@@ -25,8 +25,9 @@ public class LoginActivity extends Activity {
 	 * FUNCION TEMPORAL PARA CAMBIAR DE VISTA
 	 */
 	public void onClickClientes(View v){
-		Intent i = new Intent(this, ClientesActivity.class);
+		Intent i = new Intent(this, AplicacionActivity.class);
 		startActivity(i);
+		finish();
 	}
 
 }

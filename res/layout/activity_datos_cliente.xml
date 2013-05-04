@@ -1,0 +1,11 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/ContenedorPrincipal"
+    tools:context=".DatosClienteActivity" >
+
+    <TextView
+        android:id="@+id/textViewServicios"
+        style="@style/FuenteTitulos"
+        android:text="@string/datosCliente" />
+
+</LinearLayout>
