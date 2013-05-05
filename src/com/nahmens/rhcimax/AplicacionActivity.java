@@ -1,5 +1,7 @@
 package com.nahmens.rhcimax;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,9 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TabHost;
 
+/*
+ * Contenedor principal de todos los fragmentos
+ */
 
 public class AplicacionActivity extends FragmentActivity {
 
@@ -37,7 +42,7 @@ public class AplicacionActivity extends FragmentActivity {
 
 		mTabHost = (TabHost)findViewById(android.R.id.tabhost);
 		mTabHost.setOnTabChangedListener(listener);
-		
+
 		//Se debe llamar a setup() antes de agregar los tabs 
 		//si se esta usando findViewById().
 		mTabHost.setup();
@@ -52,9 +57,9 @@ public class AplicacionActivity extends FragmentActivity {
 	public void inicializarTab() {
 
 		//Obtenemos los recursos
-        Resources res = getResources(); 
-        
-        //TabHost.TabSpec: A tab has a tab indicator, content, and a tag that is used to keep track of it. 
+		Resources res = getResources(); 
+
+		//TabHost.TabSpec: A tab has a tab indicator, content, and a tag that is used to keep track of it. 
 		TabHost.TabSpec spec =  mTabHost.newTabSpec(TAB_clientes);
 		mTabHost.setCurrentTab(-3);
 
@@ -114,7 +119,42 @@ public class AplicacionActivity extends FragmentActivity {
 		ft.replace(android.R.id.tabcontent, fragment);
 		ft.commit();
 	}
-	
+	/*
+	 * //Metodo que confirma la salida de la aplicacion.
+	 * @see android.support.v4.app.FragmentActivity#onBackPressed()
+	 */
+	@Override
+	public void onBackPressed() { 
+
+		//Obtenemos el fragment que esta cargado actualmente en el layout
+		Fragment fragmentoActual = this.getSupportFragmentManager().findFragmentById(android.R.id.tabcontent);
+		Log.e("log_tag ", "a: "+fragmentoActual);
+
+		//Si hacemos click en el back button desde el fragmento de clientes, settings o logout, se nos muestra alert.
+		if (fragmentoActual.equals(fragmentClientes) || fragmentoActual.equals(fragmentSettings) || fragmentoActual.equals(fragmentLogout)){
+			AlertDialog.Builder builder = new AlertDialog.Builder(AplicacionActivity.this);
+			builder.setMessage("Está seguro que desea salir?")
+			.setCancelable(false)
+			.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					AplicacionActivity.this.finish();
+				}
+			})
+			.setNegativeButton("No", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			});
+			AlertDialog alert = builder.create();
+			alert.show();
+
+			//sino permitimos que el back button nos lleven al fragmento anterior ejecutado (ej. desde datos_cliente a cliente)
+		}else{
+			super.onBackPressed();
+		}
+
+	}         
+
 
 
 	@Override

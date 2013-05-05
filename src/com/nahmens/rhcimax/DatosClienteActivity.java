@@ -18,5 +18,7 @@ public class DatosClienteActivity extends Fragment {
         
         return view;
     }
+	
+	
 
 }
