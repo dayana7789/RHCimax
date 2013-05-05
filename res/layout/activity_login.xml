@@ -23,14 +23,6 @@
          android:layout_gravity="center"
          android:padding="15dip" >
 
-         <Button
-             android:id="@+id/button1"
-             style="?android:attr/buttonStyleSmall"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:onClick="onClickClientes"
-             android:text="vista clientes" />
-
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,6 +75,7 @@
 
         <Button
             android:id="@+id/buttonAceptar"
+            android:onClick="onClickClientes"
             android:layout_width="10dp"
             android:layout_height="wrap_content"
             android:text="@string/aceptar" />

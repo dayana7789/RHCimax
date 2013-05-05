@@ -22,7 +22,6 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -37,6 +36,7 @@
         <activity
             android:name="com.nahmens.rhcimax.AplicacionActivity"
             android:label="@string/app_name" >
+
         </activity>
         <activity
             android:name="com.nahmens.rhcimax.LogoutActivity"
@@ -50,6 +50,7 @@
             android:name="com.nahmens.rhcimax.ServiciosActivity"
             android:label="@string/title_activity_servicios" >
         </activity>
+        
     </application>
 
 </manifest>

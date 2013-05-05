@@ -26,5 +26,7 @@
     <string name="datosCliente">Datos del cliente</string>
     <string name="title_activity_servicios">ServiciosActivity</string>
     <string name="servicios">Servicios</string>
+    <string name="title_activity_tab_group">TabGroupActivity</string>
+    <string name="title_activity_clientes_group">ClientesGroupActivity</string>
 
 </resources>

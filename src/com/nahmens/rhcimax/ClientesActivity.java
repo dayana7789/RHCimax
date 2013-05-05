@@ -1,30 +1,43 @@
 package com.nahmens.rhcimax;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 
-public class ClientesActivity extends Activity {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_clientes);
-	}
+
+public class ClientesActivity extends Fragment  {
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.clientes, menu);
-		return true;
-	}
-	
-	public void onClickNuevo(View v){
-		Intent j = new Intent(this, AplicacionActivity.class);
-		startActivity(j);
-		finish();
-	}
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        // TODO Auto-generated method stub
+        
+        View view = inflater.inflate(R.layout.activity_clientes, container, false);
+        
+		
+        // Register for the Button.OnClick event
+        Button b = (Button)view.findViewById(R.id.buttonNuevo);
+        b.setOnClickListener(new View.OnClickListener() {
+             
+            @Override
+            public void onClick(View v) {
+               // Toast.makeText(Tab1Fragment.this.getActivity(), "OnClickMe button clicked", Toast.LENGTH_LONG).show();
+            	Log.e("onClickNuevo2 ", "inicio");
+        		DatosClienteActivity fragmentDatosClientes = new DatosClienteActivity();
+        		final FragmentTransaction ft = getFragmentManager().beginTransaction();
+        	    ft.replace(android.R.id.tabcontent,fragmentDatosClientes, "fragmentDatosClientes"); 
+        	    ft.addToBackStack(null);
+        	    ft.commit(); 
+            }
+        });
+        return view;
+    }
+
 
 }
