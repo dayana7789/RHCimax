@@ -75,7 +75,7 @@
 
         <Button
             android:id="@+id/buttonAceptar"
-            android:onClick="onClickClientes"
+            android:onClick="onClickValidar"
             android:layout_width="10dp"
             android:layout_height="wrap_content"
             android:text="@string/aceptar" />

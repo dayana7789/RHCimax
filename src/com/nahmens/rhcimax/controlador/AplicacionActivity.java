@@ -1,4 +1,6 @@
-package com.nahmens.rhcimax;
+package com.nahmens.rhcimax.controlador;
+
+import com.nahmens.rhcimax.R;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;

@@ -18,7 +18,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.nahmens.rhcimax.LoginActivity"
+            android:name="com.nahmens.rhcimax.controlador.LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,28 +26,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.nahmens.rhcimax.ClientesActivity"
+            android:name="com.nahmens.rhcimax.controlador.ClientesActivity"
             android:label="@string/title_activity_clientes" >
         </activity>
         <activity
-            android:name="com.nahmens.rhcimax.SettingsActivity"
+            android:name="com.nahmens.rhcimax.controlador.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
-            android:name="com.nahmens.rhcimax.AplicacionActivity"
+            android:name="com.nahmens.rhcimax.controlador.AplicacionActivity"
             android:label="@string/app_name" >
 
         </activity>
         <activity
-            android:name="com.nahmens.rhcimax.LogoutActivity"
+            android:name="com.nahmens.rhcimax.controlador.LogoutActivity"
             android:label="@string/title_activity_log_out" >
         </activity>
         <activity
-            android:name="com.nahmens.rhcimax.DatosClienteActivity"
+            android:name="com.nahmens.rhcimax.controlador.DatosClienteActivity"
             android:label="@string/title_activity_datos_cliente" >
         </activity>
         <activity
-            android:name="com.nahmens.rhcimax.ServiciosActivity"
+            android:name="com.nahmens.rhcimax.controlador.ServiciosActivity"
             android:label="@string/title_activity_servicios" >
         </activity>
         
