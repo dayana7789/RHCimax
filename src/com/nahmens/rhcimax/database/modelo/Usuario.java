@@ -7,8 +7,7 @@ public class Usuario {
 	String correo;
 	int idRol;
 
-	public Usuario(int id, String login, String password, String correo) {
-		this.id = id;
+	public Usuario(String login, String password, String correo) {
 		this.login = login;
 		this.password = password;
 		this.correo = correo;
