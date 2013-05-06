@@ -61,7 +61,7 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 
 			Cursor c = conexion.getDatabase().rawQuery("SELECT * FROM usuario", null);
 			Log.e("UsuarioSqliteDao","path: "+ conexion.getDatabase().getPath());
-			int id[]=new int[c.getCount()];
+		/*	int id[]=new int[c.getCount()];
 			int i=0;
 			if (c.getCount() > 0) 
 			{               
@@ -72,7 +72,7 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 			           i++;
 			    } while (c.moveToNext());
 			    c.close();
-			}
+			}*/
 
 			
 			

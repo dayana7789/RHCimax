@@ -41,7 +41,7 @@ public class LoginActivity extends Activity {
 		
 		UsuarioSqliteDao usuSqlDao = new UsuarioSqliteDao();
 		Boolean resu = usuSqlDao.insertarUsuario(this, usu);
-		//usuSqlDao.listarUsuarios(this);
+
 		Intent i = new Intent(this, AplicacionActivity.class);
 		startActivity(i);
 		finish();
