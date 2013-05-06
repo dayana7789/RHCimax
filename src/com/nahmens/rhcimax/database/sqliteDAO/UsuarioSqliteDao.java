@@ -31,15 +31,16 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 			values.put("correo",usuario.getCorreo());
 
 			long value = conexion.getDatabase().insert(DataBaseHelper.TABLA_USUARIO, null,values);
-			insertado = true;
 			
-			Log.e("UsuarioSqliteDao","result: "+ value);
+			if(value!=-1){
+				insertado = true;
+			}
+
 		}finally{
 			conexion.close();
 		}
 		
 		return insertado;
-
 	}
 
 	@Override
@@ -52,33 +53,21 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 	}
 
 	@Override
-	public void listarUsuarios(Context context) {
+	public Cursor listarUsuarios(Context context) {
 		ConexionBD conexion = new ConexionBD(context);
+		Cursor c = null;
 		try{
 			
 			conexion.open();
 
-
-			Cursor c = conexion.getDatabase().rawQuery("SELECT * FROM usuario", null);
+			c = conexion.getDatabase().rawQuery("SELECT * FROM " + DataBaseHelper.TABLA_USUARIO, null);
 			Log.e("UsuarioSqliteDao","path: "+ conexion.getDatabase().getPath());
-		/*	int id[]=new int[c.getCount()];
-			int i=0;
-			if (c.getCount() > 0) 
-			{               
-			    c.moveToFirst();
-			    do {
 
-			           id[i]=c.getInt(c.getColumnIndex("field_name"));
-			           i++;
-			    } while (c.moveToNext());
-			    c.close();
-			}*/
-
-			
-			
 		}finally{
 			conexion.close();
 		}
+		
+		return c;		
 		
 	}
 }
