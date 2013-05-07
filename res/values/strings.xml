@@ -3,7 +3,7 @@
 
     <string name="app_name">RHCimax</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="lista_vacia">Lista vacia</string>
     <string name="login">Login</string>
     <string name="todo">TODO</string>
     <string name="password">Password</string>
@@ -28,5 +28,7 @@
     <string name="servicios">Servicios</string>
     <string name="title_activity_tab_group">TabGroupActivity</string>
     <string name="title_activity_clientes_group">ClientesGroupActivity</string>
+    <string name="title_activity_cliente_fila">ClienteFilaActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

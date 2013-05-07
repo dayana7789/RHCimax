@@ -23,7 +23,7 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 		Boolean insertado = false;
 		ConexionBD conexion = new ConexionBD(context);
 		try{
-			
+
 			conexion.open();
 
 			ContentValues values = new ContentValues();
@@ -33,7 +33,7 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 			values.put("correo",usuario.getCorreo());
 
 			long value = conexion.getDatabase().insert(DataBaseHelper.TABLA_USUARIO, null,values);
-			
+
 			if(value!=-1){
 				insertado = true;
 			}
@@ -41,20 +41,20 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 		}finally{
 			conexion.close();
 		}
-		
+
 		return insertado;
 	}
 
 	@Override
 	public void modificarUsuario(Context context, Usuario usuario) {
 	}
-	
+
 	@Override
 	public Usuario buscarUsuario(Context context, String login, String password) {
 		ConexionBD conexion = new ConexionBD(context);
 		Cursor mCursor = null;
 		Usuario usu = null;
-		
+
 		try{
 			conexion.open();
 
@@ -64,13 +64,13 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 				mCursor.moveToFirst();
 				usu = new Usuario(mCursor.getString(0), mCursor.getString(1), mCursor.getString(2));
 			}
-			
+
 		}finally{
 			conexion.close();
 		}
-		
+
 		return usu;
-		
+
 	}
 
 	@Override
@@ -78,32 +78,40 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 		ConexionBD conexion = new ConexionBD(context);
 		Cursor mCursor = null;
 		try{
-			
+
 			conexion.open();
 
 			mCursor = conexion.getDatabase().rawQuery("SELECT * FROM " + DataBaseHelper.TABLA_USUARIO, null);
-			
-		/*	while (!mCursor.isAfterLast()) {
-			String dbUsu = mCursor.getString(0);
-			String dbPwd = mCursor.getString(1);
-			Log.e("UsuarioSqliteDao","usu: ,"+ dbUsu + ", pass= ,"+dbPwd+",");
-			Log.e("UsuarioSqliteDao","login: ,"+ login + ", password= ,"+password+",");
-			
-			if(dbUsu.equals(login) && dbPwd.equals(password)){
-				entre = true;
-				
-				break;
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
 			}
 			
-			i++;
-			mCursor.moveToNext();
-		}*/
+			/*mCursor.moveToFirst();
+			
+			while (!mCursor.isAfterLast()) {
+				String dbUsu = mCursor.getString(0);
+				String dbPwd = mCursor.getString(1);
+				Log.e("UsuarioSqliteDao","usu: ,"+ dbUsu + ", pass= ,"+dbPwd+",");
+				Log.e("UsuarioSqliteDao","login: ,"+ login + ", password= ,"+password+",");
+
+				if(dbUsu.equals(login) && dbPwd.equals(password)){
+					entre = true;
+
+					break;
+				}
+
+				i++;
+				mCursor.moveToNext();
+			}*/
+
+
 
 		}finally{
 			conexion.close();
 		}
-		
+
 		return mCursor;		
-		
+
 	}
 }

@@ -18,6 +18,12 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	public static final String TABLA_ROL = "rol";
 	public static final String TABLA_PERMISO = "permiso";
 	public static final String TABLA_ROL_PERMISO = "rol_permiso";
+	public static final String TABLA_EMPRESA = "empresa";
+	public static final String TABLA_EMPLEADO = "empleado";
+	public static final String TABLA_COTIZACION = "cotizacion";
+	public static final String TABLA_EMPLEADO_COTIZACION = "empleado_cotizacion";
+	public static final String TABLA_SERVICIO= "servicio";
+	public static final String TABLA_COTIZACION_SERVICIO = "cotizacion_servicio";
 
 	/*Creacion de tablas*/
 	private static final String DATABASE_CREATE_ROL = "CREATE table " + TABLA_ROL + " ("
@@ -25,13 +31,12 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 													+ "nombre TEXT NOT NULL, "
 													+ "descripcion TEXT NOT NULL);";
 
-	
 	private static final String DATABASE_CREATE_USUARIO = "CREATE table " + TABLA_USUARIO + " ("
 														+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-														+ "idRol INTEGER,"
 														+ "login TEXT NOT NULL, "
 														+ "password TEXT NOT NULL, "
 														+ "correo TEXT NOT NULL, "
+														+ "idRol INTEGER, "
 														+ "FOREIGN KEY(idRol) REFERENCES " + TABLA_ROL + "(_id));";
 	
 	private static final String DATABASE_CREATE_PERMISO = "CREATE table " + TABLA_PERMISO + " ("
@@ -46,7 +51,56 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "FOREIGN KEY(idRol) REFERENCES " + TABLA_ROL + "(_id), " 
 															+ "FOREIGN KEY(idPermiso) REFERENCES " + TABLA_PERMISO + "(_id));";
 	
+	private static final String DATABASE_CREATE_EMPRESA = "CREATE table " + TABLA_EMPRESA + " ("
+															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+															+ "nombre TEXT NOT NULL, "
+															+ "web TEXT, "
+															+ "telefono TEXT NOT NULL, "
+															+ "direccion TEXT);";
 	
+	private static final String DATABASE_CREATE_EMPLEADO = "CREATE table " + TABLA_EMPLEADO + " ("
+															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+															+ "nombre TEXT NOT NULL, "
+															+ "apellido TEXT NOT NULL, "
+															+ "posicion TEXT NOT NULL, "
+															+ "email TEXT NOT NULL, "
+															+ "telfOficina TEXT, "
+															+ "celular TEXT, "
+															+ "pin TEXT, "
+															+ "linkedin TEXT, "
+															+ "descripcion TEXT, "
+															+ "idEmpresa INTEGER NOT NULL, "
+															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id));";
+	
+	private static final String DATABASE_CREATE_COTIZACION = "CREATE table " + TABLA_COTIZACION + " ("
+															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+															+ "fechaEnvio TEXT NOT NULL, "
+															+ "fechaLeido TEXT, "
+															+ "enviado INTEGER NOT NULL, "
+															+ "recibido INTEGER NOT NULL, "
+															+ "idUsuario INTEGER NOT NULL, "
+															+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id));";
+
+	
+	private static final String DATABASE_CREATE_EMPLEADO_COTIZACION = "CREATE table " + TABLA_EMPLEADO_COTIZACION + " ("
+																	+ "idEmpleado INTEGER NOT NULL, "
+																	+ "idCotizacion INTEGER NOT NULL, "
+																	+ "primary key (idEmpleado, idCotizacion), "
+																	+ "FOREIGN KEY(idEmpleado) REFERENCES " + TABLA_EMPLEADO + "(_id), " 
+																	+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id));";
+	
+	private static final String DATABASE_CREATE_SERVICIO = "CREATE table " + TABLA_SERVICIO + " ("
+															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+															+ "nombre TEXT NOT NULL, "
+															+ "precio REAL NOT NULL, "
+															+ "descripcion TEXT NOT NULL);";
+	
+	private static final String DATABASE_CREATE_COTIZACION_SERVICIO = "CREATE table " + TABLA_COTIZACION_SERVICIO + " ("
+																	+ "idCotizacion INTEGER NOT NULL, "
+																	+ "idServicio INTEGER NOT NULL, "
+																	+ "primary key (idCotizacion, idServicio), "
+																	+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id), " 
+																	+ "FOREIGN KEY(idServicio) REFERENCES " + TABLA_SERVICIO + "(_id));";
 
 	public DataBaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -59,8 +113,14 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL(DATABASE_CREATE_USUARIO);
 		database.execSQL(DATABASE_CREATE_PERMISO);
 		database.execSQL(DATABASE_CREATE_ROL_PERMISO);
+		database.execSQL(DATABASE_CREATE_EMPRESA);
+		database.execSQL(DATABASE_CREATE_EMPLEADO);
+		database.execSQL(DATABASE_CREATE_COTIZACION);
+		database.execSQL(DATABASE_CREATE_EMPLEADO_COTIZACION);
+		database.execSQL(DATABASE_CREATE_SERVICIO);
+		database.execSQL(DATABASE_CREATE_COTIZACION_SERVICIO);
+
 		this.insertarRegistros(database);
-		
 	}
 
 	@Override
@@ -72,6 +132,12 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL("DROP TABLE IF EXISTS "+TABLA_ROL_PERMISO);
 		database.execSQL("DROP TABLE IF EXISTS "+TABLA_ROL);
 		database.execSQL("DROP TABLE IF EXISTS "+TABLA_PERMISO);
+		database.execSQL("DROP TABLE IF EXISTS "+TABLA_EMPRESA);
+		database.execSQL("DROP TABLE IF EXISTS "+TABLA_EMPLEADO_COTIZACION);
+		database.execSQL("DROP TABLE IF EXISTS "+TABLA_EMPLEADO);
+		database.execSQL("DROP TABLE IF EXISTS "+TABLA_COTIZACION_SERVICIO);
+		database.execSQL("DROP TABLE IF EXISTS "+TABLA_COTIZACION);
+		database.execSQL("DROP TABLE IF EXISTS "+TABLA_SERVICIO);
 		onCreate(database);
 
 	}

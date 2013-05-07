@@ -57,7 +57,6 @@
                 android:layout_height="35dp"
                 android:onClick="onClickNuevo"
                 android:text="@string/nuevo" />
-
         </TableRow>
     </TableLayout>
 
@@ -71,19 +70,14 @@
         <requestFocus />
     </AutoCompleteTextView>
 
-    <LinearLayout
-        android:id="@+id/louyt"
+    <ListView
+        android:id="@id/android:list"
         android:layout_width="match_parent"
-        android:layout_height="286dp"
-        android:orientation="vertical" >
-
-        <ListView
-            android:id="@+id/listView1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        </ListView>
-    </LinearLayout>
-
-   
+        android:layout_height="wrap_content" >
+    </ListView>
+    <TextView android:id="@id/android:empty"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="@string/lista_vacia"/>
 
 </LinearLayout>

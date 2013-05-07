@@ -1,7 +1,7 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
-import com.nahmens.rhcimax.database.DAO.PermisoDao;
+import com.nahmens.rhcimax.database.DAO.PermisoDAO;
 
-public class PermisoSqliteDao implements PermisoDao{
+public class PermisoSqliteDao implements PermisoDAO{
 
 }

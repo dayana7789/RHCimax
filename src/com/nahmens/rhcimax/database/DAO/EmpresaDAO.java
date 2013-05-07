@@ -1,5 +1,5 @@
 package com.nahmens.rhcimax.database.DAO;
 
-public interface PermisoDao {
+public interface EmpresaDAO {
 
 }
