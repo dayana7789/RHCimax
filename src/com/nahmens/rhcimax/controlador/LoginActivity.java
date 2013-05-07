@@ -2,11 +2,13 @@ package com.nahmens.rhcimax.controlador;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.database.modelo.Usuario;
@@ -26,9 +28,9 @@ public class LoginActivity extends Activity {
 		getMenuInflater().inflate(R.menu.login, menu);
 		return true;
 	}
-	
+
 	/*
-	 * FUNCION TEMPORAL PARA CAMBIAR DE VISTA
+	 * Funcion que verifica si el usuario es válido o no.
 	 */
 	public void onClickValidar(View v){
 		EditText etLogin = (EditText)findViewById(R.id.textEditLogin);
@@ -36,15 +38,17 @@ public class LoginActivity extends Activity {
 
 		String login = etLogin.getText().toString();
 		String password = etPassword.getText().toString();
-		
-		Usuario usu = new Usuario(1, "daya", "1234", "daya@gmail.com");
-		
+
 		UsuarioSqliteDao usuSqlDao = new UsuarioSqliteDao();
-		Boolean resu = usuSqlDao.insertarUsuario(this, usu);
 
-		Intent i = new Intent(this, AplicacionActivity.class);
-		startActivity(i);
-		finish();
+		Usuario usu = usuSqlDao.buscarUsuario(this, login, password);
+
+		if(usu!=null){
+			final Intent inte = new Intent(this, AplicacionActivity.class);
+			startActivity(inte);
+			finish();
+		}else{
+			Toast.makeText(getApplicationContext(), "Error: login o password inválido",Toast.LENGTH_LONG).show();
+		}
 	}
-
 }

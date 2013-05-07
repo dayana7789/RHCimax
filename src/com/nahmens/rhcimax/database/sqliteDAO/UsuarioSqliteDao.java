@@ -1,5 +1,7 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
+import java.lang.reflect.Array;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -48,26 +50,60 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 	}
 	
 	@Override
-	public Usuario buscarUsuario(Context context, String nombre) {
-		return null;
+	public Usuario buscarUsuario(Context context, String login, String password) {
+		ConexionBD conexion = new ConexionBD(context);
+		Cursor mCursor = null;
+		Usuario usu = null;
+		
+		try{
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_USUARIO, new String[] {"login","password","correo"}, "login=? and password=?", new String[] {login,password}, null, null, null);
+
+			if(mCursor.getCount()>0){
+				mCursor.moveToFirst();
+				usu = new Usuario(mCursor.getString(0), mCursor.getString(1), mCursor.getString(2));
+			}
+			
+		}finally{
+			conexion.close();
+		}
+		
+		return usu;
+		
 	}
 
 	@Override
 	public Cursor listarUsuarios(Context context) {
 		ConexionBD conexion = new ConexionBD(context);
-		Cursor c = null;
+		Cursor mCursor = null;
 		try{
 			
 			conexion.open();
 
-			c = conexion.getDatabase().rawQuery("SELECT * FROM " + DataBaseHelper.TABLA_USUARIO, null);
-			Log.e("UsuarioSqliteDao","path: "+ conexion.getDatabase().getPath());
+			mCursor = conexion.getDatabase().rawQuery("SELECT * FROM " + DataBaseHelper.TABLA_USUARIO, null);
+			
+		/*	while (!mCursor.isAfterLast()) {
+			String dbUsu = mCursor.getString(0);
+			String dbPwd = mCursor.getString(1);
+			Log.e("UsuarioSqliteDao","usu: ,"+ dbUsu + ", pass= ,"+dbPwd+",");
+			Log.e("UsuarioSqliteDao","login: ,"+ login + ", password= ,"+password+",");
+			
+			if(dbUsu.equals(login) && dbPwd.equals(password)){
+				entre = true;
+				
+				break;
+			}
+			
+			i++;
+			mCursor.moveToNext();
+		}*/
 
 		}finally{
 			conexion.close();
 		}
 		
-		return c;		
+		return mCursor;		
 		
 	}
 }
