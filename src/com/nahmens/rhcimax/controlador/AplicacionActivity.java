@@ -22,9 +22,9 @@ import android.widget.TabHost;
 public class AplicacionActivity extends FragmentActivity {
 
 	/* Tab identificadores */
-	static String TAB_clientes = "Clientes";
-	static String TAB_settings = "Settings";
-	static String TAB_logout = "Logout";
+	static String TAB_clientes = "fragmentClientes";
+	static String TAB_settings = "fragmentSettings";
+	static String TAB_logout = "fragmentLogout";
 	
 	/* Identificadores de los fragments que se cargan en este activity.
 	 * Por cada activity nuevo de tipo Fragment, se debe inicializar el
@@ -87,7 +87,7 @@ public class AplicacionActivity extends FragmentActivity {
 		Fragment fragmentoActual = this.getSupportFragmentManager().findFragmentByTag(layout_activo);
 		Log.e("fragmentoActual", ""+this.getSupportFragmentManager().findFragmentById(android.R.id.tabcontent));
 		if(fragmentoActual!=null){
-			Log.e("hice push", ""+fragmentoActual.getTag());
+			Log.e("hice push", ""+fragmentoActual.toString() + " - "+fragmentoActual.getTag());
 			pushFragments(layout_activo, fragmentoActual);
 		}else{
 			Log.e("**ENTRE**", "**ENTRE**");
