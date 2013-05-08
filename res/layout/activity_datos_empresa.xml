@@ -6,12 +6,12 @@
     <TextView
         android:id="@+id/textViewDatosCliente"
         style="@style/FuenteTitulos"
-        android:text="@string/datosCliente" />
+        android:text="@string/datosEmpresa" />
     
     <TextView
         android:id="@+id/textViewEmpleado"
         style="@style/FuenteSubTitulos"
-        android:text="@string/empleado" />
+        android:text="@string/empresa" />
     
     <TableLayout
         android:layout_width="match_parent"

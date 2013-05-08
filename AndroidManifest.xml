@@ -54,6 +54,10 @@
             android:name="com.nahmens.rhcimax.controlador.ClienteFilaActivity"
             android:label="@string/title_activity_cliente_fila" >
         </activity>
+        <activity
+            android:name="com.nahmens.rhcimax.controlador.DatosEmpresaActivity"
+            android:label="@string/title_activity_datos_empresa" >
+        </activity>
     </application>
 
 </manifest>

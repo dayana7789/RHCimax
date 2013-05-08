@@ -54,9 +54,11 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	private static final String DATABASE_CREATE_EMPRESA = "CREATE table " + TABLA_EMPRESA + " ("
 															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
 															+ "nombre TEXT NOT NULL, "
-															+ "web TEXT, "
 															+ "telefono TEXT NOT NULL, "
-															+ "direccion TEXT);";
+															+ "web TEXT, "
+															+ "rif TEXT, "
+															+ "direccionFiscal TEXT, "
+															+ "direccionComercial TEXT);";
 	
 	private static final String DATABASE_CREATE_EMPLEADO = "CREATE table " + TABLA_EMPLEADO + " ("
 															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "

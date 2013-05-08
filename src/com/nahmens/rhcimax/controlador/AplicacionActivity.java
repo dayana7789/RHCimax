@@ -29,9 +29,11 @@ public class AplicacionActivity extends FragmentActivity {
 	final static String tagFragmentSettings = "fragmentSettings";
 	final static String tagFragmentLogout = "fragmentLogout";
 	final static String tagFragmentDatosCliente = "fragmentDatosCliente";
+	final static String tagFragmentDatosEmpresa = "fragmentDatosEmpresa";
 
 	TabHost mTabHost;
 
+	/*Principales fragments de los tabs*/
 	ClientesActivity fragmentClientes;
 	SettingsActivity fragmentSettings;
 	LogoutActivity fragmentLogout;
