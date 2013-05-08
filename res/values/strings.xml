@@ -46,5 +46,12 @@
     <string name="historialCotizaciones">Historial de cotizaciones</string>
     <string name="salvar">Salvar</string>
     <string name="cotizar">Cotizar</string>
+    <string name="apellido">Apellido</string>
+    <string name="posicion">Posición</string>
+    <string name="celular">Celular</string>
+    <string name="email">Email</string>
+    <string name="descripcion">Descripción</string>
+    <string name="linkedin">Linkedin</string>
+    <string name="telf_oficina">Telf. Oficina</string>
 
 </resources>

@@ -25,22 +25,22 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/textViewNombEmpresa"
+                android:id="@+id/textViewNombEmpleado"
                 style="@style/FuenteFormularios"
                 android:text="@string/nombre" />
 
             <EditText
-                android:id="@+id/textEditNombEmpresa"
+                android:id="@+id/textEditNombEmpleado"
                 android:inputType="text" >
             </EditText>
             
             <TextView
-                android:id="@+id/textViewTelfEmpresa"
+                android:id="@+id/textViewApellidoEmpleado"
                 style="@style/FuenteFormularios"
-                android:text="@string/telefono" />
+                android:text="@string/apellido" />
 
             <EditText
-                android:id="@+id/textEditTelfEmpresa"
+                android:id="@+id/textEditApellidoEmpleado"
                 android:inputType="text" >
             </EditText>
         </TableRow>
@@ -50,25 +50,138 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/textViewWebEmpresa"
+                android:id="@+id/textViewEmpEmpleado"
                 style="@style/FuenteFormularios"
-                android:text="@string/sitioWeb" />
+                android:text="@string/empresa" />
 
             <EditText
-                android:id="@+id/textEditWebEmpresa"
-                android:inputType="text" >
+                android:id="@+id/textEditEmpEmpleado"
+                android:inputType="textAutoComplete" >
             </EditText>
             
             <TextView
-                android:id="@+id/textViewDirComerEmpresa"
+                android:id="@+id/textViewPosEmpleado"
                 style="@style/FuenteFormularios"
-                android:text="@string/direccionComercial" />
+                android:text="@string/posicion" />
 
             <EditText
-                android:id="@+id/textEditDirFiscEmpresa"
+                android:id="@+id/textEditPosEmpleado"
                 android:inputType="text" >
             </EditText>
         </TableRow>
+        <TableRow 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            
+            <TextView
+                android:id="@+id/textViewEmail"
+                style="@style/FuenteFormularios"
+                android:text="@string/email" />
+
+            <EditText
+                android:id="@+id/textEditEmail"
+                android:inputType="textEmailAddress" >
+            </EditText>
+            
+             <TextView
+                android:id="@+id/textViewTelfOfic"
+                style="@style/FuenteFormularios"
+                android:text="@string/telf_oficina" />
+
+            <EditText
+                android:id="@+id/textEditTelfOfic"
+                android:inputType="phone" >
+            </EditText>
+        </TableRow>
+        <TableRow 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/textViewCelular"
+                style="@style/FuenteFormularios"
+                android:text="@string/celular" />
+
+            <EditText
+                android:id="@+id/textEditCelular"
+                android:inputType="phone" >
+            </EditText>
+            
+             <TextView
+                android:id="@+id/textViewLinkedin"
+                style="@style/FuenteFormularios"
+                android:text="@string/linkedin" />
+
+            <EditText
+                android:id="@+id/textEditLinkedin"
+                android:inputType="textUri" >
+            </EditText>
+
+        </TableRow>
+       
+    </TableLayout>
+    <TableLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="3dip" 
+        android:stretchColumns="1" >
+
+    	<TableRow
+    	    android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    tools:ignore="UselessParent" >
+            
+            <TextView
+                android:id="@+id/textViewDescripcion"
+                style="@style/FuenteFormularios"
+                android:text="@string/descripcion" />
+
+            <EditText
+                android:id="@+id/textEditDescripcion"
+                android:inputType="textPostalAddress" >
+            </EditText>
+            
+        </TableRow>
+    </TableLayout>
+    
+    <TextView
+	    android:id="@+id/textViewHistCotiz"
+	    style="@style/FuenteSubTitulos"
+	    android:text="@string/historialCotizaciones" />
+    
+	<ListView
+	    android:id="@+id/listViewHistCotiz"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_weight="1"
+	    tools:ignore="InefficientWeight" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="3dip" 
+        android:stretchColumns="0,1">
+        
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent" >
+
+			<Button
+			    android:id="@+id/buttonSalvar"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="@string/salvar" />
+	
+	       <Button
+	           android:id="@+id/buttonCotizar"
+	           android:layout_width="wrap_content"
+	           android:layout_height="wrap_content"
+	           android:text="@string/cotizar" />
+	       
+        </TableRow>
+       
     </TableLayout>
 
 </LinearLayout>
