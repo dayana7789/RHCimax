@@ -47,6 +47,7 @@
             
         </TableRow>
     </TableLayout>
+    
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -108,8 +109,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             
-            
-            
              <TextView
                 android:id="@+id/textViewTelfOfic"
                 style="@style/FuenteFormularios"
@@ -128,10 +127,9 @@
                 android:id="@+id/textEditCelular"
                 android:inputType="phone" >
             </EditText>
-        </TableRow>
-        
-       
+        </TableRow>    
     </TableLayout>
+    
     <TableLayout 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -141,8 +139,7 @@
         <TableRow 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            
-            
+
              <TextView
                 android:id="@+id/textViewLinkedin"
                 style="@style/FuenteFormularios"
