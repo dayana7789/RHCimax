@@ -24,9 +24,6 @@ public class ClientesActivity extends ListFragment{
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.activity_clientes, container, false);
-		
-		//Utilizado para saber que fragment se esta ejecutando
-		AplicacionActivity.layout_activo = AplicacionActivity.tagFragmentClientes;
 
 		//Cargamos la lista de clientes
 		UsuarioSqliteDao usuDao = new UsuarioSqliteDao();

@@ -18,9 +18,6 @@ public class LogoutActivity extends Fragment {
         
         View view = inflater.inflate(R.layout.activity_log_out, container, false);
         
-        //Utilizado para saber que fragment se esta ejecutando
-        AplicacionActivity.layout_activo = AplicacionActivity.tagFragmentLogout;
-        
         return view;
     }
 

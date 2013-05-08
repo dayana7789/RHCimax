@@ -21,11 +21,6 @@ import android.widget.TabHost;
 
 public class AplicacionActivity extends FragmentActivity {
 
-	/* Tab identificadores */
-	static String TAB_clientes = "fragmentClientes";
-	static String TAB_settings = "fragmentSettings";
-	static String TAB_logout = "fragmentLogout";
-	
 	/* Identificadores de los fragments que se cargan en este activity.
 	 * Por cada activity nuevo de tipo Fragment, se debe inicializar el
 	 * tag del Fragment aqui.
@@ -34,13 +29,6 @@ public class AplicacionActivity extends FragmentActivity {
 	final static String tagFragmentSettings = "fragmentSettings";
 	final static String tagFragmentLogout = "fragmentLogout";
 	final static String tagFragmentDatosCliente = "fragmentDatosCliente";
-	
-	/* Varible utilizada para saber, cual layout esta activo.
-	 * Se actualiza su valor cada vez que llamo a un fragment 
-	 * en particular, es decir, en el onCreateView de cada fragment
-	 * (ej. ClientesActivity.java, SettingsActivity.java, etc.)
-	 */
-	public static String layout_activo;
 
 	TabHost mTabHost;
 
@@ -76,21 +64,41 @@ public class AplicacionActivity extends FragmentActivity {
 		 * distinto de null le indico que cargue el layout correspondiente.
 		 */
 		if (savedInstanceState != null){
-			establecerLayout();
+			String value = savedInstanceState.getString("fragmentoActual");
+			establecerLayout(value);
 		}
 
-	}   
+	}
+	
+	/*
+	 * Funcion que se llama antes de de destruir el layout al cambiarse la orientacion
+	 * del dispositivo. Guarda el tag del frame que estaba activo antes de producirse
+	 * el cambio de orientacion de manera que pueda ser recuperado en el onCreate.
+	 * 
+	 * @param bundle Instancia del Bundle de la actividad creada.
+	 * 
+	 */
+	protected void onSaveInstanceState(Bundle bundle) {
+		  super.onSaveInstanceState(bundle);
+		  Fragment fragmentoActual = this.getSupportFragmentManager().findFragmentById(android.R.id.tabcontent);
+		  bundle.putString("fragmentoActual", fragmentoActual.getTag());
+		  Log.e("layout-guardando",fragmentoActual.getTag());
+		}
 
-	public void establecerLayout(){
-		Log.e("layout_activo", layout_activo);
-		mTabHost.setCurrentTabByTag(layout_activo);
-		Fragment fragmentoActual = this.getSupportFragmentManager().findFragmentByTag(layout_activo);
-		Log.e("fragmentoActual", ""+this.getSupportFragmentManager().findFragmentById(android.R.id.tabcontent));
+	
+	/*
+	 * Funcion que establece el layout correspondiente cuando se cambia la orientacion
+	 * del dispositivo.
+	 * 
+	 * @param tagFragment Tag del fragmento que se va a cargar.
+	 */
+	public void establecerLayout(String tagFragment){
+		mTabHost.setCurrentTabByTag(tagFragment);
+		Fragment fragmentoActual = this.getSupportFragmentManager().findFragmentByTag(tagFragment);
 		if(fragmentoActual!=null){
-			Log.e("hice push", ""+fragmentoActual.toString() + " - "+fragmentoActual.getTag());
-			pushFragments(layout_activo, fragmentoActual);
+			pushFragments(tagFragment, fragmentoActual);
 		}else{
-			Log.e("**ENTRE**", "**ENTRE**");
+			Log.e("**Error**", "**No debo entrar aqui**");
 		}
 	}
 	
@@ -103,7 +111,7 @@ public class AplicacionActivity extends FragmentActivity {
 		Resources res = getResources(); 
 
 		//TabHost.TabSpec: A tab has a tab indicator, content, and a tag that is used to keep track of it. 
-		TabHost.TabSpec spec =  mTabHost.newTabSpec(TAB_clientes);
+		TabHost.TabSpec spec =  mTabHost.newTabSpec(tagFragmentClientes);
 
 
 		//TabHost.TabContentFactory: Makes the content of a tab when it is selected. 
@@ -116,7 +124,7 @@ public class AplicacionActivity extends FragmentActivity {
 		mTabHost.addTab(spec);
 
 
-		spec =   mTabHost.newTabSpec(TAB_settings);
+		spec = mTabHost.newTabSpec(tagFragmentSettings);
 		spec.setContent(new TabHost.TabContentFactory() {
 			public View createTabContent(String tag) {
 				return findViewById(android.R.id.tabcontent);
@@ -125,7 +133,7 @@ public class AplicacionActivity extends FragmentActivity {
 		spec.setIndicator(" Settings ",res.getDrawable(R.drawable.settings));
 		mTabHost.addTab(spec);
 
-		spec =   mTabHost.newTabSpec(TAB_logout);
+		spec =   mTabHost.newTabSpec(tagFragmentLogout);
 		spec.setContent(new TabHost.TabContentFactory() {
 			public View createTabContent(String tag) {
 				return findViewById(android.R.id.tabcontent);
@@ -137,23 +145,27 @@ public class AplicacionActivity extends FragmentActivity {
 	}
 
 	/*
-	 * TabChangeListener para cambiar el tab cuando uno de los tabs es presionado
+	 * TabChangeListener para cambiar el contenido del FrameLayout cuando uno de los 
+	 * tabs es presionado.
 	 */
 	TabHost.OnTabChangeListener listener    =   new TabHost.OnTabChangeListener() {
 		public void onTabChanged(String tabId) {
 			/*Set current tab..*/
-			if(tabId.equals(TAB_clientes)){
+			if(tabId.equals(tagFragmentClientes)){
 				pushFragments(tagFragmentClientes, fragmentClientes);
-			}else if(tabId.equals(TAB_settings)){
+			}else if(tabId.equals(tagFragmentSettings)){
 				pushFragments(tagFragmentSettings, fragmentSettings);
-			}else if(tabId.equals(TAB_logout)){
+			}else if(tabId.equals(tagFragmentLogout)){
 				pushFragments(tagFragmentLogout, fragmentLogout);
 			}
 		}
 	};
 
 	/*
-	 * agrega el fragment al FrameLayout
+	 * Reemplaza el contenido del FrameLayout por el nuevo fragment.
+	 * 
+	 * @param tag Tag del fragment que se va a invocar.
+	 * @param fragment Fragmento que se reemplaza en el FrameLayout.
 	 */
 	public void pushFragments(String tag, Fragment fragment){
 
@@ -163,8 +175,10 @@ public class AplicacionActivity extends FragmentActivity {
 		ft.replace(android.R.id.tabcontent, fragment, tag);
 		ft.commit();
 	}
+	
+	
 	/*
-	 * //Metodo que confirma la salida de la aplicacion.
+	 * Metodo que confirma la salida de la aplicacion.
 	 * @see android.support.v4.app.FragmentActivity#onBackPressed()
 	 */
 	@Override

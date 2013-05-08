@@ -18,9 +18,7 @@ public class DatosClienteActivity extends Fragment {
         // TODO Auto-generated method stub
 	
         View view = inflater.inflate(R.layout.activity_datos_cliente, container, false);
-        
-        //Utilizado para saber que fragment se esta ejecutando
-        AplicacionActivity.layout_activo = AplicacionActivity.tagFragmentDatosCliente;
+
         return view;
     }
 	
