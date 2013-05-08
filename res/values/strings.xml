@@ -53,5 +53,6 @@
     <string name="descripcion">Descripción</string>
     <string name="linkedin">Linkedin</string>
     <string name="telf_oficina">Telf. Oficina</string>
+    <string name="ver_empresa">Ver Empresa</string>
 
 </resources>
