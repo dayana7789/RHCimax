@@ -19,6 +19,9 @@ public class SettingsActivity extends Fragment {
         
         View view = inflater.inflate(R.layout.activity_settings, container, false);
         
+        //Utilizado para saber que fragment se esta ejecutando
+        AplicacionActivity.layout_activo = AplicacionActivity.tagFragmentSettings;
+        
         return view;
     }
 

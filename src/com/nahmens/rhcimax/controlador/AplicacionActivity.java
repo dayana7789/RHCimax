@@ -25,6 +25,22 @@ public class AplicacionActivity extends FragmentActivity {
 	static String TAB_clientes = "Clientes";
 	static String TAB_settings = "Settings";
 	static String TAB_logout = "Logout";
+	
+	/* Identificadores de los fragments que se cargan en este activity.
+	 * Por cada activity nuevo de tipo Fragment, se debe inicializar el
+	 * tag del Fragment aqui.
+	 */
+	final static String tagFragmentClientes = "fragmentClientes";
+	final static String tagFragmentSettings = "fragmentSettings";
+	final static String tagFragmentLogout = "fragmentLogout";
+	final static String tagFragmentDatosCliente = "fragmentDatosCliente";
+	
+	/* Varible utilizada para saber, cual layout esta activo.
+	 * Se actualiza su valor cada vez que llamo a un fragment 
+	 * en particular, es decir, en el onCreateView de cada fragment
+	 * (ej. ClientesActivity.java, SettingsActivity.java, etc.)
+	 */
+	public static String layout_activo;
 
 	TabHost mTabHost;
 
@@ -35,6 +51,7 @@ public class AplicacionActivity extends FragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_aplicacion);
 
@@ -48,11 +65,35 @@ public class AplicacionActivity extends FragmentActivity {
 		//Se debe llamar a setup() antes de agregar los tabs 
 		//si se esta usando findViewById().
 		mTabHost.setup();
-
+		
 		inicializarTab();
+
+		/*
+		 * Cuando cambio la orientacion del tablet, el oncreate
+		 * de esta clase se llama. Para evitar perder el layout 
+		 * que tengo activo en el momento en que cambie la orientacion
+		 * del tablet, verifico el valor de savedInstanceState y si es
+		 * distinto de null le indico que cargue el layout correspondiente.
+		 */
+		if (savedInstanceState != null){
+			establecerLayout();
+		}
+
 	}   
 
-
+	public void establecerLayout(){
+		Log.e("layout_activo", layout_activo);
+		mTabHost.setCurrentTabByTag(layout_activo);
+		Fragment fragmentoActual = this.getSupportFragmentManager().findFragmentByTag(layout_activo);
+		Log.e("fragmentoActual", ""+this.getSupportFragmentManager().findFragmentById(android.R.id.tabcontent));
+		if(fragmentoActual!=null){
+			Log.e("hice push", ""+fragmentoActual.getTag());
+			pushFragments(layout_activo, fragmentoActual);
+		}else{
+			Log.e("**ENTRE**", "**ENTRE**");
+		}
+	}
+	
 	/*
 	 * Inicializa los tabs y setea los views e identificadores para los tabs.
 	 */
@@ -63,7 +104,7 @@ public class AplicacionActivity extends FragmentActivity {
 
 		//TabHost.TabSpec: A tab has a tab indicator, content, and a tag that is used to keep track of it. 
 		TabHost.TabSpec spec =  mTabHost.newTabSpec(TAB_clientes);
-		mTabHost.setCurrentTab(-3);
+
 
 		//TabHost.TabContentFactory: Makes the content of a tab when it is selected. 
 		spec.setContent(new TabHost.TabContentFactory() {
@@ -92,6 +133,7 @@ public class AplicacionActivity extends FragmentActivity {
 		});
 		spec.setIndicator(" Logout ",res.getDrawable(R.drawable.logouticon));
 		mTabHost.addTab(spec);
+
 	}
 
 	/*
@@ -101,11 +143,11 @@ public class AplicacionActivity extends FragmentActivity {
 		public void onTabChanged(String tabId) {
 			/*Set current tab..*/
 			if(tabId.equals(TAB_clientes)){
-				pushFragments(tabId, fragmentClientes);
+				pushFragments(tagFragmentClientes, fragmentClientes);
 			}else if(tabId.equals(TAB_settings)){
-				pushFragments(tabId, fragmentSettings);
+				pushFragments(tagFragmentSettings, fragmentSettings);
 			}else if(tabId.equals(TAB_logout)){
-				pushFragments(tabId, fragmentLogout);
+				pushFragments(tagFragmentLogout, fragmentLogout);
 			}
 		}
 	};
@@ -118,7 +160,7 @@ public class AplicacionActivity extends FragmentActivity {
 		FragmentManager manager = getSupportFragmentManager();
 		FragmentTransaction ft = manager.beginTransaction();
 
-		ft.replace(android.R.id.tabcontent, fragment);
+		ft.replace(android.R.id.tabcontent, fragment, tag);
 		ft.commit();
 	}
 	/*
@@ -130,7 +172,6 @@ public class AplicacionActivity extends FragmentActivity {
 
 		//Obtenemos el fragment que esta cargado actualmente en el layout
 		Fragment fragmentoActual = this.getSupportFragmentManager().findFragmentById(android.R.id.tabcontent);
-		Log.e("log_tag ", "a: "+fragmentoActual);
 
 		//Si hacemos click en el back button desde el fragmento de clientes, settings o logout, se nos muestra alert.
 		if (fragmentoActual.equals(fragmentClientes) || fragmentoActual.equals(fragmentSettings) || fragmentoActual.equals(fragmentLogout)){

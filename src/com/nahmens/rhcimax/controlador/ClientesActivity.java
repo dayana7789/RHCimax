@@ -22,9 +22,11 @@ public class ClientesActivity extends ListFragment{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 
 		View view = inflater.inflate(R.layout.activity_clientes, container, false);
+		
+		//Utilizado para saber que fragment se esta ejecutando
+		AplicacionActivity.layout_activo = AplicacionActivity.tagFragmentClientes;
 
 		//Cargamos la lista de clientes
 		UsuarioSqliteDao usuDao = new UsuarioSqliteDao();
@@ -48,8 +50,8 @@ public class ClientesActivity extends ListFragment{
 			public void onClick(View v) {
 				DatosClienteActivity fragmentDatosClientes = new DatosClienteActivity();
 				final FragmentTransaction ft = getFragmentManager().beginTransaction();
-				//Cambiamos el layout de clientes por datos_cliente
-				ft.replace(android.R.id.tabcontent,fragmentDatosClientes, "fragmentDatosClientes"); 
+				//Cambiamos el layout de clientes por datos_cliente e indicamos el tag del frame.
+				ft.replace(android.R.id.tabcontent,fragmentDatosClientes, AplicacionActivity.tagFragmentDatosCliente); 
 				//preservamos el estado anterior al hacer click en back button
 				ft.addToBackStack(null);
 				ft.commit(); 
