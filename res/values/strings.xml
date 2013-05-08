@@ -30,5 +30,10 @@
     <string name="title_activity_clientes_group">ClientesGroupActivity</string>
     <string name="title_activity_cliente_fila">ClienteFilaActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="empresa">Empresa</string>
+    <string name="nombre">Nombre</string>
+    <string name="telefono">Teléfono</string>
+    <string name="sitioWeb">Sitio Web</string>
+    <string name="direccion">Dirección</string>
 
 </resources>
