@@ -39,7 +39,7 @@
                 android:textSize="16sp" />
 
             <EditText
-                android:id="@+id/textEditLogin"
+                android:id="@+id/editTextLogin"
                 android:layout_width="160sp"
                 android:layout_height="wrap_content"
                 android:layout_column="1"
@@ -64,7 +64,7 @@
                 android:textSize="16sp" />
 
             <EditText
-                android:id="@+id/textEditPassword"
+                android:id="@+id/editTextPassword"
                 android:layout_width="160sp"
                 android:layout_height="wrap_content"
                 android:layout_column="1"

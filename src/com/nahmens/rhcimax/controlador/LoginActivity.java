@@ -33,8 +33,8 @@ public class LoginActivity extends Activity {
 	 * Funcion que verifica si el usuario es válido o no.
 	 */
 	public void onClickValidar(View v){
-		EditText etLogin = (EditText)findViewById(R.id.textEditLogin);
-		EditText etPassword = (EditText)findViewById(R.id.textEditPassword); 
+		EditText etLogin = (EditText)findViewById(R.id.editTextLogin);
+		EditText etPassword = (EditText)findViewById(R.id.editTextPassword); 
 
 		String login = etLogin.getText().toString();
 		String password = etPassword.getText().toString();
