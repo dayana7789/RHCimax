@@ -55,7 +55,7 @@ public class ClientesActivity extends ListFragment{
 			}
 		});
 
-		// Registro del evento OnClick del buttonEmpresa
+		// Registro del evento OnClick del buttonCliente
 		Button bClient = (Button)view.findViewById(R.id.buttonCliente);
 		bClient.setOnClickListener(new View.OnClickListener() {
 
