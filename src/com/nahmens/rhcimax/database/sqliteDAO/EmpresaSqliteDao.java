@@ -22,9 +22,11 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			ContentValues values = new ContentValues();
 
 			values.put("nombre",empresa.getNombre());
-			values.put("web",empresa.getWeb());
 			values.put("telefono",empresa.getTelefono());
-			values.put("direccion",empresa.getDireccion());
+			values.put("web",empresa.getWeb());
+			values.put("rif", empresa.getRif());
+			values.put("dirFiscal",empresa.getDirFiscal());
+			values.put("dirComercial",empresa.getDirComercial());
 
 			long value = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPRESA, null,values);
 
@@ -60,11 +62,11 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA, new String[] {"nombre","web","telefono","direccion"}, "nombre=?", new String[] {nombre}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA, new String[] {"nombre","telefono","rif","web","dirFiscal","dirComercial"}, "nombre=?", new String[] {nombre}, null, null, null);
 
 			if(mCursor.getCount()>0){
 				mCursor.moveToFirst();
-				empresa = new Empresa(mCursor.getString(0), mCursor.getString(1), mCursor.getString(2), mCursor.getString(3));
+				empresa = new Empresa(mCursor.getString(0), mCursor.getString(1), mCursor.getString(2), mCursor.getString(3), mCursor.getString(4), mCursor.getString(5));
 			}
 
 		}finally{
@@ -81,5 +83,25 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		return null;
 	}
 
+	@Override
+	public Cursor listarEmpresas(Context contexto) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		try{
+
+			conexion.open();
+
+			mCursor = conexion.getDatabase().rawQuery("SELECT * FROM " + DataBaseHelper.TABLA_EMPRESA  + " order by nombre", null);
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+			
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;		
+	}
 
 }

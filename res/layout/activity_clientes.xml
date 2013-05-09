@@ -75,14 +75,30 @@
         <requestFocus />
     </AutoCompleteTextView>
 
+    <!-- Lista de empleados. Notar que el id es  @id/android:list. Debe
+    ser asi o de lo contrario explota.
+    -->
     <ListView
         android:id="@id/android:list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </ListView>
-    <TextView android:id="@id/android:empty"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"
-               android:text="@string/lista_vacia"/>
+    
+    <!-- Separador -->
+    <View
+	    android:layout_width="fill_parent"
+	    android:layout_height="1dp"
+	    android:background="@android:color/darker_gray"/>
+
+    <!-- Lista de empresas. Notar que el id es diferente respecto a la
+    lista de empleados, en este caso es @+id/listEmpresas. Cuando se utiliza
+    este tipo de id (@+id/) se debe llamar desde el activity como findViewById(R.id.listEmpresas)
+    -->
+    <ListView
+        android:id="@+id/listEmpresas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </ListView>
+
 
 </LinearLayout>

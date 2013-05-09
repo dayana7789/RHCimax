@@ -57,8 +57,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "telefono TEXT NOT NULL, "
 															+ "web TEXT, "
 															+ "rif TEXT, "
-															+ "direccionFiscal TEXT, "
-															+ "direccionComercial TEXT);";
+															+ "dirFiscal TEXT, "
+															+ "dirComercial TEXT);";
 	
 	private static final String DATABASE_CREATE_EMPLEADO = "CREATE table " + TABLA_EMPLEADO + " ("
 															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "

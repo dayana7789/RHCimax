@@ -25,22 +25,22 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/textViewNombEmpleado"
+                android:id="@+id/textViewNombEmpresa"
                 style="@style/FuenteFormularios"
                 android:text="@string/nombre" />
 
             <EditText
-                android:id="@+id/textEditNombEmpleado"
+                android:id="@+id/textEditNombEmpresa"
                 android:inputType="text" >
             </EditText>
             
             <TextView
-                android:id="@+id/textViewApellidoEmpleado"
+                android:id="@+id/textViewTelfEmpresa"
                 style="@style/FuenteFormularios"
                 android:text="@string/telefono" />
 
             <EditText
-                android:id="@+id/textEditApellidoEmpleado"
+                android:id="@+id/textEditTelfEmpresa"
                 android:inputType="phone" >
             </EditText>
         </TableRow>
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/textViewEmpEmpleado"
+                android:id="@+id/textViewWebEmpresa"
                 style="@style/FuenteFormularios"
                 android:text="@string/sitioWeb" />
 
@@ -88,7 +88,7 @@
 			    android:text="@string/direccionFiscal" />
 	
 	        <EditText
-	            android:id="@+id/textEditPosEmpleado"
+	            android:id="@+id/textEditDirFiscEmpresa"
 	            android:inputType="textPostalAddress" >
 	        </EditText>
 
@@ -150,7 +150,7 @@
         <TableRow
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:ignore="UselessParent" >
+            tools:ignore="UselessParent"  >
 
 			<Button
 			    android:id="@+id/buttonSalvar"

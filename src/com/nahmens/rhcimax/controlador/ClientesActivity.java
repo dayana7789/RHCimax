@@ -5,19 +5,25 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 
 import com.nahmens.rhcimax.R;
-import com.nahmens.rhcimax.database.sqliteDAO.UsuarioSqliteDao;
+import com.nahmens.rhcimax.adapters.ListaClientesCursorAdapter;
+import com.nahmens.rhcimax.database.modelo.Empleado;
+import com.nahmens.rhcimax.database.modelo.Empresa;
+import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 
 
 
 public class ClientesActivity extends ListFragment{
 	private Cursor mCursor;
+
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,19 +31,8 @@ public class ClientesActivity extends ListFragment{
 
 		View view = inflater.inflate(R.layout.activity_clientes, container, false);
 
-		//Cargamos la lista de clientes
-		UsuarioSqliteDao usuDao = new UsuarioSqliteDao();
-
-		Context context = getActivity();
-		mCursor = usuDao.listarUsuarios(context);
-
-		//indicamos los campos que queremos mostrar (from) y en donde (to)
-		String[] from = new String[] { "login", "password" };
-		int[] to = new int[] { R.id.textViewClienteFila,  R.id.textViewClienteFila2};
-
-		//Creamos un array adapter para desplegar cada una de las filas
-		SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_cliente_fila, mCursor, from, to);
-		setListAdapter(notes);
+		listarEmpleados(view);
+		listarEmpresas(view);
 
 		// Registro del evento OnClick del buttonEmpresa
 		Button bEmp = (Button)view.findViewById(R.id.buttonEmpresa);
@@ -73,6 +68,54 @@ public class ClientesActivity extends ListFragment{
 
 
 		return view;
+	}
+
+	private void listarEmpresas(View view){
+		
+		//Cargamos la lista de empresas
+		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+
+		Context context = getActivity();
+		mCursor = empresaDao.listarEmpresas(getActivity());
+
+		if(mCursor.getCount()>0){
+
+			//indicamos los campos que queremos mostrar (from) y en donde (to)
+			String[] from = new String[] { Empresa.NOMBRE, Empresa.TELEFONO};
+			int[] to = new int[] { R.id.textViewNombreIzq,  R.id.textViewNombreCent };
+
+
+			ListView lvEmpresas = (ListView) view.findViewById (R.id.listEmpresas);
+
+			//Creamos un array adapter para desplegar cada una de las filas
+			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_cliente, mCursor, from, to);
+			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursor, from, to, 0, "empresa");
+			lvEmpresas.setAdapter(notes);
+		}
+	}
+	
+	private void listarEmpleados(View view){
+		//Cargamos la lista de empleados
+		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+
+		Context context = getActivity();
+		mCursor = empleadoDao.listarEmpleados(getActivity());
+
+		if(mCursor.getCount()>0){
+
+			//indicamos los campos que queremos mostrar (from) y en donde (to)
+			String[] from = new String[] { Empleado.NOMBRE, Empleado.EMPRESA};
+			int[] to = new int[] { R.id.textViewNombreIzq,  R.id.textViewNombreCent };
+
+
+			ListView lvEmpleados = (ListView) view.findViewById (android.R.id.list);
+			
+			//Creamos un array adapter para desplegar cada una de las filas
+			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_cliente, mCursor, from, to);
+			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursor, from, to, 0, "empleado");
+			setListAdapter(notes);
+			lvEmpleados.setAdapter(notes);
+		}
 	}
 
 }

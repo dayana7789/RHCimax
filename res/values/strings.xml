@@ -28,7 +28,7 @@
     <string name="servicios">Servicios</string>
     <string name="title_activity_tab_group">TabGroupActivity</string>
     <string name="title_activity_clientes_group">ClientesGroupActivity</string>
-    <string name="title_activity_cliente_fila">ClienteFilaActivity</string>
+    <string name="title_activity_fila_cliente">FilaClienteActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="empresa">Empresa</string>
     <string name="nombre">Nombre</string>
@@ -54,5 +54,6 @@
     <string name="linkedin">Linkedin</string>
     <string name="telf_oficina">Telf. Oficina</string>
     <string name="ver_empresa">Ver Empresa</string>
+    <string name="pin">Pin</string>
 
 </resources>
