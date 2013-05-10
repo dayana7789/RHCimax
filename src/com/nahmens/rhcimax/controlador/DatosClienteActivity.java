@@ -1,23 +1,26 @@
 package com.nahmens.rhcimax.controlador;
 
-import com.nahmens.rhcimax.R;
-import com.nahmens.rhcimax.database.modelo.Empleado;
-import com.nahmens.rhcimax.database.modelo.Empresa;
-import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
-import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
-
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.app.FragmentActivity;
+import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nahmens.rhcimax.R;
+import com.nahmens.rhcimax.database.modelo.Empleado;
+import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
+import com.nahmens.rhcimax.mensaje.Mensaje;
+
 public class DatosClienteActivity extends Fragment {
+
+	private LayoutInflater inflater;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,6 +28,7 @@ public class DatosClienteActivity extends Fragment {
 		// TODO Auto-generated method stub
 
 		View view = inflater.inflate(R.layout.activity_datos_cliente, container, false);
+		this.inflater=inflater;
 
 		// Registro del evento OnClick del buttonSalvar
 		Button bSalvar = (Button)view.findViewById(R.id.buttonSalvar);
@@ -66,11 +70,24 @@ public class DatosClienteActivity extends Fragment {
 
 		Boolean insertado = empleadoDao.insertarEmpleado(getActivity(), empleado);
 
+
+
+
+
+
+
 		if(insertado){
-			Toast.makeText(getActivity(), "Empleado ingresado satisfactoriamente",Toast.LENGTH_LONG).show();
+			Mensaje mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empleado");
+			mToast.controlMensajes();
+			
+			//Toast.makeText(getActivity(), "Empleado ingresado satisfactoriamente",Toast.LENGTH_LONG).show();
 		}else{
-			Toast.makeText(getActivity(), "Error: el empleado no pudo ser ingresado",Toast.LENGTH_LONG).show();
+			Mensaje mToast = new Mensaje(inflater, getActivity(), "error_ingreso_empleado");
+			mToast.controlMensajes();
+			
+			//Toast.makeText(getActivity(), "Error: el empleado no pudo ser ingresado",Toast.LENGTH_LONG).show();
 		}
+
 
 	}
 
