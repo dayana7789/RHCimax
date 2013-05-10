@@ -31,18 +31,32 @@ public class Mensaje {
 	/*
 	 * Funcion encargada de mostrar los mensajes.
 	 */
-	public void controlMensajes(){
+	public void controlMensajes() throws Exception{
 		
 		String mensaje = null;
 		int layoutWhere = 0;
 		
 		if (tipoMensaje == "error_ingreso_empleado"){
+			
 			mensaje =  "Error: el empleado no pudo ser ingresado";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 			
 		}else if(this.tipoMensaje == "ok_ingreso_empleado"){
+			
 			mensaje =  "Empleado ingresado satisfactoriamente";
 			layoutWhere = R.layout.toast_layout_mensaje_ok;
+			
+		}else if(this.tipoMensaje == "error_ingreso_empresa"){
+			
+			mensaje =  "Error: la empresa no pudo ser ingresada";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+			
+		}else if(this.tipoMensaje == "ok_ingreso_empresa"){
+			
+			mensaje =  "Empleado ingresado satisfactoriamente";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+		}else{
+			throw new Exception("Mensaje invalido. Revisa el atributo tipoMensaje que utiliza el constructor de la clase Mensaje.");
 		}
 		
 		View layout = inflater.inflate(layoutWhere,

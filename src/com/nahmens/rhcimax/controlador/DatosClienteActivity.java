@@ -43,6 +43,7 @@ public class DatosClienteActivity extends Fragment {
 	}
 
 	public void onClickSalvar(){
+		
 		EditText etIdEmpresa = (EditText) getActivity().findViewById(R.id.textEditEmpEmpleado);
 		EditText etNombre = (EditText) getActivity().findViewById(R.id.textEditNombEmpleado);
 		EditText etApellido = (EditText) getActivity().findViewById(R.id.textEditApellidoEmpleado);
@@ -70,27 +71,20 @@ public class DatosClienteActivity extends Fragment {
 
 		Boolean insertado = empleadoDao.insertarEmpleado(getActivity(), empleado);
 
-
-
-
-
-
-
 		if(insertado){
 			Mensaje mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empleado");
-			mToast.controlMensajes();
-			
-			//Toast.makeText(getActivity(), "Empleado ingresado satisfactoriamente",Toast.LENGTH_LONG).show();
+			try {
+				mToast.controlMensajes();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}else{
 			Mensaje mToast = new Mensaje(inflater, getActivity(), "error_ingreso_empleado");
-			mToast.controlMensajes();
-			
-			//Toast.makeText(getActivity(), "Error: el empleado no pudo ser ingresado",Toast.LENGTH_LONG).show();
+			try {
+				mToast.controlMensajes();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-
-
 	}
-
-
-
 }

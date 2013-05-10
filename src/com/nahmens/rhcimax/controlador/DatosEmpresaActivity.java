@@ -13,15 +13,19 @@ import android.widget.Toast;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
+import com.nahmens.rhcimax.mensaje.Mensaje;
 
 public class DatosEmpresaActivity extends Fragment {
 
+	private LayoutInflater inflater;
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 
 		View view = inflater.inflate(R.layout.activity_datos_empresa, container, false);
+		this.inflater=inflater;
 
 		// Registro del evento OnClick del buttonSalvar
 		Button bClient = (Button)view.findViewById(R.id.buttonSalvar);
@@ -57,9 +61,19 @@ public class DatosEmpresaActivity extends Fragment {
 		Boolean insertado = empresaDao.insertarEmpresa(getActivity(), empresa);
 
 		if(insertado){
-			Toast.makeText(getActivity(), "Empresa ingresada satisfactoriamente",Toast.LENGTH_LONG).show();
+			Mensaje mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empresa");
+			try {
+				mToast.controlMensajes();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}else{
-			Toast.makeText(getActivity(), "Error: la empresa no pudo ser ingresada",Toast.LENGTH_LONG).show();
+			Mensaje mToast = new Mensaje(inflater, getActivity(), "error_ingreso_empresa");
+			try {
+				mToast.controlMensajes();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 	}
