@@ -65,7 +65,9 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().rawQuery("SELECT * FROM " + DataBaseHelper.TABLA_EMPLEADO + " order by nombre", null);
+			mCursor = conexion.getDatabase().rawQuery("SELECT empresa._id, empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA+" FROM " + DataBaseHelper.TABLA_EMPLEADO 
+												   + " INNER JOIN " + DataBaseHelper.TABLA_EMPRESA 
+												   + " ON (empleado.idEmpresa=empresa._id) ORDER BY empleado.nombre", null);
 
 			if (mCursor != null) {
 				mCursor.moveToFirst();

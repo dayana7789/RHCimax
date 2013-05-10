@@ -22,7 +22,8 @@ import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 
 
 public class ClientesActivity extends ListFragment{
-	private Cursor mCursor;
+	private Cursor mCursorEmpleados;
+	private Cursor mCursorEmpresas;
 
 
 	@Override
@@ -76,9 +77,9 @@ public class ClientesActivity extends ListFragment{
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 
 		Context context = getActivity();
-		mCursor = empresaDao.listarEmpresas(getActivity());
+		mCursorEmpresas = empresaDao.listarEmpresas(getActivity());
 
-		if(mCursor.getCount()>0){
+		if(mCursorEmpresas.getCount()>0){
 
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
 			String[] from = new String[] { Empresa.NOMBRE, Empresa.TELEFONO};
@@ -89,7 +90,7 @@ public class ClientesActivity extends ListFragment{
 
 			//Creamos un array adapter para desplegar cada una de las filas
 			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_cliente, mCursor, from, to);
-			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursor, from, to, 0, "empresa");
+			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa");
 			lvEmpresas.setAdapter(notes);
 		}
 	}
@@ -99,21 +100,20 @@ public class ClientesActivity extends ListFragment{
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 
 		Context context = getActivity();
-		mCursor = empleadoDao.listarEmpleados(getActivity());
+		mCursorEmpleados = empleadoDao.listarEmpleados(getActivity());
 
-		if(mCursor.getCount()>0){
+		if(mCursorEmpleados.getCount()>0){
 
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
-			String[] from = new String[] { Empleado.NOMBRE, Empleado.EMPRESA};
-			int[] to = new int[] { R.id.textViewNombreIzq,  R.id.textViewNombreCent };
+			String[] from = new String[] { Empleado.NOMBRE, Empleado.APELLIDO, Empleado.EMPRESA};
+			int[] to = new int[] { R.id.textViewNombreIzq,  R.id.textViewApellidoIzq, R.id.textViewNombreCent };
 
 
 			ListView lvEmpleados = (ListView) view.findViewById (android.R.id.list);
 			
 			//Creamos un array adapter para desplegar cada una de las filas
 			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_cliente, mCursor, from, to);
-			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursor, from, to, 0, "empleado");
-			setListAdapter(notes);
+			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado");
 			lvEmpleados.setAdapter(notes);
 		}
 	}

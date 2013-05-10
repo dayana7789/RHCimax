@@ -3,7 +3,7 @@ package com.nahmens.rhcimax.database.modelo;
 public class Empleado {
 	public final static String NOMBRE = "nombre";
 	public final static String APELLIDO = "apellido";
-	public final static String EMPRESA = "idEmpresa";
+	public final static String EMPRESA = "nombreEmpresa";
 	
 	int id;
 	String nombre;
