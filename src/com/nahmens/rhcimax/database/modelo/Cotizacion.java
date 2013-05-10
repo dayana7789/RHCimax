@@ -7,15 +7,17 @@ public class Cotizacion {
 	int enviado;
 	int recibido;
 	int idUsuario;
+	int idEmpresa;
 	
 	public Cotizacion(String fechaEnvio, String fechaLeido, int enviado,
-			int recibido, int idUsuario) {
+			int recibido, int idUsuario, int idEmpresa) {
 
 		this.fechaEnvio = fechaEnvio;
 		this.fechaLeido = fechaLeido;
 		this.enviado = enviado;
 		this.recibido = recibido;
 		this.idUsuario = idUsuario;
+		this.idEmpresa = idEmpresa;
 	}
 
 	public int getId() {
@@ -65,5 +67,13 @@ public class Cotizacion {
 	public void setIdUsuario(int idUsuario) {
 		this.idUsuario = idUsuario;
 	}
-	
+
+	public int getIdEmpresa() {
+		return idEmpresa;
+	}
+
+	public void setIdEmpresa(int idEmpresa) {
+		this.idEmpresa = idEmpresa;
+	}
+		
 }

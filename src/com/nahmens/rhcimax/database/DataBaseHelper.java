@@ -81,6 +81,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "enviado INTEGER NOT NULL, "
 															+ "recibido INTEGER NOT NULL, "
 															+ "idUsuario INTEGER NOT NULL, "
+															+ "idEmpresa INTEGER NOT NULL, "
+															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id),"
 															+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id));";
 
 	
