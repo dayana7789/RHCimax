@@ -1,14 +1,16 @@
 package com.nahmens.rhcimax.controlador;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -18,13 +20,56 @@ import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
+import android.widget.AdapterView.OnItemClickListener;
 
-
-
-public class ClientesActivity extends ListFragment{
+public class ClientesActivity extends ListFragment {
 	private Cursor mCursorEmpleados;
 	private Cursor mCursorEmpresas;
 
+	/*INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA 
+	 * NOTA: Es importante que en el layout de la fila (activity_fila_cliente.xml)
+	 * en la layout raiz tenga: android:descendantFocusability="blocksDescendants"
+	 * De lo contrario, el onListItemClick no va a funcionar!.
+	 * 
+	 * NOTA2: En AplicacionActivity, se implementa la interfaz OnEmpleadoSelectedListener
+	 * con su metodo onEmpleadoSelected.
+	 */
+
+	OnClienteSelectedListener mClienteListener;
+
+	/*
+	 * interface utilizada para comunicar la lista con el detalle
+	 * de cada fila.
+	 */
+	public interface OnClienteSelectedListener {
+		public void onEmpleadoSelected(int id);
+		public void onEmpresaSelected(int id);
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			mClienteListener = (OnClienteSelectedListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString() + " se debe implementar OnClientSelectedListener ");
+		}
+	}
+
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+
+		int idEmpleado = position; 
+		if (l.getId() == android.R.id.list) {
+			mClienteListener.onEmpleadoSelected(idEmpleado);
+		} else if (l.getId() == R.id.listEmpresas) {
+			mClienteListener.onEmpresaSelected(idEmpleado);
+		}
+
+	}
+
+	/*********** FIN ******************/
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,50 +116,63 @@ public class ClientesActivity extends ListFragment{
 		return view;
 	}
 
+
 	private void listarEmpresas(View view){
-		
 		//Cargamos la lista de empresas
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-
-		Context context = getActivity();
+		Context contexto = getActivity();
 		mCursorEmpresas = empresaDao.listarEmpresas(getActivity());
 
 		if(mCursorEmpresas.getCount()>0){
-
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
 			String[] from = new String[] { Empresa.NOMBRE, Empresa.TELEFONO};
 			int[] to = new int[] { R.id.textViewNombreIzq,  R.id.textViewNombreCent };
-
-
-			ListView lvEmpresas = (ListView) view.findViewById (R.id.listEmpresas);
+			final ListView lvEmpresas = (ListView) view.findViewById (R.id.listEmpresas);
 
 			//Creamos un array adapter para desplegar cada una de las filas
 			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_cliente, mCursor, from, to);
-			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa");
+			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa");
 			lvEmpresas.setAdapter(notes);
+			
+			//OJO: como en el layout la lista que contiene a las empresas es android:id="@+id/listEmpresas" 
+			// y  no android:id="@id/android:list", se debe hacer el setOnItemClickListener para que se llame
+			// el onListItemClick sobreescrito arriba.
+		    //OJO: ListView es subclase de AdapterView
+			lvEmpresas.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+			    public void onItemClick(AdapterView<?> adapter, View view, int position, long arg)   {
+					onListItemClick(lvEmpresas,view,position,arg);
+			    }
+			});
+
 		}
 	}
-	
+
 	private void listarEmpleados(View view){
 		//Cargamos la lista de empleados
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-
 		Context context = getActivity();
 		mCursorEmpleados = empleadoDao.listarEmpleados(getActivity());
 
 		if(mCursorEmpleados.getCount()>0){
-
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
 			String[] from = new String[] { Empleado.NOMBRE, Empleado.APELLIDO, Empleado.EMPRESA};
 			int[] to = new int[] { R.id.textViewNombreIzq,  R.id.textViewApellidoIzq, R.id.textViewNombreCent };
-
-
 			ListView lvEmpleados = (ListView) view.findViewById (android.R.id.list);
-			
+
 			//Creamos un array adapter para desplegar cada una de las filas
 			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_cliente, mCursor, from, to);
 			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado");
 			lvEmpleados.setAdapter(notes);
+			
+			//OJO: como en el layout la lista que contiene a las empleados es android:id="@id/android:list", 
+			// no hay necesidad de hacer el setOnItemClickListener como se hizo en listarEmpresas. Esto
+			//android lo hace automaticamente.
+
+			//enables filtering for the contents of the given ListView
+			//lvEmpleados.setTextFilterEnabled(true);
+
+
 		}
 	}
 

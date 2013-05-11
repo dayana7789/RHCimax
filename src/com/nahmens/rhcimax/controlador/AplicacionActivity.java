@@ -1,7 +1,5 @@
 package com.nahmens.rhcimax.controlador;
 
-import com.nahmens.rhcimax.R;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -15,11 +13,14 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TabHost;
 
+import com.nahmens.rhcimax.R;
+import com.nahmens.rhcimax.controlador.ClientesActivity.OnClienteSelectedListener;
+
 /*
  * Contenedor principal de todos los fragmentos
  */
 
-public class AplicacionActivity extends FragmentActivity {
+public class AplicacionActivity extends FragmentActivity implements OnClienteSelectedListener {
 
 	/* Identificadores de los fragments que se cargan en este activity.
 	 * Por cada activity nuevo de tipo Fragment, se debe inicializar el
@@ -37,7 +38,6 @@ public class AplicacionActivity extends FragmentActivity {
 	ClientesActivity fragmentClientes;
 	SettingsActivity fragmentSettings;
 	LogoutActivity fragmentLogout;
-
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -212,7 +212,35 @@ public class AplicacionActivity extends FragmentActivity {
 			super.onBackPressed();
 		}
 
-	}         
+	}    
+	
+	/***INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA ****/
+	public void onEmpleadoSelected(int id) {
+	    Bundle arguments = new Bundle();
+	    arguments.putLong("id", id);
+	    DatosClienteActivity fragment = new DatosClienteActivity();
+	    fragment.setArguments(arguments); 
+	    
+	    getSupportFragmentManager().beginTransaction()
+	    .replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
+	    .addToBackStack(null)
+	    .commit();
+	    
+	}
+	
+	public void onEmpresaSelected(int id) {
+	    Bundle arguments = new Bundle();
+	    arguments.putLong("id", id);
+	    DatosEmpresaActivity fragment = new DatosEmpresaActivity();
+	    fragment.setArguments(arguments); 
+	    
+	    getSupportFragmentManager().beginTransaction()
+	    .replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosEmpresa)
+	    .addToBackStack(null)
+	    .commit();
+	    
+	}
+	/***************FIN ****************************/
 
 
 

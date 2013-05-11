@@ -1,8 +1,6 @@
 package com.nahmens.rhcimax.controlador;
 
 import com.nahmens.rhcimax.R;
-import com.nahmens.rhcimax.R.layout;
-import com.nahmens.rhcimax.R.menu;
 
 import android.os.Bundle;
 import android.app.Activity;

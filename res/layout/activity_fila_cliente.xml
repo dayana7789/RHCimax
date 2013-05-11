@@ -2,7 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:orientation="horizontal" 
+    android:descendantFocusability="blocksDescendants">
+    <!-- android:descendantFocusability="blocksDescendants": 
+    Esta linea es SUPER IMPORTANTE de lo contrario, no se podra hacer click en cada fila -->
+    
     
     <TableLayout
         android:layout_width="match_parent"
@@ -30,8 +34,7 @@
 			    <TextView
 			        android:id="@+id/textViewNombreIzq"
 			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:textIsSelectable="true" />
+			        android:layout_height="wrap_content"/>
 			    
 			    <!-- Este text view muestra el apellido del empleado en caso de
 			    tratarse de un empleado. Para una empresa, esto queda vacío. -->
@@ -39,8 +42,7 @@
 			        android:id="@+id/textViewApellidoIzq"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:layout_marginLeft="5dp"
-			        android:textIsSelectable="true" />
+			        android:layout_marginLeft="5dp"/>
 			</LinearLayout>
 			
 			<LinearLayout 
