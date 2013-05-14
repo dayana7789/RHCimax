@@ -38,7 +38,7 @@ public class DatosClienteActivity extends Fragment {
 	}
 
 	public void onClickSalvar(){
-		
+		Mensaje mToast = null;
 		EditText etIdEmpresa = (EditText) getActivity().findViewById(R.id.textEditEmpEmpleado);
 		EditText etNombre = (EditText) getActivity().findViewById(R.id.textEditNombEmpleado);
 		EditText etApellido = (EditText) getActivity().findViewById(R.id.textEditApellidoEmpleado);
@@ -61,25 +61,23 @@ public class DatosClienteActivity extends Fragment {
 		String pin = etPin.getText().toString();
 		String descripcion = etDescripcion.getText().toString();
 
+
 		Empleado empleado = new Empleado(nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa);
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 
 		Boolean insertado = empleadoDao.insertarEmpleado(getActivity(), empleado);
 
 		if(insertado){
-			Mensaje mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empleado");
-			try {
-				mToast.controlMensajes();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empleado");
+			
 		}else{
-			Mensaje mToast = new Mensaje(inflater, getActivity(), "error_ingreso_empleado");
-			try {
-				mToast.controlMensajes();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			mToast = new Mensaje(inflater, getActivity(), "error_ingreso_empleado");
+		}
+		
+		try {
+			mToast.controlMensajesToast();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

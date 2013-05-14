@@ -3,16 +3,18 @@ package com.nahmens.rhcimax.database.sqliteDAO;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.EmpleadoDAO;
 import com.nahmens.rhcimax.database.modelo.Empleado;
+import com.nahmens.rhcimax.database.modelo.Empresa;
 
 public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 	@Override
-	public Boolean insertarEmpleado(Context contexto, Empleado empleado) {
+	public boolean insertarEmpleado(Context contexto, Empleado empleado) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Boolean insertado = false;
 
@@ -52,9 +54,24 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 	}
 
 	@Override
-	public void eliminarEmpleado(Context contexto, Empleado empleado) {
-		// TODO Auto-generated method stub
+	public boolean eliminarEmpleado(Context contexto, String idEmpleado) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean eliminado = false;
+		
+		try{
+			conexion.open();
 
+			long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_EMPLEADO, "_id=?", new String[]{idEmpleado});
+
+			if(value!=0){
+				eliminado = true;
+			}
+			
+		}finally{
+			conexion.close();
+		}
+		
+		return eliminado;
 	}
 
 	@Override
@@ -65,7 +82,8 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().rawQuery("SELECT empresa._id, empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA+" FROM " + DataBaseHelper.TABLA_EMPLEADO 
+			mCursor = conexion.getDatabase().rawQuery("SELECT empresa._id, empresa._id as " + Empresa.ID + ", empleado._id as " + Empleado.ID + ", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA
+					                               + " FROM " + DataBaseHelper.TABLA_EMPLEADO 
 												   + " INNER JOIN " + DataBaseHelper.TABLA_EMPRESA 
 												   + " ON (empleado.idEmpresa=empresa._id) ORDER BY empleado.nombre", null);
 

@@ -6,9 +6,9 @@ import android.database.Cursor;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 
 public interface EmpleadoDAO {
-	Boolean insertarEmpleado(Context contexto, Empleado empleado);
+	boolean insertarEmpleado(Context contexto, Empleado empleado);
 	void modificarEmpleado(Context contexto, Empleado empleado);
-	void eliminarEmpleado(Context contexto, Empleado empleado);
+	boolean eliminarEmpleado(Context contexto, String idEmpleado);
 	Cursor listarEmpleados(Context contexto);
 
 }

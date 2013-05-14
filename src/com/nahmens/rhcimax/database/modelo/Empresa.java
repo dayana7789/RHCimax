@@ -1,6 +1,7 @@
 package com.nahmens.rhcimax.database.modelo;
 
 public class Empresa {
+	public final static String ID = "_id";
 	public final static String NOMBRE = "nombre";
 	public final static String TELEFONO = "telefono";
 	

@@ -104,14 +104,7 @@
 			        android:layout_height="match_parent"
 			        android:src="@android:drawable/ic_menu_delete"
 			        tools:ignore="ContentDescription" />
-			
-			    <ImageButton
-			        android:id="@+id/imageButtonEditar"
-			        android:layout_width="wrap_content"
-			        android:layout_height="match_parent"
-			        android:src="@android:drawable/ic_menu_edit"
-			        tools:ignore="ContentDescription" />
-			    
+					    
 			</LinearLayout>
 		</TableRow>
 

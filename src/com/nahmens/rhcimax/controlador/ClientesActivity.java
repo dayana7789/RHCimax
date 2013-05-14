@@ -59,6 +59,7 @@ public class ClientesActivity extends ListFragment {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
+		Log.e("onListItemClick: ", ""+position+" - "+ id);
 
 		int idEmpleado = position; 
 		if (l.getId() == android.R.id.list) {
@@ -125,8 +126,10 @@ public class ClientesActivity extends ListFragment {
 
 		if(mCursorEmpresas.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
-			String[] from = new String[] { Empresa.NOMBRE, Empresa.TELEFONO};
-			int[] to = new int[] { R.id.textViewNombreIzq,  R.id.textViewNombreCent };
+			//OJO: Aqui pasamos Empresa.ID para no invocarlo directamente en el ListaClientesCursorAdapter
+			// y lo relacionamos en el arreglo 'to' con el valor 0.
+			String[] from = new String[] { Empresa.ID, Empresa.NOMBRE, Empresa.TELEFONO};
+			int[] to = new int[] { 0, R.id.textViewNombreIzq,  R.id.textViewNombreCent };
 			final ListView lvEmpresas = (ListView) view.findViewById (R.id.listEmpresas);
 
 			//Creamos un array adapter para desplegar cada una de las filas
@@ -156,8 +159,10 @@ public class ClientesActivity extends ListFragment {
 
 		if(mCursorEmpleados.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
-			String[] from = new String[] { Empleado.NOMBRE, Empleado.APELLIDO, Empleado.EMPRESA};
-			int[] to = new int[] { R.id.textViewNombreIzq,  R.id.textViewApellidoIzq, R.id.textViewNombreCent };
+			//OJO: Aqui pasamos  Empleado.ID para no invocarlo directamente en el ListaClientesCursorAdapter
+			// y lo relacionamos en el arreglo 'to' con el valor 0.
+			String[] from = new String[] { Empleado.ID, Empleado.NOMBRE, Empleado.APELLIDO, Empleado.EMPRESA};
+			int[] to = new int[] { 0, R.id.textViewNombreIzq,  R.id.textViewApellidoIzq, R.id.textViewNombreCent };
 			ListView lvEmpleados = (ListView) view.findViewById (android.R.id.list);
 
 			//Creamos un array adapter para desplegar cada una de las filas

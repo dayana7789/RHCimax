@@ -9,7 +9,7 @@ public interface EmpresaDAO {
 	
 	Boolean insertarEmpresa(Context contexto, Empresa empresa);
 	void modificarEmpresa(Context contexto, Empresa empresa);
-	void eliminarEmpresa(Context contexto, Empresa empresa);
+	boolean eliminarEmpresa(Context contexto, String idEmpresa);
 	Cursor listarEmpresas(Context contexto);
 	Empresa buscarEmpresa(Context contexto, String nombre);
 	Empresa buscarEmpresa(Context contexto, int id);

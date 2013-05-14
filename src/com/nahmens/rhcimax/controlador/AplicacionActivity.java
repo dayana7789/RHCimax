@@ -26,11 +26,11 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	 * Por cada activity nuevo de tipo Fragment, se debe inicializar el
 	 * tag del Fragment aqui.
 	 */
-	final static String tagFragmentClientes = "fragmentClientes";
-	final static String tagFragmentSettings = "fragmentSettings";
-	final static String tagFragmentLogout = "fragmentLogout";
-	final static String tagFragmentDatosCliente = "fragmentDatosCliente";
-	final static String tagFragmentDatosEmpresa = "fragmentDatosEmpresa";
+	final public static String tagFragmentClientes = "fragmentClientes";
+	final public static String tagFragmentSettings = "fragmentSettings";
+	final public static String tagFragmentLogout = "fragmentLogout";
+	final public static String tagFragmentDatosCliente = "fragmentDatosCliente";
+	final public static String tagFragmentDatosEmpresa = "fragmentDatosEmpresa";
 
 	TabHost mTabHost;
 

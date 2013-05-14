@@ -63,14 +63,14 @@ public class DatosEmpresaActivity extends Fragment {
 		if(insertado){
 			Mensaje mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empresa");
 			try {
-				mToast.controlMensajes();
+				mToast.controlMensajesToast();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}else{
 			Mensaje mToast = new Mensaje(inflater, getActivity(), "error_ingreso_empresa");
 			try {
-				mToast.controlMensajes();
+				mToast.controlMensajesToast();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
