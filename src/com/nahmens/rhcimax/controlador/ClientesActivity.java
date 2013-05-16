@@ -42,8 +42,8 @@ public class ClientesActivity extends ListFragment {
 	 * de cada fila.
 	 */
 	public interface OnClienteSelectedListener {
-		public void onEmpleadoSelected(int id);
-		public void onEmpresaSelected(int id);
+		public void onEmpleadoSelected(String id);
+		public void onEmpresaSelected(String id);
 	}
 
 	@Override
@@ -57,15 +57,21 @@ public class ClientesActivity extends ListFragment {
 	}
 
 	@Override
+	/*
+	 * @param position numero de posicion en la lista
+	 * @param id Id del cliente sobre el cual se hizo click. Puede pertenecer a un empleado o a una empresa.
+	 *           Este Id se asigna automaticamente por la definicion de _id en la BD.
+	 */
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		Log.e("onListItemClick: ", ""+position+" - "+ id);
+		Log.e("onListItemClick: ", ""+position+" -> "+ id);
 
-		int idEmpleado = position; 
+		String idString = String.valueOf(id); 
+		
 		if (l.getId() == android.R.id.list) {
-			mClienteListener.onEmpleadoSelected(idEmpleado);
+			mClienteListener.onEmpleadoSelected(idString);
 		} else if (l.getId() == R.id.listEmpresas) {
-			mClienteListener.onEmpresaSelected(idEmpleado);
+			mClienteListener.onEmpresaSelected(idString);
 		}
 
 	}
@@ -143,8 +149,8 @@ public class ClientesActivity extends ListFragment {
 		    //OJO: ListView es subclase de AdapterView
 			lvEmpresas.setOnItemClickListener(new OnItemClickListener() {
 				@Override
-			    public void onItemClick(AdapterView<?> adapter, View view, int position, long arg)   {
-					onListItemClick(lvEmpresas,view,position,arg);
+			    public void onItemClick(AdapterView<?> adapter, View view, int position, long id)   {
+					onListItemClick(lvEmpresas,view,position,id);
 			    }
 			});
 

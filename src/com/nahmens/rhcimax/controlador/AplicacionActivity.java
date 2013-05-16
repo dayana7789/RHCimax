@@ -215,10 +215,14 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	}    
 	
 	/***INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA ****/
-	public void onEmpleadoSelected(int id) {
+	public void onEmpleadoSelected(String id) {
+		//creamos un bundle para poder enviar al fragment, el id del empleado
 	    Bundle arguments = new Bundle();
-	    arguments.putLong("id", id);
+	    arguments.putString("id", id);
+	    
 	    DatosClienteActivity fragment = new DatosClienteActivity();
+	    
+	    //pasamos al fragment el id del empleado
 	    fragment.setArguments(arguments); 
 	    
 	    getSupportFragmentManager().beginTransaction()
@@ -228,10 +232,14 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	    
 	}
 	
-	public void onEmpresaSelected(int id) {
+	public void onEmpresaSelected(String id) {
+		//creamos un bundle para poder enviar al fragment, el id de la empresa
 	    Bundle arguments = new Bundle();
-	    arguments.putLong("id", id);
+	    arguments.putString("id", id);
+	    
 	    DatosEmpresaActivity fragment = new DatosEmpresaActivity();
+	    
+	    //pasamos al fragment el id de la empresa
 	    fragment.setArguments(arguments); 
 	    
 	    getSupportFragmentManager().beginTransaction()

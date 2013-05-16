@@ -1,10 +1,11 @@
 package com.nahmens.rhcimax.database.modelo;
 
 public class Empleado {
-	public final static String ID = "idEmpleado";
+	public final static String ID = "_id";
 	public final static String NOMBRE = "nombre";
 	public final static String APELLIDO = "apellido";
 	public final static String EMPRESA = "nombreEmpresa";
+	public final static String EMPRESA_ID = "empresaId";
 	
 	int id;
 	String nombre;
@@ -18,6 +19,25 @@ public class Empleado {
 	String descripcion;
 	int idEmpresa;
 	
+	public Empleado(){
+	}
+	
+	public Empleado(int id, String nombre, String apellido, String posicion,
+			String email, String telfOficina, String celular, String pin,
+			String linkedin, String descripcion, int idEmpresa) {
+
+		this.id = id;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.posicion = posicion;
+		this.email = email;
+		this.telfOficina = telfOficina;
+		this.celular = celular;
+		this.pin = pin;
+		this.linkedin = linkedin;
+		this.descripcion = descripcion;
+		this.idEmpresa = idEmpresa;
+	}
 	
 	public Empleado(String nombre, String apellido, String posicion,
 			String email, String telfOficina, String celular, String pin,

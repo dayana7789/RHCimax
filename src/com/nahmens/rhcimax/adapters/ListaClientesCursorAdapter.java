@@ -32,6 +32,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 	private String[] from;
 	private int[] to;
 
+
 	/*
 	 * @param tipoCliente Puede ser empleado o empresa. Se utiliza para saber sobre
 	 * 					  que tipo de lista estoy iterando.
@@ -46,6 +47,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 		this.tipoCliente = tipoCliente;
 		this.from = from;
 		this.to = to;
+
 	}
 
 	@Override
@@ -181,6 +183,9 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 
 		if(eliminado){
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
+			this.notifyDataSetChanged();
+			
+			
 		}else{
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeError);
 		}

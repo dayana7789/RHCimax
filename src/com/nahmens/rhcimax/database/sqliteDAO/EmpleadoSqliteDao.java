@@ -48,9 +48,36 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 	}
 
 	@Override
-	public void modificarEmpleado(Context contexto, Empleado empleado) {
-		// TODO Auto-generated method stub
+	public boolean modificarEmpleado(Context contexto, Empleado empleado) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean modificado = false;
+		
+		try{
+			conexion.open();
+			
+			ContentValues contenido = new ContentValues();
+			contenido.put("idEmpresa", empleado.getIdEmpresa());
+			contenido.put("nombre", empleado.getNombre());
+			contenido.put("apellido", empleado.getApellido());
+			contenido.put("posicion", empleado.getPosicion());
+			contenido.put("email", empleado.getEmail());
+			contenido.put("telfOficina", empleado.getTelfOficina());
+			contenido.put("celular", empleado.getCelular());
+			contenido.put("pin", empleado.getPin());
+			contenido.put("linkedin", empleado.getLinkedin());
+			contenido.put("descripcion", empleado.getDescripcion());
 
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, contenido, "_id=?", new String []{Integer.toString(empleado.getId())});
+
+			if(value!=0){
+				modificado = true;
+			}
+			
+		}finally{
+			conexion.close();
+		}
+		
+		return modificado;
 	}
 
 	@Override
@@ -82,7 +109,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().rawQuery("SELECT empresa._id, empresa._id as " + Empresa.ID + ", empleado._id as " + Empleado.ID + ", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA
+			mCursor = conexion.getDatabase().rawQuery("SELECT empresa._id, empresa._id as " + Empleado.EMPRESA_ID + ", empleado._id as " + Empleado.ID + ", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA
 					                               + " FROM " + DataBaseHelper.TABLA_EMPLEADO 
 												   + " INNER JOIN " + DataBaseHelper.TABLA_EMPRESA 
 												   + " ON (empleado.idEmpresa=empresa._id) ORDER BY empleado.nombre", null);
@@ -96,6 +123,44 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		}
 
 		return mCursor;	
+	}
+
+	@Override
+	public Empleado buscarEmpleado(Context contexto, String idEmpleado) {
+
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		Empleado empleado = null;
+		
+		try{
+
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? ", new String [] {idEmpleado}, null, null, null);
+
+			if (mCursor.getCount() > 0) {
+				mCursor.moveToFirst();
+								
+				
+				
+				empleado = new Empleado( mCursor.getString(mCursor.getColumnIndex("nombre")), 
+						mCursor.getString(mCursor.getColumnIndex("apellido")), 
+						mCursor.getString(mCursor.getColumnIndex("posicion")), 
+						mCursor.getString(mCursor.getColumnIndex("email")), 
+						mCursor.getString(mCursor.getColumnIndex("telfOficina")), 
+						mCursor.getString(mCursor.getColumnIndex("celular")), 
+						mCursor.getString(mCursor.getColumnIndex("pin")), 
+						mCursor.getString(mCursor.getColumnIndex("linkedin")), 
+						mCursor.getString(mCursor.getColumnIndex("descripcion")), 
+						mCursor.getInt(mCursor.getColumnIndex("idEmpresa")));
+			}
+			
+		}finally{
+			conexion.close();
+		}
+
+		Log.e("empleadosqlite",""+empleado.getNombre());
+		return empleado;	
 	}
 
 }
