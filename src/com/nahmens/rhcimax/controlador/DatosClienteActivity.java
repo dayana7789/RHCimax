@@ -18,6 +18,7 @@ import com.nahmens.rhcimax.adapters.AutocompleteEmpresaCursorAdapter;
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DAO.EmpresaDAO;
 import com.nahmens.rhcimax.database.modelo.Empleado;
+import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
@@ -34,10 +35,9 @@ public class DatosClienteActivity extends Fragment {
 		View view = inflater.inflate(R.layout.activity_datos_cliente, container, false);
 		this.inflater=inflater;
 
-		final Bundle mArgumentos = this.getArguments();
-
 		setAutocompleteEmpresa(view);
-
+		
+		final Bundle mArgumentos = this.getArguments();
 		
 		//Si me pasaron argumentos, relleno la vista con la informacion. 
 		//De lo contrario, dejo todo vacio.
@@ -47,10 +47,14 @@ public class DatosClienteActivity extends Fragment {
 			String idEmpleado = mArgumentos.getString("id");
 
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 			Empleado empleado  = empleadoDao.buscarEmpleado(getActivity(),idEmpleado);
+			
 
 			if(empleado !=null){
-				llenarCamposEmpleado(view, empleado);
+				Empresa empresa = empresaDao.buscarEmpresa(view.getContext(), String.valueOf(empleado.getIdEmpresa()));
+				llenarCamposEmpleado(view, empleado,empresa.getNombre());
+				
 			}else{
 				Mensaje mToast = new Mensaje("error_general");
 				try {
@@ -79,16 +83,22 @@ public class DatosClienteActivity extends Fragment {
 		return view;
 	}
 
+	/*
+	 * Funcion que prepara el campo de empresa para que sea autocomplete.
+	 * @param view View de la actividad.
+	 */
 	private void setAutocompleteEmpresa(View view){
 		conexion = new ConexionBD(view.getContext());
 		//Es importante que el open de la BD, se haga desde aqui para poder garantizar su cierre
 		//al momento que se destruye esta actividad.
 		conexion.open();
 		
-		AutocompleteEmpresaCursorAdapter mAutocompleteCursor = new AutocompleteEmpresaCursorAdapter(view.getContext(), conexion);
+		AutocompleteEmpresaCursorAdapter mAutocompleteCursor = new AutocompleteEmpresaCursorAdapter(conexion, view);
 		
-		AutoCompleteTextView textView = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpEmpleado);
+		AutoCompleteTextView textView = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpresaEmpleado);
 		textView.setAdapter(mAutocompleteCursor);
+		//seteamos este listener definido en la clase AutocompleteEmpresaCursorAdapter
+		textView.setOnItemClickListener(mAutocompleteCursor);
 		//modificamos el siguiente valor para que despliegue lista a partir del ingreso de un caracter
 		textView.setThreshold(1);
 	}
@@ -106,7 +116,13 @@ public class DatosClienteActivity extends Fragment {
         }
     }
 	
-	private void llenarCamposEmpleado(View v, Empleado empleado) {
+	/*
+	 * Funcion que se encarga de cargar los datos de un empleado en sus respectivos campos.
+	 * 
+	 * @param v View de la actividad.
+	 * @param emplado Empleado cuya informacion se esta cargando.
+	 */
+	private void llenarCamposEmpleado(View v, Empleado empleado, String nombreEmpresa) {
 		EditText etNombre = (EditText) v.findViewById(R.id.textEditNombEmpleado);
 		EditText etApellido = (EditText) v.findViewById(R.id.textEditApellidoEmpleado);
 		EditText etPosicion = (EditText) v.findViewById(R.id.textEditPosEmpleado);
@@ -116,8 +132,8 @@ public class DatosClienteActivity extends Fragment {
 		EditText etPin = (EditText) v.findViewById(R.id.textEditPinEmpleado);
 		EditText etLinkedin = (EditText) v.findViewById(R.id.textEditLinkedinEmpleado);
 		EditText etDescripcion = (EditText) v.findViewById(R.id.textEditDescripEmpleado);
-		//EditText etIdEmpresa = (EditText) v.findViewById(R.id.textEditEmpEmpleado);
-
+		EditText etIdEmpresa = (EditText) v.findViewById(R.id.textEditIdEmpresaEmpleado);
+		AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) v.findViewById(R.id.autocompleteEmpresaEmpleado);
 
 		etNombre.setText(empleado.getNombre());
 		etApellido.setText(empleado.getApellido());
@@ -128,7 +144,8 @@ public class DatosClienteActivity extends Fragment {
 		etPin.setText(empleado.getPin());
 		etLinkedin.setText(empleado.getLinkedin());
 		etDescripcion.setText(empleado.getDescripcion());
-		//etIdEmpresa.setText(Integer.parseInt(empleado.getIdEmpresa()));
+		etIdEmpresa.setText(""+empleado.getIdEmpresa());
+		acNombreEmpresa.setText(nombreEmpresa);
 
 	}
 
@@ -138,7 +155,7 @@ public class DatosClienteActivity extends Fragment {
 	public void onClickSalvar(String id){
 		Mensaje mToast = null;
 
-		EditText etIdEmpresa = (EditText) getActivity().findViewById(R.id.autocompleteEmpEmpleado);
+		EditText etIdEmpresa = (EditText) getActivity().findViewById(R.id.textEditIdEmpresaEmpleado);
 		EditText etNombre = (EditText) getActivity().findViewById(R.id.textEditNombEmpleado);
 		EditText etApellido = (EditText) getActivity().findViewById(R.id.textEditApellidoEmpleado);
 		EditText etPosicion = (EditText) getActivity().findViewById(R.id.textEditPosEmpleado);

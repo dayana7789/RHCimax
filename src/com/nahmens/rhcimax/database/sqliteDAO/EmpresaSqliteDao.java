@@ -8,6 +8,7 @@ import android.util.Log;
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.EmpresaDAO;
+import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 
 public class EmpresaSqliteDao implements EmpresaDAO{
@@ -70,33 +71,34 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 	}
 
 	@Override
-	public Empresa buscarEmpresa(Context contexto, String nombre) {
+	public Empresa buscarEmpresa(Context contexto, String id) {
+		
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
 		Empresa empresa = null;
-
+		
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA, new String[] {"nombre","telefono","rif","web","dirFiscal","dirComercial"}, "nombre=?", new String[] {nombre}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA , null , Empresa.ID + " = ? ", new String [] {id}, null, null, null);
 
-			if(mCursor.getCount()>0){
+			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
-				empresa = new Empresa(mCursor.getString(0), mCursor.getString(1), mCursor.getString(2), mCursor.getString(3), mCursor.getString(4), mCursor.getString(5));
-			}
 
+				empresa = new Empresa( mCursor.getString(mCursor.getColumnIndex("nombre")), 
+						mCursor.getString(mCursor.getColumnIndex("telefono")), 
+						mCursor.getString(mCursor.getColumnIndex("rif")), 
+						mCursor.getString(mCursor.getColumnIndex("web")), 
+						mCursor.getString(mCursor.getColumnIndex("dirFiscal")), 
+						mCursor.getString(mCursor.getColumnIndex("dirComercial")));
+			}
+			
 		}finally{
 			conexion.close();
 		}
 
 		return empresa;
 
-	}
-
-	@Override
-	public Empresa buscarEmpresa(Context contexto, int id) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

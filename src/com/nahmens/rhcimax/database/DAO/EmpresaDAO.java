@@ -31,6 +31,6 @@ public interface EmpresaDAO {
 	 * @return Nombres de empresas
 	 */
 	Cursor listarNombresEmpresas(Context contexto, String args, ConexionBD conexion);
-	Empresa buscarEmpresa(Context contexto, String nombre);
-	Empresa buscarEmpresa(Context contexto, int id);
+	Empresa buscarEmpresa(Context contexto, String id);
+
 }

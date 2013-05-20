@@ -133,16 +133,13 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		Empleado empleado = null;
 		
 		try{
-
 			conexion.open();
 
 			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? ", new String [] {idEmpleado}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
-								
-				
-				
+
 				empleado = new Empleado( mCursor.getString(mCursor.getColumnIndex("nombre")), 
 						mCursor.getString(mCursor.getColumnIndex("apellido")), 
 						mCursor.getString(mCursor.getColumnIndex("posicion")), 
@@ -159,7 +156,6 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			conexion.close();
 		}
 
-		Log.e("empleadosqlite",""+empleado.getNombre());
 		return empleado;	
 	}
 

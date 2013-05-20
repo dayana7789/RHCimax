@@ -32,13 +32,19 @@
                 android:layout_marginRight="10dp"
                 android:text="@string/empresa" />
 		
-			<!-- <EditText
-				android:id="@+id/textEditEmpEmpleado"
-				android:inputType="textAutoComplete" >
-			</EditText> -->
-			
+            <!-- Este campo muestra el nombre de la empresa donde trabaja el empleado -->
 			<AutoCompleteTextView 
-			    android:id="@+id/autocompleteEmpEmpleado" />
+			    android:id="@+id/autocompleteEmpresaEmpleado" />
+			
+			<!-- Campo que almacena id de la empresa del empleado. 
+                 Este campo esta oculto. 				android:visibility="gone"-->
+			<EditText
+				android:id="@+id/textEditIdEmpresaEmpleado"
+
+				android:inputType="number" >
+			</EditText>
+			
+			
 			
 		
 			<ImageButton
