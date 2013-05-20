@@ -2,7 +2,6 @@ package com.nahmens.rhcimax.controlador;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,13 +38,11 @@ public class DatosClienteActivity extends Fragment {
 		//De lo contrario, dejo todo vacio.
 		if(mArgumentos!= null){
 
-
 			String idEmpleado = mArgumentos.getString("id");
 
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 			Empleado empleado  = empleadoDao.buscarEmpleado(getActivity(),idEmpleado);
-
 
 			if(empleado !=null){
 				Empresa empresa = empresaDao.buscarEmpresa(view.getContext(), String.valueOf(empleado.getIdEmpresa()));
@@ -216,10 +213,11 @@ public class DatosClienteActivity extends Fragment {
 		}
 		
 		/** FIN  Verificacion de errores **/
-		
-		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 
 		if(!error){
+			
+			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+
 			if(id!=null){
 				Empleado empleado = new Empleado( Integer.parseInt(id),nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa);
 
