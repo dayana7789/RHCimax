@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.nahmens.rhcimax.R;
@@ -21,6 +22,7 @@ import com.nahmens.rhcimax.mensaje.Mensaje;
 public class DatosEmpresaActivity extends Fragment {
 
 	private LayoutInflater inflater;
+	private static View mView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -28,6 +30,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 		View view = inflater.inflate(R.layout.activity_datos_empresa, container, false);
 		this.inflater=inflater;
+		this.mView =  view;
 
 		final Bundle mArgumentos = this.getArguments();
 
@@ -54,10 +57,24 @@ public class DatosEmpresaActivity extends Fragment {
 				}
 			}
 		}
+		
+		// Registro del evento OnClick del buttonCopiar
+		ImageButton bCopiar= (ImageButton)view.findViewById(R.id.imagenButtonCopiar);
+		bCopiar.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				EditText etDirFiscal = (EditText) mView.findViewById(R.id.textEditDirFiscEmpresa);
+				EditText etDirComercial = (EditText) mView.findViewById(R.id.textEditDirComerEmpresa);
+				
+				String dirFiscal = etDirFiscal.getText().toString();
+				etDirComercial.setText(dirFiscal);
+			}
+		});
 
 		// Registro del evento OnClick del buttonSalvar
-		Button bClient = (Button)view.findViewById(R.id.buttonSalvar);
-		bClient.setOnClickListener(new View.OnClickListener() {
+		Button bSalvar = (Button)view.findViewById(R.id.buttonSalvar);
+		bSalvar.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {

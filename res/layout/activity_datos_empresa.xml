@@ -93,7 +93,7 @@
 	        </EditText>
 
 	        <ImageButton
-	            android:id="@+id/imageButton1"
+	            android:id="@+id/imagenButtonCopiar"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:src="@drawable/ic_tab_copiar_unselected"
