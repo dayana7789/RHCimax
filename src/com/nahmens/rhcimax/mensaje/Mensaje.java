@@ -15,6 +15,8 @@ public class Mensaje {
 	private LayoutInflater inflater;
 	private FragmentActivity contexto;
 	private String tipoMensaje;
+	public static final String ERROR_CAMPO_VACIO = "Este campo no puede estar vacio";
+	public static final String ERROR_EMPRESA_NO_VALIDA = "Empresa no valida";
 
 	/*
 	 * Constructor para mensajes toast
@@ -99,6 +101,11 @@ public class Mensaje {
 
 			mensaje =  "Ha ocurrido un error inesperado. Inténtelo de nuevo.";
 			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
+		}else if(this.tipoMensaje == "error_formulario"){
+
+			mensaje =  "Verifique el formulario. Se han encontrado errores.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
 
 		}else{
 			throw new Exception("Mensaje invalido. Revisa el atributo tipoMensaje que utiliza el constructor de la clase Mensaje.");

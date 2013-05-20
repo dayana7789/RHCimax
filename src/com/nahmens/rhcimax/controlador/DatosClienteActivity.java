@@ -36,26 +36,27 @@ public class DatosClienteActivity extends Fragment {
 		this.inflater=inflater;
 
 		setAutocompleteEmpresa(view);
-		
+
 		final Bundle mArgumentos = this.getArguments();
-		
+
 		//Si me pasaron argumentos, relleno la vista con la informacion. 
 		//De lo contrario, dejo todo vacio.
 		if(mArgumentos!= null){
-			
+
 
 			String idEmpleado = mArgumentos.getString("id");
 
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 			Empleado empleado  = empleadoDao.buscarEmpleado(getActivity(),idEmpleado);
-			
+
 
 			if(empleado !=null){
 				Empresa empresa = empresaDao.buscarEmpresa(view.getContext(), String.valueOf(empleado.getIdEmpresa()));
 				llenarCamposEmpleado(view, empleado,empresa.getNombre());
-				
+
 			}else{
+				//Esto nunca deberia llamarse
 				Mensaje mToast = new Mensaje("error_general");
 				try {
 					mToast.controlMensajesToast();
@@ -72,11 +73,11 @@ public class DatosClienteActivity extends Fragment {
 			@Override
 			public void onClick(View v) {
 				String id = null;
-				
+
 				if(mArgumentos!=null){
 					id = mArgumentos.getString("id");
 				}
-				
+
 				onClickSalvar(id);
 			}
 		});
@@ -92,17 +93,18 @@ public class DatosClienteActivity extends Fragment {
 		//Es importante que el open de la BD, se haga desde aqui para poder garantizar su cierre
 		//al momento que se destruye esta actividad.
 		conexion.open();
-		
+
 		AutocompleteEmpresaCursorAdapter mAutocompleteCursor = new AutocompleteEmpresaCursorAdapter(conexion, view);
-		
+
 		AutoCompleteTextView textView = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpresaEmpleado);
 		textView.setAdapter(mAutocompleteCursor);
 		//seteamos este listener definido en la clase AutocompleteEmpresaCursorAdapter
 		textView.setOnItemClickListener(mAutocompleteCursor);
+		textView.addTextChangedListener(mAutocompleteCursor);
 		//modificamos el siguiente valor para que despliegue lista a partir del ingreso de un caracter
 		textView.setThreshold(1);
 	}
-	
+
 	/*
 	 * Se debe garantizar el cierre de la BD, al momento
 	 * en que se destruye la actividad. De lo contrario,
@@ -110,12 +112,12 @@ public class DatosClienteActivity extends Fragment {
 	 */
 	@Override
 	public void onDestroy() {
-        super.onDestroy();
-        if (conexion  != null) {
-        	conexion.close();
-        }
-    }
-	
+		super.onDestroy();
+		if (conexion  != null) {
+			conexion.close();
+		}
+	}
+
 	/*
 	 * Funcion que se encarga de cargar los datos de un empleado en sus respectivos campos.
 	 * 
@@ -154,6 +156,7 @@ public class DatosClienteActivity extends Fragment {
 	 */
 	public void onClickSalvar(String id){
 		Mensaje mToast = null;
+		boolean error = false;
 
 		EditText etIdEmpresa = (EditText) getActivity().findViewById(R.id.textEditIdEmpresaEmpleado);
 		EditText etNombre = (EditText) getActivity().findViewById(R.id.textEditNombEmpleado);
@@ -165,8 +168,15 @@ public class DatosClienteActivity extends Fragment {
 		EditText etPin = (EditText) getActivity().findViewById(R.id.textEditPinEmpleado);
 		EditText etLinkedin = (EditText) getActivity().findViewById(R.id.textEditLinkedinEmpleado);
 		EditText etDescripcion = (EditText) getActivity().findViewById(R.id.textEditDescripEmpleado);
-
-		int idEmpresa = Integer.parseInt(etIdEmpresa.getText().toString());
+		AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) getActivity().findViewById(R.id.autocompleteEmpresaEmpleado);
+		
+		int idEmpresa = 0;
+		
+		//este try catch es para evitar errores de tipo de campo
+		try{
+			idEmpresa = Integer.parseInt(etIdEmpresa.getText().toString());
+		}catch (Exception e) {}
+				
 		String nombre = etNombre.getText().toString();
 		String apellido = etApellido.getText().toString();
 		String posicion = etPosicion.getText().toString();
@@ -176,41 +186,83 @@ public class DatosClienteActivity extends Fragment {
 		String linkedin = etLinkedin.getText().toString();
 		String pin = etPin.getText().toString();
 		String descripcion = etDescripcion.getText().toString();
+		String nombreEmpresa = acNombreEmpresa.getText().toString();
 
-
-		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-
-		if(id!=null){
-			Empleado empleado = new Empleado( Integer.parseInt(id),nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa);
-
-			//Estamos modificando un registro
-			Boolean modificado = empleadoDao.modificarEmpleado(getActivity(), empleado);
-
-			if(modificado){
-				mToast = new Mensaje(inflater, getActivity(), "ok_modificar_empleado");
-
-			}else{
-				mToast = new Mensaje(inflater, getActivity(), "error_modificar_empleado");
-			}
-
-		}else{
-			//Estamos creando un nuevo registro
-			Empleado empleado = new Empleado(nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa);
-			Boolean insertado = empleadoDao.insertarEmpleado(getActivity(), empleado);
-
-			if(insertado){
-				mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empleado");
-
-			}else{
-				mToast = new Mensaje(inflater, getActivity(), "error_ingreso_empleado");
-			}
+		/** Verificacion de errores **/
+		if(nombre.equals("") || nombre==null){
+			etNombre.setError(Mensaje.ERROR_CAMPO_VACIO);
+			error = true;
 		}
 
+		if(apellido.equals("") || apellido==null){
+			etApellido.setError(Mensaje.ERROR_CAMPO_VACIO);
+			error = true;
+		}
+
+		if(nombreEmpresa.equals("") || nombreEmpresa==null){
+			acNombreEmpresa.setError(Mensaje.ERROR_CAMPO_VACIO);
+			error = true;
+		}
+
+		
+		if (idEmpresa==0){
+			acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
+			error = true;
+		}else{
+			//Verificamos que el nombre de empresa ingresado se corresponda con alguno de la BD.
+			
+			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+			Empresa empresa = empresaDao.buscarEmpresa(getActivity(), String.valueOf(idEmpresa));
+			
+			if(!nombreEmpresa.equals(empresa.getNombre()) && empresa.getNombre() !=null){
+				acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
+				error = true;
+			}
+			
+			Log.e("AQUI","nombreEmpresa: "+nombreEmpresa + " idEmpresa: " +idEmpresa +" nombre empresa db: "+empresa.getNombre());
+
+		}
+		
+		/** FIN  Verificacion de errores **/
+		
+		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+
+		if(!error){
+			if(id!=null){
+				Empleado empleado = new Empleado( Integer.parseInt(id),nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa);
+
+				//Estamos modificando un registro
+				Boolean modificado = empleadoDao.modificarEmpleado(getActivity(), empleado);
+
+				if(modificado){
+					mToast = new Mensaje(inflater, getActivity(), "ok_modificar_empleado");
+
+				}else{
+					mToast = new Mensaje(inflater, getActivity(), "error_modificar_empleado");
+				}
+
+			}else{
+				//Estamos creando un nuevo registro
+				Empleado empleado = new Empleado(nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa);
+				Boolean insertado = empleadoDao.insertarEmpleado(getActivity(), empleado);
+
+				if(insertado){
+					mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empleado");
+
+				}else{
+					mToast = new Mensaje(inflater, getActivity(), "error_ingreso_empleado");
+				}
+			}
+
+			
+		}else{
+			mToast = new Mensaje(inflater, getActivity(), "error_formulario");
+		}
+		
 		try {
 			mToast.controlMensajesToast();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
 }

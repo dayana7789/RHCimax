@@ -101,6 +101,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 	}
 
+
 	@Override
 	public Cursor listarEmpresas(Context contexto) {
 		ConexionBD conexion = new ConexionBD(contexto);
@@ -132,6 +133,21 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
 		sqlQuery += " WHERE " + Empresa.NOMBRE + " LIKE '%" + args + "%' ";
 		sqlQuery += " ORDER BY " + Empresa.NOMBRE;
+
+		mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
+
+		return mCursor;		
+	}
+	
+	@Override
+	public Cursor buscarEmpresaPorNombre(Context contexto, String args, ConexionBD conexion) {
+
+		Cursor mCursor = null;
+		String sqlQuery = "";
+
+		sqlQuery  = " SELECT " + Empresa.ID + ", " + Empresa.NOMBRE;
+		sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
+		sqlQuery += " WHERE " + Empresa.NOMBRE + " = '" + args +"'";
 
 		mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 

@@ -3,11 +3,14 @@ package com.nahmens.rhcimax.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -19,11 +22,11 @@ import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
  * Adaptador utilizado para mostrar lista de autocomplete de nombres 
  * de empresas haciendo uso de cursores.
  */
-public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements android.widget.AdapterView.OnItemClickListener {
+public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements android.widget.AdapterView.OnItemClickListener, TextWatcher {
 	private ConexionBD conexion = null;
 	private Context contexto;
 	private View mView;
-	 
+
 
 	/*
 	 * Constructor. Notar que no se necesita el cursor cuando se crea el 
@@ -76,8 +79,8 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 	public View newView(Context context, Cursor cursor, ViewGroup parent){
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		final TextView view = (TextView) inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-		
-		
+
+
 		return view;
 	}
 
@@ -137,7 +140,7 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 		return cursor.getString(1); 
 	}
 
-	
+
 	/**
 	 * Called by the AutoCompleteTextView field when a choice has been made
 	 * by the user. Aqui actualizamos el valor del text edit escondido que
@@ -156,18 +159,56 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 	 */
 	@Override
 	public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
-		
+
 		// Get the cursor, positioned to the corresponding row in the result set
 		Cursor cursor = (Cursor) listView.getItemAtPosition(position);
 
 		// Obtenemos el id de la empresa
 		String idEmpresa = cursor.getString(0);
-		
+
 		EditText etIdEmpresaEmpleado = (EditText) mView.findViewById(R.id.textEditIdEmpresaEmpleado); 
 		// Update the parent class's TextView
 		etIdEmpresaEmpleado.setText(""+idEmpresa);
 
 	}
+
+	/*
+	 * Se implementa este metodo para actualizar el valor del id de la empresa del campo oculto
+	 * cuando la persona no selecciona ninguna opcion de la lista sino que escribe completamente
+	 * el contenido del campo autocomplete.
+	 */
+	@Override
+	public void afterTextChanged(Editable s) {
+		AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) mView.findViewById(R.id.autocompleteEmpresaEmpleado);
+		String nombreEmpresa = acNombreEmpresa.getText().toString();
+
+		EmpresaSqliteDao empresaDao =  new EmpresaSqliteDao();
+		Cursor cursor = empresaDao.buscarEmpresaPorNombre(contexto, nombreEmpresa, conexion);
+		cursor.moveToFirst();
+
+		if(cursor.getCount()!=0){
+
+			// Obtenemos el id de la empresa
+			String idEmpresa = cursor.getString(0);
+
+
+			EditText etIdEmpresaEmpleado = (EditText) mView.findViewById(R.id.textEditIdEmpresaEmpleado); 
+			// Update the parent class's TextView
+			etIdEmpresaEmpleado.setText(""+idEmpresa);
+		}
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count,
+			int after) {
+	}
+
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+		
+	}
+
 
 }
 
