@@ -117,6 +117,11 @@ public class Mensaje {
 			mensaje =  "Verifique el formulario. Se han encontrado errores.";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
+		}else if(this.tipoMensaje == "error_empresa_no_existe"){
+
+			mensaje =  "Empresa no existe. Verifique el nombre de la empresa ingresado.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
 		}else{
 			throw new Exception("Mensaje invalido. Revisa el atributo tipoMensaje que utiliza el constructor de la clase Mensaje.");
 		}

@@ -34,11 +34,12 @@ public class DatosEmpresaActivity extends Fragment {
 
 		final Bundle mArgumentos = this.getArguments();
 
+
 		//Si me pasaron argumentos, relleno la vista con la informacion. 
 		//De lo contrario, dejo todo vacio.
 		if(mArgumentos!= null){
 
-			String idEmpresa = mArgumentos.getString("id");
+			String idEmpresa = mArgumentos.getString("idEmpresa");
 
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 			Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
@@ -81,7 +82,7 @@ public class DatosEmpresaActivity extends Fragment {
 				String id = null;
 
 				if(mArgumentos!=null){
-					id = mArgumentos.getString("id");
+					id = mArgumentos.getString("idEmpresa");
 				}
 
 				onClickSalvar(id);

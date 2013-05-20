@@ -235,7 +235,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	public void onEmpresaSelected(String id) {
 		//creamos un bundle para poder enviar al fragment, el id de la empresa
 	    Bundle arguments = new Bundle();
-	    arguments.putString("id", id);
+	    arguments.putString("idEmpresa", id);
 	    
 	    DatosEmpresaActivity fragment = new DatosEmpresaActivity();
 	    

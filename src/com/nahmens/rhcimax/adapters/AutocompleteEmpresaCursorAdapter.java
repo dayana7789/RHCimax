@@ -179,6 +179,7 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 	 */
 	@Override
 	public void afterTextChanged(Editable s) {
+		
 		AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) mView.findViewById(R.id.autocompleteEmpresaEmpleado);
 		String nombreEmpresa = acNombreEmpresa.getText().toString();
 
@@ -195,6 +196,7 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 			EditText etIdEmpresaEmpleado = (EditText) mView.findViewById(R.id.textEditIdEmpresaEmpleado); 
 			// Update the parent class's TextView
 			etIdEmpresaEmpleado.setText(""+idEmpresa);
+			
 		}
 	}
 

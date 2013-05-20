@@ -37,18 +37,15 @@
 			    android:id="@+id/autocompleteEmpresaEmpleado" />
 			
 			<!-- Campo que almacena id de la empresa del empleado. 
-                 Este campo esta oculto.android:visibility="gone" -->
+                 Este campo esta oculto. -->
 			<EditText
 				android:id="@+id/textEditIdEmpresaEmpleado"
-				
+				android:visibility="gone"
 				android:inputType="number" >
 			</EditText>
 			
-			
-			
-		
 			<ImageButton
-				android:id="@+id/imageButton1"
+				android:id="@+id/imageButtonVerEmpresa"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:src="@android:drawable/ic_menu_view" 

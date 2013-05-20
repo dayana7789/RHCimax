@@ -2,12 +2,16 @@ package com.nahmens.rhcimax.controlador;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.AutocompleteEmpresaCursorAdapter;
@@ -22,6 +26,7 @@ public class DatosClienteActivity extends Fragment {
 
 	private LayoutInflater inflater;
 	private ConexionBD conexion;
+	private View mView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,6 +34,10 @@ public class DatosClienteActivity extends Fragment {
 
 		View view = inflater.inflate(R.layout.activity_datos_cliente, container, false);
 		this.inflater=inflater;
+		this.mView = view;
+		
+		//usando dentro del metodo onclick del boton ver empresa
+		final LayoutInflater inf = inflater;
 
 		setAutocompleteEmpresa(view);
 
@@ -59,6 +68,49 @@ public class DatosClienteActivity extends Fragment {
 			}
 		}
 
+		// Registro del evento OnClick del buttonVerEmpresa
+		ImageButton bVerEmpresa = (ImageButton)view.findViewById(R.id.imageButtonVerEmpresa);
+		bVerEmpresa.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				
+				EditText etIdEmpresa = (EditText) mView.findViewById(R.id.textEditIdEmpresaEmpleado);
+				String idEmpresa = etIdEmpresa.getText().toString();
+
+				if(idEmpresa.equals("") || idEmpresa.equals(null)){
+					Mensaje mToast = new Mensaje(inf, getActivity(), "error_empresa_no_existe");
+					
+					try {
+						mToast.controlMensajesToast();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
+				}else{
+					
+					//Antes de cambiar de vista, cerramos cualquier conexion a BD
+					if (conexion  != null) {
+						conexion.close();
+					}
+					
+					Bundle mArgumentos = new Bundle();
+				    mArgumentos.putString("idEmpresa",idEmpresa);
+					
+					Fragment fragment = new DatosEmpresaActivity();
+					
+					fragment.setArguments(mArgumentos); 
+				
+					FragmentManager manager = getFragmentManager();
+					FragmentTransaction ft = manager.beginTransaction();
+					ft.addToBackStack(null);
+					ft.replace(android.R.id.tabcontent, fragment, AplicacionActivity.tagFragmentDatosEmpresa);
+					ft.commit();
+				}
+				
+			}
+		});
+
 		// Registro del evento OnClick del buttonSalvar
 		Button bSalvar = (Button)view.findViewById(R.id.buttonSalvar);
 		bSalvar.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +134,7 @@ public class DatosClienteActivity extends Fragment {
 	 * @param view View de la actividad.
 	 */
 	private void setAutocompleteEmpresa(View view){
+
 		conexion = new ConexionBD(view.getContext());
 		//Es importante que el open de la BD, se haga desde aqui para poder garantizar su cierre
 		//al momento que se destruye esta actividad.
@@ -162,14 +215,14 @@ public class DatosClienteActivity extends Fragment {
 		EditText etLinkedin = (EditText) getActivity().findViewById(R.id.textEditLinkedinEmpleado);
 		EditText etDescripcion = (EditText) getActivity().findViewById(R.id.textEditDescripEmpleado);
 		AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) getActivity().findViewById(R.id.autocompleteEmpresaEmpleado);
-		
+
 		int idEmpresa = 0;
-		
+
 		//este try catch es para evitar errores de tipo de campo
 		try{
 			idEmpresa = Integer.parseInt(etIdEmpresa.getText().toString());
 		}catch (Exception e) {}
-				
+
 		String nombre = etNombre.getText().toString();
 		String apellido = etApellido.getText().toString();
 		String posicion = etPosicion.getText().toString();
@@ -196,26 +249,26 @@ public class DatosClienteActivity extends Fragment {
 			acNombreEmpresa.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
-		
+
 		if (idEmpresa==0){
 			acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
 			error = true;
 		}else{
 			//Verificamos que el nombre de empresa ingresado se corresponda con alguno de la BD.
-			
+
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 			Empresa empresa = empresaDao.buscarEmpresa(getActivity(), String.valueOf(idEmpresa));
-			
+
 			if(!nombreEmpresa.equals(empresa.getNombre()) && empresa.getNombre() !=null){
 				acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
 				error = true;
 			}
 		}
-		
+
 		/** FIN  Verificacion de errores **/
 
 		if(!error){
-			
+
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 
 			if(id!=null){
@@ -244,11 +297,11 @@ public class DatosClienteActivity extends Fragment {
 				}
 			}
 
-			
+
 		}else{
 			mToast = new Mensaje(inflater, getActivity(), "error_formulario");
 		}
-		
+
 		try {
 			mToast.controlMensajesToast();
 		} catch (Exception e) {
