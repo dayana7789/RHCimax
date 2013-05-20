@@ -1,14 +1,11 @@
 package com.nahmens.rhcimax.controlador;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +13,6 @@ import android.widget.EditText;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.AutocompleteEmpresaCursorAdapter;
 import com.nahmens.rhcimax.database.ConexionBD;
-import com.nahmens.rhcimax.database.DAO.EmpresaDAO;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
@@ -106,7 +102,7 @@ public class DatosClienteActivity extends Fragment {
 	}
 
 	/*
-	 * Se debe garantizar el cierre de la BD, al momento
+	 * Se debe garantizar el cierre de la BD (debido al autocomplete), al momento
 	 * en que se destruye la actividad. De lo contrario,
 	 * el close no se hace bien y se muestran excepciones.
 	 */
@@ -203,7 +199,6 @@ public class DatosClienteActivity extends Fragment {
 			acNombreEmpresa.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
-
 		
 		if (idEmpresa==0){
 			acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
@@ -218,9 +213,6 @@ public class DatosClienteActivity extends Fragment {
 				acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
 				error = true;
 			}
-			
-			Log.e("AQUI","nombreEmpresa: "+nombreEmpresa + " idEmpresa: " +idEmpresa +" nombre empresa db: "+empresa.getNombre());
-
 		}
 		
 		/** FIN  Verificacion de errores **/
