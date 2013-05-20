@@ -32,10 +32,13 @@
                 android:layout_marginRight="10dp"
                 android:text="@string/empresa" />
 		
-			<EditText
+			<!-- <EditText
 				android:id="@+id/textEditEmpEmpleado"
 				android:inputType="textAutoComplete" >
-			</EditText>
+			</EditText> -->
+			
+			<AutoCompleteTextView 
+			    android:id="@+id/autocompleteEmpEmpleado" />
 			
 		
 			<ImageButton

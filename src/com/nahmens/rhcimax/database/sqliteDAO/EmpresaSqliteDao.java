@@ -16,7 +16,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 	public Boolean insertarEmpresa(Context contexto, Empresa empresa) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Boolean insertado = false;
-		
+
 		try{
 			conexion.open();
 
@@ -38,21 +38,21 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		}finally{
 			conexion.close();
 		}
-		
+
 		return insertado;
 	}
 
 	@Override
 	public void modificarEmpresa(Context contexto, Empresa empresa) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public boolean eliminarEmpresa(Context contexto, String idEmpresa) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean eliminado = false;
-		
+
 		try{
 			conexion.open();
 
@@ -61,11 +61,11 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			if(value!=0){
 				eliminado = true;
 			}
-			
+
 		}finally{
 			conexion.close();
 		}
-		
+
 		return eliminado;
 	}
 
@@ -112,7 +112,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			if (mCursor != null) {
 				mCursor.moveToFirst();
 			}
-			
+
 		}finally{
 			conexion.close();
 		}
@@ -120,4 +120,19 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		return mCursor;		
 	}
 
+	@Override
+	public Cursor listarNombresEmpresas(Context contexto, String args, ConexionBD conexion) {
+
+		Cursor mCursor = null;
+		String sqlQuery = "";
+
+		sqlQuery  = " SELECT " + Empresa.ID + ", " + Empresa.NOMBRE;
+		sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
+		sqlQuery += " WHERE " + Empresa.NOMBRE + " LIKE '%" + args + "%' ";
+		sqlQuery += " ORDER BY " + Empresa.NOMBRE;
+
+		mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
+
+		return mCursor;		
+	}
 }
