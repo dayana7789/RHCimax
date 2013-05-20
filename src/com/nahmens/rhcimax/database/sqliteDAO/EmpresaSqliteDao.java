@@ -14,7 +14,7 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 public class EmpresaSqliteDao implements EmpresaDAO{
 
 	@Override
-	public Boolean insertarEmpresa(Context contexto, Empresa empresa) {
+	public boolean insertarEmpresa(Context contexto, Empresa empresa) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Boolean insertado = false;
 
@@ -44,8 +44,32 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 	}
 
 	@Override
-	public void modificarEmpresa(Context contexto, Empresa empresa) {
-		// TODO Auto-generated method stub
+	public boolean modificarEmpresa(Context contexto, Empresa empresa) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean modificado = false;
+		
+		try{
+			conexion.open();
+			
+			ContentValues contenido = new ContentValues();
+			contenido.put("nombre", empresa.getNombre());
+			contenido.put("telefono", empresa.getTelefono());
+			contenido.put("rif", empresa.getRif());
+			contenido.put("web", empresa.getWeb());
+			contenido.put("dirFiscal", empresa.getDirFiscal());
+			contenido.put("dirComercial", empresa.getDirComercial());
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPRESA, contenido, "_id=?", new String []{Integer.toString(empresa.getId())});
+
+			if(value!=0){
+				modificado = true;
+			}
+			
+		}finally{
+			conexion.close();
+		}
+		
+		return modificado;
 
 	}
 

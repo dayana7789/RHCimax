@@ -97,6 +97,16 @@ public class Mensaje {
 			mensaje =  "Error: el empleado no pudo ser modificado";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
+		}else if(this.tipoMensaje == "ok_modificar_empresa"){
+
+			mensaje =  "Empresa modificada satisfactoriamente.";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
+		}else if(this.tipoMensaje == "error_modificar_empresa"){
+
+			mensaje =  "Error: la empresa no pudo ser modificada";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
 		}else if(this.tipoMensaje == "error_general"){
 
 			mensaje =  "Ha ocurrido un error inesperado. Inténtelo de nuevo.";

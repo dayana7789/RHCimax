@@ -13,6 +13,17 @@ public class Empresa {
 	String dirFiscal;
 	String dirComercial;
 	
+	public Empresa(int id, String nombre, String telefono, String rif, String web,
+			String dirFiscal, String dirComercial) {
+		this.id = id;
+		this.nombre = nombre;
+		this.telefono = telefono;
+		this.rif = rif;
+		this.web = web;
+		this.dirFiscal = dirFiscal;
+		this.dirComercial = dirComercial;
+	}
+	
 	public Empresa(String nombre, String telefono, String rif, String web,
 			String dirFiscal, String dirComercial) {
 		this.nombre = nombre;

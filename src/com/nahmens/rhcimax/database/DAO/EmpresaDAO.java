@@ -8,8 +8,8 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 
 public interface EmpresaDAO {
 	
-	Boolean insertarEmpresa(Context contexto, Empresa empresa);
-	void modificarEmpresa(Context contexto, Empresa empresa);
+	boolean insertarEmpresa(Context contexto, Empresa empresa);
+	boolean modificarEmpresa(Context contexto, Empresa empresa);
 	boolean eliminarEmpresa(Context contexto, String idEmpresa);
 	/**
 	 * 
