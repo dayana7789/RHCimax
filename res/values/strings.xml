@@ -58,5 +58,10 @@
     <string name="title_activity_fila_empleado">FilaEmpleadoActivity</string>
     <string name="mas">+</string>
     <string name="agregarEmpleado">Agregar Empleado</string>
+    <string name="enviarA">Enviar a:</string>
+    <string name="totalPorServicio">Total por el servicio</string>
+    <string name="mensual">Mensual</string>
+    <string name="total">Total</string>
+    <string name="finalizar">Finalizar</string>
 
 </resources>
