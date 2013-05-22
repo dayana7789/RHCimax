@@ -194,6 +194,19 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL(rolPer7);
 		database.execSQL(rolPer8);
 		database.execSQL(rolPer9);
+		
+		String serv1 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,descripcion) VALUES('Administracion de nominas',1000)";
+		String serv2 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,descripcion) VALUES('Reclutacion y seleccion de talento humando',500)";
+		String serv3 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,descripcion) VALUES('Adiestramiento y capacitacion',600)";
+		String serv4 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,descripcion) VALUES('Mantenimiento y limpieza',800)";
+		String serv5 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,descripcion) VALUES('Canal Makro comercializadora',300)";
+		
+		database.execSQL(serv1);
+		database.execSQL(serv2);
+		database.execSQL(serv3);
+		database.execSQL(serv4);
+		database.execSQL(serv5);
+	
 	}
 
 }
