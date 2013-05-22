@@ -8,7 +8,13 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 
 public interface EmpresaDAO {
 	
-	boolean insertarEmpresa(Context contexto, Empresa empresa);
+	/* 
+	 * Funcion que inserta una nueva empresa.
+	 * 
+	 * @param empresa Datos de la empresa a ingresar.
+	 * @return Id de la empresa ingresada o -1 en caso de error.
+	 */
+	long insertarEmpresa(Context contexto, Empresa empresa);
 	boolean modificarEmpresa(Context contexto, Empresa empresa);
 	boolean eliminarEmpresa(Context contexto, String idEmpresa);
 	/**

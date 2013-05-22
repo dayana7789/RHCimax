@@ -133,7 +133,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , new String [] {Empleado.ID, Empleado.NOMBRE, Empleado.APELLIDO, Empleado.POSICION} , Empleado.EMPRESA_ID + " = ? ", new String [] {idEmpresa}, null, null, Empleado.NOMBRE);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , new String [] {Empleado.ID, Empleado.NOMBRE, Empleado.APELLIDO, Empleado.POSICION, Empleado.EMAIL} , Empleado.EMPRESA_ID + " = ? ", new String [] {idEmpresa}, null, null, Empleado.NOMBRE);
 			
 			if (mCursor != null) {
 				mCursor.moveToFirst();

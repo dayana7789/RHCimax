@@ -31,6 +31,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	final public static String tagFragmentLogout = "fragmentLogout";
 	final public static String tagFragmentDatosCliente = "fragmentDatosCliente";
 	final public static String tagFragmentDatosEmpresa = "fragmentDatosEmpresa";
+	final public static String tagFragmentServicios = "fragmentServicios";
 
 	TabHost mTabHost;
 

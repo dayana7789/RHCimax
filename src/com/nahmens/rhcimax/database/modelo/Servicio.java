@@ -1,6 +1,11 @@
 package com.nahmens.rhcimax.database.modelo;
 
 public class Servicio {
+	public final static String ID = "_id";
+	public final static String NOMBRE = "nombre";
+	public final static String PRECIO = "precio";
+	public final static String DESCRIPCION = "descripcion";
+	
 	int id;
 	String nombre;
 	double precio;

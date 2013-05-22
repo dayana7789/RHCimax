@@ -30,6 +30,7 @@ public class DatosEmpresaActivity extends Fragment {
 	private LayoutInflater inflater;
 	private View mView;
 	private FragmentManager fragmentManager; 
+	private Bundle mArgumentos;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,7 +41,7 @@ public class DatosEmpresaActivity extends Fragment {
 		this.mView =  view;
 		this.fragmentManager = this.getFragmentManager();
 
-		final Bundle mArgumentos = this.getArguments();
+		mArgumentos = this.getArguments();
 
 
 		//Si me pasaron argumentos, relleno la vista con la informacion. 
@@ -115,6 +116,24 @@ public class DatosEmpresaActivity extends Fragment {
 				}
 
 				onClickSalvar(id);
+			}
+		});
+
+		// Registro del evento OnClick del buttonCotizar
+		Button bCotizar = (Button)view.findViewById(R.id.buttonCotizar);
+		bCotizar.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				ServiciosActivity fragment = new ServiciosActivity();
+
+				//pasamos al fragment el id de la empresa
+				fragment.setArguments(mArgumentos); 
+
+				fragmentManager.beginTransaction()
+				.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentServicios)
+				.addToBackStack(null)
+				.commit();
 			}
 		});
 
@@ -213,11 +232,13 @@ public class DatosEmpresaActivity extends Fragment {
 				//Estamos creando un nuevo registro
 				Empresa empresa = new Empresa(nombre, telefono, rif, web, dirFiscal, dirComercial);
 
-				Boolean insertado = empresaDao.insertarEmpresa(getActivity(), empresa);
+				long idFilaInsertada = empresaDao.insertarEmpresa(getActivity(), empresa);
 
-				if(insertado){
+				if(idFilaInsertada != -1){
 					mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empresa");
-
+					mArgumentos = new Bundle();
+					mArgumentos.putString("idEmpresa", ""+idFilaInsertada);
+					
 				}else{
 					mToast = new Mensaje(inflater, getActivity(), "error_ingreso_empresa");
 				}

@@ -14,9 +14,9 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 public class EmpresaSqliteDao implements EmpresaDAO{
 
 	@Override
-	public boolean insertarEmpresa(Context contexto, Empresa empresa) {
+	public long insertarEmpresa(Context contexto, Empresa empresa) {
 		ConexionBD conexion = new ConexionBD(contexto);
-		Boolean insertado = false;
+		long idFila = 0;
 
 		try{
 			conexion.open();
@@ -30,17 +30,13 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			values.put("dirFiscal",empresa.getDirFiscal());
 			values.put("dirComercial",empresa.getDirComercial());
 
-			long value = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPRESA, null,values);
-
-			if(value!=-1){
-				insertado = true;
-			}
+			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPRESA, null,values);
 
 		}finally{
 			conexion.close();
 		}
 
-		return insertado;
+		return idFila;
 	}
 
 	@Override
@@ -124,7 +120,6 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		return empresa;
 
 	}
-
 
 	@Override
 	public Cursor listarEmpresas(Context contexto) {

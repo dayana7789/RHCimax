@@ -264,6 +264,11 @@ public class DatosClienteActivity extends Fragment {
 			acNombreEmpresa.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
+		
+		if(email.equals("") || email==null){
+			etEmail.setError(Mensaje.ERROR_CAMPO_VACIO);
+			error = true;
+		}
 
 		if (idEmpresa==0){
 			acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);

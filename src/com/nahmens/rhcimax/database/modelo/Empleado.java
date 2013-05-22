@@ -7,6 +7,7 @@ public class Empleado {
 	public final static String EMPRESA = "nombreEmpresa";
 	public final static String EMPRESA_ID = "idEmpresa";
 	public final static String POSICION = "posicion";
+	public final static String EMAIL = "email";
 	
 	int id;
 	String nombre;
