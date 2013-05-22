@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 	private LayoutInflater inflater;
 	private View mView;
+	private FragmentManager fragmentManager; 
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,6 +38,7 @@ public class DatosEmpresaActivity extends Fragment {
 		View view = inflater.inflate(R.layout.activity_datos_empresa, container, false);
 		this.inflater=inflater;
 		this.mView =  view;
+		this.fragmentManager = this.getFragmentManager();
 
 		final Bundle mArgumentos = this.getArguments();
 
@@ -65,10 +68,10 @@ public class DatosEmpresaActivity extends Fragment {
 			}
 		}
 
-		
+
 
 		// Registro del evento OnClick del buttonCopiar
-		ImageButton bCopiar= (ImageButton)view.findViewById(R.id.imagenButtonCopiar);
+		ImageButton bCopiar= (ImageButton)view.findViewById(R.id.imageButtonCopiar);
 		bCopiar.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -78,6 +81,24 @@ public class DatosEmpresaActivity extends Fragment {
 
 				String dirFiscal = etDirFiscal.getText().toString();
 				etDirComercial.setText(dirFiscal);
+			}
+		});
+
+		// Registro del evento OnClick del buttonAgregarEmpleado
+		ImageButton bAgregar= (ImageButton)view.findViewById(R.id.imageButtonAgregarEmpleado);
+		bAgregar.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				DatosClienteActivity fragment = new DatosClienteActivity();
+
+				//pasamos al fragment el id de la empresa
+				fragment.setArguments(mArgumentos); 
+
+				fragmentManager.beginTransaction()
+				.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
+				.addToBackStack(null)
+				.commit();
 			}
 		});
 
@@ -116,7 +137,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 			//Creamos un array adapter para desplegar cada una de las filas
 			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_empleado, mCursor, from, to);
-			ListaEmpleadosCursorAdapter notes = new ListaEmpleadosCursorAdapter(context, R.layout.activity_fila_empleado, mCursorEmpleados, from, to, 0,this.getFragmentManager());
+			ListaEmpleadosCursorAdapter notes = new ListaEmpleadosCursorAdapter(context, R.layout.activity_fila_empleado, mCursorEmpleados, from, to, 0,fragmentManager);
 			lvEmpleados.setAdapter(notes);
 
 		}

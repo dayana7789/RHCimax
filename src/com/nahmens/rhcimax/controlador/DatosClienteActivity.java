@@ -35,7 +35,7 @@ public class DatosClienteActivity extends Fragment {
 		View view = inflater.inflate(R.layout.activity_datos_cliente, container, false);
 		this.inflater=inflater;
 		this.mView = view;
-		
+
 		//usando dentro del metodo onclick del boton ver empresa
 		final LayoutInflater inf = inflater;
 
@@ -49,22 +49,37 @@ public class DatosClienteActivity extends Fragment {
 
 			String idEmpleado = mArgumentos.getString("id");
 
-			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-			Empleado empleado  = empleadoDao.buscarEmpleado(getActivity(),idEmpleado);
+			if(idEmpleado !=null){
+				//estamos modificando a un empleado
+				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+				Empleado empleado  = empleadoDao.buscarEmpleado(getActivity(),idEmpleado);
 
-			if(empleado !=null){
-				Empresa empresa = empresaDao.buscarEmpresa(view.getContext(), String.valueOf(empleado.getIdEmpresa()));
-				llenarCamposEmpleado(view, empleado,empresa.getNombre());
+				if(empleado !=null){
+					Empresa empresa = empresaDao.buscarEmpresa(view.getContext(), String.valueOf(empleado.getIdEmpresa()));
+					llenarCamposEmpleado(view, empleado,empresa.getNombre());
 
-			}else{
-				//Esto nunca deberia llamarse
-				Mensaje mToast = new Mensaje("error_general");
-				try {
-					mToast.controlMensajesToast();
-				} catch (Exception e) {
-					e.printStackTrace();
+				}else{
+					//Esto nunca deberia llamarse
+					Mensaje mToast = new Mensaje("error_general");
+					try {
+						mToast.controlMensajesToast();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
+			}else{
+				//estamos agregando un nuevo empleado, a partir del id de la empresa
+				String idEmpresa = mArgumentos.getString("idEmpresa");
+				
+				EditText etIdEmpresa = (EditText) view.findViewById(R.id.textEditIdEmpresaEmpleado);
+				AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpresaEmpleado);
+				
+				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+				Empresa empresa = empresaDao.buscarEmpresa(view.getContext(), idEmpresa);
+				
+				etIdEmpresa.setText(idEmpresa);
+				acNombreEmpresa.setText(empresa.getNombre());
 			}
 		}
 
@@ -74,40 +89,40 @@ public class DatosClienteActivity extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				
+
 				EditText etIdEmpresa = (EditText) mView.findViewById(R.id.textEditIdEmpresaEmpleado);
 				String idEmpresa = etIdEmpresa.getText().toString();
 
 				if(idEmpresa.equals("") || idEmpresa.equals(null)){
 					Mensaje mToast = new Mensaje(inf, getActivity(), "error_empresa_no_existe");
-					
+
 					try {
 						mToast.controlMensajesToast();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					
+
 				}else{
-					
+
 					//Antes de cambiar de vista, cerramos cualquier conexion a BD
 					if (conexion  != null) {
 						conexion.close();
 					}
-					
+
 					Bundle mArgumentos = new Bundle();
-				    mArgumentos.putString("idEmpresa",idEmpresa);
-					
+					mArgumentos.putString("idEmpresa",idEmpresa);
+
 					Fragment fragment = new DatosEmpresaActivity();
-					
+
 					fragment.setArguments(mArgumentos); 
-				
+
 					FragmentManager manager = getFragmentManager();
 					FragmentTransaction ft = manager.beginTransaction();
 					ft.addToBackStack(null);
 					ft.replace(android.R.id.tabcontent, fragment, AplicacionActivity.tagFragmentDatosEmpresa);
 					ft.commit();
 				}
-				
+
 			}
 		});
 

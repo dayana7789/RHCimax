@@ -56,5 +56,7 @@
     <string name="ver_empresa">Ver Empresa</string>
     <string name="pin">Pin</string>
     <string name="title_activity_fila_empleado">FilaEmpleadoActivity</string>
+    <string name="mas">+</string>
+    <string name="agregarEmpleado">Agregar Empleado</string>
 
 </resources>

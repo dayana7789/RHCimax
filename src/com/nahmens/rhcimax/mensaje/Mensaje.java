@@ -157,6 +157,11 @@ public class Mensaje {
 			mensaje =  "Está seguro de eliminar este empleado?.";
 			titulo = "Eliminar Empleado";
 
+		}else if(this.tipoMensaje == "guardar_cambios_empresa"){
+			
+			mensaje =  "Debe guardar los cambios antes de poder agregar un empleado a esta empresa.";
+			titulo = "Guardar Cambios";
+
 		}else{
 			throw new Exception("Mensaje invalido. Revisa el atributo tipoMensaje que utiliza el constructor de la clase Mensaje.");
 		}

@@ -93,7 +93,7 @@
 	        </EditText>
 
 	        <ImageButton
-	            android:id="@+id/imagenButtonCopiar"
+	            android:id="@+id/imageButtonCopiar"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:src="@drawable/ic_tab_copiar_unselected"
@@ -117,11 +117,33 @@
         </TableRow>
 	</TableLayout>
 
-	<TextView
+    
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:stretchColumns="0" >
+        
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent" 
+            android:gravity="center">
+        
+        <TextView
 	    android:id="@+id/textViewEmpleados"
 	    style="@style/FuenteSubTitulos"
-	    android:text="@string/empleados" />
+	    android:text="@string/empleados"/>
 	
+		<ImageButton
+		    android:id="@+id/imageButtonAgregarEmpleado"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:src="@android:drawable/ic_menu_add" 
+		    android:contentDescription="@string/agregarEmpleado"/>
+		</TableRow>
+	</TableLayout>
+
 	<ListView
         android:id="@+id/listViewEmpleados"
         android:layout_width="match_parent"
