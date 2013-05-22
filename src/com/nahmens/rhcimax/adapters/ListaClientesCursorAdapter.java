@@ -81,7 +81,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 			//lo que estamos recuperando: IDEmpresa e IDEmpleado.
 			if(to[i] == 0){
 				id = nombre;
-				id = nombre;
 			}
 
 			nombre_text = (TextView) v.findViewById(to[i]);

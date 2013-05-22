@@ -11,5 +11,6 @@ public interface EmpleadoDAO {
 	boolean eliminarEmpleado(Context contexto, String idEmpleado);
 	Empleado buscarEmpleado(Context contexto, String idEmpleado);
 	Cursor listarEmpleados(Context contexto);
+	Cursor listarEmpleadosPorEmpresa(Context contexto, String idEmpresa);
 
 }

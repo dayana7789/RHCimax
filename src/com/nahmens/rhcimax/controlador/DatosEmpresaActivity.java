@@ -1,5 +1,7 @@
 package com.nahmens.rhcimax.controlador;
 
+import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -10,9 +12,12 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.nahmens.rhcimax.R;
+import com.nahmens.rhcimax.adapters.ListaClientesCursorAdapter;
+import com.nahmens.rhcimax.adapters.ListaEmpleadosCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
@@ -22,7 +27,7 @@ import com.nahmens.rhcimax.mensaje.Mensaje;
 public class DatosEmpresaActivity extends Fragment {
 
 	private LayoutInflater inflater;
-	private static View mView;
+	private View mView;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,6 +52,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 			if(empresa !=null){
 				llenarCamposEmpresa(view, empresa);
+				listarEmpleados(view, idEmpresa);
 
 			}else{
 				//Esto nunca deberia llamarse
@@ -58,7 +64,9 @@ public class DatosEmpresaActivity extends Fragment {
 				}
 			}
 		}
+
 		
+
 		// Registro del evento OnClick del buttonCopiar
 		ImageButton bCopiar= (ImageButton)view.findViewById(R.id.imagenButtonCopiar);
 		bCopiar.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +75,7 @@ public class DatosEmpresaActivity extends Fragment {
 			public void onClick(View v) {
 				EditText etDirFiscal = (EditText) mView.findViewById(R.id.textEditDirFiscEmpresa);
 				EditText etDirComercial = (EditText) mView.findViewById(R.id.textEditDirComerEmpresa);
-				
+
 				String dirFiscal = etDirFiscal.getText().toString();
 				etDirComercial.setText(dirFiscal);
 			}
@@ -90,6 +98,28 @@ public class DatosEmpresaActivity extends Fragment {
 		});
 
 		return view;
+	}
+
+	private void listarEmpleados(View view, String idEmpresa){
+		//Cargamos la lista de empleados
+		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+		Context context = getActivity();
+		Cursor mCursorEmpleados = empleadoDao.listarEmpleadosPorEmpresa(getActivity(),idEmpresa);
+
+		if(mCursorEmpleados.getCount()>0){
+			//indicamos los campos que queremos mostrar (from) y en donde (to)
+			//OJO: Aqui pasamos  Empleado.ID para no invocarlo directamente en el ListaClientesCursorAdapter
+			// y lo relacionamos en el arreglo 'to' con el valor 0.
+			String[] from = new String[] { Empleado.ID, Empleado.NOMBRE, Empleado.APELLIDO, Empleado.POSICION};
+			int[] to = new int[] { 0, R.id.textViewNombreEmp,  R.id.textViewApellidoEmp, R.id.textViewPosicionEmp };
+			ListView lvEmpleados = (ListView) view.findViewById (R.id.listViewEmpleados);
+
+			//Creamos un array adapter para desplegar cada una de las filas
+			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_empleado, mCursor, from, to);
+			ListaEmpleadosCursorAdapter notes = new ListaEmpleadosCursorAdapter(context, R.layout.activity_fila_empleado, mCursorEmpleados, from, to, 0,this.getFragmentManager());
+			lvEmpleados.setAdapter(notes);
+
+		}
 	}
 
 	/*

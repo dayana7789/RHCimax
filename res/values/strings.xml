@@ -55,5 +55,6 @@
     <string name="telf_oficina">Telf. Oficina</string>
     <string name="ver_empresa">Ver Empresa</string>
     <string name="pin">Pin</string>
+    <string name="title_activity_fila_empleado">FilaEmpleadoActivity</string>
 
 </resources>
