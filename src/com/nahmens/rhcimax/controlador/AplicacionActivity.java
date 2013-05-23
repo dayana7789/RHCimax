@@ -56,7 +56,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		//Se debe llamar a setup() antes de agregar los tabs 
 		//si se esta usando findViewById().
 		mTabHost.setup();
-		
+
 		inicializarTab();
 
 		/*
@@ -72,7 +72,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		}
 
 	}
-	
+
 	/*
 	 * Funcion que se llama antes de de destruir el layout al cambiarse la orientacion
 	 * del dispositivo. Guarda el tag del frame que estaba activo antes de producirse
@@ -82,13 +82,13 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	 * 
 	 */
 	protected void onSaveInstanceState(Bundle bundle) {
-		  super.onSaveInstanceState(bundle);
-		  Fragment fragmentoActual = this.getSupportFragmentManager().findFragmentById(android.R.id.tabcontent);
-		  bundle.putString("fragmentoActual", fragmentoActual.getTag());
-		  Log.e("layout-guardando",fragmentoActual.getTag());
-		}
+		super.onSaveInstanceState(bundle);
+		Fragment fragmentoActual = this.getSupportFragmentManager().findFragmentById(android.R.id.tabcontent);
+		bundle.putString("fragmentoActual", fragmentoActual.getTag());
+		Log.e("layout-guardando",fragmentoActual.getTag());
+	}
 
-	
+
 	/*
 	 * Funcion que establece el layout correspondiente cuando se cambia la orientacion
 	 * del dispositivo.
@@ -99,12 +99,12 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		mTabHost.setCurrentTabByTag(tagFragment);
 		Fragment fragmentoActual = this.getSupportFragmentManager().findFragmentByTag(tagFragment);
 		if(fragmentoActual!=null){
-			pushFragments(tagFragment, fragmentoActual);
+			pushFragments(tagFragment, fragmentoActual, false);
 		}else{
 			Log.e("**Error**", "**No debo entrar aqui**");
 		}
 	}
-	
+
 	/*
 	 * Inicializa los tabs y setea los views e identificadores para los tabs.
 	 */
@@ -155,11 +155,11 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		public void onTabChanged(String tabId) {
 			/*Set current tab..*/
 			if(tabId.equals(tagFragmentClientes)){
-				pushFragments(tagFragmentClientes, fragmentClientes);
+				pushFragments(tagFragmentClientes, fragmentClientes, false);
 			}else if(tabId.equals(tagFragmentSettings)){
-				pushFragments(tagFragmentSettings, fragmentSettings);
+				pushFragments(tagFragmentSettings, fragmentSettings, false);
 			}else if(tabId.equals(tagFragmentLogout)){
-				pushFragments(tagFragmentLogout, fragmentLogout);
+				pushFragments(tagFragmentLogout, fragmentLogout, false);
 			}
 		}
 	};
@@ -169,17 +169,24 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	 * 
 	 * @param tag Tag del fragment que se va a invocar.
 	 * @param fragment Fragmento que se reemplaza en el FrameLayout.
+	 * @param backStack. Indica si queremos que se guarde el fragmento anterior
+	 *                   al presionar back button
 	 */
-	public void pushFragments(String tag, Fragment fragment){
+	public void pushFragments(String tag, Fragment fragment, boolean backStack){
 
 		FragmentManager manager = getSupportFragmentManager();
 		FragmentTransaction ft = manager.beginTransaction();
 
 		ft.replace(android.R.id.tabcontent, fragment, tag);
+
+		if(backStack){
+			ft.addToBackStack(null);
+		}
+
 		ft.commit();
 	}
-	
-	
+
+
 	/*
 	 * Metodo que confirma la salida de la aplicacion.
 	 * @see android.support.v4.app.FragmentActivity#onBackPressed()
@@ -190,8 +197,11 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		//Obtenemos el fragment que esta cargado actualmente en el layout
 		Fragment fragmentoActual = this.getSupportFragmentManager().findFragmentById(android.R.id.tabcontent);
 
+		String fragmentoTag = fragmentoActual.getTag().toString();
+
 		//Si hacemos click en el back button desde el fragmento de clientes, settings o logout, se nos muestra alert.
-		if (fragmentoActual.equals(fragmentClientes) || fragmentoActual.equals(fragmentSettings) || fragmentoActual.equals(fragmentLogout)){
+		if (fragmentoTag.equals(tagFragmentClientes) || fragmentoTag.equals(tagFragmentSettings) || fragmentoTag.equals(tagFragmentLogout)){
+
 			AlertDialog.Builder builder = new AlertDialog.Builder(AplicacionActivity.this);
 			builder.setMessage("Está seguro que desea salir?")
 			.setCancelable(false)
@@ -208,46 +218,120 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 			AlertDialog alert = builder.create();
 			alert.show();
 
-			//sino permitimos que el back button nos lleven al fragmento anterior ejecutado (ej. desde datos_cliente a cliente)
+
+			//Si presionan back button desde fragmento Datos Cliente
+		}else if(fragmentoTag.equals(tagFragmentDatosCliente)){
+
+			/*
+			 * OJO: las siguientes lineas de codigo son para que al agregar una empresa nueva, y despues hacer
+			 * click en el boton + para agregar a un empleado y luego se haga click en el back button, se cargue 
+			 * el fragment Datos empresa con la lista de empleados actualizada.
+			 */
+			//Obtenemos informacion del fragmento que queremos sobreescribir
+			Fragment removefragment = this.getSupportFragmentManager().findFragmentByTag(tagFragmentDatosEmpresa);
+
+			//Obtenemos informacion del fragmento datos cliente para poder tener acceso a los argumentos pasados a este: idEmpresa.
+			Fragment fragmentClient = this.getSupportFragmentManager().findFragmentByTag(tagFragmentDatosCliente);
+
+			if(removefragment != null){
+				//Si llaman a datos empresa sin argumentos, eso significa que estoy en un formulario en blanco o vacio
+				if(removefragment.getArguments()== null){
+
+					//Verificamos que fragmentClient tenga argumentos
+					if(fragmentClient.getArguments()!= null){
+
+						//Creamos un nuevo fragmento DatosEmpresaActivity y le pasamos los argumentos que necesitamos: idEmpresa.
+						//Tambien necesitamos saber que este fragmento paso por aqui, de manera que se pueda
+						//añadir la logica necesaria cuando presionamos el back button desde datos empresa.
+						DatosEmpresaActivity fragment = new DatosEmpresaActivity();
+
+						Bundle mArgumentos = fragmentClient.getArguments();
+						mArgumentos.putString("FLAG","Pase por aqui");
+						fragment.setArguments(mArgumentos);
+
+						pushFragments(tagFragmentDatosEmpresa, fragment, true);
+					}else{
+						
+						super.onBackPressed();
+					}
+				}else{
+					//Estoy en el caso en que agregue un empleado, sobre una empresa ya creada.
+					super.onBackPressed();
+				}
+			}else{
+				//Estoy en el caso en que estoy viendo informacion del empleado.
+				super.onBackPressed();
+			}
+
+
+			//Si presionan back button desde fragmento Datos Empresa
+		}else if(fragmentoTag.equals(tagFragmentDatosEmpresa)){
+
+			/*
+			 * OJO: Las siguientes lineas de codigo son para que al hacer click en el back button
+			 * desde Datos empresa, necesariamente me lleve a la pagina de lista de clientes siempre
+			 * y cuando, haya pasado por el if anterior a este, el cual pasa un FLAG al fragmento.
+			 */
+			//Obtenemos informacion del fragmento
+			Fragment removefragment = this.getSupportFragmentManager().findFragmentByTag(tagFragmentDatosEmpresa);
+
+			//Si me llamaron con argumentos..
+			if(removefragment.getArguments()!= null){
+				Bundle mArgumentos = removefragment.getArguments();
+				String flag = mArgumentos.getString("FLAG");
+
+				//Si me sobreescribieron..
+				if(flag!=null){
+					//Invocamos a la lista de clientes
+					pushFragments(tagFragmentClientes, fragmentClientes, false);
+
+				}else{
+					super.onBackPressed();
+				}
+			}else{
+				super.onBackPressed();
+			}
+
+			//sino permitimos que el back button nos lleven al fragmento anterior ejecutado	
 		}else{
 			super.onBackPressed();
 		}
 
 	}    
-	
+
 	/***INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA ****/
 	public void onEmpleadoSelected(String id) {
 		//creamos un bundle para poder enviar al fragment, el id del empleado
-	    Bundle arguments = new Bundle();
-	    arguments.putString("id", id);
-	    
-	    DatosClienteActivity fragment = new DatosClienteActivity();
-	    
-	    //pasamos al fragment el id del empleado
-	    fragment.setArguments(arguments); 
-	    
-	    getSupportFragmentManager().beginTransaction()
-	    .replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
-	    .addToBackStack(null)
-	    .commit();
-	    
+		Bundle arguments = new Bundle();
+		arguments.putString("id", id);
+
+		DatosClienteActivity fragment = new DatosClienteActivity();
+
+		//pasamos al fragment el id del empleado
+		fragment.setArguments(arguments); 
+
+		getSupportFragmentManager().beginTransaction()
+		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
+		.addToBackStack(null)
+		.commit();
+
 	}
-	
+
 	public void onEmpresaSelected(String id) {
 		//creamos un bundle para poder enviar al fragment, el id de la empresa
-	    Bundle arguments = new Bundle();
-	    arguments.putString("idEmpresa", id);
-	    
-	    DatosEmpresaActivity fragment = new DatosEmpresaActivity();
-	    
-	    //pasamos al fragment el id de la empresa
-	    fragment.setArguments(arguments); 
-	    
-	    getSupportFragmentManager().beginTransaction()
-	    .replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosEmpresa)
-	    .addToBackStack(null)
-	    .commit();
-	    
+		Bundle arguments = new Bundle();
+		arguments.putString("idEmpresa", id);
+
+		DatosEmpresaActivity fragment = new DatosEmpresaActivity();
+
+		//pasamos al fragment el id de la empresa
+		fragment.setArguments(arguments); 
+
+		getSupportFragmentManager().beginTransaction()
+		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosEmpresa)
+		.addToBackStack(null)
+		.commit();
+
 	}
 	/***************FIN ****************************/
 
