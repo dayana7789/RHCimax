@@ -43,13 +43,10 @@ public class ServiciosActivity extends Fragment {
 			String idEmpresa = mArgumentos.getString("idEmpresa");
 
 			if(idEmpresa != null){
-				Log.e("","id empresa: "+idEmpresa);
 				llenarCampos(view, idEmpresa, "empresa");
 			}else{
 				String idEmpleado = mArgumentos.getString("id");
 				if(idEmpleado != null){
-					
-					Log.e("","id empleado: "+idEmpleado);
 					llenarCampos(view, idEmpleado, "empleado");
 				}
 			}
