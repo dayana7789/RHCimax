@@ -27,6 +27,7 @@ public class DatosClienteActivity extends Fragment {
 	private LayoutInflater inflater;
 	private ConexionBD conexion;
 	private View mView;
+	private FragmentManager fragmentManager; 
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,6 +36,7 @@ public class DatosClienteActivity extends Fragment {
 		View view = inflater.inflate(R.layout.activity_datos_cliente, container, false);
 		this.inflater=inflater;
 		this.mView = view;
+		this.fragmentManager = this.getFragmentManager();
 
 		//usando dentro del metodo onclick del boton ver empresa
 		final LayoutInflater inf = inflater;
@@ -71,13 +73,13 @@ public class DatosClienteActivity extends Fragment {
 			}else{
 				//estamos agregando un nuevo empleado, a partir del id de la empresa
 				String idEmpresa = mArgumentos.getString("idEmpresa");
-				
+
 				EditText etIdEmpresa = (EditText) view.findViewById(R.id.textEditIdEmpresaEmpleado);
 				AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpresaEmpleado);
-				
+
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				Empresa empresa = empresaDao.buscarEmpresa(view.getContext(), idEmpresa);
-				
+
 				etIdEmpresa.setText(idEmpresa);
 				acNombreEmpresa.setText(empresa.getNombre());
 			}
@@ -139,6 +141,24 @@ public class DatosClienteActivity extends Fragment {
 				}
 
 				onClickSalvar(id);
+			}
+		});
+
+		// Registro del evento OnClick del buttonCotizar
+		Button bCotizar = (Button)view.findViewById(R.id.buttonCotizar);
+		bCotizar.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				ServiciosActivity fragment = new ServiciosActivity();
+
+				//pasamos al fragment el id de la empresa
+				fragment.setArguments(mArgumentos); 
+
+				fragmentManager.beginTransaction()
+				.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentServicios)
+				.addToBackStack(null)
+				.commit();
 			}
 		});
 		return view;
@@ -264,7 +284,7 @@ public class DatosClienteActivity extends Fragment {
 			acNombreEmpresa.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
-		
+
 		if(email.equals("") || email==null){
 			etEmail.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
