@@ -79,8 +79,6 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 	public View newView(Context context, Cursor cursor, ViewGroup parent){
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		final TextView view = (TextView) inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-
-
 		return view;
 	}
 

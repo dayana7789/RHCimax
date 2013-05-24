@@ -56,6 +56,12 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		View v = inflater.inflate(layout, parent, false);
 
+		return v;
+	}
+	
+	@Override
+	public void bindView(View v, Context context, Cursor cursor) { 
+
 		//Columna de la BD que queremos recuperar
 		String columna = null;
 
@@ -156,7 +162,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 				alertDialog.show();
 
 			}});
-		return v;
+
 	}
 
 	private void borrarCliente(String id, String tipoCliente) {

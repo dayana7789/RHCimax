@@ -49,12 +49,18 @@ public class ListaEmpleadosCursorAdapter extends SimpleCursorAdapter{
 		this.to = to;
 
 	}
-
+	
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		View v = inflater.inflate(layout, parent, false);
+
+		return v;
+	}
+
+	@Override
+	public void bindView(View v, Context context, Cursor cursor) { 
 
 		//Columna de la BD que queremos recuperar
 		String columna = null;
@@ -113,7 +119,6 @@ public class ListaEmpleadosCursorAdapter extends SimpleCursorAdapter{
 
 			}});
 
-		return v;
 	}
 }
 

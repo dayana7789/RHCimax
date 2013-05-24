@@ -47,12 +47,25 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 
 	}
 
+	/*
+	 * The newView() method should be responsible only for building the row view(inflating a layout, programatically constructing the row etc).
+	 * The row will be built based on the **layout id** that you pass in the constructor
+	 */
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		View v = inflater.inflate(layout, parent, false);
 
+		return v;
+	}
+	
+	/*
+	 * bindView() is where you'll actually bind the data from the Cursor to the views of the row that is passed in.
+	 */
+	@Override
+    public void bindView(View v, Context context, Cursor cursor) { 
+		
 		//Columna de la BD que queremos recuperar
 		String columna = null;
 
@@ -101,7 +114,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		mArgumentos.putString("nombre", nombreServicio);
 		mArgumentos.putString("precio", precio);
 		mArgumentos.putString("descripcion", descripcion);
-
+		
 		buttonVerServicio.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -122,8 +135,6 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 				alert.show();
 
 			}});
-
-		return v;
 	}
 }
 
