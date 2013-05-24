@@ -159,7 +159,7 @@ public class Mensaje {
 
 		}else if(this.tipoMensaje == "guardar_cambios_empresa"){
 			
-			mensaje =  "Debe guardar los cambios antes de poder agregar un empleado a esta empresa.";
+			mensaje =  "No puede agregar un empleado sin haber guardado la empresa. Desea guardar los cambios?.";
 			titulo = "Guardar Cambios";
 
 		}else{

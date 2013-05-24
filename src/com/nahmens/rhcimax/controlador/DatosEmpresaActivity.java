@@ -1,6 +1,8 @@
 package com.nahmens.rhcimax.controlador;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -32,6 +34,11 @@ public class DatosEmpresaActivity extends Fragment {
 	private FragmentManager fragmentManager; 
 	private Bundle mArgumentos;
 
+	/* Flag que permite saber si al crear una nueva empresa, esta se guardo
+	 * antes de hacer click en el boton + para agregar un nuevo empleado. 
+	 */
+	private boolean flagGuardado;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -47,10 +54,9 @@ public class DatosEmpresaActivity extends Fragment {
 		//Si me pasaron argumentos, relleno la vista con la informacion. 
 		//De lo contrario, dejo todo vacio.
 		if(mArgumentos!= null){
+			flagGuardado = true;
 
 			String idEmpresa = mArgumentos.getString("idEmpresa");
-			
-			Log.e("Datos Empresa ","id empresa: " +  idEmpresa);
 
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 			Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
@@ -69,6 +75,9 @@ public class DatosEmpresaActivity extends Fragment {
 					e.printStackTrace();
 				}
 			}
+		}else{
+			//creacion de empresa nueva
+			flagGuardado = false;
 		}
 
 
@@ -93,15 +102,53 @@ public class DatosEmpresaActivity extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				DatosClienteActivity fragment = new DatosClienteActivity();
 
-				//pasamos al fragment el id de la empresa
-				fragment.setArguments(mArgumentos); 
+				if(flagGuardado){
+					DatosClienteActivity fragment = new DatosClienteActivity();
 
-				fragmentManager.beginTransaction()
-				.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
-				.addToBackStack(null)
-				.commit();
+					//pasamos al fragment el id de la empresa
+					fragment.setArguments(mArgumentos); 
+
+					fragmentManager.beginTransaction()
+					.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
+					.addToBackStack(null)
+					.commit();
+					
+				}else{
+					
+					AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
+					String[] mensArray = null;
+					Mensaje mensajeDialog = new Mensaje("guardar_cambios_empresa");
+
+					try {
+						mensArray = mensajeDialog.controlMensajesDialog();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					alert.setMessage(mensArray[0]); 
+					alert.setTitle(mensArray[1]); 
+
+					alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+							dialog.cancel();
+						}});
+
+					alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+							String id = null;
+
+							if(mArgumentos!=null){
+								id = mArgumentos.getString("idEmpresa");
+							}
+
+							onClickSalvar(id);
+						}
+					});
+
+					AlertDialog alertDialog = alert.create();
+					alertDialog.show();
+				}
 			}
 		});
 
@@ -240,9 +287,11 @@ public class DatosEmpresaActivity extends Fragment {
 					mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empresa");
 					mArgumentos = new Bundle();
 					mArgumentos.putString("idEmpresa", ""+idFilaInsertada);
-					
+					flagGuardado = true;
+
 				}else{
 					mToast = new Mensaje(inflater, getActivity(), "error_ingreso_empresa");
+					flagGuardado = false;
 				}
 			}
 		}else{
