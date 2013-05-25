@@ -17,6 +17,18 @@
             android:id="@+id/checkBoxServicio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        
+        <TextView 
+            android:id="@+id/textViewUnidadMedicion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        
+        <!-- OJO colocamos el edit text como invisible -->
+        <EditText
+            android:id="@+id/editTextMedida"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <ImageButton
             android:id="@+id/imageButtonVerServicio"

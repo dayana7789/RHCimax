@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.controlador.AplicacionActivity;
 import com.nahmens.rhcimax.controlador.DatosClienteActivity;
+import com.nahmens.rhcimax.database.modelo.Servicio;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 
 
@@ -57,15 +59,26 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		View v = inflater.inflate(layout, parent, false);
 
+		String unidadMedicion = cursor.getString(cursor.getColumnIndex(Servicio.UNIDAD_MEDICION));
+		
+		if(!unidadMedicion.equals("ninguno")){
+			
+			EditText etMedida = (EditText) v.findViewById(R.id.editTextMedida);
+			etMedida.setVisibility(View.VISIBLE);
+			
+			TextView tvUnidadMedicion = (TextView) v.findViewById(R.id.textViewUnidadMedicion);
+			tvUnidadMedicion.setText(unidadMedicion);
+		}
+		
 		return v;
 	}
-	
+
 	/*
 	 * bindView() is where you'll actually bind the data from the Cursor to the views of the row that is passed in.
 	 */
 	@Override
-    public void bindView(View v, Context context, Cursor cursor) { 
-		
+	public void bindView(View v, Context context, Cursor cursor) { 
+
 		//Columna de la BD que queremos recuperar
 		String columna = null;
 
@@ -78,9 +91,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		//Nombre del textView en nuestro Layout donde queremos
 		//que aparezca el resultado.
 		TextView nombre_text = null;
-
-		String precio = null;
-		String descripcion = null;
+		
 		String nombreServicio = null;
 
 		//Para cada valor de la BD solicitado, lo mostramos en el text view.
@@ -88,41 +99,47 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 			columna = from[i];
 			nombreCol = cursor.getColumnIndex(columna);
 			nombre = cursor.getString(nombreCol);
+			nombreServicio = nombre; 
+			nombre_text = (TextView) v.findViewById(to[i]);
 
-			//los valores to[i] iguales a 0 y 1 indican valores que necesitamos
-			//pero que no se van a mostrar en la lista directamente.
-			//1 -> descripcion
-			//0 -> precio
-			if(to[i] == 0){
-				precio = nombre;
-			}else if(to[i] == 1){
-				descripcion = nombre;
-			}else{
-				nombreServicio = nombre; 
-				nombre_text = (TextView) v.findViewById(to[i]);
-				if (nombre_text != null) {
-					nombre_text.setText(nombre);
-				}
+			if (nombre_text != null) {
+				nombre_text.setText(nombre);
 			}
 		}
 
+		//Obtenemos resto de valores de la BD
+		double precio = cursor.getDouble(cursor.getColumnIndex(Servicio.PRECIO));
+		String descripcion = cursor.getString(cursor.getColumnIndex(Servicio.DESCRIPCION));
+		String unidadMedicion = cursor.getString(cursor.getColumnIndex(Servicio.UNIDAD_MEDICION));
+		double inicial =  cursor.getDouble(cursor.getColumnIndex(Servicio.INICIAL));
+		
+		if(!unidadMedicion.equals("ninguno")){
+			
+			EditText etMedida = (EditText) v.findViewById(R.id.editTextMedida);
+			etMedida.setVisibility(View.VISIBLE);
+			
+			TextView tvUnidadMedicion = (TextView) v.findViewById(R.id.textViewUnidadMedicion);
+			tvUnidadMedicion.setText(unidadMedicion);
+		}
 
 		ImageButton buttonVerServicio = (ImageButton)  v.findViewById(R.id.imageButtonVerServicio);
 
 		//almacenamos en un bundle, precio y descripcion del servicio.
 		final Bundle mArgumentos = new Bundle();
 		mArgumentos.putString("nombre", nombreServicio);
-		mArgumentos.putString("precio", precio);
+		mArgumentos.putDouble("precio", precio);
 		mArgumentos.putString("descripcion", descripcion);
-		
+		mArgumentos.putString("unidadMedicion", unidadMedicion);
+		mArgumentos.putDouble("inicial", inicial);
+
 		buttonVerServicio.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v){
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
-				
-				builder.setMessage(mArgumentos.getString("descripcion"))
+
+				builder.setMessage(","+mArgumentos.getString("unidadMedicion") + ", " + mArgumentos.getString("descripcion"))
 				.setTitle(mArgumentos.getString("nombre"))
 				.setCancelable(false)
 				.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
@@ -130,7 +147,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 						dialog.cancel();
 					}
 				});
-				
+
 				AlertDialog alert = builder.create();
 				alert.show();
 

@@ -5,17 +5,29 @@ public class Servicio {
 	public final static String NOMBRE = "nombre";
 	public final static String PRECIO = "precio";
 	public final static String DESCRIPCION = "descripcion";
+	public final static String STATUS = "status";
+	public final static String UNIDAD_MEDICION = "unidadMedicion";
+	public final static String INICIAL = "inicial";
 	
 	int id;
 	String nombre;
 	double precio;
 	String descripcion;
+	String status;
+	String unidadMedicion;
+	double inicial;
 	
 	
-	public Servicio(String nombre, double precio, String descripcion) {
+	public Servicio(int id, String nombre, double precio, String descripcion,
+			String status, String unidadMedicion, double inicial) {
+
+		this.id = id;
 		this.nombre = nombre;
 		this.precio = precio;
 		this.descripcion = descripcion;
+		this.status = status;
+		this.unidadMedicion = unidadMedicion;
+		this.inicial = inicial;
 	}
 
 
@@ -57,5 +69,40 @@ public class Servicio {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+
+
+	public String getStatus() {
+		return status;
+	}
+
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+
+	public String getUnidadMedicion() {
+		return unidadMedicion;
+	}
+
+
+	public void setUnidadMedicion(String unidadMedicion) {
+		this.unidadMedicion = unidadMedicion;
+	}
+
+
+	public double getInicial() {
+		return inicial;
+	}
+
+
+	public void setInicial(double inicial) {
+		this.inicial = inicial;
+	}
+	
+	
+	
+	
+	
 
 }

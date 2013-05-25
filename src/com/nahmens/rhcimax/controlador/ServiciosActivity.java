@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.nahmens.rhcimax.R;
-import com.nahmens.rhcimax.adapters.ListaEmpleadosCursorAdapter;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
@@ -59,8 +58,6 @@ public class ServiciosActivity extends Fragment {
 	 */
 
 	private void llenarCampos(View v, String id, String tipoCliente){
-
-		
 
 		if(tipoCliente.equals("empresa")){
 			
@@ -129,8 +126,8 @@ public class ServiciosActivity extends Fragment {
 		//Lista de servicios
 		if(mCursorServicios.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
-			String[] from = new String[] { Servicio.NOMBRE, Servicio.PRECIO, Servicio.DESCRIPCION};
-			int[] to = new int[] { R.id.checkBoxServicio,0, 1};
+			String[] from = new String[] { Servicio.NOMBRE};
+			int[] to = new int[] { R.id.checkBoxServicio};
 			ListView lvServicios = (ListView) v.findViewById (R.id.listViewServicios);
 
 			//Creamos un array adapter para desplegar cada una de las filas
