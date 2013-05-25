@@ -26,7 +26,6 @@
         <!-- OJO colocamos el edit text como invisible -->
         <EditText
             android:id="@+id/editTextMedida"
-            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

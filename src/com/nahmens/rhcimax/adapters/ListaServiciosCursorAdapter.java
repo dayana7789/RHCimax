@@ -59,17 +59,6 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		View v = inflater.inflate(layout, parent, false);
 
-		String unidadMedicion = cursor.getString(cursor.getColumnIndex(Servicio.UNIDAD_MEDICION));
-		
-		if(!unidadMedicion.equals("ninguno")){
-			
-			EditText etMedida = (EditText) v.findViewById(R.id.editTextMedida);
-			etMedida.setVisibility(View.VISIBLE);
-			
-			TextView tvUnidadMedicion = (TextView) v.findViewById(R.id.textViewUnidadMedicion);
-			tvUnidadMedicion.setText(unidadMedicion);
-		}
-		
 		return v;
 	}
 
@@ -113,13 +102,22 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		String unidadMedicion = cursor.getString(cursor.getColumnIndex(Servicio.UNIDAD_MEDICION));
 		double inicial =  cursor.getDouble(cursor.getColumnIndex(Servicio.INICIAL));
 		
-		if(!unidadMedicion.equals("ninguno")){
+		if(unidadMedicion.equals("ninguno")){
+			EditText etMedida = (EditText) v.findViewById(R.id.editTextMedida);
+			etMedida.setVisibility(View.INVISIBLE);
 			
+			TextView tvUnidadMedicion = (TextView) v.findViewById(R.id.textViewUnidadMedicion);
+			tvUnidadMedicion.setVisibility(View.INVISIBLE);
+			
+
+		}else{
 			EditText etMedida = (EditText) v.findViewById(R.id.editTextMedida);
 			etMedida.setVisibility(View.VISIBLE);
 			
 			TextView tvUnidadMedicion = (TextView) v.findViewById(R.id.textViewUnidadMedicion);
+			tvUnidadMedicion.setVisibility(View.VISIBLE);
 			tvUnidadMedicion.setText(unidadMedicion);
+
 		}
 
 		ImageButton buttonVerServicio = (ImageButton)  v.findViewById(R.id.imageButtonVerServicio);
