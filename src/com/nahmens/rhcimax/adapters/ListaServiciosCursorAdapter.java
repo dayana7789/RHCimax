@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -33,7 +34,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	private int layout;
 	private String[] from;
 	private int[] to;
-	private HashMap<Integer,Boolean> status; //Almacena los checkboxes que fueron seleccionados <idServicio, seleccionado?>
+	public static HashMap<Integer,Boolean> status; //Almacena los checkboxes que fueron seleccionados <idServicio, seleccionado?>
 
 
 	public ListaServiciosCursorAdapter(Context context, int layout, Cursor c,
@@ -47,17 +48,13 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		this.to = to;
 		this.status = new HashMap<Integer, Boolean>();
 
+		//Inicializamos la tabla status con idServicio y false, pues no se ha 
+		//seleccionado ningun checkbox
 		while (!c.isAfterLast()) {
-
 			int idServicio = c.getInt(c.getColumnIndex(Servicio.ID));
 			status.put(idServicio, false);
-
 			c.moveToNext();
-
 		}
-
-
-
 	}
 
 	/*
@@ -183,7 +180,11 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 			}
 		});
 
+		//Esta linea de codigo es importante para evitar que se pierdan los checkboxes seleccionados
+		//cuando hacemos scroll de la lista. De aqui la importancia del setOnCheckedChangeListener
+		//y la lista status.
 		cb.setChecked(status.get(mArgumentos.getInt("idServicio")));
 
 	}
+
 }
