@@ -134,6 +134,7 @@ public class ServiciosActivity extends Fragment {
 			ListaServiciosCursorAdapter notes = new ListaServiciosCursorAdapter(getActivity(), R.layout.activity_fila_servicio, mCursorServicios, from, to, 0);
 			lvServicios.setAdapter(notes);
 			lvServicios.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+			//Log.e("cheked items: ",""+lvServicios.getCheckedItemIds().toString());
 
 		}
 

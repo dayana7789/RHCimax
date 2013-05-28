@@ -1,10 +1,6 @@
 package com.nahmens.rhcimax.adapters;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -50,6 +46,17 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		this.from = from;
 		this.to = to;
 		this.status = new HashMap<Integer, Boolean>();
+
+		while (!c.isAfterLast()) {
+
+			int idServicio = c.getInt(c.getColumnIndex(Servicio.ID));
+			status.put(idServicio, false);
+
+			c.moveToNext();
+
+		}
+
+
 
 	}
 
@@ -172,20 +179,11 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 				}else{
 					status.put(mArgumentos.getInt("idServicio"), isChecked);
 				}
+
 			}
 		});
 
-		
-		try{
-			//Esta linea de codigo es importante para evitar que se pierdan los checkboxes seleccionados
-			//cuando hacemos scroll de la lista. De aqui la importancia del setOnCheckedChangeListener
-			//y la lista status.
-			cb.setChecked(status.get(mArgumentos.getInt("idServicio")));
-		}catch (Exception e) {
-			// Ingnorar. Esta se excepcion se llama cuando status.get(mArgumentos.getInt("idServicio")) devuelve null.
-			//Esto es porque no inicializamos la lista a priori con los ids de los servicios, sino que la vamos cargando 
-			//a medida que setOnCheckedChangeListener es llamado.
-		}
+		cb.setChecked(status.get(mArgumentos.getInt("idServicio")));
+
 	}
 }
-
