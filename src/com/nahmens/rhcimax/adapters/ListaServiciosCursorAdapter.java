@@ -1,5 +1,10 @@
 package com.nahmens.rhcimax.adapters;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,19 +15,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 
 import com.nahmens.rhcimax.R;
-import com.nahmens.rhcimax.controlador.AplicacionActivity;
-import com.nahmens.rhcimax.controlador.DatosClienteActivity;
 import com.nahmens.rhcimax.database.modelo.Servicio;
-import com.nahmens.rhcimax.mensaje.Mensaje;
+
 
 
 /*
@@ -35,6 +37,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	private int layout;
 	private String[] from;
 	private int[] to;
+	private HashMap<Integer,Boolean> status; //Almacena los checkboxes que fueron seleccionados <idServicio, seleccionado?>
 
 
 	public ListaServiciosCursorAdapter(Context context, int layout, Cursor c,
@@ -46,6 +49,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		this.layout = layout;
 		this.from = from;
 		this.to = to;
+		this.status = new HashMap<Integer, Boolean>();
 
 	}
 
@@ -80,7 +84,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		//Nombre del textView en nuestro Layout donde queremos
 		//que aparezca el resultado.
 		TextView nombre_text = null;
-		
+
 		String nombreServicio = null;
 
 		//Para cada valor de la BD solicitado, lo mostramos en el text view.
@@ -101,24 +105,27 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		String descripcion = cursor.getString(cursor.getColumnIndex(Servicio.DESCRIPCION));
 		String unidadMedicion = cursor.getString(cursor.getColumnIndex(Servicio.UNIDAD_MEDICION));
 		double inicial =  cursor.getDouble(cursor.getColumnIndex(Servicio.INICIAL));
-		
+		int idServicio = cursor.getInt(cursor.getColumnIndex(Servicio.ID));
+
 		if(unidadMedicion.equals("ninguno")){
 			EditText etMedida = (EditText) v.findViewById(R.id.editTextMedida);
 			etMedida.setVisibility(View.INVISIBLE);
-			
+
 			TextView tvUnidadMedicion = (TextView) v.findViewById(R.id.textViewUnidadMedicion);
 			tvUnidadMedicion.setVisibility(View.INVISIBLE);
-			
+
 
 		}else{
 			EditText etMedida = (EditText) v.findViewById(R.id.editTextMedida);
 			etMedida.setVisibility(View.VISIBLE);
-			
+
 			TextView tvUnidadMedicion = (TextView) v.findViewById(R.id.textViewUnidadMedicion);
 			tvUnidadMedicion.setVisibility(View.VISIBLE);
 			tvUnidadMedicion.setText(unidadMedicion);
 
 		}
+
+
 
 		ImageButton buttonVerServicio = (ImageButton)  v.findViewById(R.id.imageButtonVerServicio);
 
@@ -129,6 +136,8 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		mArgumentos.putString("descripcion", descripcion);
 		mArgumentos.putString("unidadMedicion", unidadMedicion);
 		mArgumentos.putDouble("inicial", inicial);
+		mArgumentos.putInt("idServicio", idServicio);
+
 
 		buttonVerServicio.setOnClickListener(new View.OnClickListener() {
 
@@ -137,7 +146,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
 
-				builder.setMessage(","+mArgumentos.getString("unidadMedicion") + ", " + mArgumentos.getString("descripcion"))
+				builder.setMessage(mArgumentos.getInt("idServicio") +","+mArgumentos.getString("unidadMedicion") + ", " + mArgumentos.getString("descripcion"))
 				.setTitle(mArgumentos.getString("nombre"))
 				.setCancelable(false)
 				.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
@@ -150,6 +159,33 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 				alert.show();
 
 			}});
+
+
+		//Creamos un listener para actualizar la lista de checkboxes seleccionados
+		CheckBox cb = ( CheckBox ) v.findViewById( R.id.checkBoxServicio );
+		cb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+				if(status.containsKey(mArgumentos.getInt("idServicio"))){
+					status.remove(mArgumentos.getInt("idServicio"));
+					status.put(mArgumentos.getInt("idServicio"), isChecked);
+				}else{
+					status.put(mArgumentos.getInt("idServicio"), isChecked);
+				}
+			}
+		});
+
+		
+		try{
+			//Esta linea de codigo es importante para evitar que se pierdan los checkboxes seleccionados
+			//cuando hacemos scroll de la lista. De aqui la importancia del setOnCheckedChangeListener
+			//y la lista status.
+			cb.setChecked(status.get(mArgumentos.getInt("idServicio")));
+		}catch (Exception e) {
+			// Ingnorar. Esta se excepcion se llama cuando status.get(mArgumentos.getInt("idServicio")) devuelve null.
+			//Esto es porque no inicializamos la lista a priori con los ids de los servicios, sino que la vamos cargando 
+			//a medida que setOnCheckedChangeListener es llamado.
+		}
 	}
 }
 

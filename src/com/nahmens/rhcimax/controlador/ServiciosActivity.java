@@ -133,9 +133,8 @@ public class ServiciosActivity extends Fragment {
 			//Creamos un array adapter para desplegar cada una de las filas
 			ListaServiciosCursorAdapter notes = new ListaServiciosCursorAdapter(getActivity(), R.layout.activity_fila_servicio, mCursorServicios, from, to, 0);
 			lvServicios.setAdapter(notes);
+			lvServicios.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
-		}else{
-			Log.e("no deberia entrar aqio","no entre");
 		}
 
 	}

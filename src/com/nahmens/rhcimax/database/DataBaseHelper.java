@@ -100,6 +100,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "descripcion TEXT NOT NULL, "
 															+ "status TEXT NOT NULL, "
 															+ "unidadMedicion TEXT NOT NULL, "
+															+ "medida TEXT, "
 															+ "inicial REAL NOT NULL);";
 	
 	private static final String DATABASE_CREATE_COTIZACION_SERVICIO = "CREATE table " + TABLA_COTIZACION_SERVICIO + " ("
