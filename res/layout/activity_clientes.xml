@@ -31,24 +31,19 @@
 
                 <TextView
                     android:id="@+id/avisoVerde"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="#FFFFFF"
-                    android:text="" />
+                    style="@style/CuadroNotificacion"
+                    android:background="@drawable/borde_blanco"/>
 
                 <TextView
                     android:id="@+id/avisoAmarillo"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="#FCC601"
-                    android:text="" />
+					style="@style/CuadroNotificacion"
+                    android:background="@drawable/borde_blanco"/>
 
                 <TextView
                     android:id="@+id/avisoRojo"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:background="#FFFFFF"
-                    android:text="" />
+                    style="@style/CuadroNotificacion"
+                    android:background="@drawable/borde_blanco"/>
+                
             </LinearLayout>
 
             <Button

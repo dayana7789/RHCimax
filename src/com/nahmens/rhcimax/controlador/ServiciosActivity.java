@@ -28,7 +28,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class ServiciosActivity extends Fragment {
-	
+
 	private FragmentManager fragmentManager; 
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,7 +50,6 @@ public class ServiciosActivity extends Fragment {
 					llenarCampos(view, idEmpleado, "empleado");
 				}
 			}
-
 		}
 
 		return view;
@@ -64,66 +63,27 @@ public class ServiciosActivity extends Fragment {
 	private void llenarCampos(View v, String id, String tipoCliente){
 
 		if(tipoCliente.equals("empresa")){
-			
-			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-			Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),id);
+			llenarCamposEmpresa(v,id);
 
-			TextView tvEmpresa = (TextView) v.findViewById(R.id.textViewEmpresa);
-			tvEmpresa.setText(empresa.getNombre());
-
-			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-			Cursor mCursorEmpleados = empleadoDao.listarEmpleadosPorEmpresa(getActivity(), id);
-
-			//Lista de correos de empleados
-			if(mCursorEmpleados.getCount()>0){
-
-				//indicamos los campos que queremos mostrar (from) y en donde (to)
-				String[] from = new String[] { Empleado.NOMBRE, Empleado.APELLIDO, Empleado.EMAIL};
-				int[] to = new int[] { R.id.textViewServNombreEmp,R.id.textViewServApellidoEmp, R.id.checkBoxServEmail};
-				ListView lvEmpleados = (ListView) v.findViewById (R.id.listViewCorreos);
-
-				//Creamos un array adapter para desplegar cada una de las filas
-				SimpleCursorAdapter notes = new SimpleCursorAdapter(getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0);
-				lvEmpleados.setAdapter(notes);
-
-			}
 		}else if(tipoCliente.equals("empleado")){
+			llenarCamposEmpleado(v,id);
 
-			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-			Empleado empleado = empleadoDao.buscarEmpleado(getActivity(), id);
-			
-			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-			Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),""+empleado.getIdEmpresa());
-
-			TextView tvEmpresa = (TextView) v.findViewById(R.id.textViewEmpresa);
-			tvEmpresa.setText(empresa.getNombre());
-
-			//Correo del empleado
-			if(empleado!=null){
-				List<HashMap<String, String>> mList = new ArrayList<HashMap<String, String>>();
-				
-				HashMap<String, String> map = new HashMap<String, String>();
-	        	map.put(Empleado.NOMBRE, empleado.getNombre());
-	        	map.put(Empleado.APELLIDO, empleado.getApellido());
-	        	map.put(Empleado.EMAIL,empleado.getEmail());
-
-	        	
-				mList.add(map);
-				//indicamos los campos que queremos mostrar (from) y en donde (to)
-				String[] from = new String[] { Empleado.NOMBRE, Empleado.APELLIDO, Empleado.EMAIL};
-				int[] to = new int[] { R.id.textViewServNombreEmp,R.id.textViewServApellidoEmp, R.id.checkBoxServEmail};
-				ListView lvEmpleados = (ListView) v.findViewById (R.id.listViewCorreos);
-
-				//Creamos un array adapter para desplegar cada una de las filas
-				SimpleAdapter notes = new SimpleAdapter(getActivity(),mList, R.layout.activity_fila_correo, from, to);
-				lvEmpleados.setAdapter(notes);
-
-			}
-			
 		}else{
 			Log.e("ServiciosActivity", "Tipo de cliente no valido: " + tipoCliente);
 		}
 
+		llenarCamposServicios(v,id,tipoCliente);
+	}
+
+	/*
+	 * Funcion que llena en pantalla los datos relacionados a los servicios:
+	 * lista de servicios.
+	 * 
+	 * @param v  View del fragmento
+	 * @param id Identificador de la empresa
+	 * @param tipoCliente Posibles valores: empresa o empleado
+	 */
+	private void llenarCamposServicios(View v, String id, String tipoCliente) {
 		ServicioSqliteDao servicioDao = new ServicioSqliteDao();
 		Cursor mCursorServicios = servicioDao.listarServicios(getActivity());
 
@@ -156,9 +116,76 @@ public class ServiciosActivity extends Fragment {
 					ListaServiciosCursorAdapter.setServiciosSeleccionados(null);
 
 				}});
-
 		}
-
 	}
 
+
+	/*
+	 * Funcion que llena en pantalla los datos relacionados al empleado:
+	 * el correo del mismo.
+	 * 
+	 * @param v  View del fragmento
+	 * @param id Identificador de la empresa
+	 */
+	private void llenarCamposEmpleado(View v, String id) {
+		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+		Empleado empleado = empleadoDao.buscarEmpleado(getActivity(), id);
+
+		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+		Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),""+empleado.getIdEmpresa());
+
+		TextView tvEmpresa = (TextView) v.findViewById(R.id.textViewEmpresa);
+		tvEmpresa.setText(empresa.getNombre());
+
+		//Correo del empleado
+		if(empleado!=null){
+			List<HashMap<String, String>> mList = new ArrayList<HashMap<String, String>>();
+
+			HashMap<String, String> map = new HashMap<String, String>();
+			map.put(Empleado.NOMBRE, empleado.getNombre());
+			map.put(Empleado.APELLIDO, empleado.getApellido());
+			map.put(Empleado.EMAIL,empleado.getEmail());
+
+			mList.add(map);
+			//indicamos los campos que queremos mostrar (from) y en donde (to)
+			String[] from = new String[] { Empleado.NOMBRE, Empleado.APELLIDO, Empleado.EMAIL};
+			int[] to = new int[] { R.id.textViewServNombreEmp,R.id.textViewServApellidoEmp, R.id.checkBoxServEmail};
+			ListView lvEmpleados = (ListView) v.findViewById (R.id.listViewCorreos);
+
+			//Creamos un array adapter para desplegar cada una de las filas
+			SimpleAdapter notes = new SimpleAdapter(getActivity(),mList, R.layout.activity_fila_correo, from, to);
+			lvEmpleados.setAdapter(notes);
+		}
+	}
+
+	/*
+	 * Funcion que llena en pantalla los datos relacionados a la empresa:
+	 * lista de correos de todos sus empleados.
+	 * 
+	 * @param v  View del fragmento
+	 * @param id Identificador de la empresa
+	 */
+	private void llenarCamposEmpresa(View v, String id) {
+		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+		Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),id);
+
+		TextView tvEmpresa = (TextView) v.findViewById(R.id.textViewEmpresa);
+		tvEmpresa.setText(empresa.getNombre());
+
+		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+		Cursor mCursorEmpleados = empleadoDao.listarEmpleadosPorEmpresa(getActivity(), id);
+
+		//Lista de correos de empleados
+		if(mCursorEmpleados.getCount()>0){
+
+			//indicamos los campos que queremos mostrar (from) y en donde (to)
+			String[] from = new String[] { Empleado.NOMBRE, Empleado.APELLIDO, Empleado.EMAIL};
+			int[] to = new int[] { R.id.textViewServNombreEmp,R.id.textViewServApellidoEmp, R.id.checkBoxServEmail};
+			ListView lvEmpleados = (ListView) v.findViewById (R.id.listViewCorreos);
+
+			//Creamos un array adapter para desplegar cada una de las filas
+			SimpleCursorAdapter notes = new SimpleCursorAdapter(getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0);
+			lvEmpleados.setAdapter(notes);
+		}
+	}
 }

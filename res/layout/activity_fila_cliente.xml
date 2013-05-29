@@ -1,113 +1,97 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" 
+    android:stretchColumns="0,1"
+    tools:ignore="UselessParent" 
     android:descendantFocusability="blocksDescendants">
     <!-- android:descendantFocusability="blocksDescendants": 
     Esta linea es SUPER IMPORTANTE de lo contrario, no se podra hacer click en cada fila -->
-    
-    
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="0,1"
-        tools:ignore="UselessParent" >
         
-		<TableRow
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    tools:ignore="UselessParent" >
+	<TableRow
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		tools:ignore="UselessParent" >
             
-			<LinearLayout
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:gravity="left"
+			tools:ignore="UseCompoundDrawables" >
+
+			<ImageView
+				android:id="@+id/imageViewTipoCliente"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
-			    android:gravity="left"
-			    tools:ignore="UseCompoundDrawables" >
-
-			    <ImageView
-			        android:id="@+id/imageViewTipoCliente"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        tools:ignore="ContentDescription" />
+			    tools:ignore="ContentDescription" />
 			
-			    <TextView
-			        android:id="@+id/textViewNombreIzq"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"/>
-			    
-			    <!-- Este text view muestra el apellido del empleado en caso de
+			<TextView
+			    android:id="@+id/textViewNombreIzq"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"/>
+			   
+			<!-- Este text view muestra el apellido del empleado en caso de
 			    tratarse de un empleado. Para una empresa, esto queda vacío. -->
-			    <TextView
-			        android:id="@+id/textViewApellidoIzq"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_marginLeft="5dp"/>
-			</LinearLayout>
-			
-			<LinearLayout 
-			    android:gravity="center_horizontal"
+			 <TextView
+			    android:id="@+id/textViewApellidoIzq"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
-			    android:orientation="vertical">
+			    android:layout_marginLeft="5dp"/>
+		</LinearLayout>
 			
-			    <TextView
-			        android:id="@+id/textViewNombreCent"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        tools:ignore="SelectableText" />
-			    
-			    <LinearLayout 
-			        android:orientation="horizontal"
-			        android:layout_width="wrap_content"
-			    	android:layout_height="wrap_content">
-			        
-			        <TextView
-	                    android:id="@+id/avisoVerde"
-	                    android:layout_width="20dp"
-	                    android:layout_height="20dp"
-	                    android:background="@drawable/borde"
-
-	                    android:text="" />
-			        
-			        <TextView
-	                    android:id="@+id/avisoAmarillo"
-	                    android:layout_width="20dp"
-	                    android:layout_height="20dp"
-	                    android:background="@drawable/borde"
-	                    android:text="" />
-			        
-			        <TextView
-	                    android:id="@+id/avisoRojo"
-	                    android:layout_width="20dp"
-	                    android:layout_height="20dp"
-	                    android:background="@drawable/borde"
-	                    android:text="" />
-			    </LinearLayout>
-			</LinearLayout>
+		<LinearLayout 
+			android:gravity="center_horizontal"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
 			
-			<LinearLayout 
-			    android:gravity="right"
+			<TextView
+				android:id="@+id/textViewNombreCent"
 			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content">
-
-			    <ImageButton
-			        android:id="@+id/imageButtonSync"
-			        android:layout_width="wrap_content"
-			        android:layout_height="match_parent"
-			        android:src="@android:drawable/stat_notify_sync"
-			        tools:ignore="ContentDescription" />
+			    android:layout_height="wrap_content"
+			    tools:ignore="SelectableText" />
+			    
+			<LinearLayout 
+			    android:orientation="horizontal"
+			    android:layout_width="wrap_content"
+			  	android:layout_height="wrap_content">
+			        
+				<TextView
+		            android:id="@+id/avisoVerde"
+		            style="@style/CuadroNotificacion"
+                    android:background="@drawable/borde_blanco"/>
+				        
+		        <TextView
+	                android:id="@+id/avisoAmarillo"
+	                style="@style/CuadroNotificacion"
+                    android:background="@drawable/borde_blanco"/>
+				        
+		        <TextView
+	                android:id="@+id/avisoRojo"
+	                style="@style/CuadroNotificacion"
+                    android:background="@drawable/borde_blanco"/>
+	    	</LinearLayout>
+		</LinearLayout>
 			
-			    <ImageButton
-			        android:id="@+id/imageButtonBorrar"
-			        android:layout_width="wrap_content"
-			        android:layout_height="match_parent"
-			        android:src="@android:drawable/ic_menu_delete"
-			        tools:ignore="ContentDescription" />
+		<LinearLayout 
+			android:gravity="right"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<ImageButton
+				android:id="@+id/imageButtonSync"
+			    android:layout_width="wrap_content"
+			    android:layout_height="match_parent"
+			    android:src="@android:drawable/stat_notify_sync"
+			    tools:ignore="ContentDescription" />
+			
+			 <ImageButton
+			    android:id="@+id/imageButtonBorrar"
+			    android:layout_width="wrap_content"
+			    android:layout_height="match_parent"
+			    android:src="@android:drawable/ic_menu_delete"
+			    tools:ignore="ContentDescription" />
 					    
-			</LinearLayout>
-		</TableRow>
-
-    </TableLayout>
-
-</LinearLayout>
+		</LinearLayout>
+	</TableRow>
+</TableLayout>

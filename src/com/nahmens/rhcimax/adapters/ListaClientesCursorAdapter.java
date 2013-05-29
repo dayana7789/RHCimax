@@ -91,7 +91,11 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 
 			nombre_text = (TextView) v.findViewById(to[i]);
 			if (nombre_text != null) {
-				nombre_text.setText(nombre);
+				if(nombre.equals("")){
+					nombre_text.setText("--");
+				}else{
+					nombre_text.setText(nombre);
+				}
 			}
 		}
 

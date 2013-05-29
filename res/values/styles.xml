@@ -64,6 +64,13 @@
         <item name="android:layout_height">wrap_content</item>
 
     </style>
+    
+    <style name="CuadroNotificacion">
+        <item name="android:text"></item>
+        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+    </style>
 
     
     <style name="Tabla2xn">
