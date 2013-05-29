@@ -1,17 +1,21 @@
 package com.nahmens.rhcimax.controlador;
 
+import android.R.drawable;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaClientesCursorAdapter;
@@ -84,6 +88,14 @@ public class ClientesActivity extends ListFragment {
 
 		listarEmpleados(view);
 		listarEmpresas(view);
+		
+		Bundle mArgumentos = this.getArguments();
+		
+		//Reviso si me pasaron argumentos: notificacion de cambio de color en cuadro de notificacion
+		if(mArgumentos!= null){
+			String color = mArgumentos.getString(AplicacionActivity.tagCuadroColor);
+			cambiarColorCuadroNotificacion(view, inflater, color);
+		}
 
 		// Registro del evento OnClick del buttonEmpresa
 		Button bEmp = (Button)view.findViewById(R.id.buttonEmpresa);
@@ -121,6 +133,41 @@ public class ClientesActivity extends ListFragment {
 		return view;
 	}
 
+
+	/*
+	 * Funcion encargada de modificar los colores de los cuadros de notificacion.
+	 * @param view  Vista del fragmento
+	 * @param color Color a ser modificado
+	 */
+	private void cambiarColorCuadroNotificacion(View view, LayoutInflater inflater, String color) {
+		View viewFila = getLayoutInflater(getArguments()).inflate(R.layout.activity_fila_cliente, null, false);
+		
+		TextView tvAmarilloFila = (TextView) viewFila.findViewById(R.id.avisoAmarilloFila);
+		TextView tvVerdeFila = (TextView) viewFila.findViewById(R.id.avisoVerdeFila);
+		TextView tvRojoFila = (TextView) viewFila.findViewById(R.id.avisoRojoFila);
+		
+		TextView tvAmarillo = (TextView) view.findViewById(R.id.avisoAmarillo);
+		
+		
+		if(color.equals(AplicacionActivity.tagRojo)){
+			Log.e("entre","entre "+ tvRojoFila + " " + tvRojoFila.getTag());
+			tvRojoFila.setBackgroundResource(R.drawable.borde_rojo);
+			tvAmarillo.setBackgroundResource(R.drawable.borde_amarillo);
+			
+			tvVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
+			
+			
+			tvAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
+			
+		}else if(color.equals(AplicacionActivity.tagVerde)){
+			
+		}else if(color.equals(AplicacionActivity.tagAmarillo)){
+			
+		}else{
+			Log.e("ClientesActivity: linea 138","Color invalido: " + color);
+		}
+		
+	}
 
 	private void listarEmpresas(View view){
 		//Cargamos la lista de empresas

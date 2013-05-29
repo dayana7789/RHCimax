@@ -57,18 +57,19 @@
 			  	android:layout_height="wrap_content">
 			        
 				<TextView
-		            android:id="@+id/avisoVerde"
+		            android:id="@+id/avisoVerdeFila"
 		            style="@style/CuadroNotificacion"
                     android:background="@drawable/borde_blanco"/>
 				        
 		        <TextView
-	                android:id="@+id/avisoAmarillo"
+	                android:id="@+id/avisoAmarilloFila"
 	                style="@style/CuadroNotificacion"
                     android:background="@drawable/borde_blanco"/>
 				        
 		        <TextView
-	                android:id="@+id/avisoRojo"
+	                android:id="@+id/avisoRojoFila"
 	                style="@style/CuadroNotificacion"
+	                android:tag="hgola"
                     android:background="@drawable/borde_blanco"/>
 	    	</LinearLayout>
 		</LinearLayout>

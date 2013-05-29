@@ -104,9 +104,17 @@ public class ServiciosActivity extends Fragment {
 
 				@Override
 				public void onClick(View v){
-					HashMap<Integer, Boolean> mapa = ListaServiciosCursorAdapter.getServiciosSeleccionados();
+					HashMap<Integer, Boolean> servSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
+					
 					ClientesActivity fragment = new ClientesActivity();
 
+					Bundle mArgumentos =  new Bundle();
+					mArgumentos.putString(AplicacionActivity.tagCuadroColor, AplicacionActivity.tagRojo);
+					
+					//pasamos al fragment la notificacion de cambio de color
+					//del cuadro de color
+					fragment.setArguments(mArgumentos); 
+					
 					fragmentManager.beginTransaction()
 					.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentClientes)
 					.addToBackStack(null)

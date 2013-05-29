@@ -13,7 +13,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.TabHost;
 
 import com.nahmens.rhcimax.R;
@@ -36,6 +38,12 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	final public static String tagFragmentDatosCliente = "fragmentDatosCliente";
 	final public static String tagFragmentDatosEmpresa = "fragmentDatosEmpresa";
 	final public static String tagFragmentServicios = "fragmentServicios";
+
+	/*Tag para identificar a los cuadros de colores en la lista de clientes*/
+	final public static String tagCuadroColor = "cuadroColor";
+	final public static String tagAmarillo = "amarillo";
+	final public static String tagVerde = "verde";
+	final public static String tagRojo = "rojo";
 
 	TabHost mTabHost;
 
@@ -85,6 +93,9 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		}
 
 	}
+
+
+
 
 	/*
 	 * Funcion que se llama antes de de destruir el layout al cambiarse la orientacion
@@ -168,7 +179,10 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		spec.setIndicator(" Logout ",res.getDrawable(R.drawable.logouticon));
 		mTabHost.addTab(spec);
 
+
+
 	}
+
 
 	/*
 	 * TabChangeListener para cambiar el contenido del FrameLayout cuando uno de los 
@@ -176,13 +190,51 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	 */
 	TabHost.OnTabChangeListener listener    =   new TabHost.OnTabChangeListener() {
 		public void onTabChanged(String tabId) {
+
 			/*Set current tab..*/
 			if(tabId.equals(tagFragmentClientes)){
+
 				pushFragments(tagFragmentClientes, fragmentClientes, false);
+
+				//Creamos listener para cuando hagamos click sobre el tab previamente seleccionado
+				//nos lleve al fragmento correspondiente.
+				mTabHost.getCurrentTabView().setOnTouchListener(new OnTouchListener(){
+					@Override
+					public boolean onTouch(View v, MotionEvent event){
+
+						if (event.getAction() == MotionEvent.ACTION_DOWN){
+							if (mTabHost.getCurrentTabTag().equals(tagFragmentClientes)){
+								pushFragments(tagFragmentClientes, fragmentClientes, false);
+							}
+						}
+						return false;
+					}
+				});
+
 			}else if(tabId.equals(tagFragmentSettings)){
+
 				pushFragments(tagFragmentSettings, fragmentSettings, false);
+
 			}else if(tabId.equals(tagFragmentLogout)){
-				pushFragments(tagFragmentLogout, fragmentLogout, false);
+
+				mostrarAvisoCierreApp();
+
+				//Creamos listener para cuando hagamos click sobre el tab previamente seleccionado
+				//nos saque el aviso de nuevo si lo volvemos a presionar.
+				mTabHost.getCurrentTabView().setOnTouchListener(new OnTouchListener(){
+					@Override
+					public boolean onTouch(View v, MotionEvent event){
+
+						if (event.getAction() == MotionEvent.ACTION_DOWN){
+							if (mTabHost.getCurrentTabTag().equals(tagFragmentLogout)){
+								mostrarAvisoCierreApp();
+							}
+						}
+						return false;
+					}
+				});
+
+				//pushFragments(tagFragmentLogout, fragmentLogout, false);
 			}
 		}
 	};
@@ -225,21 +277,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		//Si hacemos click en el back button desde el fragmento de clientes, settings o logout, se nos muestra alert.
 		if (fragmentoTag.equals(tagFragmentClientes) || fragmentoTag.equals(tagFragmentSettings) || fragmentoTag.equals(tagFragmentLogout)){
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(AplicacionActivity.this);
-			builder.setMessage("Está seguro que desea salir?")
-			.setCancelable(false)
-			.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					AplicacionActivity.this.finish();
-				}
-			})
-			.setNegativeButton("No", new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int id) {
-					dialog.cancel();
-				}
-			});
-			AlertDialog alert = builder.create();
-			alert.show();
+			mostrarAvisoCierreApp();
 
 
 			//Si presionan back button desde fragmento Datos Cliente
@@ -317,13 +355,35 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 
 			//sino permitimos que el back button nos lleven al fragmento anterior ejecutado	
 		}else{
-			
+
 			//seteamos la lista de servicios seleccionados a null de la vista servicios
 			ListaServiciosCursorAdapter.setServiciosSeleccionados(null);
 			super.onBackPressed();
 		}
+	}   
 
-	}    
+	/*
+	 * Funcion que muestra mensaje de alerta cuando hacemos logout
+	 * o cuando llegamos a la raiz de la app y presionamos back button.
+	 */
+	private void mostrarAvisoCierreApp() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(AplicacionActivity.this);
+		builder.setMessage("Está seguro que desea salir?")
+		.setCancelable(false)
+		.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				finish();
+			}
+		})
+		.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
+
+	}
 
 	/***INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA ****/
 	public void onEmpleadoSelected(String id) {
