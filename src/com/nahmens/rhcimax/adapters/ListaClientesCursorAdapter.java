@@ -31,14 +31,19 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 	private String tipoCliente;
 	private String[] from;
 	private int[] to;
+	private ListaClientesCursorAdapter empleadosAdapter;
 
 
 	/*
 	 * @param tipoCliente Puede ser empleado o empresa. Se utiliza para saber sobre
 	 * 					  que tipo de lista estoy iterando.
+	 * @param empleadosAdapter Adaptador utilizado por la lista de empleados para iterar sobre la misma.
+	 *                         Se necesita tener una referencia de este para que cuando se elimine una empresa,
+	 *                         se actualice tambien la lista de empleados. 
+	 *                         En el caso tipoCliente == empleado, el valor de este es null.
 	 */
 	public ListaClientesCursorAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to, int flags, String tipoCliente) {
+			String[] from, int[] to, int flags, String tipoCliente, ListaClientesCursorAdapter empleadosAdapter) {
 
 		super(context, layout, c, from, to, flags);
 
@@ -47,6 +52,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 		this.tipoCliente = tipoCliente;
 		this.from = from;
 		this.to = to;
+		this.empleadosAdapter = empleadosAdapter;
 
 	}
 
@@ -192,8 +198,25 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 
 		if(eliminado){
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
-			this.notifyDataSetChanged();
 			
+			if(tipoCliente.equals("empresa")){
+				//Actualizamos los valores del cursor de la lista de empresas
+				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+				this.changeCursor(empresaDao.listarEmpresas(context));
+				
+				//Cuando eliminamos a una empresa, eliminamos tambien a sus empleados
+				//Actualizamos los valores del cursor de la lista de empleados
+				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+				this.empleadosAdapter.changeCursor(empleadoDao.listarEmpleados(context));
+				
+			}else if(tipoCliente.equals("empleado")){
+				//Actualizamos los valores del cursor de la lista de empleados
+				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+				this.changeCursor(empleadoDao.listarEmpleados(context));
+			}
+			
+			//Notificamos que la lista cambio
+			this.notifyDataSetChanged();
 			
 		}else{
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeError);
@@ -204,5 +227,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		
 	}
 }

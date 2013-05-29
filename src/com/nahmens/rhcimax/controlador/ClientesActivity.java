@@ -86,8 +86,8 @@ public class ClientesActivity extends ListFragment {
 
 		View view = inflater.inflate(R.layout.activity_clientes, container, false);
 
-		listarEmpleados(view);
-		listarEmpresas(view);
+		ListaClientesCursorAdapter empleadosAdapter = listarEmpleados(view);
+    	listarEmpresas(view, empleadosAdapter);
 		
 		Bundle mArgumentos = this.getArguments();
 		
@@ -169,7 +169,14 @@ public class ClientesActivity extends ListFragment {
 		
 	}
 
-	private void listarEmpresas(View view){
+	/*
+	 * Funcion que muestra lista de empresas y crea adaptador para iterar sobre la misma.
+	 * @param view
+	 * @param empleadosAdapter Adaptador utilizado por la lista de empleados para iterar sobre la misma.
+	 *                         Se necesita tener una referencia de este para que cuando se elimine una empresa,
+	 *                         se actualice tambien la lista de empleados. 
+	 */
+	private void listarEmpresas(View view, ListaClientesCursorAdapter empleadosAdapter){
 		//Cargamos la lista de empresas
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 		Context contexto = getActivity();
@@ -184,8 +191,7 @@ public class ClientesActivity extends ListFragment {
 			final ListView lvEmpresas = (ListView) view.findViewById (R.id.listEmpresas);
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_cliente, mCursor, from, to);
-			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa");
+			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa", empleadosAdapter);
 			lvEmpresas.setAdapter(notes);
 			
 			//OJO: como en el layout la lista que contiene a las empresas es android:id="@+id/listEmpresas" 
@@ -202,11 +208,17 @@ public class ClientesActivity extends ListFragment {
 		}
 	}
 
-	private void listarEmpleados(View view){
+	/*
+	 * Funcion que muestra lista de empleados y crea adaptador para iterar sobre la misma.
+	 * @param view
+	 * @return ListaClientesCursorAdapter Adaptador utilizado para iterar sobre la lista de empelados.
+	 */
+	private ListaClientesCursorAdapter listarEmpleados(View view){
 		//Cargamos la lista de empleados
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 		Context context = getActivity();
 		mCursorEmpleados = empleadoDao.listarEmpleados(getActivity());
+		ListaClientesCursorAdapter notes = null;
 
 		if(mCursorEmpleados.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
@@ -217,10 +229,9 @@ public class ClientesActivity extends ListFragment {
 			ListView lvEmpleados = (ListView) view.findViewById (android.R.id.list);
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_cliente, mCursor, from, to);
-			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado");
+			notes = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado",null);
 			lvEmpleados.setAdapter(notes);
-			
+
 			//OJO: como en el layout la lista que contiene a las empleados es android:id="@id/android:list", 
 			// no hay necesidad de hacer el setOnItemClickListener como se hizo en listarEmpresas. Esto
 			//android lo hace automaticamente.
@@ -230,6 +241,7 @@ public class ClientesActivity extends ListFragment {
 
 
 		}
+		return notes;
 	}
 
 }
