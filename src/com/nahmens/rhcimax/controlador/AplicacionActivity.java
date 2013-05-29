@@ -1,5 +1,8 @@
 package com.nahmens.rhcimax.controlador;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.widget.TabHost;
 
 import com.nahmens.rhcimax.R;
+import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
 import com.nahmens.rhcimax.controlador.ClientesActivity.OnClienteSelectedListener;
 
 /*
@@ -69,6 +73,15 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		if (savedInstanceState != null){
 			String value = savedInstanceState.getString("fragmentoActual");
 			establecerLayout(value);
+
+			/* Si estamos en el fragmento de servicios,
+			 * seteamos la lista de servicios que fueron seleccionados
+			 */
+			if(value.equals(tagFragmentServicios)){
+				if(ListaServiciosCursorAdapter.getServiciosSeleccionados()!=null){
+					ListaServiciosCursorAdapter.setServiciosSeleccionados((HashMap<Integer, Boolean>) savedInstanceState.getSerializable("serviciosSelected"));
+				}
+			}
 		}
 
 	}
@@ -86,6 +99,16 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		Fragment fragmentoActual = this.getSupportFragmentManager().findFragmentById(android.R.id.tabcontent);
 		bundle.putString("fragmentoActual", fragmentoActual.getTag());
 		Log.e("layout-guardando",fragmentoActual.getTag());
+
+		/* Si estamos en el fragmento de servicios,
+		 * Guardamos la lista de servicios que fueron seleccionados
+		 */
+		if(fragmentoActual.getTag().equals(tagFragmentServicios)){
+			if(ListaServiciosCursorAdapter.getServiciosSeleccionados()!=null){
+				bundle.putSerializable("serviciosSelected", ListaServiciosCursorAdapter.getServiciosSeleccionados());
+			}
+		}
+
 	}
 
 
@@ -251,7 +274,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 
 						pushFragments(tagFragmentDatosEmpresa, fragment, true);
 					}else{
-						
+
 						super.onBackPressed();
 					}
 				}else{
@@ -294,6 +317,9 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 
 			//sino permitimos que el back button nos lleven al fragmento anterior ejecutado	
 		}else{
+			
+			//seteamos la lista de servicios seleccionados a null de la vista servicios
+			ListaServiciosCursorAdapter.setServiciosSeleccionados(null);
 			super.onBackPressed();
 		}
 

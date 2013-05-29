@@ -14,28 +14,28 @@ import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.ServicioSqliteDao;
 
 import android.os.Bundle;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class ServiciosActivity extends Fragment {
+	
+	private FragmentManager fragmentManager; 
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.activity_servicios, container, false);
-
+		this.fragmentManager = this.getFragmentManager();
 		final Bundle mArgumentos = this.getArguments();
 
 		//Nos aseguramos que nos hayan pasado argumentos
@@ -139,16 +139,22 @@ public class ServiciosActivity extends Fragment {
 			lvServicios.setAdapter(notes);
 			lvServicios.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 			
-			
-			
 			Button buttonFinalizas= (Button)  v.findViewById(R.id.buttonFinalizar);
 			buttonFinalizas.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v){
-					HashMap<Integer, Boolean> mapa = ListaServiciosCursorAdapter.status;
-					Log.e("aqui", ""+mapa.toString());
+					HashMap<Integer, Boolean> mapa = ListaServiciosCursorAdapter.getServiciosSeleccionados();
+					ClientesActivity fragment = new ClientesActivity();
+
+					fragmentManager.beginTransaction()
+					.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentClientes)
+					.addToBackStack(null)
+					.commit();
 					
+					//seteamos la lista de servicios seleccionados a null de la vista servicios
+					ListaServiciosCursorAdapter.setServiciosSeleccionados(null);
+
 				}});
 
 		}

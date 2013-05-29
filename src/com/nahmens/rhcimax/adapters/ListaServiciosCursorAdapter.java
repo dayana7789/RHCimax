@@ -34,9 +34,17 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	private int layout;
 	private String[] from;
 	private int[] to;
-	public static HashMap<Integer,Boolean> status; //Almacena los checkboxes que fueron seleccionados <idServicio, seleccionado?>
+	private static HashMap<Integer,Boolean> status; //Almacena los checkboxes que fueron seleccionados <idServicio, seleccionado?>
 
-
+	public static HashMap<Integer,Boolean> getServiciosSeleccionados(){
+		return status;
+	}
+	
+	
+	public static void setServiciosSeleccionados( HashMap<Integer,Boolean> nuevo){
+		status = nuevo;
+	}
+	
 	public ListaServiciosCursorAdapter(Context context, int layout, Cursor c,
 			String[] from, int[] to, int flags) {
 
@@ -46,15 +54,28 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		this.layout = layout;
 		this.from = from;
 		this.to = to;
-		this.status = new HashMap<Integer, Boolean>();
 
-		//Inicializamos la tabla status con idServicio y false, pues no se ha 
-		//seleccionado ningun checkbox
-		while (!c.isAfterLast()) {
-			int idServicio = c.getInt(c.getColumnIndex(Servicio.ID));
-			status.put(idServicio, false);
-			c.moveToNext();
+		//se esta llamando a la lista de servicios por primera vez
+		if(this.status == null){
+			this.status = new HashMap<Integer, Boolean>();
+
+			//Inicializamos la tabla status con idServicio y false, pues no se ha 
+			//seleccionado ningun checkbox
+			while (!c.isAfterLast()) {
+				int idServicio = c.getInt(c.getColumnIndex(Servicio.ID));
+				status.put(idServicio, false);
+				c.moveToNext();
+			}
 		}
+	}
+
+	//Clase que permite guardar referencia de los childs en el layout
+	private class ViewHolder {
+		CheckBox cbServicio;
+		TextView tvUnidadMedicion;
+		EditText etMedida;
+		ImageButton ibVerServicio;
+
 	}
 
 	/*
@@ -67,6 +88,17 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		View v = inflater.inflate(layout, parent, false);
 
+		//Este holder se encarga de guardar las referencias a los elementos de las filas
+		//de manera de que estas no se calculen cada vez que se entra en el bind view.
+		//(operacion costosa en android)
+		ViewHolder holder = null;
+		holder = new ViewHolder();
+		holder.cbServicio = (CheckBox) v.findViewById(R.id.checkBoxServicio);
+		holder.tvUnidadMedicion = (TextView) v.findViewById(R.id.textViewUnidadMedicion);
+		holder.etMedida = (EditText) v.findViewById(R.id.editTextMedida);
+		holder.ibVerServicio = (ImageButton) v.findViewById(R.id.imageButtonVerServicio);
+		v.setTag(holder);
+
 		return v;
 	}
 
@@ -75,6 +107,11 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	 */
 	@Override
 	public void bindView(View v, Context context, Cursor cursor) { 
+
+		//Obtenemos el holder de las referencias a los elementos.
+		//de esta manera evitamos hacer v.findViewById 
+		//(operacion costosa en android)
+		ViewHolder holder = (ViewHolder) v.getTag();
 
 		//Columna de la BD que queremos recuperar
 		String columna = null;
@@ -112,18 +149,18 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		int idServicio = cursor.getInt(cursor.getColumnIndex(Servicio.ID));
 
 		if(unidadMedicion.equals("ninguno")){
-			EditText etMedida = (EditText) v.findViewById(R.id.editTextMedida);
+			EditText etMedida = holder.etMedida;
 			etMedida.setVisibility(View.INVISIBLE);
 
-			TextView tvUnidadMedicion = (TextView) v.findViewById(R.id.textViewUnidadMedicion);
+			TextView tvUnidadMedicion = holder.tvUnidadMedicion;
 			tvUnidadMedicion.setVisibility(View.INVISIBLE);
 
 
 		}else{
-			EditText etMedida = (EditText) v.findViewById(R.id.editTextMedida);
+			EditText etMedida = holder.etMedida;
 			etMedida.setVisibility(View.VISIBLE);
 
-			TextView tvUnidadMedicion = (TextView) v.findViewById(R.id.textViewUnidadMedicion);
+			TextView tvUnidadMedicion = holder.tvUnidadMedicion;
 			tvUnidadMedicion.setVisibility(View.VISIBLE);
 			tvUnidadMedicion.setText(unidadMedicion);
 
@@ -131,7 +168,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 
 
 
-		ImageButton buttonVerServicio = (ImageButton)  v.findViewById(R.id.imageButtonVerServicio);
+		ImageButton buttonVerServicio = holder.ibVerServicio;
 
 		//almacenamos en un bundle, precio y descripcion del servicio.
 		final Bundle mArgumentos = new Bundle();
