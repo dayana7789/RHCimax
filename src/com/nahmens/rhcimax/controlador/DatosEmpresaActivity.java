@@ -120,7 +120,7 @@ public class DatosEmpresaActivity extends Fragment {
 					Mensaje mensajeDialog = new Mensaje("guardar_cambios_empresa");
 
 					try {
-						mensArray = mensajeDialog.controlMensajesDialog();
+						mensArray = mensajeDialog.controlMensajesDialog(null);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

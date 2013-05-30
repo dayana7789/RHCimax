@@ -151,20 +151,21 @@ public class Mensaje {
 
 	/*
 	 * Funcion encargada de mostrar los mensajes dialog.
+	 * @param args Argumentos que deseamos mostrar en el dialog.
 	 * @return Mensaje a mostrar y titulo
 	 */
-	public String[] controlMensajesDialog() throws Exception{
+	public String[] controlMensajesDialog(String args) throws Exception{
 		String mensaje = null;
 		String titulo = null;
 
 		if (tipoMensaje == "eliminar_empresa"){
 			
-			mensaje =  "Está seguro de eliminar esta empresa?. Todos los empleados asociados a la misma serán eliminados!.";
+			mensaje =  "Está seguro de eliminar esta empresa: "+args+ "?. Todos los empleados asociados a la misma serán eliminados!.";
 			titulo = "Eliminar Empresa";
 
 		}else if(this.tipoMensaje == "eliminar_empleado"){
 			
-			mensaje =  "Está seguro de eliminar este empleado?.";
+			mensaje =  "Está seguro de eliminar este empleado: "+args +"?.";
 			titulo = "Eliminar Empleado";
 
 		}else if(this.tipoMensaje == "guardar_cambios_empresa"){

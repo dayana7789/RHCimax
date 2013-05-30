@@ -82,12 +82,21 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 		TextView nombre_text = null;
 
 		String id = null;
+		String nombreE = ""; //almacena nombre completo del empleado o nombre de la empresa
 
 		//Para cada valor de la BD solicitado, lo mostramos en el text view.
 		for (int i=0; i<from.length; i++){
 			columna = from[i];
 			nombreCol = cursor.getColumnIndex(columna);
 			nombre = cursor.getString(nombreCol);
+			
+			if(columna.equals("nombre")){
+				nombreE = nombre;
+			}
+			
+			if(columna.equals("apellido")){
+				nombreE = nombreE + " " + nombre;
+			}
 
 			//los valores to[i] iguales a 0 indican que son ID's
 			//lo que estamos recuperando: IDEmpresa e IDEmpleado.
@@ -126,6 +135,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 		final Bundle mArgumentos = new Bundle();
 		mArgumentos.putString("id", id);
 		mArgumentos.putString("tipoCliente", this.tipoCliente);
+		mArgumentos.putString("nombreE", nombreE);
 
 		buttonBorrar.setOnClickListener(new View.OnClickListener() {
 
@@ -135,6 +145,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 				AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
 				String[] mensArray = null;
 				Mensaje mensajeDialog = null;
+				String nombreE = mArgumentos.getString("nombreE");
 
 				if(tipoCliente.equals("empresa")){
 					mensajeDialog = new Mensaje("eliminar_empresa");
@@ -147,7 +158,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 				}
 				
 				try {
-					mensArray = mensajeDialog.controlMensajesDialog();
+					mensArray = mensajeDialog.controlMensajesDialog(nombreE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -164,6 +175,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 					public void onClick(DialogInterface dialog, int whichButton) {
 						String id = mArgumentos.getString("id");
 						String tipoCliente = mArgumentos.getString("tipoCliente");
+						
 						borrarCliente(id, tipoCliente);
 					}
 				});
@@ -175,6 +187,12 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 
 	}
 
+	/* Funcion que elimina de la BD y del list view empleados o empresas.
+	 * 
+	 * @param id Id del empleado o empresa
+	 * @param tipoCliente Posibles valores: empresa o empleado
+	 *
+	 */
 	private void borrarCliente(String id, String tipoCliente) {
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		Boolean eliminado =  false;
