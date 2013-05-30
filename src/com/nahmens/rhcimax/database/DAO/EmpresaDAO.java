@@ -8,7 +8,7 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 
 public interface EmpresaDAO {
 	
-	/* 
+	/** 
 	 * Funcion que inserta una nueva empresa.
 	 * 
 	 * @param empresa Datos de la empresa a ingresar.
@@ -17,10 +17,12 @@ public interface EmpresaDAO {
 	long insertarEmpresa(Context contexto, Empresa empresa);
 	boolean modificarEmpresa(Context contexto, Empresa empresa);
 	boolean eliminarEmpresa(Context contexto, String idEmpresa);
+	
 	/**
+	 * Funcion que retorna lista de empresas y toda la informacion asociada a cada una de ellas.
 	 * 
 	 * @param contexto
-	 * @return Toda la informacion almacenada acerca de cada una de las empresas
+	 * @return Cursor Lista de todas las empresas almacenadas en la BD
 	 */
 	Cursor listarEmpresas(Context contexto);
 	
@@ -39,5 +41,16 @@ public interface EmpresaDAO {
 	Cursor listarNombresEmpresas(Context contexto, String args, ConexionBD conexion);
 	Empresa buscarEmpresa(Context contexto, String id);
 	Cursor buscarEmpresaPorNombre(Context contexto, String args, ConexionBD conexion);
+	
+	/**
+	 * Funcion utilizada por el buscador para filtrar la lista de empresas.
+	 * Esta funcion compara el valor de args con el nombre de la empresa.
+	 * 
+	 * @param args Argumentos pasados al query como los caracteres que se ingresan en el campo
+	 *             de buscador
+	 * @return Cursor Lista filtrada
+	 * 
+	 */
+	Cursor buscarEmpresaFilter(Context contexto, String args);
 
 }

@@ -3,12 +3,10 @@ package com.nahmens.rhcimax.database.sqliteDAO;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.EmpresaDAO;
-import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 
 public class EmpresaSqliteDao implements EmpresaDAO{
@@ -171,5 +169,31 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 
 		return mCursor;		
+	}
+
+	@Override
+	public Cursor buscarEmpresaFilter(Context contexto, String args) {
+		
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		String sqlQuery = "";
+		try{
+			conexion.open();
+			
+			sqlQuery  = " SELECT * ";
+			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
+			sqlQuery += " WHERE " + Empresa.NOMBRE + " LIKE '%" + args + "%' ";
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
+			
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+			
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;	
 	}
 }

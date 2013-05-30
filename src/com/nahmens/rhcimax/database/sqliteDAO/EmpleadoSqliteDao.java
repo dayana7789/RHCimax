@@ -3,13 +3,11 @@ package com.nahmens.rhcimax.database.sqliteDAO;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.EmpleadoDAO;
 import com.nahmens.rhcimax.database.modelo.Empleado;
-import com.nahmens.rhcimax.database.modelo.Empresa;
 
 public class EmpleadoSqliteDao implements EmpleadoDAO{
 
@@ -178,6 +176,35 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		}
 
 		return empleado;	
+	}
+
+	@Override
+	public Cursor buscarEmpleadoFilter(Context contexto, String args) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		String sqlQuery = "";
+		
+		try{
+			conexion.open();
+			sqlQuery  = " SELECT  empresa._id, empresa._id as " + Empleado.EMPRESA_ID + ", empleado._id as " + Empleado.ID + ", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA;
+			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
+			sqlQuery += " INNER JOIN " + DataBaseHelper.TABLA_EMPRESA;
+			sqlQuery += " ON (empleado.idEmpresa=empresa._id)";
+			sqlQuery += " WHERE empleado.nombre LIKE '%" + args + "%' ";
+			sqlQuery += " OR empleado.apellido LIKE '%" + args + "%' ";
+			sqlQuery += " OR empresa.nombre LIKE '%" + args + "%' ";
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
+						
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;	
 	}
 
 }

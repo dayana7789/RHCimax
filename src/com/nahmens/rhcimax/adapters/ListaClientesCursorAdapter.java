@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,11 +21,11 @@ import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 
-/*
+/**
  * Adaptador personalizado para iterar sobre los resultados de la BD,
  * relacionados con la lista de clientes.
  */
-public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
+public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements Filterable{
 
 	private Context context;
 	private int layout;
@@ -34,7 +35,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 	private ListaClientesCursorAdapter empleadosAdapter;
 
 
-	/*
+	/**
 	 * @param tipoCliente Puede ser empleado o empresa. Se utiliza para saber sobre
 	 * 					  que tipo de lista estoy iterando.
 	 * @param empleadosAdapter Adaptador utilizado por la lista de empleados para iterar sobre la misma.
@@ -53,7 +54,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 		this.from = from;
 		this.to = to;
 		this.empleadosAdapter = empleadosAdapter;
-
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 
 		return v;
 	}
-	
+
 	@Override
 	public void bindView(View v, Context context, Cursor cursor) { 
 
@@ -89,11 +89,11 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 			columna = from[i];
 			nombreCol = cursor.getColumnIndex(columna);
 			nombre = cursor.getString(nombreCol);
-			
+
 			if(columna.equals("nombre")){
 				nombreE = nombre;
 			}
-			
+
 			if(columna.equals("apellido")){
 				nombreE = nombreE + " " + nombre;
 			}
@@ -156,7 +156,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 				}else{
 					Log.e("ListaClientesCursorAdapter","tipoCliente no soportado en funcion onClick de boton eliminar: " + tipoCliente);
 				}
-				
+
 				try {
 					mensArray = mensajeDialog.controlMensajesDialog(nombreE);
 				} catch (Exception e) {
@@ -175,7 +175,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 					public void onClick(DialogInterface dialog, int whichButton) {
 						String id = mArgumentos.getString("id");
 						String tipoCliente = mArgumentos.getString("tipoCliente");
-						
+
 						borrarCliente(id, tipoCliente);
 					}
 				});
@@ -187,7 +187,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 
 	}
 
-	/* Funcion que elimina de la BD y del list view empleados o empresas.
+	/** Funcion que elimina de la BD y del list view empleados o empresas.
 	 * 
 	 * @param id Id del empleado o empresa
 	 * @param tipoCliente Posibles valores: empresa o empleado
@@ -216,36 +216,65 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter{
 
 		if(eliminado){
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
-			
+
 			if(tipoCliente.equals("empresa")){
 				//Actualizamos los valores del cursor de la lista de empresas
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				this.changeCursor(empresaDao.listarEmpresas(context));
-				
+
 				//Cuando eliminamos a una empresa, eliminamos tambien a sus empleados
 				//Actualizamos los valores del cursor de la lista de empleados
 				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 				this.empleadosAdapter.changeCursor(empleadoDao.listarEmpleados(context));
-				
+
 			}else if(tipoCliente.equals("empleado")){
 				//Actualizamos los valores del cursor de la lista de empleados
 				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 				this.changeCursor(empleadoDao.listarEmpleados(context));
 			}
-			
+
 			//Notificamos que la lista cambio
 			this.notifyDataSetChanged();
-			
+
 		}else{
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeError);
 		}
-		
+
 		try {
 			mToast.controlMensajesToast();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+
 	}
+
+
+	/**
+	 * Esta funcion realiza la magia del filtrado!!
+	 * Es la unica funcion que se implementa aqui la que se encarga del filtrado.
+	 * Nota1: Es propia de la clase Filterable la cual esta clase implementa (implements Filterable).
+	 * Nota2: Desde ClientesActivity.java es importante el Registro del evento 
+	 *        addTextChangedListener cuando utilizamos el buscador y llamar a 
+	 *        adaptador.getFilter().filter(cs); dentro del metodo onTextChanged()
+	 * Nota3: El ListView que se va a filtrar debe poseer el atributo android:textFilterEnabled="true"
+	 */
+	public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
+		if (getFilterQueryProvider() != null){ 
+			return getFilterQueryProvider().runQuery(constraint); 
+		}
+
+		Cursor filterResultsData = null;
+
+		if(tipoCliente.equals("empresa")){
+			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+			filterResultsData = empresaDao.buscarEmpresaFilter(context, constraint.toString());
+
+		}else{
+			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+			filterResultsData = empleadoDao.buscarEmpleadoFilter(context, constraint.toString());
+		}
+		
+		return filterResultsData;
+	}
+
 }

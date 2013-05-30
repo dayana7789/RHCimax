@@ -1,19 +1,20 @@
 package com.nahmens.rhcimax.controlador;
 
-import android.R.drawable;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,6 +29,8 @@ import android.widget.AdapterView.OnItemClickListener;
 public class ClientesActivity extends ListFragment {
 	private Cursor mCursorEmpleados;
 	private Cursor mCursorEmpresas;
+	private ListaClientesCursorAdapter listCursorAdapterEmpleados;
+	private ListaClientesCursorAdapter listCursorAdapterEmpresas;
 
 	/*INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA 
 	 * NOTA: Es importante que en el layout de la fila (activity_fila_cliente.xml)
@@ -128,6 +131,31 @@ public class ClientesActivity extends ListFragment {
 				ft.commit(); 
 			}
 		});
+		
+		//Registro del evento addTextChangedListener cuando utilizamos el buscador
+		EditText etBuscar = (EditText) view.findViewById(R.id.editTextBuscar);
+		etBuscar.addTextChangedListener(new TextWatcher() {
+		     
+		    @Override
+		    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+		        // When user changed the Text
+
+		    	listCursorAdapterEmpleados.getFilter().filter(cs);   
+		    	listCursorAdapterEmpresas.getFilter().filter(cs); 
+		    }
+		     
+		    @Override
+		    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+		            int arg3) {
+		        // TODO Auto-generated method stub
+		         
+		    }
+		     
+		    @Override
+		    public void afterTextChanged(Editable arg0) {
+		        // TODO Auto-generated method stub                          
+		    }
+		});
 
 
 		return view;
@@ -191,9 +219,9 @@ public class ClientesActivity extends ListFragment {
 			final ListView lvEmpresas = (ListView) view.findViewById (R.id.listEmpresas);
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			ListaClientesCursorAdapter notes = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa", empleadosAdapter);
-			lvEmpresas.setAdapter(notes);
-			
+			listCursorAdapterEmpresas = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa", empleadosAdapter);
+			lvEmpresas.setAdapter(listCursorAdapterEmpresas);
+						
 			//OJO: como en el layout la lista que contiene a las empresas es android:id="@+id/listEmpresas" 
 			// y  no android:id="@id/android:list", se debe hacer el setOnItemClickListener para que se llame
 			// el onListItemClick sobreescrito arriba.
@@ -218,7 +246,6 @@ public class ClientesActivity extends ListFragment {
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 		Context context = getActivity();
 		mCursorEmpleados = empleadoDao.listarEmpleados(getActivity());
-		ListaClientesCursorAdapter notes = null;
 
 		if(mCursorEmpleados.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
@@ -229,8 +256,8 @@ public class ClientesActivity extends ListFragment {
 			ListView lvEmpleados = (ListView) view.findViewById (android.R.id.list);
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			notes = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado",null);
-			lvEmpleados.setAdapter(notes);
+			listCursorAdapterEmpleados = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado",null);
+			lvEmpleados.setAdapter(listCursorAdapterEmpleados);
 
 			//OJO: como en el layout la lista que contiene a las empleados es android:id="@id/android:list", 
 			// no hay necesidad de hacer el setOnItemClickListener como se hizo en listarEmpresas. Esto
@@ -241,7 +268,7 @@ public class ClientesActivity extends ListFragment {
 
 
 		}
-		return notes;
+		return listCursorAdapterEmpleados;
 	}
 
 }

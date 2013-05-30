@@ -60,21 +60,22 @@
         </TableRow>
     </TableLayout>
 
-    <AutoCompleteTextView
-        android:id="@+id/autoCompleteBuscar"
+    <EditText
+        android:id="@+id/editTextBuscar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:text="@string/buscar" >
+        android:inputType="text"
+        android:hint="@string/buscar" >
+    </EditText>
 
-        <requestFocus />
-    </AutoCompleteTextView>
-
-    <!-- Lista de empleados. Notar que el id es  @id/android:list. Debe
-    ser asi o de lo contrario explota.
+    <!-- Nota1: Lista de empleados. Notar que el id es  @id/android:list. Debe
+                ser asi o de lo contrario explota.
+    Nota2: Se debe agregar android:textFilterEnabled="true" para permitir que funcione el filtro
+           que va a llevar a cabo el EditText con android:id="@+id/editTextBuscar"
     -->
     <ListView
         android:id="@id/android:list"
+        android:textFilterEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </ListView>
@@ -85,12 +86,16 @@
 	    android:layout_height="1dp"
 	    android:background="@android:color/darker_gray"/>
 
-    <!-- Lista de empresas. Notar que el id es diferente respecto a la
+    <!-- Nota1: Lista de empresas. Notar que el id es diferente respecto a la
     lista de empleados, en este caso es @+id/listEmpresas. Cuando se utiliza
     este tipo de id (@+id/) se debe llamar desde el activity como findViewById(R.id.listEmpresas)
+    
+    Nota2: Se debe agregar android:textFilterEnabled="true" para permitir que funcione el filtro
+           que va a llevar a cabo el EditText con android:id="@+id/editTextBuscar"
     -->
     <ListView
         android:id="@+id/listEmpresas"
+        android:textFilterEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
     </ListView>
