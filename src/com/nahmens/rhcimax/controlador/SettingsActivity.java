@@ -1,17 +1,12 @@
 package com.nahmens.rhcimax.controlador;
 
-
 import com.nahmens.rhcimax.R;
-import com.nahmens.rhcimax.database.DAO.ConfiguracionDAO;
 import com.nahmens.rhcimax.database.modelo.Configuracion;
-import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.sqliteDAO.ConfiguracionSqliteDao;
-import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

@@ -1,27 +1,19 @@
 package com.nahmens.rhcimax.adapters;
 
-
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.controlador.AplicacionActivity;
 import com.nahmens.rhcimax.controlador.DatosClienteActivity;
-import com.nahmens.rhcimax.mensaje.Mensaje;
 
 
 /*
@@ -30,7 +22,6 @@ import com.nahmens.rhcimax.mensaje.Mensaje;
  */
 public class ListaEmpleadosCursorAdapter extends SimpleCursorAdapter{
 
-	private Context context;
 	private int layout;
 	private String[] from;
 	private int[] to;
@@ -43,7 +34,6 @@ public class ListaEmpleadosCursorAdapter extends SimpleCursorAdapter{
 		super(context, layout, c, from, to, flags);
 
 		this.fragmentManager=fragmentManager;
-		this.context = context;
 		this.layout = layout;
 		this.from = from;
 		this.to = to;

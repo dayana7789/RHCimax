@@ -3,7 +3,6 @@ package com.nahmens.rhcimax.database;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 /*
  * Clase encargada de abrir y cerrar la conexion con la BD.

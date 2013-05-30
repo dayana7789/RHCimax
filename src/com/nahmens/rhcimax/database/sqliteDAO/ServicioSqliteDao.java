@@ -6,8 +6,6 @@ import android.database.Cursor;
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.ServicioDAO;
-import com.nahmens.rhcimax.database.modelo.Empleado;
-import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Servicio;
 
 public class ServicioSqliteDao implements ServicioDAO{

@@ -1,8 +1,6 @@
 package com.nahmens.rhcimax.controlador;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -52,6 +50,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	SettingsActivity fragmentSettings;
 	LogoutActivity fragmentLogout;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
