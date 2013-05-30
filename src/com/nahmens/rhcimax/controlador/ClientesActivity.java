@@ -27,12 +27,12 @@ import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class ClientesActivity extends ListFragment {
-	private Cursor mCursorEmpleados;
-	private Cursor mCursorEmpresas;
+
 	private ListaClientesCursorAdapter listCursorAdapterEmpleados;
 	private ListaClientesCursorAdapter listCursorAdapterEmpresas;
 
-	/*INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA 
+	/**
+	 * INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA 
 	 * NOTA: Es importante que en el layout de la fila (activity_fila_cliente.xml)
 	 * en la layout raiz tenga: android:descendantFocusability="blocksDescendants"
 	 * De lo contrario, el onListItemClick no va a funcionar!.
@@ -43,7 +43,7 @@ public class ClientesActivity extends ListFragment {
 
 	OnClienteSelectedListener mClienteListener;
 
-	/*
+	/**
 	 * interface utilizada para comunicar la lista con el detalle
 	 * de cada fila.
 	 */
@@ -63,7 +63,7 @@ public class ClientesActivity extends ListFragment {
 	}
 
 	@Override
-	/*
+	/**
 	 * @param position numero de posicion en la lista
 	 * @param id Id del cliente sobre el cual se hizo click. Puede pertenecer a un empleado o a una empresa.
 	 *           Este Id se asigna automaticamente por la definicion de _id en la BD.
@@ -89,8 +89,12 @@ public class ClientesActivity extends ListFragment {
 
 		View view = inflater.inflate(R.layout.activity_clientes, container, false);
 
-		ListaClientesCursorAdapter empleadosAdapter = listarEmpleados(view);
-    	listarEmpresas(view, empleadosAdapter);
+		//primero listamos a los empleados donde vamos a inicializar el valor de listCursorAdapterEmpleados
+		listarEmpleados(view);
+		
+		//por ultimo listamos a las empresas, la cual utiliza la referencia de listCursorAdapterEmpleados dentro
+		//del adaptador. OJO con esto.
+    	listarEmpresas(view);
 		
 		Bundle mArgumentos = this.getArguments();
 		
@@ -162,7 +166,7 @@ public class ClientesActivity extends ListFragment {
 	}
 
 
-	/*
+	/**
 	 * Funcion encargada de modificar los colores de los cuadros de notificacion.
 	 * @param view  Vista del fragmento
 	 * @param color Color a ser modificado
@@ -197,18 +201,15 @@ public class ClientesActivity extends ListFragment {
 		
 	}
 
-	/*
+	/**
 	 * Funcion que muestra lista de empresas y crea adaptador para iterar sobre la misma.
 	 * @param view
-	 * @param empleadosAdapter Adaptador utilizado por la lista de empleados para iterar sobre la misma.
-	 *                         Se necesita tener una referencia de este para que cuando se elimine una empresa,
-	 *                         se actualice tambien la lista de empleados. 
 	 */
-	private void listarEmpresas(View view, ListaClientesCursorAdapter empleadosAdapter){
+	private void listarEmpresas(View view){
 		//Cargamos la lista de empresas
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 		Context contexto = getActivity();
-		mCursorEmpresas = empresaDao.listarEmpresas(getActivity());
+		Cursor mCursorEmpresas = empresaDao.listarEmpresas(getActivity());
 
 		if(mCursorEmpresas.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
@@ -218,34 +219,39 @@ public class ClientesActivity extends ListFragment {
 			int[] to = new int[] { 0, R.id.textViewNombreIzq,  R.id.textViewNombreCent };
 			final ListView lvEmpresas = (ListView) view.findViewById (R.id.listEmpresas);
 
-			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterEmpresas = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa", empleadosAdapter);
-			lvEmpresas.setAdapter(listCursorAdapterEmpresas);
+			//Verificamos que listCursorAdapterEmpleados no sea nullo pues se utiliza en el adaptador: ListaClientesCursorAdapter
+			if(listCursorAdapterEmpleados!=null){
+				//Creamos un array adapter para desplegar cada una de las filas
+				listCursorAdapterEmpresas = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa", listCursorAdapterEmpleados);
+				lvEmpresas.setAdapter(listCursorAdapterEmpresas);
 						
-			//OJO: como en el layout la lista que contiene a las empresas es android:id="@+id/listEmpresas" 
-			// y  no android:id="@id/android:list", se debe hacer el setOnItemClickListener para que se llame
-			// el onListItemClick sobreescrito arriba.
-		    //OJO: ListView es subclase de AdapterView
-			lvEmpresas.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-			    public void onItemClick(AdapterView<?> adapter, View view, int position, long id)   {
-					onListItemClick(lvEmpresas,view,position,id);
-			    }
-			});
+				//OJO: como en el layout la lista que contiene a las empresas es android:id="@+id/listEmpresas" 
+				// y  no android:id="@id/android:list", se debe hacer el setOnItemClickListener para que se llame
+				// el onListItemClick sobreescrito arriba.
+			    //OJO: ListView es subclase de AdapterView
+				lvEmpresas.setOnItemClickListener(new OnItemClickListener() {
+					@Override
+				    public void onItemClick(AdapterView<?> adapter, View view, int position, long id)   {
+						onListItemClick(lvEmpresas,view,position,id);
+				    }
+				});
+			}else{
+				Log.e("ClientesActivity","La variable listCursorAdapterEmpleados no puede ser nulo en el metodo listarEmpresas()!!.");
+			}
 
 		}
 	}
 
-	/*
+	/**
 	 * Funcion que muestra lista de empleados y crea adaptador para iterar sobre la misma.
 	 * @param view
-	 * @return ListaClientesCursorAdapter Adaptador utilizado para iterar sobre la lista de empelados.
+     *
 	 */
-	private ListaClientesCursorAdapter listarEmpleados(View view){
+	private void listarEmpleados(View view){
 		//Cargamos la lista de empleados
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 		Context context = getActivity();
-		mCursorEmpleados = empleadoDao.listarEmpleados(getActivity());
+		Cursor mCursorEmpleados = empleadoDao.listarEmpleados(getActivity());
 
 		if(mCursorEmpleados.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
@@ -265,10 +271,6 @@ public class ClientesActivity extends ListFragment {
 
 			//enables filtering for the contents of the given ListView
 			//lvEmpleados.setTextFilterEnabled(true);
-
-
 		}
-		return listCursorAdapterEmpleados;
 	}
-
 }
