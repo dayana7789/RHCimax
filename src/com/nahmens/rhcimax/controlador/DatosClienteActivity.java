@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.ImageButton;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.AutocompleteEmpresaCursorAdapter;
-import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
@@ -25,7 +23,6 @@ import com.nahmens.rhcimax.mensaje.Mensaje;
 public class DatosClienteActivity extends Fragment {
 
 	private LayoutInflater inflater;
-	private ConexionBD conexionDB;
 	private View mView;
 	private FragmentManager fragmentManager; 
 
@@ -106,12 +103,6 @@ public class DatosClienteActivity extends Fragment {
 
 				}else{
 
-					//Antes de cambiar de vista, cerramos cualquier conexion a BD
-					if (conexionDB  != null) {
-						conexionDB.close();
-						conexionDB = null;
-					}
-
 					Bundle mArgumentos = new Bundle();
 					mArgumentos.putString("idEmpresa",idEmpresa);
 
@@ -171,16 +162,8 @@ public class DatosClienteActivity extends Fragment {
 	 */
 	private void setAutocompleteEmpresa(View view){
 
-		//Tenemos que garantizar que haya una sola conexion abierta
-		if (conexionDB  == null) {
-			conexionDB = new ConexionBD(view.getContext());
-			//Es importante que el open de la BD, se haga desde aqui para poder garantizar su cierre
-			//al momento que se destruye esta actividad o se presione algun boton y se cambie de fragment.
-			conexionDB.open();
-		}
 
-
-		AutocompleteEmpresaCursorAdapter mAutocompleteCursor = new AutocompleteEmpresaCursorAdapter(conexionDB, view);
+		AutocompleteEmpresaCursorAdapter mAutocompleteCursor = new AutocompleteEmpresaCursorAdapter(view);
 
 		AutoCompleteTextView textView = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpresaEmpleado);
 		textView.setAdapter(mAutocompleteCursor);
@@ -191,19 +174,6 @@ public class DatosClienteActivity extends Fragment {
 		textView.setThreshold(1);
 	}
 
-	/*
-	 * Se debe garantizar el cierre de la BD (debido al autocomplete), al momento
-	 * en que se destruye la actividad. De lo contrario,
-	 * el close no se hace bien y se muestran excepciones.
-	 * Cuando se cambia la orientacion de la tablet, este metodo se llama.
-	 */
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if (conexionDB  != null) {
-			conexionDB.close();
-		}
-	}
 
 	/*
 	 * Funcion que se encarga de cargar los datos de un empleado en sus respectivos campos.

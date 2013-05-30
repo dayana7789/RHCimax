@@ -41,10 +41,10 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 	public boolean modificarEmpresa(Context contexto, Empresa empresa) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean modificado = false;
-		
+
 		try{
 			conexion.open();
-			
+
 			ContentValues contenido = new ContentValues();
 			contenido.put("nombre", empresa.getNombre());
 			contenido.put("telefono", empresa.getTelefono());
@@ -58,11 +58,11 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			if(value!=0){
 				modificado = true;
 			}
-			
+
 		}finally{
 			conexion.close();
 		}
-		
+
 		return modificado;
 
 	}
@@ -90,11 +90,11 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 	@Override
 	public Empresa buscarEmpresa(Context contexto, String id) {
-		
+
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
 		Empresa empresa = null;
-		
+
 		try{
 			conexion.open();
 
@@ -110,7 +110,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 						mCursor.getString(mCursor.getColumnIndex("dirFiscal")), 
 						mCursor.getString(mCursor.getColumnIndex("dirComercial")));
 			}
-			
+
 		}finally{
 			conexion.close();
 		}
@@ -141,48 +141,18 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 	}
 
 	@Override
-	public Cursor listarNombresEmpresas(Context contexto, String args, ConexionBD conexion) {
+	public Cursor listarNombresEmpresas(Context contexto, String args) {
 
-		Cursor mCursor = null;
-		String sqlQuery = "";
-
-		sqlQuery  = " SELECT " + Empresa.ID + ", " + Empresa.NOMBRE;
-		sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
-		sqlQuery += " WHERE " + Empresa.NOMBRE + " LIKE '%" + args + "%' ";
-		sqlQuery += " ORDER BY " + Empresa.NOMBRE;
-
-		mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
-
-		return mCursor;		
-	}
-	
-	@Override
-	public Cursor buscarEmpresaPorNombre(Context contexto, String args, ConexionBD conexion) {
-
-		Cursor mCursor = null;
-		String sqlQuery = "";
-
-		sqlQuery  = " SELECT " + Empresa.ID + ", " + Empresa.NOMBRE;
-		sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
-		sqlQuery += " WHERE " + Empresa.NOMBRE + " = '" + args +"'";
-
-		mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
-
-		return mCursor;		
-	}
-
-	@Override
-	public Cursor buscarEmpresaFilter(Context contexto, String args) {
-		
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
 		String sqlQuery = "";
 		try{
 			conexion.open();
-			
-			sqlQuery  = " SELECT * ";
+
+			sqlQuery  = " SELECT " + Empresa.ID + ", " + Empresa.NOMBRE;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " WHERE " + Empresa.NOMBRE + " LIKE '%" + args + "%' ";
+			sqlQuery += " ORDER BY " + Empresa.NOMBRE;
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 			
@@ -190,6 +160,58 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 				mCursor.moveToFirst();
 			}
 			
+		}finally{
+			conexion.close();
+		}
+		
+		return mCursor;		
+	}
+
+	@Override
+	public Cursor buscarEmpresaPorNombre(Context contexto, String args) {
+
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		String sqlQuery = "";
+		try{
+			conexion.open();
+
+			sqlQuery  = " SELECT " + Empresa.ID + ", " + Empresa.NOMBRE;
+			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
+			sqlQuery += " WHERE " + Empresa.NOMBRE + " = '" + args +"'";
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
+			
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+			
+		}finally{
+			conexion.close();
+		}
+		
+		return mCursor;		
+	}
+
+	@Override
+	public Cursor buscarEmpresaFilter(Context contexto, String args) {
+
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		String sqlQuery = "";
+		try{
+			conexion.open();
+
+			sqlQuery  = " SELECT * ";
+			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
+			sqlQuery += " WHERE " + Empresa.NOMBRE + " LIKE '%" + args + "%' ";
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
 		}finally{
 			conexion.close();
 		}

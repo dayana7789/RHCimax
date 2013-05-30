@@ -14,29 +14,26 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
-import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 
-/*
+/**
  * Adaptador utilizado para mostrar lista de autocomplete de nombres 
  * de empresas haciendo uso de cursores.
  */
 public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements android.widget.AdapterView.OnItemClickListener, TextWatcher {
-	private ConexionBD conexion;
 	private Context contexto;
 	private View mView;
 
 
-	/*
+	/**
 	 * Constructor. Notar que no se necesita el cursor cuando se crea el 
 	 * adaptador. En cambio, los cursores son creados a medida que completaciones
 	 * son necesitadas por el campo.
 	 */
-	public AutocompleteEmpresaCursorAdapter(ConexionBD conexion, View mView){
+	public AutocompleteEmpresaCursorAdapter(View mView){
 		//llamamos a super con cursor en null
 		super(mView.getContext(), null, 0);
 		this.contexto = mView.getContext();
-		this.conexion = conexion;
 		this.mView = mView;
 	}
 
@@ -110,7 +107,7 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 		}
 
 		EmpresaSqliteDao empresaDao =  new EmpresaSqliteDao();
-		currentCursor = empresaDao.listarNombresEmpresas(contexto, args, conexion);
+		currentCursor = empresaDao.listarNombresEmpresas(contexto, args);
 
 		return currentCursor;
 	}
@@ -168,7 +165,7 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 
 	}
 
-	/*
+	/**
 	 * Se implementa este metodo para actualizar el valor del id de la empresa del campo oculto
 	 * cuando la persona no selecciona ninguna opcion de la lista sino que escribe completamente
 	 * el contenido del campo autocomplete.
@@ -180,8 +177,8 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 		String nombreEmpresa = acNombreEmpresa.getText().toString();
 
 		EmpresaSqliteDao empresaDao =  new EmpresaSqliteDao();
-		Cursor cursor = empresaDao.buscarEmpresaPorNombre(contexto, nombreEmpresa, conexion);
-		cursor.moveToFirst();
+		Cursor cursor = empresaDao.buscarEmpresaPorNombre(contexto, nombreEmpresa);
+		
 
 		if(cursor.getCount()!=0){
 

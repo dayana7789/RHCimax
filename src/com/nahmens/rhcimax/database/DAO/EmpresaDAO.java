@@ -3,7 +3,6 @@ package com.nahmens.rhcimax.database.DAO;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 
 public interface EmpresaDAO {
@@ -32,15 +31,11 @@ public interface EmpresaDAO {
 	 * @param contexto
 	 * @param args Argumentos pasados al sql como los caracteres que se ingresan en el 
 	 *             campo autocomplete.
-	 * @param conexion Conexion abierta de la BD desde la actividad. Es importante que se haga
-	 *                 asi, para poder cerrar la conexion a la BD en el momento en que la actividad
-	 *                 se destruya. De lo contrario el cierre a la conexion nunca se hace bien y 
-	 *                 se muestran excepciones en el log. 
 	 * @return Nombres de empresas
 	 */
-	Cursor listarNombresEmpresas(Context contexto, String args, ConexionBD conexion);
+	Cursor listarNombresEmpresas(Context contexto, String args);
 	Empresa buscarEmpresa(Context contexto, String id);
-	Cursor buscarEmpresaPorNombre(Context contexto, String args, ConexionBD conexion);
+	Cursor buscarEmpresaPorNombre(Context contexto, String args);
 	
 	/**
 	 * Funcion utilizada por el buscador para filtrar la lista de empresas.
