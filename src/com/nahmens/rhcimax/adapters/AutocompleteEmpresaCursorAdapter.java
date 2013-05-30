@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
  * de empresas haciendo uso de cursores.
  */
 public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements android.widget.AdapterView.OnItemClickListener, TextWatcher {
-	private ConexionBD conexion = null;
+	private ConexionBD conexion;
 	private Context contexto;
 	private View mView;
 
@@ -58,7 +57,6 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 	public void bindView(View view, Context context, Cursor cursor){
 		String item = createItem(cursor);    
 		((TextView) view).setText(item);      
-
 	}
 
 	/**

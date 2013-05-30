@@ -72,7 +72,7 @@ public class ClientesActivity extends ListFragment {
 		super.onListItemClick(l, v, position, id);
 
 		String idString = String.valueOf(id); 
-		
+
 		if (l.getId() == android.R.id.list) {
 			mClienteListener.onEmpleadoSelected(idString);
 		} else if (l.getId() == R.id.listEmpresas) {
@@ -91,13 +91,13 @@ public class ClientesActivity extends ListFragment {
 
 		//primero listamos a los empleados donde vamos a inicializar el valor de listCursorAdapterEmpleados
 		listarEmpleados(view);
-		
+
 		//por ultimo listamos a las empresas, la cual utiliza la referencia de listCursorAdapterEmpleados dentro
 		//del adaptador. OJO con esto.
-    	listarEmpresas(view);
-		
+		listarEmpresas(view);
+
 		Bundle mArgumentos = this.getArguments();
-		
+
 		//Reviso si me pasaron argumentos: notificacion de cambio de color en cuadro de notificacion
 		if(mArgumentos!= null){
 			String color = mArgumentos.getString(AplicacionActivity.tagCuadroColor);
@@ -135,30 +135,35 @@ public class ClientesActivity extends ListFragment {
 				ft.commit(); 
 			}
 		});
-		
+
 		//Registro del evento addTextChangedListener cuando utilizamos el buscador
 		EditText etBuscar = (EditText) view.findViewById(R.id.editTextBuscar);
 		etBuscar.addTextChangedListener(new TextWatcher() {
-		     
-		    @Override
-		    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-		        // When user changed the Text
 
-		    	listCursorAdapterEmpleados.getFilter().filter(cs);   
-		    	listCursorAdapterEmpresas.getFilter().filter(cs); 
-		    }
-		     
-		    @Override
-		    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-		            int arg3) {
-		        // TODO Auto-generated method stub
-		         
-		    }
-		     
-		    @Override
-		    public void afterTextChanged(Editable arg0) {
-		        // TODO Auto-generated method stub                          
-		    }
+			@Override
+			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+				// When user changed the Text
+
+				if(listCursorAdapterEmpleados!=null){
+					listCursorAdapterEmpleados.getFilter().filter(cs);   
+				}
+				
+				if(listCursorAdapterEmpresas!=null){
+					listCursorAdapterEmpresas.getFilter().filter(cs); 
+				}
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+					int arg3) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void afterTextChanged(Editable arg0) {
+				// TODO Auto-generated method stub                          
+			}
 		});
 
 
@@ -173,32 +178,32 @@ public class ClientesActivity extends ListFragment {
 	 */
 	private void cambiarColorCuadroNotificacion(View view, LayoutInflater inflater, String color) {
 		View viewFila = getLayoutInflater(getArguments()).inflate(R.layout.activity_fila_cliente, null, false);
-		
+
 		TextView tvAmarilloFila = (TextView) viewFila.findViewById(R.id.avisoAmarilloFila);
 		TextView tvVerdeFila = (TextView) viewFila.findViewById(R.id.avisoVerdeFila);
 		TextView tvRojoFila = (TextView) viewFila.findViewById(R.id.avisoRojoFila);
-		
+
 		TextView tvAmarillo = (TextView) view.findViewById(R.id.avisoAmarillo);
-		
-		
+
+
 		if(color.equals(AplicacionActivity.tagRojo)){
 			Log.e("entre","entre "+ tvRojoFila + " " + tvRojoFila.getTag());
 			tvRojoFila.setBackgroundResource(R.drawable.borde_rojo);
 			tvAmarillo.setBackgroundResource(R.drawable.borde_amarillo);
-			
+
 			tvVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
-			
-			
+
+
 			tvAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
-			
+
 		}else if(color.equals(AplicacionActivity.tagVerde)){
-			
+
 		}else if(color.equals(AplicacionActivity.tagAmarillo)){
-			
+
 		}else{
 			Log.e("ClientesActivity: linea 138","Color invalido: " + color);
 		}
-		
+
 	}
 
 	/**
@@ -219,25 +224,22 @@ public class ClientesActivity extends ListFragment {
 			int[] to = new int[] { 0, R.id.textViewNombreIzq,  R.id.textViewNombreCent };
 			final ListView lvEmpresas = (ListView) view.findViewById (R.id.listEmpresas);
 
-			//Verificamos que listCursorAdapterEmpleados no sea nullo pues se utiliza en el adaptador: ListaClientesCursorAdapter
-			if(listCursorAdapterEmpleados!=null){
-				//Creamos un array adapter para desplegar cada una de las filas
-				listCursorAdapterEmpresas = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa", listCursorAdapterEmpleados);
-				lvEmpresas.setAdapter(listCursorAdapterEmpresas);
-						
-				//OJO: como en el layout la lista que contiene a las empresas es android:id="@+id/listEmpresas" 
-				// y  no android:id="@id/android:list", se debe hacer el setOnItemClickListener para que se llame
-				// el onListItemClick sobreescrito arriba.
-			    //OJO: ListView es subclase de AdapterView
-				lvEmpresas.setOnItemClickListener(new OnItemClickListener() {
-					@Override
-				    public void onItemClick(AdapterView<?> adapter, View view, int position, long id)   {
-						onListItemClick(lvEmpresas,view,position,id);
-				    }
-				});
-			}else{
-				Log.e("ClientesActivity","La variable listCursorAdapterEmpleados no puede ser nulo en el metodo listarEmpresas()!!.");
-			}
+
+			//Creamos un array adapter para desplegar cada una de las filas
+			listCursorAdapterEmpresas = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa", listCursorAdapterEmpleados);
+			lvEmpresas.setAdapter(listCursorAdapterEmpresas);
+
+			//OJO: como en el layout la lista que contiene a las empresas es android:id="@+id/listEmpresas" 
+			// y  no android:id="@id/android:list", se debe hacer el setOnItemClickListener para que se llame
+			// el onListItemClick sobreescrito arriba.
+			//OJO: ListView es subclase de AdapterView
+			lvEmpresas.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> adapter, View view, int position, long id)   {
+					onListItemClick(lvEmpresas,view,position,id);
+				}
+			});
+
 
 		}
 	}
@@ -245,7 +247,7 @@ public class ClientesActivity extends ListFragment {
 	/**
 	 * Funcion que muestra lista de empleados y crea adaptador para iterar sobre la misma.
 	 * @param view
-     *
+	 *
 	 */
 	private void listarEmpleados(View view){
 		//Cargamos la lista de empleados
