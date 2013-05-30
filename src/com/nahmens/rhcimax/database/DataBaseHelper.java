@@ -1,5 +1,7 @@
 package com.nahmens.rhcimax.database;
 
+import com.nahmens.rhcimax.database.modelo.Configuracion;
+
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -24,6 +26,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	public static final String TABLA_EMPLEADO_COTIZACION = "empleado_cotizacion";
 	public static final String TABLA_SERVICIO= "servicio";
 	public static final String TABLA_COTIZACION_SERVICIO = "cotizacion_servicio";
+	public static final String TABLA_CONFIGURACION= "configuracion";
 
 	/*Creacion de tablas*/
 	private static final String DATABASE_CREATE_ROL = "CREATE table " + TABLA_ROL + " ("
@@ -110,6 +113,12 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 																	+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id), " 
 																	+ "FOREIGN KEY(idServicio) REFERENCES " + TABLA_SERVICIO + "(_id));";
 
+	
+	private static final String DATABASE_CREATE_CONFIGURACION = "CREATE table " + TABLA_CONFIGURACION + " ("
+															  + "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+															  + "key TEXT NOT NULL, "
+															  + "value TEXT NOT NULL);";
+	
 	public DataBaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -127,8 +136,15 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL(DATABASE_CREATE_EMPLEADO_COTIZACION);
 		database.execSQL(DATABASE_CREATE_SERVICIO);
 		database.execSQL(DATABASE_CREATE_COTIZACION_SERVICIO);
+		database.execSQL(DATABASE_CREATE_CONFIGURACION);
 
+		this.insertarConfiguracion(database);
 		this.insertarRegistros(database);
+	}
+
+	private void insertarConfiguracion(SQLiteDatabase database) {
+		String insertServer = "INSERT INTO "+ TABLA_CONFIGURACION + "("+Configuracion.KEY+", " + Configuracion.VALUE + ") VALUES('"+Configuracion.NOMBRE_SERVIDOR+"','')";
+		database.execSQL(insertServer);
 	}
 
 	@Override

@@ -122,6 +122,16 @@ public class Mensaje {
 			mensaje =  "Empresa no existe. Verifique el nombre de la empresa ingresado.";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
+		}else if(this.tipoMensaje == "ok_modificar_servidor"){
+
+			mensaje =  "Nombre de servidor guardado.";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
+		}else if(this.tipoMensaje == "error_modificar_servidor"){
+
+			mensaje =  "Error: el nombre de servidor no pudo ser modificado.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
 		}else{
 			throw new Exception("Mensaje invalido. Revisa el atributo tipoMensaje que utiliza el constructor de la clase Mensaje.");
 		}
