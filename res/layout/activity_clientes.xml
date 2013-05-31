@@ -32,16 +32,19 @@
                 <TextView
                     android:id="@+id/avisoVerde"
                     style="@style/CuadroNotificacion"
+                    android:textIsSelectable="false"
                     android:background="@drawable/borde_blanco"/>
 
                 <TextView
                     android:id="@+id/avisoAmarillo"
 					style="@style/CuadroNotificacion"
+					android:textIsSelectable="false"
                     android:background="@drawable/borde_blanco"/>
 
                 <TextView
                     android:id="@+id/avisoRojo"
                     style="@style/CuadroNotificacion"
+                    android:textIsSelectable="false"
                     android:background="@drawable/borde_blanco"/>
                 
             </LinearLayout>
@@ -65,6 +68,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
+		android:layout_marginTop="10dp"
+		android:layout_marginBottom="10dp"
+		android:drawableRight="@android:drawable/ic_menu_search"
         android:hint="@string/buscar" >
     </EditText>
 
@@ -73,18 +79,30 @@
     Nota2: Se debe agregar android:textFilterEnabled="true" para permitir que funcione el filtro
            que va a llevar a cabo el EditText con android:id="@+id/editTextBuscar"
     -->
+    
+    <TextView
+		android:id="@+id/textViewEmpleados"
+	    style="@style/FuenteSubTitulos"
+	    android:text="@string/empleados" />
+    
     <ListView
         android:id="@id/android:list"
         android:textFilterEnabled="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:fadeScrollbars="false"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
     </ListView>
     
     <!-- Separador -->
-    <View
+   <!-- <View
 	    android:layout_width="fill_parent"
 	    android:layout_height="1dp"
-	    android:background="@android:color/darker_gray"/>
+	    android:background="@android:color/darker_gray"/> -->
+	<TextView
+		android:id="@+id/textViewEmpresas"
+	    style="@style/FuenteSubTitulos"
+	    android:text="@string/empresas" />
 
     <!-- Nota1: Lista de empresas. Notar que el id es diferente respecto a la
     lista de empleados, en este caso es @+id/listEmpresas. Cuando se utiliza
@@ -96,9 +114,10 @@
     <ListView
         android:id="@+id/listEmpresas"
         android:textFilterEnabled="true"
+        android:fadeScrollbars="false"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="0dp"
+        android:layout_weight="1" >
     </ListView>
-
 
 </LinearLayout>
