@@ -3,6 +3,7 @@ package com.nahmens.rhcimax.controlador;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaEmpleadosCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
+import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
@@ -260,9 +262,17 @@ public class DatosEmpresaActivity extends Fragment {
 		if(!error){
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 
+			SharedPreferences prefs = this.getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
+			int idUsuario = prefs.getInt(Usuario.ID, 0);
+			
 			if(id!=null){
 				//Estamos modificando un registro
-				Empresa empresa = new Empresa(Integer.parseInt(id), nombre, telefono, rif, web, dirFiscal, dirComercial);
+				
+				//cada vez que hagamos una modificacion, colocamos el valor de fechaSincronizacion en null 
+				//para saber que este empleado esta desactualizado en la nube
+				String fechaSincronizacion = null;
+				
+				Empresa empresa = new Empresa(Integer.parseInt(id), nombre, telefono, rif, web, dirFiscal, dirComercial, idUsuario, fechaSincronizacion);
 
 				Boolean modificado = empresaDao.modificarEmpresa(getActivity(), empresa);
 
@@ -274,9 +284,14 @@ public class DatosEmpresaActivity extends Fragment {
 				}
 			}else{
 				//Estamos creando un nuevo registro
-				Empresa empresa = new Empresa(nombre, telefono, rif, web, dirFiscal, dirComercial);
+				
+				//cada vez que hagamos una modificacion, colocamos el valor de fechaSincronizacion en null 
+				//para saber que este empleado esta desactualizado en la nube
+				String fechaSincronizacion = null;
+				
+				Empresa empresa = new Empresa(nombre, telefono, rif, web, dirFiscal, dirComercial, idUsuario,fechaSincronizacion);
 
-				long idFilaInsertada = empresaDao.insertarEmpresa(getActivity(), empresa);
+				long idFilaInsertada = empresaDao.insertarEmpresa(getActivity(), empresa, idUsuario);
 
 				if(idFilaInsertada != -1){
 					mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empresa");

@@ -1,7 +1,9 @@
 package com.nahmens.rhcimax.controlador;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -42,6 +44,16 @@ public class LoginActivity extends Activity {
 		Usuario usu = usuSqlDao.buscarUsuario(this, login, password);
 
 		if(usu!=null){
+
+			//Guardamos en el archivo de preferencias la sesion del usuario
+			//de manera que pueda ser accedido desde cualquier parte del codigo
+			SharedPreferences prefs = getSharedPreferences("Usuario",Context.MODE_PRIVATE);
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putInt(Usuario.ID, usu.getId());
+			editor.putString(Usuario.CORREO, usu.getCorreo());
+			editor.putString(Usuario.ID_ROL, ""+usu.getIdRol());
+			editor.commit();
+
 			final Intent inte = new Intent(this, AplicacionActivity.class);
 			startActivity(inte);
 			finish();

@@ -61,7 +61,11 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "web TEXT, "
 															+ "rif TEXT, "
 															+ "dirFiscal TEXT, "
-															+ "dirComercial TEXT);";
+															+ "dirComercial TEXT, "
+															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
+															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
+															+ "idUsuario INTEGER NOT NULL, "
+															+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id));";
 	
 	private static final String DATABASE_CREATE_EMPLEADO = "CREATE table " + TABLA_EMPLEADO + " ("
 															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -75,7 +79,11 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "linkedin TEXT, "
 															+ "descripcion TEXT, "
 															+ "idEmpresa INTEGER NOT NULL, "
-															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id));";
+															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
+															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
+															+ "idUsuario INTEGER NOT NULL, "
+															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id), "
+															+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id));";
 	
 	private static final String DATABASE_CREATE_COTIZACION = "CREATE table " + TABLA_COTIZACION + " ("
 															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -85,6 +93,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "recibido INTEGER NOT NULL, "
 															+ "idUsuario INTEGER NOT NULL, "
 															+ "idEmpresa INTEGER NOT NULL, "
+															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
+															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id),"
 															+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id));";
 
@@ -126,6 +136,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	@Override
 	// Este método se llama automaticamente al momento en el que se crea la BD.
 	public void onCreate(SQLiteDatabase database) {
+		Log.e("pase por squi","DB!!!!!!!!!!!");
 		database.execSQL(DATABASE_CREATE_ROL);
 		database.execSQL(DATABASE_CREATE_USUARIO);
 		database.execSQL(DATABASE_CREATE_PERMISO);

@@ -1,5 +1,10 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,7 +17,7 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 public class EmpresaSqliteDao implements EmpresaDAO{
 
 	@Override
-	public long insertarEmpresa(Context contexto, Empresa empresa) {
+	public long insertarEmpresa(Context contexto, Empresa empresa, int idUsuario) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		long idFila = 0;
 
@@ -27,6 +32,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			values.put("rif", empresa.getRif());
 			values.put("dirFiscal",empresa.getDirFiscal());
 			values.put("dirComercial",empresa.getDirComercial());
+			values.put("idUsuario",idUsuario);
 
 			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPRESA, null,values);
 
@@ -108,7 +114,8 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 						mCursor.getString(mCursor.getColumnIndex("rif")), 
 						mCursor.getString(mCursor.getColumnIndex("web")), 
 						mCursor.getString(mCursor.getColumnIndex("dirFiscal")), 
-						mCursor.getString(mCursor.getColumnIndex("dirComercial")));
+						mCursor.getString(mCursor.getColumnIndex("dirComercial")),
+						mCursor.getInt(mCursor.getColumnIndex("idUsuario")));
 			}
 
 		}finally{
@@ -217,5 +224,30 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		}
 
 		return mCursor;	
+	}
+
+	@Override
+	public boolean sincronizarEmpresa(Context contexto, String idEmpresa) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean sincronizado = false;
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss",Locale.getDefault());
+
+		try{
+			conexion.open();
+
+			ContentValues contenido = new ContentValues();
+			contenido.put(Empresa.FECHA_SINCRONIZACION,dateFormat.format(new Date()));
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPRESA, contenido, "_id=?", new String []{idEmpresa});
+
+			if(value!=0){
+				sincronizado = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return sincronizado;
 	}
 }

@@ -1,16 +1,26 @@
 package com.nahmens.rhcimax.database.modelo;
 
 public class Usuario {
+	
+	public final static String ID = "_id";
+	public final static String LOGIN = "login";
+	public final static String PASSWORD = "password";
+	public final static String CORREO = "correo";
+	public final static String ID_ROL = "idRol";
+	public final static String ROL = "rol";
+	
 	int id;
 	String login;
 	String password;
 	String correo;
 	int idRol;
 
-	public Usuario(String login, String password, String correo) {
+	public Usuario(int id, String login, String password, String correo, int idRol) {
+		this.id = id;
 		this.login = login;
 		this.password = password;
 		this.correo = correo;
+		this.idRol = idRol;
 	}
 
 	

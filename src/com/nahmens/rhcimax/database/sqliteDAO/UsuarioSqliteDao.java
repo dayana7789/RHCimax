@@ -55,11 +55,15 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_USUARIO, new String[] {"login","password","correo"}, "login=? and password=?", new String[] {login,password}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_USUARIO, null, "login=? and password=?", new String[] {login,password}, null, null, null);
 
 			if(mCursor.getCount()>0){
 				mCursor.moveToFirst();
-				usu = new Usuario(mCursor.getString(0), mCursor.getString(1), mCursor.getString(2));
+				usu = new Usuario(mCursor.getInt(mCursor.getColumnIndex(Usuario.ID)), 
+						         mCursor.getString(mCursor.getColumnIndex(Usuario.LOGIN)),
+						         mCursor.getString(mCursor.getColumnIndex(Usuario.CORREO)),
+						         mCursor.getString(mCursor.getColumnIndex(Usuario.PASSWORD)),
+						         mCursor.getInt(mCursor.getColumnIndex(Usuario.ID_ROL)));
 			}
 
 		}finally{

@@ -1,5 +1,9 @@
 package com.nahmens.rhcimax.adapters;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -114,34 +118,32 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 			}
 		}
 
-		int imagen = 0 ;
-
-		//Especificamos la imagen segun corresponda: empleado o empresa.
-		if(this.tipoCliente=="empresa"){
-			imagen = R.drawable.ic_tab_empresa_unselected;
-		}else{
-			imagen = R.drawable.ic_tab_empleado_unselected;
-		}
-
-		ImageView imgView = (ImageView) v.findViewById(R.id.imageViewTipoCliente);
-
-		if (imgView != null) {
-			imgView.setBackgroundResource(imagen);
-		}
-
-		ImageButton buttonBorrar = (ImageButton)  v.findViewById(R.id.imageButtonBorrar);
-
-		//almacenamos en un bundle, el id de empresa o id empleado y tipo de cliente.
+		actualizarCuadrosNotificacion(v, cursor);
+		setIconoCliente(v);
+		
+		//almacenamos en un bundle, el id de empresa o id empleado y nombre de la empresa.
 		final Bundle mArgumentos = new Bundle();
 		mArgumentos.putString("id", id);
-		mArgumentos.putString("tipoCliente", this.tipoCliente);
 		mArgumentos.putString("nombreE", nombreE);
 
+
+		ImageButton buttonSincronizar = (ImageButton)  v.findViewById(R.id.imageButtonSync);
+		buttonSincronizar.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v){
+				String id = mArgumentos.getString("id");
+				sincronizarCliente(id);
+			}
+
+		});
+		
+		ImageButton buttonBorrar = (ImageButton)  v.findViewById(R.id.imageButtonBorrar);
 		buttonBorrar.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v){
-				String tipoCliente = mArgumentos.getString("tipoCliente");
+
 				AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
 				String[] mensArray = null;
 				Mensaje mensajeDialog = null;
@@ -174,9 +176,8 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 				alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						String id = mArgumentos.getString("id");
-						String tipoCliente = mArgumentos.getString("tipoCliente");
 
-						borrarCliente(id, tipoCliente);
+						borrarCliente(id);
 					}
 				});
 
@@ -184,6 +185,131 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 				alertDialog.show();
 
 			}});
+	}
+	
+	/**
+	 * Funcion que sincroniza a un cliente.
+	 * @param Id del empleado o empresa
+	 */
+	private void sincronizarCliente(String id) {
+		final LayoutInflater inflater = LayoutInflater.from(context);
+		Boolean sincronizado =  false;
+		Mensaje mToast = null;
+		String mensajeError = null;
+		String mensajeOk = null;
+
+		if(tipoCliente.equals("empresa")){
+			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+			sincronizado = empresaDao.sincronizarEmpresa(this.context, id);
+			mensajeOk = "ok_sincronizado_empresa";
+			mensajeError = "error_sincronizado_empresa";
+		}else if(tipoCliente.equals("empleado")){
+			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+			sincronizado = empleadoDao.sincronizarEmpleado(this.context, id);
+			mensajeOk = "ok_sincronizado_empleado";
+			mensajeError = "error_sincronizado_empleado";
+		}else{
+			Log.e("ListaClientesCursorAdapter","tipoCliente no soportado en funcion sincronizarCliente: " + tipoCliente);
+		}
+		
+		if(sincronizado){
+			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
+
+			if(tipoCliente.equals("empresa")){
+				//Actualizamos los valores del cursor de la lista de empresas
+				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+				this.changeCursor(empresaDao.listarEmpresas(context));
+
+				//Cuando eliminamos a una empresa, eliminamos tambien a sus empleados
+				//Actualizamos los valores del cursor de la lista de empleados
+				if(this.empleadosAdapter!=null){
+					EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+					this.empleadosAdapter.changeCursor(empleadoDao.listarEmpleados(context));
+				}
+
+			}else if(tipoCliente.equals("empleado")){
+				//Actualizamos los valores del cursor de la lista de empleados
+				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+				this.changeCursor(empleadoDao.listarEmpleados(context));
+			}
+
+			//Notificamos que la lista cambio
+			this.notifyDataSetChanged();
+
+		}else{
+			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeError);
+		}
+
+		try {
+			mToast.controlMensajesToast();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	/**
+	 * Funcion que asigna un icono para diferenciar empresas de empleados.
+	 * @param v
+	 */
+	private void setIconoCliente(View v) {
+		int imagen = 0 ;
+
+		//Especificamos la imagen segun corresponda: empleado o empresa.
+		if(this.tipoCliente=="empresa"){
+			imagen = R.drawable.ic_tab_empresa_unselected;
+		}else{
+			imagen = R.drawable.ic_tab_empleado_unselected;
+		}
+
+		ImageView imgView = (ImageView) v.findViewById(R.id.imageViewTipoCliente);
+
+		if (imgView != null) {
+			imgView.setBackgroundResource(imagen);
+		}
+		
+	}
+
+	/**
+	 * Actualiza los colores de los cuadros de notificación según la sincronización
+	 * @param v
+	 * @param cursor
+	 */
+	private void actualizarCuadrosNotificacion(View v, Cursor cursor) {
+		String strFechaCreacion = cursor.getString(cursor.getColumnIndex("fechaCreacion"));
+		String strFechaSincronizacion = cursor.getString(cursor.getColumnIndex("fechaSincronizacion"));
+
+		TextView tvAvisoRojoFila = (TextView) v.findViewById(R.id.avisoRojoFila);
+		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
+
+		Date now = new Date();
+
+		SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date fechaSincronizacion = null;
+
+		try {
+
+			if(strFechaSincronizacion != null){
+				fechaSincronizacion = formatoDelTexto.parse(strFechaSincronizacion);
+			}
+
+			if(fechaSincronizacion==null){
+				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
+				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
+			}else{
+				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
+				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_verde);
+			}
+
+		} catch (ParseException ex) {
+			ex.printStackTrace();
+		}
+
+		Log.d("Lista clientes", "tipoCliente: "+ tipoCliente+ ", Nombre: " +  cursor.getString(cursor.getColumnIndex("nombre")) 
+				+ ", idUsuario: " + cursor.getInt(cursor.getColumnIndex("idUsuario")) 
+				+ ", fechaCreacion: " + strFechaCreacion
+				+ ", fechaSincronizacion: " + strFechaSincronizacion
+				+ ", now: " + formatoDelTexto.format(now));
 
 	}
 
@@ -193,7 +319,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 	 * @param tipoCliente Posibles valores: empresa o empleado
 	 *
 	 */
-	private void borrarCliente(String id, String tipoCliente) {
+	private void borrarCliente(String id) {
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		Boolean eliminado =  false;
 		Mensaje mToast = null;
@@ -224,8 +350,10 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 				//Cuando eliminamos a una empresa, eliminamos tambien a sus empleados
 				//Actualizamos los valores del cursor de la lista de empleados
-				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-				this.empleadosAdapter.changeCursor(empleadoDao.listarEmpleados(context));
+				if(this.empleadosAdapter!=null){
+					EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+					this.empleadosAdapter.changeCursor(empleadoDao.listarEmpleados(context));
+				}
 
 			}else if(tipoCliente.equals("empleado")){
 				//Actualizamos los valores del cursor de la lista de empleados
@@ -273,7 +401,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 			filterResultsData = empleadoDao.buscarEmpleadoFilter(context, constraint.toString());
 		}
-		
+
 		return filterResultsData;
 	}
 

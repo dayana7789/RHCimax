@@ -132,6 +132,26 @@ public class Mensaje {
 			mensaje =  "Error: el nombre de servidor no pudo ser modificado.";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
+		}else if(this.tipoMensaje == "error_sincronizado_empresa"){
+
+			mensaje =  "Error: la empresa no pudo ser sincronizada.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
+		}else if(this.tipoMensaje == "ok_sincronizado_empresa"){
+
+			mensaje =  "Empresa sincronizada satisfactoriamente.";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
+		}else if(this.tipoMensaje == "error_sincronizado_empleado"){
+
+			mensaje =  "Error: el empleado no pudo ser sincronizado.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
+		}else if(this.tipoMensaje == "ok_sincronizado_empleado"){
+
+			mensaje =  "Empleado sincronizado satisfactoriamente.";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
 		}else{
 			throw new Exception("Mensaje invalido. Revisa el atributo tipoMensaje que utiliza el constructor de la clase Mensaje.");
 		}

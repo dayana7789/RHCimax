@@ -1,5 +1,10 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,11 +13,12 @@ import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.EmpleadoDAO;
 import com.nahmens.rhcimax.database.modelo.Empleado;
+import com.nahmens.rhcimax.database.modelo.Empresa;
 
 public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 	@Override
-	public boolean insertarEmpleado(Context contexto, Empleado empleado) {
+	public boolean insertarEmpleado(Context contexto, Empleado empleado, int idUsuario) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Boolean insertado = false;
 
@@ -31,6 +37,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			values.put("linkedin",empleado.getLinkedin());
 			values.put("descripcion",empleado.getDescripcion());
 			values.put("idEmpresa",empleado.getIdEmpresa());
+			values.put("idUsuario",idUsuario);
 
 			long value = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPLEADO, null,values);
 
@@ -108,6 +115,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			conexion.open();
 
 			mCursor = conexion.getDatabase().rawQuery("SELECT empresa._id, empresa._id as " + Empleado.EMPRESA_ID + ", empleado._id as " + Empleado.ID + ", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA
+												   + ", empleado."+Empleado.FECHA_CREACION +", empleado." + Empleado.FECHA_SINCRONIZACION + ", empleado." + Empleado.ID_USUARIO
 					                               + " FROM " + DataBaseHelper.TABLA_EMPLEADO 
 												   + " INNER JOIN " + DataBaseHelper.TABLA_EMPRESA 
 												   + " ON (empleado.idEmpresa=empresa._id) ORDER BY empleado.nombre", null);
@@ -131,7 +139,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , new String [] {Empleado.ID, Empleado.NOMBRE, Empleado.APELLIDO, Empleado.POSICION, Empleado.EMAIL} , Empleado.EMPRESA_ID + " = ? ", new String [] {idEmpresa}, null, null, Empleado.NOMBRE);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.EMPRESA_ID + " = ? ", new String [] {idEmpresa}, null, null, Empleado.NOMBRE);
 			
 			if (mCursor != null) {
 				mCursor.moveToFirst();
@@ -168,7 +176,8 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 						mCursor.getString(mCursor.getColumnIndex("pin")), 
 						mCursor.getString(mCursor.getColumnIndex("linkedin")), 
 						mCursor.getString(mCursor.getColumnIndex("descripcion")), 
-						mCursor.getInt(mCursor.getColumnIndex("idEmpresa")));
+						mCursor.getInt(mCursor.getColumnIndex("idEmpresa")),
+						mCursor.getInt(mCursor.getColumnIndex("idUsuario")));
 			}
 			
 		}finally{
@@ -186,7 +195,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		
 		try{
 			conexion.open();
-			sqlQuery  = " SELECT  empresa._id, empresa._id as " + Empleado.EMPRESA_ID + ", empleado._id as " + Empleado.ID + ", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA;
+			sqlQuery  = " SELECT  empresa._id, empresa._id as " + Empleado.EMPRESA_ID + ", empleado._id as " + Empleado.ID + ", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA  + ", empleado."+Empleado.FECHA_CREACION +", empleado." + Empleado.FECHA_SINCRONIZACION + ", empleado." + Empleado.ID_USUARIO;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
 			sqlQuery += " INNER JOIN " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " ON (empleado.idEmpresa=empresa._id)";
@@ -205,6 +214,31 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		}
 
 		return mCursor;	
+	}
+	
+	@Override
+	public boolean sincronizarEmpleado(Context contexto, String idEmpleado) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean sincronizado = false;
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
+
+		try{
+			conexion.open();
+
+			ContentValues contenido = new ContentValues();
+			contenido.put(Empleado.FECHA_SINCRONIZACION, dateFormat.format(new Date()));
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, contenido, "_id=?", new String []{idEmpleado});
+
+			if(value!=0){
+				sincronizado = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return sincronizado;
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.nahmens.rhcimax.controlador;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +18,7 @@ import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.AutocompleteEmpresaCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
+import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
@@ -286,9 +289,16 @@ public class DatosClienteActivity extends Fragment {
 		if(!error){
 
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+			
+			SharedPreferences prefs = this.getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
+			int idUsuario = prefs.getInt(Usuario.ID, 0);
 
 			if(id!=null){
-				Empleado empleado = new Empleado( Integer.parseInt(id),nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa);
+				
+				//cada vez que hagamos una modificacion, colocamos el valor de fechaSincronizacion en null 
+				//para saber que este empleado esta desactualizado en la nube
+				String fechaSincronizacion = null;
+				Empleado empleado = new Empleado( Integer.parseInt(id),nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, idUsuario, fechaSincronizacion);
 
 				//Estamos modificando un registro
 				Boolean modificado = empleadoDao.modificarEmpleado(getActivity(), empleado);
@@ -302,8 +312,13 @@ public class DatosClienteActivity extends Fragment {
 
 			}else{
 				//Estamos creando un nuevo registro
-				Empleado empleado = new Empleado(nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa);
-				Boolean insertado = empleadoDao.insertarEmpleado(getActivity(), empleado);
+				
+				//cada vez que hagamos una modificacion, colocamos el valor de fechaSincronizacion en null 
+				//para saber que este empleado esta desactualizado en la nube
+				String fechaSincronizacion = null;
+				
+				Empleado empleado = new Empleado(nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, idUsuario, fechaSincronizacion);
+				Boolean insertado = empleadoDao.insertarEmpleado(getActivity(), empleado, idUsuario);
 
 				if(insertado){
 					mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empleado");

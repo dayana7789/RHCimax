@@ -59,7 +59,7 @@
                 android:id="@+id/buttonCliente"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:text="@string/cliente" />
+                android:text="@string/empleado" />
         </TableRow>
     </TableLayout>
 
