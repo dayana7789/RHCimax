@@ -267,7 +267,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		if (imgView != null) {
 			imgView.setBackgroundResource(imagen);
 		}
-		
 	}
 
 	/**
