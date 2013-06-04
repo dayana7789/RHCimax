@@ -1,4 +1,4 @@
-RHCimax
+apprhc
 =======
 
-Aplicación Android para RHCimax
+apprhc
