@@ -11,6 +11,13 @@ public interface EmpleadoDAO {
 	boolean eliminarEmpleado(Context contexto, String idEmpleado);
 	Empleado buscarEmpleado(Context contexto, String idEmpleado);
 	Cursor listarEmpleados(Context contexto);
+	
+	/**
+	 * Funcion que lista a todos los empleados asociados a una empresa.
+	 * @param contexto
+	 * @param idEmpresa
+	 * @return
+	 */
 	Cursor listarEmpleadosPorEmpresa(Context contexto, String idEmpresa);
 	
 	/**
@@ -25,5 +32,13 @@ public interface EmpleadoDAO {
 	 */
 	Cursor buscarEmpleadoFilter(Context contexto, String args);
 	boolean sincronizarEmpleado(Context contexto, String idEmpleado);
+	
+	/**
+	 * Funcion que sincroniza a todos los empleados asociados a una empresa.
+	 * @param contexto
+	 * @param idEmpresa
+	 * @return
+	 */
+	boolean sincronizarEmpleados(Context contexto, String idEmpresa); 
 
 }

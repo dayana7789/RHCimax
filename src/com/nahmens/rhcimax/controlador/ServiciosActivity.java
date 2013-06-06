@@ -99,8 +99,8 @@ public class ServiciosActivity extends Fragment {
 			lvServicios.setAdapter(notes);
 			lvServicios.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 			
-			Button buttonFinalizas= (Button)  v.findViewById(R.id.buttonFinalizar);
-			buttonFinalizas.setOnClickListener(new View.OnClickListener() {
+			Button buttonFinalizar= (Button)  v.findViewById(R.id.buttonFinalizar);
+			buttonFinalizar.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v){

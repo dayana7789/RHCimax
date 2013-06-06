@@ -1,8 +1,11 @@
 package com.nahmens.rhcimax.controlador;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
@@ -28,8 +31,27 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class ClientesActivity extends ListFragment {
 
-	private ListaClientesCursorAdapter listCursorAdapterEmpleados;
-	private ListaClientesCursorAdapter listCursorAdapterEmpresas;
+	/*
+	 * Necesitamos que los siguientes adaptadores sean estaticos para
+	 * poder llamarlos directamente dentro su clase: ListaClientesCursorAdapter
+	 */
+	public static ListaClientesCursorAdapter listCursorAdapterEmpleados;
+	public static ListaClientesCursorAdapter listCursorAdapterEmpresas;
+	
+	//Creamos un DataSetObserver para saber cuando los listView de empleados
+	//y empresas han sido modificados
+	//y lo registramos al adaptor con la funcion registerDataSetObserver().
+	private DataSetObserver observer = new DataSetObserver() {
+		public void onChanged(){
+			Log.e("onchanged","me llamaron");
+			cambiarColorCuadroNotificacion(null);
+	//		try{
+		//	cambiarColorCuadroNotificacion(AplicacionActivity.tagVerde);
+		//	}catch (Exception e) {
+				// TODO: handle exception
+			//}
+		}
+	};
 
 	/**
 	 * INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA 
@@ -96,13 +118,13 @@ public class ClientesActivity extends ListFragment {
 		//del adaptador. OJO con esto.
 		listarEmpresas(view);
 
-		Bundle mArgumentos = this.getArguments();
+		//Bundle mArgumentos = this.getArguments();
 
 		//Reviso si me pasaron argumentos: notificacion de cambio de color en cuadro de notificacion
-		if(mArgumentos!= null){
-			String color = mArgumentos.getString(AplicacionActivity.tagCuadroColor);
-			cambiarColorCuadroNotificacion(view, inflater, color);
-		}
+		//if(mArgumentos!= null){
+			//String color = mArgumentos.getString(AplicacionActivity.tagCuadroColor);
+			cambiarColorCuadroNotificacion(view);
+		//}
 
 		// Registro del evento OnClick del buttonEmpresa
 		Button bEmp = (Button)view.findViewById(R.id.buttonEmpresa);
@@ -172,38 +194,90 @@ public class ClientesActivity extends ListFragment {
 
 
 	/**
-	 * Funcion encargada de modificar los colores de los cuadros de notificacion.
-	 * @param view  Vista del fragmento
+	 * Funcion encargada de modificar los colores de los cuadros de notificacion principal.
 	 * @param color Color a ser modificado
 	 */
-	private void cambiarColorCuadroNotificacion(View view, LayoutInflater inflater, String color) {
-		View viewFila = getLayoutInflater(getArguments()).inflate(R.layout.activity_fila_cliente, null, false);
+	private void cambiarColorCuadroNotificacion(View v) {
+		
+		if(v==null){
+			v = getView();
+		}
+		TextView tvAmarillo = (TextView) v.findViewById(R.id.avisoAmarillo);
+		TextView tvVerde = (TextView) v.findViewById(R.id.avisoVerde);
+		TextView tvRojo = (TextView) v.findViewById(R.id.avisoRojo);
 
-		TextView tvAmarilloFila = (TextView) viewFila.findViewById(R.id.avisoAmarilloFila);
-		TextView tvVerdeFila = (TextView) viewFila.findViewById(R.id.avisoVerdeFila);
-		TextView tvRojoFila = (TextView) viewFila.findViewById(R.id.avisoRojoFila);
+		EmpresaSqliteDao empresasDao = new EmpresaSqliteDao();
+		Cursor cursorlistEmp = empresasDao.listarEmpresas(getActivity());
+		ArrayList<Boolean> arr = new ArrayList<Boolean>();
 
-		TextView tvAmarillo = (TextView) view.findViewById(R.id.avisoAmarillo);
+	//	Log.e("empresas: ", " id: "+cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.ID)) + " fechSync: ," + cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.FECHA_SINCRONIZACION))+",");
+		if (cursorlistEmp != null) {
+			cursorlistEmp.moveToFirst();
+		}
+		
+		while(!cursorlistEmp.isAfterLast()){
 
+			if(cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.FECHA_SINCRONIZACION)) == null){
+				arr.add(false);
+			}else if(cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.FECHA_SINCRONIZACION)).equals("")){
+				arr.add(null);
+			}else{
+				arr.add(true);
+			}
 
-		if(color.equals(AplicacionActivity.tagRojo)){
-			Log.e("entre","entre "+ tvRojoFila + " " + tvRojoFila.getTag());
-			tvRojoFila.setBackgroundResource(R.drawable.borde_rojo);
+			cursorlistEmp.moveToNext();
+		}
+
+		if(arr.contains(true) && arr.contains(false)){
 			tvAmarillo.setBackgroundResource(R.drawable.borde_amarillo);
+			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
+			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
 
-			tvVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
+		}else if(arr.contains(true)){
+			tvAmarillo.setBackgroundResource(R.drawable.borde_blanco);
+			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
+			tvVerde.setBackgroundResource(R.drawable.borde_verde);
 
+		}else if(arr.contains(false)){
+			tvAmarillo.setBackgroundResource(R.drawable.borde_blanco);
+			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
+			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
+		}else if(arr.contains(null)){
+			tvAmarillo.setBackgroundResource(R.drawable.borde_amarillo);
+			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
+			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
+		}/*else{
+			//caso empresa sin empleados
+			if(strFechaSincronizacion==null){
+				tvAmarillo.setBackgroundResource(R.drawable.borde_blanco);
+				tvRojo.setBackgroundResource(R.drawable.borde_rojo);
+				tvVerde.setBackgroundResource(R.drawable.borde_blanco);
+			}else{
+				tvAmarillo.setBackgroundResource(R.drawable.borde_blanco);
+				tvRojo.setBackgroundResource(R.drawable.borde_blanco);
+				tvVerde.setBackgroundResource(R.drawable.borde_verde);
+			}
+			
+		}*/
 
-			tvAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
+		/*if(color.equals(AplicacionActivity.tagRojo)){
+			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
+			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
+			tvAmarillo.setBackgroundResource(R.drawable.borde_blanco);
 
 		}else if(color.equals(AplicacionActivity.tagVerde)){
+			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
+			tvVerde.setBackgroundResource(R.drawable.borde_verde);
+			tvAmarillo.setBackgroundResource(R.drawable.borde_blanco);
 
 		}else if(color.equals(AplicacionActivity.tagAmarillo)){
+			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
+			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
+			tvAmarillo.setBackgroundResource(R.drawable.borde_amarillo);
 
 		}else{
 			Log.e("ClientesActivity: linea 138","Color invalido: " + color);
-		}
-
+		}*/
 	}
 
 	/**
@@ -211,6 +285,8 @@ public class ClientesActivity extends ListFragment {
 	 * @param view
 	 */
 	private void listarEmpresas(View view){
+		
+		
 		//Cargamos la lista de empresas
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 		Context contexto = getActivity();
@@ -224,10 +300,13 @@ public class ClientesActivity extends ListFragment {
 			int[] to = new int[] { 0, R.id.textViewNombreIzq,  R.id.textViewNombreCent };
 			final ListView lvEmpresas = (ListView) view.findViewById (R.id.listEmpresas);
 
-
 			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterEmpresas = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa", listCursorAdapterEmpleados);
+			listCursorAdapterEmpresas = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa");
 			lvEmpresas.setAdapter(listCursorAdapterEmpresas);
+			
+			
+			//registramos el DataSetObserver al adaptador
+			listCursorAdapterEmpresas.registerDataSetObserver(observer);
 
 			//OJO: como en el layout la lista que contiene a las empresas es android:id="@+id/listEmpresas" 
 			// y  no android:id="@id/android:list", se debe hacer el setOnItemClickListener para que se llame
@@ -239,9 +318,10 @@ public class ClientesActivity extends ListFragment {
 					onListItemClick(lvEmpresas,view,position,id);
 				}
 			});
-
-
+			
+			
 		}
+		
 	}
 
 	/**
@@ -264,9 +344,13 @@ public class ClientesActivity extends ListFragment {
 			ListView lvEmpleados = (ListView) view.findViewById (android.R.id.list);
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterEmpleados = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado",null);
+			listCursorAdapterEmpleados = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado");
 			lvEmpleados.setAdapter(listCursorAdapterEmpleados);
 
+			
+			//registramos el DataSetObserver al adaptador
+			listCursorAdapterEmpleados.registerDataSetObserver(observer);
+			
 			//OJO: como en el layout la lista que contiene a las empleados es android:id="@id/android:list", 
 			// no hay necesidad de hacer el setOnItemClickListener como se hizo en listarEmpresas. Esto
 			//android lo hace automaticamente.

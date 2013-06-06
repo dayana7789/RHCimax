@@ -64,6 +64,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "dirComercial TEXT, "
 															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
+															+ "modificado INTEGER DEFAULT 0, " 
 															+ "idUsuario INTEGER NOT NULL, "
 															+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id));";
 	
@@ -136,7 +137,6 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	@Override
 	// Este método se llama automaticamente al momento en el que se crea la BD.
 	public void onCreate(SQLiteDatabase database) {
-		Log.e("pase por squi","DB!!!!!!!!!!!");
 		database.execSQL(DATABASE_CREATE_ROL);
 		database.execSQL(DATABASE_CREATE_USUARIO);
 		database.execSQL(DATABASE_CREATE_PERMISO);

@@ -69,7 +69,6 @@
 		        <TextView
 	                android:id="@+id/avisoRojoFila"
 	                style="@style/CuadroNotificacion"
-	                android:tag="hgola"
                     android:background="@drawable/borde_blanco"/>
 	    	</LinearLayout>
 		</LinearLayout>

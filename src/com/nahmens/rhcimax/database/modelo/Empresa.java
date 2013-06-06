@@ -5,6 +5,8 @@ public class Empresa {
 	public final static String NOMBRE = "nombre";
 	public final static String TELEFONO = "telefono";
 	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
+	public final static String FECHA_CREACION = "fechaCreacion";
+	public final static String MODIFICADO = "modificado";
 	
 	int id;
 	String nombre;
@@ -15,6 +17,7 @@ public class Empresa {
 	String dirComercial;
 	String fechaCreacion;
 	String fechaSincronizacion;
+	int modificado;
 	int idUsuario;
 
 	public Empresa(int id, String nombre, String telefono, String rif,
@@ -155,6 +158,14 @@ public class Empresa {
 		this.fechaSincronizacion = fechaSincronizacion;
 	}
 	
+	public int getModificado() {
+		return modificado;
+	}
+
+	public void setModificado(int modificado) {
+		this.modificado = modificado;
+	}
+
 	public int getIdUsuario() {
 		return idUsuario;
 	}

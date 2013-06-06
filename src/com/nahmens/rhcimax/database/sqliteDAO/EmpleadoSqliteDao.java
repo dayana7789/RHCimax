@@ -60,6 +60,8 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		try{
 			conexion.open();
 			
+			String fechaSync= null;
+			
 			ContentValues contenido = new ContentValues();
 			contenido.put("idEmpresa", empleado.getIdEmpresa());
 			contenido.put("nombre", empleado.getNombre());
@@ -71,6 +73,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			contenido.put("pin", empleado.getPin());
 			contenido.put("linkedin", empleado.getLinkedin());
 			contenido.put("descripcion", empleado.getDescripcion());
+			contenido.put(Empleado.FECHA_SINCRONIZACION, fechaSync);
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, contenido, "_id=?", new String []{Integer.toString(empleado.getId())});
 
@@ -240,5 +243,34 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 		return sincronizado;
 	}
+	
+	
+	@Override
+	public boolean sincronizarEmpleados(Context contexto, String idEmpresa) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean sincronizado = false;
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss",Locale.getDefault());
+
+		try{
+			conexion.open();
+
+			ContentValues contenido = new ContentValues();
+			contenido.put(Empresa.FECHA_SINCRONIZACION,dateFormat.format(new Date()));
+
+	
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, contenido, Empleado.EMPRESA_ID+"=?", new String []{idEmpresa});
+
+			if(value>0){
+				sincronizado = true;
+			}
+			
+
+		}finally{
+			conexion.close();
+		}
+
+		return sincronizado;
+	}
+	
 
 }

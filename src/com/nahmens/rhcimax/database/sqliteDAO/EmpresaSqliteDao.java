@@ -50,6 +50,8 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 		try{
 			conexion.open();
+			
+			String fechaSync= null;
 
 			ContentValues contenido = new ContentValues();
 			contenido.put("nombre", empresa.getNombre());
@@ -58,6 +60,8 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			contenido.put("web", empresa.getWeb());
 			contenido.put("dirFiscal", empresa.getDirFiscal());
 			contenido.put("dirComercial", empresa.getDirComercial());
+			contenido.put(Empresa.MODIFICADO, 1);
+			contenido.put(Empresa.FECHA_SINCRONIZACION, fechaSync);
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPRESA, contenido, "_id=?", new String []{Integer.toString(empresa.getId())});
 
@@ -227,7 +231,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 	}
 
 	@Override
-	public boolean sincronizarEmpresa(Context contexto, String idEmpresa) {
+	public boolean sincronizarEmpresa(Context contexto, String idEmpresa, Boolean setVacio) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean sincronizado = false;
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss",Locale.getDefault());
@@ -236,13 +240,24 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			conexion.open();
 
 			ContentValues contenido = new ContentValues();
-			contenido.put(Empresa.FECHA_SINCRONIZACION,dateFormat.format(new Date()));
+			
+			if(setVacio == null){
+				String fechaSync = null;
+				contenido.put(Empresa.FECHA_SINCRONIZACION,fechaSync);
+			}else if(setVacio){
+				String fechaSync = "";
+				contenido.put(Empresa.FECHA_SINCRONIZACION,fechaSync);
+			}else{
+				contenido.put(Empresa.FECHA_SINCRONIZACION,dateFormat.format(new Date()));
+			}
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPRESA, contenido, "_id=?", new String []{idEmpresa});
+			
 
 			if(value!=0){
 				sincronizado = true;
 			}
+
 
 		}finally{
 			conexion.close();
@@ -250,4 +265,38 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 		return sincronizado;
 	}
+	
+	
+	@Override
+	public boolean setModificado(Context contexto, String idEmpresa, boolean valor) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean modificado = false;
+		int val;
+		
+		if(valor==true){
+			val = 1;
+		}else{
+			val = 0;
+		}
+
+		try{
+			conexion.open();
+
+			ContentValues contenido = new ContentValues();
+			contenido.put(Empresa.MODIFICADO, val);
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPRESA, contenido, "_id=?", new String []{idEmpresa});
+
+			if(value!=0){
+				modificado = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return modificado;
+
+	}
+
 }
