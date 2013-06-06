@@ -208,26 +208,10 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 		if(tipoCliente.equals("empresa")){
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-			sincronizado = empresaDao.sincronizarEmpresa(this.context, id, false);
-
-			empresaDao.setModificado(context, id, false);
-
-			//sincronizamos los empleados asociados a la empresa
-			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-			empleadoDao.sincronizarEmpleados(this.context, id);
-
-			mensajeOk = "ok_sincronizado_empresa";
-			mensajeError = "error_sincronizado_empresa";
-
-		}else if(tipoCliente.equals("empleado")){
-			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-			sincronizado = empleadoDao.sincronizarEmpleado(this.context, id);
-			Empleado emp = empleadoDao.buscarEmpleado(context, id);
-			int idEmpresa=emp.getIdEmpresa();
-
 
 			EmpleadoSqliteDao empleadosDao = new EmpleadoSqliteDao();
-			Cursor cursorlistEmpl = empleadosDao.listarEmpleadosPorEmpresa(context, ""+idEmpresa);
+
+			Cursor cursorlistEmpl = empleadosDao.listarEmpleadosPorEmpresa(context, ""+id);
 			ArrayList<Boolean> arr = new ArrayList<Boolean>();
 
 			if (cursorlistEmpl != null) {
@@ -246,21 +230,72 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 			}
 
 			if(arr.contains(true) && arr.contains(false)){
-
-				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				empresaDao.sincronizarEmpresa(context, ""+idEmpresa, true);
+				sincronizado = empresaDao.sincronizarEmpresa(context, ""+id, true);
 
 			}else if(arr.contains(true)){
+				sincronizado = empresaDao.sincronizarEmpresa(context, ""+id, false);
 
-				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				empresaDao.sincronizarEmpresa(context, ""+idEmpresa, false);
 
 			}else if(arr.contains(false)){
-				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				empresaDao.sincronizarEmpresa(context, ""+idEmpresa, null);
+				sincronizado = empresaDao.sincronizarEmpresa(context, ""+id, null);
 			}
 
+			empresaDao.setModificado(context, id, false);
 
+			//sincronizamos los empleados asociados a la empresa
+			//EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+			//empleadoDao.sincronizarEmpleados(this.context, id);
+
+			mensajeOk = "ok_sincronizado_empresa";
+			mensajeError = "error_sincronizado_empresa";
+
+		}else if(tipoCliente.equals("empleado")){
+			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+			sincronizado = empleadoDao.sincronizarEmpleado(this.context, id);
+			Empleado emp = empleadoDao.buscarEmpleado(context, id);
+			
+			
+			
+			
+			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+			EmpleadoSqliteDao empleadosDao = new EmpleadoSqliteDao();
+
+			Cursor cursorlistEmpl = empleadosDao.listarEmpleadosPorEmpresa(context, ""+emp.getIdEmpresa());
+			ArrayList<Boolean> arr = new ArrayList<Boolean>();
+
+			if (cursorlistEmpl != null) {
+				cursorlistEmpl.moveToFirst();
+			}
+
+			while(!cursorlistEmpl.isAfterLast()){
+
+				if(cursorlistEmpl.getString(cursorlistEmpl.getColumnIndex(Empleado.FECHA_SINCRONIZACION)) == null){
+					arr.add(false);
+				}else{
+					arr.add(true);
+				}
+
+				cursorlistEmpl.moveToNext();
+			}
+
+			if(arr.contains(true) && arr.contains(false)){
+				Log.e("####", "amarillo");
+				empresaDao.sincronizarEmpresa(context, ""+id, true);
+
+			}else if(arr.contains(true)){
+				
+				Log.e("####", "verde");
+				empresaDao.sincronizarEmpresa(context, ""+id, false);
+
+
+			}else if(arr.contains(false)){
+				Log.e("####", "rojo");
+				empresaDao.sincronizarEmpresa(context, ""+id, null);
+			}
+			
+			
+			
+			
 
 			mensajeOk = "ok_sincronizado_empleado";
 			mensajeError = "error_sincronizado_empleado";
@@ -399,70 +434,89 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
 		TextView tvAvisoAmarilloFila = (TextView) v.findViewById(R.id.avisoAmarilloFila);
 
-		if(modificado == 1){
-			//Si la empresa fue modificada y no ha sido sincronizada, no me importa
-			//si mis empleados estan sincronizados o no.
-			tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
-			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
+		int idEmpresa =  cursor.getInt(cursor.getColumnIndex(Empresa.ID));
+		EmpleadoSqliteDao empleadosDao = new EmpleadoSqliteDao();
+		Cursor cursorlistEmpl = empleadosDao.listarEmpleadosPorEmpresa(context, ""+idEmpresa);
+		ArrayList<Boolean> arr = new ArrayList<Boolean>();
+
+		if (cursorlistEmpl != null) {
+			cursorlistEmpl.moveToFirst();
+		}
+
+		while(!cursorlistEmpl.isAfterLast()){
+
+			if(cursorlistEmpl.getString(cursorlistEmpl.getColumnIndex(Empleado.FECHA_SINCRONIZACION)) == null){
+				arr.add(false);
+			}else{
+				arr.add(true);
+			}
+
+			cursorlistEmpl.moveToNext();
+		}
+
+		if(arr.contains(true) && arr.contains(false)){
+			tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_amarillo);
+			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
 			tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
-		}else{
 
-			int idEmpresa =  cursor.getInt(cursor.getColumnIndex(Empresa.ID));
-			EmpleadoSqliteDao empleadosDao = new EmpleadoSqliteDao();
-			Cursor cursorlistEmpl = empleadosDao.listarEmpleadosPorEmpresa(context, ""+idEmpresa);
-			ArrayList<Boolean> arr = new ArrayList<Boolean>();
+			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+			empresaDao.sincronizarEmpresa(context, ""+idEmpresa, true);
 
-			if (cursorlistEmpl != null) {
-				cursorlistEmpl.moveToFirst();
-			}
+		}else if(arr.contains(true)){
 
-			while(!cursorlistEmpl.isAfterLast()){
-
-				if(cursorlistEmpl.getString(cursorlistEmpl.getColumnIndex(Empleado.FECHA_SINCRONIZACION)) == null){
-					arr.add(false);
-				}else{
-					arr.add(true);
-				}
-
-				cursorlistEmpl.moveToNext();
-			}
-
-			if(arr.contains(true) && arr.contains(false)){
+			if(modificado == 1){
+				//Si la empresa SI fue modificada y mis empleados SI estan sincronizados..
 				tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_amarillo);
 				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
 				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				empresaDao.sincronizarEmpresa(context, ""+idEmpresa, true);
+			}else{
 
-			}else if(arr.contains(true)){
+				//Si la empresa NO fue modificada y mis empleados SI estan sincronizados..
 				tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
 				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
 				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_verde);
 
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				empresaDao.sincronizarEmpresa(context, ""+idEmpresa, false);
+			}
 
-			}else if(arr.contains(false)){
+		}else if(arr.contains(false)){
+
+			if(modificado == 0){
+				//Si la empresa NO fue modificada y mis empleados NO estan sincronizados..
+				tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_amarillo);
+				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
+				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
+
+				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+				empresaDao.sincronizarEmpresa(context, ""+idEmpresa, true);
+			}else{
+
+				//Si la empresa SI fue modificada y mis empleados NO estan sincronizados..
 				tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
 				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
 				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				empresaDao.sincronizarEmpresa(context, ""+idEmpresa, null);
+			}
+
+		}else{
+			//caso empresa sin empleados
+			if(strFechaSincronizacion==null){
+				tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
+				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
+				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 			}else{
-				//caso empresa sin empleados
-				if(strFechaSincronizacion==null){
-					tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
-					tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
-					tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
-				}else{
-					tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
-					tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
-					tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_verde);
-				}
+				tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
+				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
+				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_verde);
 			}
 		}
+
 
 
 		//solo para imprimir

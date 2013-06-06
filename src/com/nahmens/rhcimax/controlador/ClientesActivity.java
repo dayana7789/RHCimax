@@ -210,7 +210,7 @@ public class ClientesActivity extends ListFragment {
 		Cursor cursorlistEmp = empresasDao.listarEmpresas(getActivity());
 		ArrayList<Boolean> arr = new ArrayList<Boolean>();
 
-	//	Log.e("empresas: ", " id: "+cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.ID)) + " fechSync: ," + cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.FECHA_SINCRONIZACION))+",");
+		Log.e("empresas: ", " id: "+cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.ID)) + " fechSync: ," + cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.FECHA_SINCRONIZACION))+",");
 		if (cursorlistEmp != null) {
 			cursorlistEmp.moveToFirst();
 		}

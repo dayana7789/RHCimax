@@ -278,7 +278,7 @@ public class DatosClienteActivity extends Fragment {
 			error = true;
 	    }
 	    
-	    pattern = Patterns.PHONE;
+	    /*pattern = Patterns.PHONE;
 	    if(!pattern.matcher(celular).matches()){
 	    	etCelular.setError(Mensaje.ERROR_TELF_INVALIDO);
 			error = true;
@@ -287,7 +287,7 @@ public class DatosClienteActivity extends Fragment {
 	    if(!pattern.matcher(telfOficina).matches()){
 	    	etCelular.setError(Mensaje.ERROR_TELF_INVALIDO);
 			error = true;
-	    }
+	    }*/
 
 		if (idEmpresa==0){
 			acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
