@@ -16,7 +16,9 @@ public class Mensaje {
 	private FragmentActivity contexto;
 	private String tipoMensaje;
 	public static final String ERROR_CAMPO_VACIO = "Este campo no puede estar vacio";
-	public static final String ERROR_EMPRESA_NO_VALIDA = "Empresa no valida";
+	public static final String ERROR_EMPRESA_NO_VALIDA = "Empresa no válida";
+	public static final String ERROR_EMAIL_INVALIDO =  "Email no válido";
+	public static final String ERROR_TELF_INVALIDO =  "Número no válido";
 
 	/*
 	 * Constructor para mensajes toast

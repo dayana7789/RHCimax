@@ -1,11 +1,14 @@
 package com.nahmens.rhcimax.controlador;
 
+import java.util.regex.Pattern;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -268,6 +271,23 @@ public class DatosClienteActivity extends Fragment {
 			etEmail.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
+		
+		Pattern pattern = Patterns.EMAIL_ADDRESS;
+	    if(!pattern.matcher(email).matches()){
+	    	etEmail.setError(Mensaje.ERROR_EMAIL_INVALIDO);
+			error = true;
+	    }
+	    
+	    pattern = Patterns.PHONE;
+	    if(!pattern.matcher(celular).matches()){
+	    	etCelular.setError(Mensaje.ERROR_TELF_INVALIDO);
+			error = true;
+	    }
+	    
+	    if(!pattern.matcher(telfOficina).matches()){
+	    	etCelular.setError(Mensaje.ERROR_TELF_INVALIDO);
+			error = true;
+	    }
 
 		if (idEmpresa==0){
 			acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
