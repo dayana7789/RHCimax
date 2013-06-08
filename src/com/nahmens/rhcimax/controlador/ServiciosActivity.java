@@ -1,10 +1,21 @@
 package com.nahmens.rhcimax.controlador;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
+import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
@@ -12,20 +23,6 @@ import com.nahmens.rhcimax.database.modelo.Servicio;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.ServicioSqliteDao;
-
-import android.os.Bundle;
-import android.database.Cursor;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
 
 public class ServiciosActivity extends Fragment {
 
@@ -55,7 +52,8 @@ public class ServiciosActivity extends Fragment {
 		return view;
 	}
 
-	/*
+	/**
+	 * Funcion que llena la informacion de servicios y clientes.
 	 * @param id Se refiere al idEmpresa o al idEmpleado segun el tipoCliente.
 	 * @param tipoCliente Posibles valores: empleado o empresa.
 	 */
@@ -63,10 +61,13 @@ public class ServiciosActivity extends Fragment {
 	private void llenarCampos(View v, String id, String tipoCliente){
 
 		if(tipoCliente.equals("empresa")){
-			llenarCamposEmpresa(v,id);
+			llenarCamposCliente(v,id, null);
 
 		}else if(tipoCliente.equals("empleado")){
-			llenarCamposEmpleado(v,id);
+			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+			Empleado empleado = empleadoDao.buscarEmpleado(getActivity(), id);
+			
+			llenarCamposCliente(v, ""+empleado.getIdEmpresa(), id);
 
 		}else{
 			Log.e("ServiciosActivity", "Tipo de cliente no valido: " + tipoCliente);
@@ -75,7 +76,7 @@ public class ServiciosActivity extends Fragment {
 		llenarCamposServicios(v,id,tipoCliente);
 	}
 
-	/*
+	/**
 	 * Funcion que llena en pantalla los datos relacionados a los servicios:
 	 * lista de servicios.
 	 * 
@@ -128,60 +129,25 @@ public class ServiciosActivity extends Fragment {
 	}
 
 
-	/*
-	 * Funcion que llena en pantalla los datos relacionados al empleado:
-	 * el correo del mismo.
+	/**
+	 * Funcion que llena en pantalla los datos relacionados al cliente:
+	 * lista de correos de todos los empleados.
 	 * 
 	 * @param v  View del fragmento
-	 * @param id Identificador de la empresa
+	 * @param idEmpresa Identificador de la empresa
+	 * @param idEmpleado Identificador del empleado. 
+	 *                   Si idEmpleado==null, se marcan todos los correos (checkbox).
+	 *                   Si no, se marca solo el correo de idEmpleado.
 	 */
-	private void llenarCamposEmpleado(View v, String id) {
-		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-		Empleado empleado = empleadoDao.buscarEmpleado(getActivity(), id);
-
+	private void llenarCamposCliente(View v, String idEmpresa, String idEmpleado) {
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-		Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),""+empleado.getIdEmpresa());
-
-		TextView tvEmpresa = (TextView) v.findViewById(R.id.textViewEmpresa);
-		tvEmpresa.setText(empresa.getNombre());
-
-		//Correo del empleado
-		if(empleado!=null){
-			List<HashMap<String, String>> mList = new ArrayList<HashMap<String, String>>();
-
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put(Empleado.NOMBRE, empleado.getNombre());
-			map.put(Empleado.APELLIDO, empleado.getApellido());
-			map.put(Empleado.EMAIL,empleado.getEmail());
-
-			mList.add(map);
-			//indicamos los campos que queremos mostrar (from) y en donde (to)
-			String[] from = new String[] { Empleado.NOMBRE, Empleado.APELLIDO, Empleado.EMAIL};
-			int[] to = new int[] { R.id.textViewServNombreEmp,R.id.textViewServApellidoEmp, R.id.checkBoxServEmail};
-			ListView lvEmpleados = (ListView) v.findViewById (R.id.listViewCorreos);
-
-			//Creamos un array adapter para desplegar cada una de las filas
-			SimpleAdapter notes = new SimpleAdapter(getActivity(),mList, R.layout.activity_fila_correo, from, to);
-			lvEmpleados.setAdapter(notes);
-		}
-	}
-
-	/*
-	 * Funcion que llena en pantalla los datos relacionados a la empresa:
-	 * lista de correos de todos sus empleados.
-	 * 
-	 * @param v  View del fragmento
-	 * @param id Identificador de la empresa
-	 */
-	private void llenarCamposEmpresa(View v, String id) {
-		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-		Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),id);
+		Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
 
 		TextView tvEmpresa = (TextView) v.findViewById(R.id.textViewEmpresa);
 		tvEmpresa.setText(empresa.getNombre());
 
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-		Cursor mCursorEmpleados = empleadoDao.listarEmpleadosPorEmpresa(getActivity(), id);
+		Cursor mCursorEmpleados = empleadoDao.listarEmpleadosPorEmpresa(getActivity(), idEmpresa);
 
 		//Lista de correos de empleados
 		if(mCursorEmpleados.getCount()>0){
@@ -192,7 +158,13 @@ public class ServiciosActivity extends Fragment {
 			ListView lvEmpleados = (ListView) v.findViewById (R.id.listViewCorreos);
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			SimpleCursorAdapter notes = new SimpleCursorAdapter(getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0);
+			ListaCorreosCursorAdapter notes = null;
+			
+			if(idEmpleado==null){
+				notes = new ListaCorreosCursorAdapter(getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0, null);
+			}else{
+				notes = new ListaCorreosCursorAdapter(getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0, idEmpleado);
+			}
 			lvEmpleados.setAdapter(notes);
 		}
 	}
