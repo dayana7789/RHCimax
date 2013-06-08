@@ -36,8 +36,10 @@
         </activity>
         <activity
             android:name="com.nahmens.rhcimax.controlador.AplicacionActivity"
+            android:windowSoftInputMode="adjustPan"
             android:label="@string/app_name" >
         </activity>
+        <!-- android:windowSoftInputMode="adjustPan": Esta linea es super importante cuando se tiene edit text dentro de list view -->
         <activity
             android:name="com.nahmens.rhcimax.controlador.LogoutActivity"
             android:label="@string/title_activity_log_out" >
