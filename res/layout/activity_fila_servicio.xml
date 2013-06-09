@@ -27,7 +27,8 @@
             android:id="@+id/editTextMedida"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:clickable="true"    
+            android:clickable="true"  
+            android:enabled="false"  
             android:inputType="number"/>
 
         <ImageButton

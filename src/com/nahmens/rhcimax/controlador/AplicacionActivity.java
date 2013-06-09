@@ -1,6 +1,7 @@
 package com.nahmens.rhcimax.controlador;
 
 import java.util.HashMap;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Resources;
@@ -19,6 +20,7 @@ import android.widget.TabHost;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
 import com.nahmens.rhcimax.controlador.ClientesActivity.OnClienteSelectedListener;
+import com.nahmens.rhcimax.utils.Par;
 
 /*
  * Contenedor principal de todos los fragmentos
@@ -83,10 +85,10 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 
 			/* Si estamos en el fragmento de servicios,
 			 * seteamos la lista de servicios que fueron seleccionados
-			 */
+			 */		
 			if(value.equals(tagFragmentServicios)){
 				if(ListaServiciosCursorAdapter.getServiciosSeleccionados()!=null){
-					ListaServiciosCursorAdapter.setServiciosSeleccionados((HashMap<Integer, Boolean>) savedInstanceState.getSerializable("serviciosSelected"));
+					ListaServiciosCursorAdapter.setServiciosSeleccionados((HashMap<Integer, Par>) savedInstanceState.getSerializable("serviciosSelected"));
 				}
 			}
 		}

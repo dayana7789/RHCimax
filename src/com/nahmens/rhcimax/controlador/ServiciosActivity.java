@@ -23,6 +23,7 @@ import com.nahmens.rhcimax.database.modelo.Servicio;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.ServicioSqliteDao;
+import com.nahmens.rhcimax.utils.Par;
 
 public class ServiciosActivity extends Fragment {
 
@@ -70,7 +71,7 @@ public class ServiciosActivity extends Fragment {
 			llenarCamposCliente(v, ""+empleado.getIdEmpresa(), id);
 
 		}else{
-			Log.e("ServiciosActivity", "Tipo de cliente no valido: " + tipoCliente);
+			Log.e("ServiciosActivity: llenarCampos(..)", "Tipo de cliente no valido: " + tipoCliente);
 		}
 
 		llenarCamposServicios(v,id,tipoCliente);
@@ -105,7 +106,7 @@ public class ServiciosActivity extends Fragment {
 
 				@Override
 				public void onClick(View v){
-					HashMap<Integer, Boolean> servSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
+					HashMap<Integer, Par> servSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
 					
 					ClientesActivity fragment = new ClientesActivity();
 

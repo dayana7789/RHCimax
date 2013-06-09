@@ -1,14 +1,17 @@
 package com.nahmens.rhcimax.adapters;
 
 import java.util.HashMap;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -19,6 +22,7 @@ import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.database.modelo.Servicio;
+import com.nahmens.rhcimax.utils.Par;
 
 
 
@@ -31,17 +35,18 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	private int layout;
 	private String[] from;
 	private int[] to;
-	private static HashMap<Integer,Boolean> status; //Almacena los checkboxes que fueron seleccionados <idServicio, seleccionado?>
-
-	public static HashMap<Integer,Boolean> getServiciosSeleccionados(){
+	private static HashMap<Integer, Par> status; //Almacena los checkboxes que fueron seleccionados <idServicio, seleccionado?>
+	private HashMap<Integer, EditText> hmEditText = new HashMap<Integer, EditText>(); //almacena las referencias a los EditText
+	
+	public static HashMap<Integer,Par> getServiciosSeleccionados(){
 		return status;
 	}
-	
-	
-	public static void setServiciosSeleccionados( HashMap<Integer,Boolean> nuevo){
+
+
+	public static void setServiciosSeleccionados( HashMap<Integer,Par> nuevo){
 		status = nuevo;
 	}
-	
+
 	public ListaServiciosCursorAdapter(Context context, int layout, Cursor c,
 			String[] from, int[] to, int flags) {
 
@@ -53,13 +58,14 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 
 		//se esta llamando a la lista de servicios por primera vez
 		if(this.status == null){
-			this.status = new HashMap<Integer, Boolean>();
+			this.status = new HashMap<Integer, Par>();
 
 			//Inicializamos la tabla status con idServicio y false, pues no se ha 
 			//seleccionado ningun checkbox
 			while (!c.isAfterLast()) {
 				int idServicio = c.getInt(c.getColumnIndex(Servicio.ID));
-				status.put(idServicio, false);
+				status.put(idServicio, new Par(false, ""));
+				hmEditText.put(idServicio,null);
 				c.moveToNext();
 			}
 		}
@@ -103,6 +109,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	 */
 	@Override
 	public void bindView(View v, Context context, Cursor cursor) { 
+
 
 		//Obtenemos el holder de las referencias a los elementos.
 		//de esta manera evitamos hacer v.findViewById 
@@ -162,7 +169,9 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 
 		}
 
-
+		//guardamos la referencia del edit text de cada fila
+		hmEditText.remove(idServicio);
+		hmEditText.put(idServicio, holder.etMedida);
 
 		ImageButton buttonVerServicio = holder.ibVerServicio;
 
@@ -199,24 +208,48 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 
 
 		//Creamos un listener para actualizar la lista de checkboxes seleccionados
-		CheckBox cb = ( CheckBox ) v.findViewById( R.id.checkBoxServicio );
+		CheckBox cb = ( CheckBox ) holder.cbServicio;
 		cb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				Par par = status.get(mArgumentos.getInt("idServicio"));
+				EditText et = (EditText) hmEditText.get(mArgumentos.getInt("idServicio"));
+				String medida = par.getMedida();
 
-				if(status.containsKey(mArgumentos.getInt("idServicio"))){
-					status.remove(mArgumentos.getInt("idServicio"));
-					status.put(mArgumentos.getInt("idServicio"), isChecked);
+				if(isChecked){
+					et.setFocusable(true);
+					et.setFocusableInTouchMode(true);
+					et.setEnabled(true);
 				}else{
-					status.put(mArgumentos.getInt("idServicio"), isChecked);
+					et.setFocusable(false);
+					et.setFocusableInTouchMode(false);
+					et.setEnabled(false);
+					et.setText("");
+					medida = "";
 				}
-
+				status.remove(mArgumentos.getInt("idServicio"));
+				status.put(mArgumentos.getInt("idServicio"), new Par(isChecked, medida));
 			}
 		});
 
+		//Creamos un listener para actualizar la lista de edit texts seleccionados
+		EditText etMedida = holder.etMedida;
+		etMedida.setOnFocusChangeListener(new OnFocusChangeListener() {
+            public void onFocusChange(View v, boolean hasFocus) {
+            	
+            	Par par = status.get(mArgumentos.getInt("idServicio"));
+            	boolean cheked = par.getBooleano();
+            	EditText et = (EditText) hmEditText.get(mArgumentos.getInt("idServicio"));
+            	status.remove(mArgumentos.getInt("idServicio"));
+				status.put(mArgumentos.getInt("idServicio"), new Par(cheked, et.getText().toString()));
+            }
+        });
+		
 		//Esta linea de codigo es importante para evitar que se pierdan los checkboxes seleccionados
 		//cuando hacemos scroll de la lista. De aqui la importancia del setOnCheckedChangeListener
 		//y la lista status.
-		cb.setChecked(status.get(mArgumentos.getInt("idServicio")));
+		Par tripleta = status.get(idServicio);
+		cb.setChecked(tripleta.getBooleano());
+		etMedida.setText(tripleta.getMedida());
 
 	}
 
