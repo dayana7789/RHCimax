@@ -1,15 +1,24 @@
 package com.nahmens.rhcimax.adapters;
 
+import java.util.HashMap;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
+import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.database.modelo.Empleado;
+
 
 
 /**
@@ -24,7 +33,16 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 	private String[] from;
 	private int[] to;
 	private String idEmpleado;
+	private static HashMap<Integer, Boolean> correosSeleccionados; //Almacena los checkboxes que fueron seleccionados <idEmpleado, booleano>
 
+	public static HashMap<Integer,Boolean> getCorreosSeleccionados(){
+		return correosSeleccionados;
+	}
+
+
+	public static void setCorreosSeleccionados( HashMap<Integer,Boolean> nuevo){
+		correosSeleccionados = nuevo;
+	}
 
 	public ListaCorreosCursorAdapter(Context context, int layout, Cursor c,
 			String[] from, int[] to, int flags, String idEmpleado) {
@@ -36,6 +54,51 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 		this.to = to;
 		this.idEmpleado = idEmpleado;
 
+		inicializarCorreosSeleccionados(c);
+
+	}
+
+
+	/**
+	 * Inicializa la estructura correosSeleccionados agregando todos los idEmpleados y asociandolos
+	 * con valores true o false para indicar a priori cuales correos se muestran como checkeados 
+	 * por default.
+	 * @param c Cursor
+	 */
+	@SuppressLint("UseSparseArrays")
+	private void inicializarCorreosSeleccionados(Cursor c) {
+		//se esta llamando a la lista de servicios por primera vez
+		if(getCorreosSeleccionados() == null){
+			setCorreosSeleccionados(new HashMap<Integer, Boolean>());
+
+			while (!c.isAfterLast()) {
+				int idEmpleadoNuevo = c.getInt(c.getColumnIndex(Empleado.ID));
+
+				//Si se nos indica el idEmpleado, quiere decir que solo el correo
+				//de esta persona sera checkeado por default
+				if(idEmpleado!=null){
+
+					if(idEmpleado.equals(""+idEmpleadoNuevo)){
+						getCorreosSeleccionados().put(idEmpleadoNuevo, true);
+
+					}else{
+						getCorreosSeleccionados().put(idEmpleadoNuevo, false);
+					}
+
+				//De resto marcamos todos los correos como seleccionados por default
+				}else{
+					getCorreosSeleccionados().put(idEmpleadoNuevo, true);
+				}
+
+				c.moveToNext();
+			}
+		}
+	}
+
+
+	//Clase que permite guardar referencia de los childs en el layout
+	private class ViewHolder {
+		CheckBox cbCorreo;
 	}
 
 	@Override
@@ -44,11 +107,24 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		View v = inflater.inflate(layout, parent, false);
 
+		//Este holder se encarga de guardar las referencias a los elementos de las filas
+		//de manera de que estas no se calculen cada vez que se entra en el bind view.
+		//(operacion costosa en android)
+		ViewHolder holder = null;
+		holder = new ViewHolder();
+		holder.cbCorreo = (CheckBox) v.findViewById(R.id.checkBoxServEmail);
+		v.setTag(holder);
+
 		return v;
 	}
 
 	@Override
 	public void bindView(View v, Context context, Cursor cursor) { 
+
+		//Obtenemos el holder de las referencias a los elementos.
+		//de esta manera evitamos hacer v.findViewById 
+		//(operacion costosa en android)
+		ViewHolder holder = (ViewHolder) v.getTag();
 
 		//Columna de la BD que queremos recuperar
 		String columna = null;
@@ -63,54 +139,36 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 		//que aparezca el resultado.
 		TextView nombre_text = null;
 
-		//Nombre del checkbox en nuestro Layout.
-		CheckBox checkbox = null;
-		
-		String correo=null;
-
 		//Para cada valor de la BD solicitado, lo mostramos en el text view.
 		for (int i=0; i<from.length; i++){
 			columna = from[i];
 			nombreCol = cursor.getColumnIndex(columna);
 			nombre = cursor.getString(nombreCol);
-
-			if(v.findViewById(to[i]) instanceof CheckBox){
-				correo = nombre;
-				nombreCol = cursor.getColumnIndex(Empleado.ID);
-				nombre = cursor.getString(nombreCol);
-				checkbox = (CheckBox) v.findViewById(to[i]);
-				
-				//Aqui sabemos que solo debemos marcar el correo de un solo empleado 
-				//y no de todos los asociados a una empresa.
-				if(idEmpleado!=null){
-
-					if(checkbox != null){
-						checkbox.setText(correo);
-
-						if(nombre.equals(idEmpleado)){
-							if (checkbox != null) {
-								checkbox.setChecked(true);
-							}
-
-						}else{
-							if (checkbox != null) {
-								checkbox.setChecked(false);
-							}
-						}
-					}
-				}else{
-					if(checkbox != null){
-						checkbox.setText(correo);
-					}
-				}
-
-			}else{
-				nombre_text = (TextView) v.findViewById(to[i]);
-				if (nombre_text != null) {
-					nombre_text.setText(nombre);
-				}
+			nombre_text = (TextView) v.findViewById(to[i]);
+			
+			if (nombre_text != null) {
+				nombre_text.setText(nombre);
 			}
 		}
+
+		int idEmpleado = cursor.getInt(cursor.getColumnIndex(Empleado.ID));
+
+		//almacenamos en un bundle id del usuario.
+		final Bundle mArgumentos = new Bundle();
+		mArgumentos.putInt("idEmpleado", idEmpleado);
+
+		CheckBox cb = ( CheckBox ) holder.cbCorreo;
+		cb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				getCorreosSeleccionados().remove(mArgumentos.getInt("idEmpleado"));
+				getCorreosSeleccionados().put(mArgumentos.getInt("idEmpleado"), isChecked);
+			}
+		});
+
+		//Esta linea de codigo es importante para evitar que se pierdan los checkboxes seleccionados
+		//cuando hacemos scroll de la lista. De aqui la importancia del setOnCheckedChangeListener
+		//y la lista correosSeleccionados.
+		cb.setChecked(getCorreosSeleccionados().get(idEmpleado));
 	}
 }
 

@@ -18,6 +18,7 @@ import android.view.View.OnTouchListener;
 import android.widget.TabHost;
 
 import com.nahmens.rhcimax.R;
+import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
 import com.nahmens.rhcimax.controlador.ClientesActivity.OnClienteSelectedListener;
 import com.nahmens.rhcimax.utils.Par;
@@ -85,16 +86,19 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 
 			/* Si estamos en el fragmento de servicios,
 			 * seteamos la lista de servicios que fueron seleccionados
+			 * seteamos la lista de correos que fueron seleccionados
 			 */		
 			if(value.equals(tagFragmentServicios)){
 				if(ListaServiciosCursorAdapter.getServiciosSeleccionados()!=null){
 					ListaServiciosCursorAdapter.setServiciosSeleccionados((HashMap<Integer, Par>) savedInstanceState.getSerializable("serviciosSelected"));
 				}
+				
+				if(ListaCorreosCursorAdapter.getCorreosSeleccionados()!=null){
+					ListaCorreosCursorAdapter.setCorreosSeleccionados((HashMap<Integer, Boolean>) savedInstanceState.getSerializable("correosSelected"));
+				}
 			}
 		}
-
 	}
-
 
 
 
@@ -114,13 +118,17 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 
 		/* Si estamos en el fragmento de servicios,
 		 * Guardamos la lista de servicios que fueron seleccionados
+		 * Guardamos la lista de correos que fueron seleccionados
 		 */
 		if(fragmentoActual.getTag().equals(tagFragmentServicios)){
 			if(ListaServiciosCursorAdapter.getServiciosSeleccionados()!=null){
 				bundle.putSerializable("serviciosSelected", ListaServiciosCursorAdapter.getServiciosSeleccionados());
 			}
+			
+			if(ListaCorreosCursorAdapter.getCorreosSeleccionados()!=null){
+				bundle.putSerializable("correosSelected", ListaCorreosCursorAdapter.getCorreosSeleccionados());
+			}
 		}
-
 	}
 
 
@@ -357,8 +365,9 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 			//sino permitimos que el back button nos lleven al fragmento anterior ejecutado	
 		}else{
 
-			//seteamos la lista de servicios seleccionados a null de la vista servicios
+			//seteamos la lista de servicios seleccionados y de correos a null de la vista servicios
 			ListaServiciosCursorAdapter.setServiciosSeleccionados(null);
+			ListaCorreosCursorAdapter.setCorreosSeleccionados(null);
 			super.onBackPressed();
 		}
 	}   
