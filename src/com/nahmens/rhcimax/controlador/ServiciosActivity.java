@@ -1,7 +1,10 @@
 package com.nahmens.rhcimax.controlador;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,19 +24,26 @@ import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Servicio;
+import com.nahmens.rhcimax.database.modelo.Usuario;
+import com.nahmens.rhcimax.database.sqliteDAO.CotizacionSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.Cotizacion_ServicioSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.Empleado_CotizacionSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.ServicioSqliteDao;
+import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.Par;
 
 public class ServiciosActivity extends Fragment {
 
 	private FragmentManager fragmentManager; 
+	private LayoutInflater inflater;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.activity_servicios, container, false);
+		this.inflater=inflater;
 		this.fragmentManager = this.getFragmentManager();
 		final Bundle mArgumentos = this.getArguments();
 
@@ -67,8 +78,10 @@ public class ServiciosActivity extends Fragment {
 		}else if(tipoCliente.equals("empleado")){
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 			Empleado empleado = empleadoDao.buscarEmpleado(getActivity(), id);
-			
+
 			llenarCamposCliente(v, ""+empleado.getIdEmpresa(), id);
+
+			id = ""+empleado.getIdEmpresa();
 
 		}else{
 			Log.e("ServiciosActivity: llenarCampos(..)", "Tipo de cliente no valido: " + tipoCliente);
@@ -82,10 +95,10 @@ public class ServiciosActivity extends Fragment {
 	 * lista de servicios.
 	 * 
 	 * @param v  View del fragmento
-	 * @param id Identificador de la empresa
+	 * @param idEmpresa Identificador de la empresa
 	 * @param tipoCliente Posibles valores: empresa o empleado
 	 */
-	private void llenarCamposServicios(View v, String id, String tipoCliente) {
+	private void llenarCamposServicios(View v, final String idEmpresa, String tipoCliente) {
 		ServicioSqliteDao servicioDao = new ServicioSqliteDao();
 		Cursor mCursorServicios = servicioDao.listarServicios(getActivity());
 
@@ -100,32 +113,294 @@ public class ServiciosActivity extends Fragment {
 			ListaServiciosCursorAdapter notes = new ListaServiciosCursorAdapter(getActivity(), R.layout.activity_fila_servicio, mCursorServicios, from, to, 0);
 			lvServicios.setAdapter(notes);
 			lvServicios.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-			
+			final EditText etMensual = (EditText) v.findViewById(R.id.textEditMensual);
+			final EditText etTotal = (EditText) v.findViewById(R.id.textEditTotal);
+
+			Button buttonCalcular= (Button)  v.findViewById(R.id.buttonCalcular);
+			buttonCalcular.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v){
+					HashMap<Integer, Par> servSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
+					double total = 0;
+					double mensual = 0;
+					Par par = null;
+					double medida = 0;
+
+					for (Map.Entry<Integer, Par> entry : servSeleccionados.entrySet()) {
+						par = entry.getValue();
+
+						if(par.getBooleano()){
+							int idServicio = entry.getKey();
+							ServicioSqliteDao servicioDao = new ServicioSqliteDao();
+							Servicio servicio = servicioDao.buscarServicio(v.getContext(), ""+idServicio);
+
+							if(!par.getMedida().equals("")){
+								medida = Double.parseDouble(par.getMedida());
+							}else{
+								medida = 0;
+							}
+
+							if(servicio.getUnidadMedicion().equals("ninguno")){
+
+								//	if(servicio.getPrecio() != 0){
+								mensual = mensual + servicio.getPrecio();
+								//		}else{
+								total = total + servicio.getInicial();
+								//		}
+
+							}else{
+								mensual = mensual + (medida*servicio.getPrecio());
+								total = total + (medida*servicio.getInicial());
+							}
+
+						}
+					}
+
+					total = total + mensual;
+
+					etMensual.setText(""+mensual);
+					etTotal.setText(""+total);
+
+				}});
+
+			final TextView tvErrorCorreo = (TextView) v.findViewById(R.id.textViewErrorCorreo);
+			final TextView tvErrorServicio = (TextView) v.findViewById(R.id.textViewErrorServicio);
+
 			Button buttonFinalizar= (Button)  v.findViewById(R.id.buttonFinalizar);
 			buttonFinalizar.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v){
-					HashMap<Integer, Par> servSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
-					
+					tvErrorServicio.setVisibility(View.GONE);
+					tvErrorServicio.setError(null);
+					tvErrorCorreo.setVisibility(View.GONE);
+					tvErrorCorreo.setError(null);
+					Mensaje mToast = null;
+
+					//Verificamos que hayan correos seleccionados
+					boolean hayErrorCorreos = hayErrorCorreos();
+
+					//Verificamos que hayan servicios seleccionados
+					boolean hayErrorServicios = hayErrorServicios();
+
+					if(hayErrorCorreos || hayErrorServicios){
+
+						mToast = new Mensaje(inflater, getActivity(), "error_formulario");
+						try {
+							mToast.controlMensajesToast();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+						//no hay errores en la pagina..
+					}else{
+
+						//Obtenemos al usuario
+						SharedPreferences prefs = getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
+						int idUsuario = prefs.getInt(Usuario.ID, 0);
+
+						//creamos una cotizacion
+						CotizacionSqliteDao cotizacionDao = new CotizacionSqliteDao();
+						long idCotizacion = cotizacionDao.insertarCotizacion(getActivity(), ""+idUsuario, ""+idEmpresa);
+
+						//creamos un registro en la tabla empleadoCotizacion
+						boolean hayErrorResultEC = crearEmpleadoCotizacion(idCotizacion);
+
+						if(hayErrorResultEC){
+							mToast = new Mensaje(inflater, getActivity(), "error_creacion_cotizacion");
+							try {
+								mToast.controlMensajesToast();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+							
+							//Si ocurrio un error, eliminamos la cotizacion que recien agregamos
+							//para evitar que haya inconsistencias en la BD
+							cotizacionDao.eliminarCotizacion(getActivity(), ""+idCotizacion);
+							
+						}else{
+
+							//creamos un registro en la tabla cotizacionServicio
+							boolean hayErrorResultCS = crearCotizacionServicio(idCotizacion);
+							
+							if(hayErrorResultCS){
+								mToast = new Mensaje(inflater, getActivity(), "error_creacion_cotizacion");
+								try {
+									mToast.controlMensajesToast();
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								
+								//Si ocurrio un error, eliminamos la cotizacion que recien agregamos
+								//para evitar que haya inconsistencias en la BD
+								cotizacionDao.eliminarCotizacion(getActivity(), ""+idCotizacion);
+								
+						    //finalmente.. si no errores de ningun tipo..
+							}else{
+
+								mToast = new Mensaje(inflater, getActivity(), "ok_creacion_cotizacion");
+								try {
+									mToast.controlMensajesToast();
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+																
+								//Redirigimos la pantalla a FragmentClientes
+								cambiarFragmento();
+
+								//seteamos la lista de correos seleccionados a null de la vista servicios
+								ListaCorreosCursorAdapter.setCorreosSeleccionados(null);
+								
+								//seteamos la lista de servicios seleccionados a null de la vista servicios
+								ListaServiciosCursorAdapter.setServiciosSeleccionados(null);
+							}
+						}
+					}
+				}
+
+				/**
+				 * Funcion que detecta si ningun correo fue seleccionado.
+				 * @return si existe error.
+				 */
+				private boolean hayErrorCorreos() {
+					HashMap<Integer, Boolean> correosSeleccionados = ListaCorreosCursorAdapter.getCorreosSeleccionados();
+					boolean flagCorreo = false;
+
+					for (Map.Entry<Integer, Boolean> entry : correosSeleccionados.entrySet()) {
+						//si tengo algun correo seleccionado..
+						if( entry.getValue() == true){
+							flagCorreo = true;
+						}
+					}
+
+					//si flag es falso es porque ningun correo fue seleccionado.
+					if(flagCorreo==false){
+						//mostramos mensaje de error en pantalla
+						tvErrorCorreo.setVisibility(View.VISIBLE);
+						tvErrorCorreo.setError(Mensaje.ERROR_CHECK_CORREO);
+						tvErrorCorreo.setText(Mensaje.ERROR_CHECK_CORREO);
+
+						return true;
+					}
+					return false;
+				}
+
+				/**
+				 * Funcion que detecta si ningun servicio fue seleccionado.
+				 * @return si existe error.
+				 */
+				private boolean hayErrorServicios() {
+					HashMap<Integer, Par> serviciosSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
+					boolean flagServicio = false;
+					Par par = null;
+
+					for (Map.Entry<Integer, Par> entry : serviciosSeleccionados.entrySet()) {
+						par = entry.getValue();
+						//si tengo algun servicio seleccionado..
+						if( par.getBooleano() == true){
+							flagServicio = true;
+						}
+					}
+
+					//si flag es falso es porque ningun servicio fue seleccionado.
+					if(flagServicio==false){
+						//mostramos mensaje de error en pantalla
+						tvErrorServicio.setVisibility(View.VISIBLE);
+						tvErrorServicio.setError(Mensaje.ERROR_CHECK_SERVICIO);
+						tvErrorServicio.setText(Mensaje.ERROR_CHECK_SERVICIO);
+
+						return true;
+					}
+					return false;
+				}
+
+				/**
+				 * Funcion que carga el fragmento FragmentClientes
+				 */
+				private void cambiarFragmento() {
 					ClientesActivity fragment = new ClientesActivity();
 
 					Bundle mArgumentos =  new Bundle();
 					mArgumentos.putString(AplicacionActivity.tagCuadroColor, AplicacionActivity.tagRojo);
-					
+
 					//pasamos al fragment la notificacion de cambio de color
 					//del cuadro de color
 					fragment.setArguments(mArgumentos); 
-					
+
 					fragmentManager.beginTransaction()
 					.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentClientes)
-					.addToBackStack(null)
 					.commit();
-					
-					//seteamos la lista de servicios seleccionados a null de la vista servicios
-					ListaServiciosCursorAdapter.setServiciosSeleccionados(null);
+				}
 
-				}});
+				/**
+				 * Funcion que itera sobre la estructura correosSeleccionados y crea nuevos 
+				 * registros en la tabla EmpleadoCotizacion.
+				 * @param idCotizacion
+				 * @return true si todo se ha ingresado correctamente a la BD.
+				 *         false caso contrario.
+				 */
+				private boolean crearEmpleadoCotizacion(long idCotizacion) {
+					HashMap<Integer, Boolean> correosSeleccionados = ListaCorreosCursorAdapter.getCorreosSeleccionados();
+					boolean bool = false;
+					int idEmpleado = 0;
+					long idEmplCot = 0;
+					boolean error = false;
+					Empleado_CotizacionSqliteDao emplCotDao = new Empleado_CotizacionSqliteDao();
+
+					for (Map.Entry<Integer, Boolean> entry : correosSeleccionados.entrySet()) {
+						bool = entry.getValue();
+
+						//si este correo fue seleccionado..
+						if(bool){
+							idEmpleado = entry.getKey();
+
+							idEmplCot = emplCotDao.insertar(getActivity(), ""+idEmpleado, ""+idCotizacion);
+
+							if(idEmplCot ==-1){
+								error = true;
+								Log.e("ServiciosActivity: onclick button finalizar", "Problema al insertar empleado_cotizacion en BD: idEmpleado: " + idEmpleado + " idCotizacion: " + idCotizacion);
+							}
+						}
+					}
+					return error;
+				}
+
+				/**
+				 * Funcion que itera sobre la estructura servSeleccionados y crea nuevos 
+				 * registros en la tabla CotizacionServicio.
+				 * @param idCotizacion
+				 * @return true si todo se ha ingresado correctamente a la BD.
+				 *         false caso contrario.
+				 */
+				private boolean crearCotizacionServicio(long idCotizacion) {
+
+					HashMap<Integer, Par> servSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
+					Par par = null;
+					int idServicio = 0;
+					String medida = null;
+					long idCotServ = 0;
+					Cotizacion_ServicioSqliteDao cotServDao = new Cotizacion_ServicioSqliteDao();
+					boolean error = false;
+
+					for (Map.Entry<Integer, Par> entry : servSeleccionados.entrySet()) {
+						par = entry.getValue();
+
+						//si este servicio fue seleccionado..
+						if(par.getBooleano()){
+							idServicio = entry.getKey();
+							medida = par.getMedida();
+							idCotServ = cotServDao.insertar(getActivity(), ""+idServicio, ""+idCotizacion, medida);
+
+							if(idCotServ ==-1){
+								error = true;
+								Log.e("ServiciosActivity: onclick button finalizar", "Problema al insertar cotizacion_servicio en BD: idServicio:" + idServicio + " idCotizacion:" + idCotizacion);
+							}
+						}
+					}
+					return error;
+				}
+			});
 		}
 	}
 
@@ -160,7 +435,7 @@ public class ServiciosActivity extends Fragment {
 
 			//Creamos un array adapter para desplegar cada una de las filas
 			ListaCorreosCursorAdapter notes = null;
-			
+
 			if(idEmpleado==null){
 				notes = new ListaCorreosCursorAdapter(getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0, null);
 			}else{

@@ -1,6 +1,14 @@
 package com.nahmens.rhcimax.database.modelo;
 
 public class Cotizacion {
+	public final static String ID = "_id";
+	public final static String FECHA_ENVIO = "fechaEnvio";
+	public final static String FECHA_LEIDO = "fechaLeido";
+	public final static String ENVIADO = "enviado";
+	public final static String RECIBIDO = "recibido";
+	public final static String ID_USUARIO = "idUsuario";
+	public final static String ID_EMPRESA = "idEmpresa";
+	
 	int id;
 	String fechaEnvio;
 	String fechaLeido;

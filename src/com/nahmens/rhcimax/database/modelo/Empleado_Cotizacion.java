@@ -1,6 +1,10 @@
 package com.nahmens.rhcimax.database.modelo;
 
 public class Empleado_Cotizacion {
+	
+	public final static String ID_COTIZACION = "idCotizacion";
+	public final static String ID_EMPLEADO = "idEmpleado";
+	
 	int idEmpleado;
 	int idCotizacion;
 	

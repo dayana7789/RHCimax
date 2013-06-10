@@ -19,6 +19,10 @@ public class Mensaje {
 	public static final String ERROR_EMPRESA_NO_VALIDA = "Empresa no válida";
 	public static final String ERROR_EMAIL_INVALIDO =  "Email no válido";
 	public static final String ERROR_TELF_INVALIDO =  "Número no válido";
+	public static final String ERROR_CAMPO_OBLIGATORIO =  "Campo obligatorio";
+	public static final String ERROR_CHECK_CORREO =  "Debe seleccionar al menos un correo";
+	public static final String ERROR_CHECK_SERVICIO =  "Debe seleccionar al menos un servicio";
+	
 
 	/*
 	 * Constructor para mensajes toast
@@ -152,6 +156,16 @@ public class Mensaje {
 		}else if(this.tipoMensaje == "ok_sincronizado_empleado"){
 
 			mensaje =  "Empleado sincronizado satisfactoriamente.";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
+		}else if(this.tipoMensaje == "error_creacion_cotizacion"){
+
+			mensaje =  "Error: la cotización no pudo crearse.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
+		}else if(this.tipoMensaje == "ok_creacion_cotizacion"){
+
+			mensaje =  "Cotización creada satisfactoriamente.";
 			layoutWhere = R.layout.toast_layout_mensaje_ok;
 
 		}else{

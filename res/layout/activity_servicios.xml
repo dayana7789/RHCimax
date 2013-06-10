@@ -8,11 +8,19 @@
         android:id="@+id/textViewServicios"
         style="@style/FuenteTitulos"
         android:text="@string/servicios" />
+    
 
     <TextView
         android:id="@+id/textViewEmpresa"
         android:textIsSelectable="false"
         style="@style/FuenteSubSubTitulos"/>
+    
+    <!-- Text view utilizado solo para mostrar mensajes de error -->
+    <TextView 
+        android:id="@+id/textViewErrorCorreo"
+        style="@style/FuenteError"
+        android:visibility="gone"
+        android:paddingRight="10dp"/>
     
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +33,7 @@
             style="@style/FuenteFormularios"
             android:text="@string/enviarA"
             android:paddingRight="10dp"/>
-            
+  
         <ListView
 	        android:id="@+id/listViewCorreos"
 	        android:fadeScrollbars="false"
@@ -40,6 +48,13 @@
         style="@style/FuenteSubTitulos"
         android:text="@string/servicios"/>
     
+    <!-- Text view utilizado solo para mostrar mensajes de error -->
+    <TextView 
+        android:id="@+id/textViewErrorServicio"
+        style="@style/FuenteError"
+        android:visibility="gone"
+        android:paddingRight="10dp"/>
+    
     <ListView
 	    android:id="@+id/listViewServicios"
 	    android:layout_width="match_parent"
@@ -47,11 +62,30 @@
 	    android:layout_height="0dp"
 		android:layout_weight="1"/>
 
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:stretchColumns="0" >
+        
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent" 
+            android:gravity="center">
+        
+	        <TextView 
+		    	android:id="@+id/textViewTotalPorServicio"
+		        style="@style/FuenteSubTitulos"
+		        android:text="@string/totalPorServicio"/>
+	    	<Button
+				android:id="@+id/buttonCalcular"
+			    android:layout_width="200dp"
+			    android:layout_height="wrap_content"
+			    android:text="@string/calcular" />
+		</TableRow>
+	</TableLayout>
     
-    <TextView 
-    	android:id="@+id/textViewTotalPorServicio"
-        style="@style/FuenteSubTitulos"
-        android:text="@string/totalPorServicio"/>
     
     <TableLayout
         android:layout_width="match_parent"
