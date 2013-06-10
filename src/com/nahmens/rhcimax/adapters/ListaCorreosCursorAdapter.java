@@ -65,6 +65,8 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 
 		//Nombre del checkbox en nuestro Layout.
 		CheckBox checkbox = null;
+		
+		String correo=null;
 
 		//Para cada valor de la BD solicitado, lo mostramos en el text view.
 		for (int i=0; i<from.length; i++){
@@ -73,22 +75,32 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 			nombre = cursor.getString(nombreCol);
 
 			if(v.findViewById(to[i]) instanceof CheckBox){
+				correo = nombre;
+				nombreCol = cursor.getColumnIndex(Empleado.ID);
+				nombre = cursor.getString(nombreCol);
+				checkbox = (CheckBox) v.findViewById(to[i]);
+				
 				//Aqui sabemos que solo debemos marcar el correo de un solo empleado 
 				//y no de todos los asociados a una empresa.
 				if(idEmpleado!=null){
-					nombreCol = cursor.getColumnIndex(Empleado.ID);
-					nombre = cursor.getString(nombreCol);
-					checkbox = (CheckBox) v.findViewById(to[i]);
-					
-					if(nombre.equals(idEmpleado)){
-						if (checkbox != null) {
-							checkbox.setChecked(true);
+
+					if(checkbox != null){
+						checkbox.setText(correo);
+
+						if(nombre.equals(idEmpleado)){
+							if (checkbox != null) {
+								checkbox.setChecked(true);
+							}
+
+						}else{
+							if (checkbox != null) {
+								checkbox.setChecked(false);
+							}
 						}
-						
-					}else{
-						if (checkbox != null) {
-							checkbox.setChecked(false);
-						}
+					}
+				}else{
+					if(checkbox != null){
+						checkbox.setText(correo);
 					}
 				}
 
