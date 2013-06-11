@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.database.modelo.Empleado;
-import com.nahmens.rhcimax.utils.Par;
+import com.nahmens.rhcimax.utils.Tripleta;
 
 
 
@@ -170,9 +170,9 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 				
 				boolean flagServicio = false;
 				boolean flagCorreo = false;
-				Par par = null;
+				Tripleta par = null;
 				
-				for (Map.Entry<Integer, Par> entry : ListaServiciosCursorAdapter.getServiciosSeleccionados().entrySet()) {
+				for (Map.Entry<Integer, Tripleta> entry : ListaServiciosCursorAdapter.getServiciosSeleccionados().entrySet()) {
 					par = entry.getValue();
 					//si tengo algun servicio seleccionado..
 					if( par.getBooleano() == true){

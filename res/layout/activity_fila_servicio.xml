@@ -38,6 +38,16 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/ver_servicio"
             android:src="@android:drawable/ic_menu_view" />
+
+        <ImageButton
+            android:id="@+id/imageButtonDescripcionServ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false"
+            android:enabled="false"
+            android:src="@drawable/image_buton_edit"
+            android:contentDescription="@string/editar_servicio" />
+
     </TableRow>
 
 </TableLayout>

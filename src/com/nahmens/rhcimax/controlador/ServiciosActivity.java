@@ -3,18 +3,22 @@ package com.nahmens.rhcimax.controlador;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -32,7 +36,7 @@ import com.nahmens.rhcimax.database.sqliteDAO.Empleado_CotizacionSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.ServicioSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
-import com.nahmens.rhcimax.utils.Par;
+import com.nahmens.rhcimax.utils.Tripleta;
 
 public class ServiciosActivity extends Fragment {
 
@@ -118,18 +122,19 @@ public class ServiciosActivity extends Fragment {
 			final EditText etMensual = (EditText) v.findViewById(R.id.textEditMensual);
 			final EditText etTotal = (EditText) v.findViewById(R.id.textEditTotal);
 
+			
 			Button buttonCalcular= (Button)  v.findViewById(R.id.buttonCalcular);
 			buttonCalcular.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v){
-					HashMap<Integer, Par> servSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
+					HashMap<Integer, Tripleta> servSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
 					double total = 0;
 					double mensual = 0;
-					Par par = null;
+					Tripleta par = null;
 					double medida = 0;
 
-					for (Map.Entry<Integer, Par> entry : servSeleccionados.entrySet()) {
+					for (Map.Entry<Integer, Tripleta> entry : servSeleccionados.entrySet()) {
 						par = entry.getValue();
 
 						if(par.getBooleano()){
@@ -166,8 +171,9 @@ public class ServiciosActivity extends Fragment {
 
 				}});
 
-			final TextView tvErrorCorreo = (TextView) v.findViewById(R.id.textViewErrorCorreo);
-			final TextView tvErrorServicio = (TextView) v.findViewById(R.id.textViewErrorServicio);
+
+			final EditText etDescripcion = (EditText) v.findViewById(R.id.textEditDescripcion);
+			
 
 			buttonFinalizar.setOnClickListener(new View.OnClickListener() {
 
@@ -182,7 +188,7 @@ public class ServiciosActivity extends Fragment {
 
 					//creamos una cotizacion
 					CotizacionSqliteDao cotizacionDao = new CotizacionSqliteDao();
-					long idCotizacion = cotizacionDao.insertarCotizacion(getActivity(), ""+idUsuario, ""+idEmpresa);
+					long idCotizacion = cotizacionDao.insertarCotizacion(getActivity(), ""+idUsuario, ""+idEmpresa, etDescripcion.getText().toString());
 
 					//creamos un registro en la tabla empleadoCotizacion
 					boolean hayErrorResultEC = crearEmpleadoCotizacion(idCotizacion);
@@ -299,15 +305,15 @@ public class ServiciosActivity extends Fragment {
 				 */
 				private boolean crearCotizacionServicio(long idCotizacion) {
 
-					HashMap<Integer, Par> servSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
-					Par par = null;
+					HashMap<Integer, Tripleta> servSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
+					Tripleta par = null;
 					int idServicio = 0;
 					String medida = null;
 					long idCotServ = 0;
 					Cotizacion_ServicioSqliteDao cotServDao = new Cotizacion_ServicioSqliteDao();
 					boolean error = false;
 
-					for (Map.Entry<Integer, Par> entry : servSeleccionados.entrySet()) {
+					for (Map.Entry<Integer, Tripleta> entry : servSeleccionados.entrySet()) {
 						par = entry.getValue();
 
 						//si este servicio fue seleccionado..

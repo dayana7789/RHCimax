@@ -21,7 +21,7 @@ import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
 import com.nahmens.rhcimax.controlador.ClientesActivity.OnClienteSelectedListener;
-import com.nahmens.rhcimax.utils.Par;
+import com.nahmens.rhcimax.utils.Tripleta;
 
 /*
  * Contenedor principal de todos los fragmentos
@@ -90,7 +90,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 			 */		
 			if(value.equals(tagFragmentServicios)){
 				if(ListaServiciosCursorAdapter.getServiciosSeleccionados()!=null){
-					ListaServiciosCursorAdapter.setServiciosSeleccionados((HashMap<Integer, Par>) savedInstanceState.getSerializable("serviciosSelected"));
+					ListaServiciosCursorAdapter.setServiciosSeleccionados((HashMap<Integer, Tripleta>) savedInstanceState.getSerializable("serviciosSelected"));
 				}
 				
 				if(ListaCorreosCursorAdapter.getCorreosSeleccionados()!=null){

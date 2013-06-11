@@ -10,7 +10,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
@@ -26,7 +26,7 @@ import android.widget.TextView;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.database.modelo.Servicio;
 import com.nahmens.rhcimax.mensaje.Mensaje;
-import com.nahmens.rhcimax.utils.Par;
+import com.nahmens.rhcimax.utils.Tripleta;
 
 
 
@@ -39,18 +39,18 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	private int layout;
 	private String[] from;
 	private int[] to;
-	private static HashMap<Integer, Par> status; //Almacena los checkboxes que fueron seleccionados <idServicio, Par(booleano, medida)>
+	private static HashMap<Integer, Tripleta> status; //Almacena los checkboxes que fueron seleccionados <idServicio, Tripleta(booleano, medida, descripcion)>
 	private Button bFinalizar; //referencia al boton finalizar
-	
+
 	@SuppressLint("UseSparseArrays")
 	private final HashMap<Integer, EditText> hmEditText = new HashMap<Integer, EditText>(); //almacena las referencias a los EditText
 
-	public static HashMap<Integer,Par> getServiciosSeleccionados(){
+	public static HashMap<Integer,Tripleta> getServiciosSeleccionados(){
 		return status;
 	}
 
 
-	public static void setServiciosSeleccionados( HashMap<Integer,Par> nuevo){
+	public static void setServiciosSeleccionados( HashMap<Integer,Tripleta> nuevo){
 		status = nuevo;
 	}
 
@@ -77,13 +77,13 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	private void inicializarServiciosSeleccionados(Cursor c) {
 		//se esta llamando a la lista de servicios por primera vez
 		if(getServiciosSeleccionados() == null){
-			setServiciosSeleccionados(new HashMap<Integer, Par>());
+			setServiciosSeleccionados(new HashMap<Integer, Tripleta>());
 
 			//Inicializamos la tabla status con idServicio y false, pues no se ha 
 			//seleccionado ningun checkbox
 			while (!c.isAfterLast()) {
 				int idServicio = c.getInt(c.getColumnIndex(Servicio.ID));
-				getServiciosSeleccionados().put(idServicio, new Par(false, ""));
+				getServiciosSeleccionados().put(idServicio, new Tripleta(false, "", ""));
 				hmEditText.put(idServicio,null);
 				c.moveToNext();
 			}
@@ -96,6 +96,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		TextView tvUnidadMedicion;
 		EditText etMedida;
 		ImageButton ibVerServicio;
+		ImageButton ibDescripcionServ;
 	}
 
 	/*
@@ -117,6 +118,8 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		holder.tvUnidadMedicion = (TextView) v.findViewById(R.id.textViewUnidadMedicion);
 		holder.etMedida = (EditText) v.findViewById(R.id.editTextMedida);
 		holder.ibVerServicio = (ImageButton) v.findViewById(R.id.imageButtonVerServicio);
+		holder.ibDescripcionServ = (ImageButton) v.findViewById(R.id.imageButtonDescripcionServ);
+		holder.ibDescripcionServ.setEnabled(false);
 		v.setTag(holder);
 
 		return v;
@@ -217,20 +220,71 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 				alert.show();
 			}});
 
+		final ImageButton ibDescripcionServ = holder.ibDescripcionServ;
+
+		ibDescripcionServ.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v){
+
+				if (!ibDescripcionServ.isEnabled()) { 
+					return; 
+				} else {  
+					final Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getInt("idServicio"));
+
+					AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+					builder.setTitle("Descripción servicio");
+
+					// Specify the type of input expected;
+					final EditText input = new EditText(v.getContext());
+					input.setText(tripleta.getDescripcion());
+
+					input.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES|InputType.TYPE_TEXT_FLAG_MULTI_LINE|InputType.TYPE_CLASS_TEXT);
+					builder.setView(input);
+
+					// Set up the buttons
+					builder.setPositiveButton("Guardar", new DialogInterface.OnClickListener() { 
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
+							boolean checked = tripleta.getBooleano();
+							String medida = tripleta.getMedida();
+							String descripcion = input.getText().toString();
+
+							getServiciosSeleccionados().remove(mArgumentos.getInt("idServicio"));
+							getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Tripleta(checked, medida, descripcion));
+
+						}
+					});
+					builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.cancel();
+						}
+					});
+
+					builder.show();
+				}
+
+			}});
+
 
 		//Creamos un listener para actualizar la lista de checkboxes seleccionados
 		CheckBox cb = ( CheckBox ) holder.cbServicio;
 		cb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				Par par = getServiciosSeleccionados().get(mArgumentos.getInt("idServicio"));
+				Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getInt("idServicio"));
 				EditText et = (EditText) hmEditText.get(mArgumentos.getInt("idServicio"));
-				String medida = par.getMedida();
+				String medida = tripleta.getMedida();
+				String descripcion = tripleta.getDescripcion();
 
 				if(isChecked){
 					et.setFocusable(true);
 					et.setFocusableInTouchMode(true);
 					et.setSelected(true);
 					et.setEnabled(true);
+					ibDescripcionServ.setClickable(true);
+					ibDescripcionServ.setEnabled(true);
 					if(medida.equals("") || medida==null){
 						et.requestFocus();
 						et.setError(Mensaje.ERROR_CAMPO_OBLIGATORIO);
@@ -239,26 +293,28 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 					et.setFocusable(false);
 					et.setFocusableInTouchMode(false);
 					et.setEnabled(false);
+					ibDescripcionServ.setClickable(false);
+					ibDescripcionServ.setEnabled(false);
 					et.setText("");
 					medida = "";
 					et.setError(null);
 				}
 
 				getServiciosSeleccionados().remove(mArgumentos.getInt("idServicio"));
-				getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Par(isChecked, medida));
-				
+				getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Tripleta(isChecked, medida, descripcion));
+
 				boolean flagServicio = false;
 				boolean flagCorreo = false;
-				par = null;
+				tripleta = null;
 
-				for (Map.Entry<Integer, Par> entry : getServiciosSeleccionados().entrySet()) {
-					par = entry.getValue();
+				for (Map.Entry<Integer, Tripleta> entry : getServiciosSeleccionados().entrySet()) {
+					tripleta = entry.getValue();
 					//si tengo algun servicio seleccionado..
-					if( par.getBooleano() == true){
+					if( tripleta.getBooleano() == true){
 						flagServicio = true;
 					}
 				}
-				
+
 				for (Map.Entry<Integer, Boolean> entry : ListaCorreosCursorAdapter.getCorreosSeleccionados().entrySet()) {
 					//si tengo algun correo seleccionado..
 					if( entry.getValue() == true){
@@ -310,13 +366,14 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		etMedida.setOnFocusChangeListener(new OnFocusChangeListener() {
 			public void onFocusChange(View v, boolean hasFocus) {
 
-				if(!hasFocus && getServiciosSeleccionados()!=null){
-					Log.e("setOnFocusChangeListener","idservicio: " + mArgumentos.getInt("idServicio"));
-					Par par = getServiciosSeleccionados().get(mArgumentos.getInt("idServicio"));
-					boolean cheked = par.getBooleano();
+				if(!hasFocus){
+					//	Log.e("setOnFocusChangeListener","idservicio: " + mArgumentos.getInt("idServicio"));
+					Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getInt("idServicio"));
+					boolean cheked = tripleta.getBooleano();
+					String descripcion = tripleta.getDescripcion(); 
 					EditText et = (EditText) hmEditText.get(mArgumentos.getInt("idServicio"));
 					getServiciosSeleccionados().remove(mArgumentos.getInt("idServicio"));
-					getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Par(cheked, et.getText().toString()));
+					getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Tripleta(cheked, et.getText().toString(), descripcion));
 				}
 			}
 		});
@@ -324,7 +381,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		//Esta linea de codigo es importante para evitar que se pierdan los checkboxes seleccionados
 		//cuando hacemos scroll de la lista. De aqui la importancia del setOnCheckedChangeListener
 		//y la lista status.
-		Par par = getServiciosSeleccionados().get(idServicio);
+		Tripleta par = getServiciosSeleccionados().get(idServicio);
 		cb.setChecked(par.getBooleano());
 		etMedida.setText(par.getMedida());
 	}

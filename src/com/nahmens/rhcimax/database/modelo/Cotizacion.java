@@ -8,6 +8,7 @@ public class Cotizacion {
 	public final static String RECIBIDO = "recibido";
 	public final static String ID_USUARIO = "idUsuario";
 	public final static String ID_EMPRESA = "idEmpresa";
+	public final static String DESCRIPCION = "descripcion";
 	
 	int id;
 	String fechaEnvio;
@@ -16,16 +17,18 @@ public class Cotizacion {
 	int recibido;
 	int idUsuario;
 	int idEmpresa;
+	String descripcion;
 	
-	public Cotizacion(String fechaEnvio, String fechaLeido, int enviado,
-			int recibido, int idUsuario, int idEmpresa) {
-
+	public Cotizacion(String fechaEnvio, String fechaLeido,
+			int enviado, int recibido, int idUsuario, int idEmpresa,
+			String descripcion) {
 		this.fechaEnvio = fechaEnvio;
 		this.fechaLeido = fechaLeido;
 		this.enviado = enviado;
 		this.recibido = recibido;
 		this.idUsuario = idUsuario;
 		this.idEmpresa = idEmpresa;
+		this.descripcion = descripcion;
 	}
 
 	public int getId() {
@@ -83,5 +86,13 @@ public class Cotizacion {
 	public void setIdEmpresa(int idEmpresa) {
 		this.idEmpresa = idEmpresa;
 	}
-		
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+	
 }

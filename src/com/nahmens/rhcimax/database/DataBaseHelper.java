@@ -94,6 +94,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "recibido INTEGER NOT NULL DEFAULT 0, "
 															+ "idUsuario INTEGER NOT NULL, "
 															+ "idEmpresa INTEGER NOT NULL, "
+															+ "descripcion TEXT, "
 															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id),"
@@ -120,6 +121,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 																	+ "idCotizacion INTEGER NOT NULL, "
 																	+ "idServicio INTEGER NOT NULL, "
 																	+ "medida TEXT, "
+																	+ "descripcion TEXT, "
 																	+ "primary key (idCotizacion, idServicio), "
 																	+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id), " 
 																	+ "FOREIGN KEY(idServicio) REFERENCES " + TABLA_SERVICIO + "(_id));";

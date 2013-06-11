@@ -66,5 +66,6 @@
     <string name="ver_servicio">Ver Servicio</string>
     <string name="empresas">Empresas</string>
     <string name="calcular">Calcular</string>
+    <string name="editar_servicio">Editar Servicio</string>
 
 </resources>
