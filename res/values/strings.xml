@@ -69,5 +69,14 @@
     <string name="editar_servicio">Editar Servicio</string>
     <string name="title_activity_historicos">HistoricosActivity</string>
     <string name="title_activity_tareas">TareasActivity</string>
+    <string name="actualizar">Actualizar</string>
+    <string name="historicos">Históricos</string>
+    
+    <string-array name="historicos_filtro_array">
+        <item>Hoy</item>
+        <item>Ayer</item>
+        <item>Esta semana</item>
+    </string-array>
+
 
 </resources>

@@ -22,12 +22,12 @@ public class LoginActivity extends Activity {
 		setContentView(R.layout.activity_login);
 	}
 
-	@Override
+	/*@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.login, menu);
 		return true;
-	}
+	}*/
 
 	/*
 	 * Funcion que verifica si el usuario es válido o no.

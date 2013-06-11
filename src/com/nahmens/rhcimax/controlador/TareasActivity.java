@@ -19,7 +19,7 @@ public class TareasActivity extends Fragment {
             Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         
-        View view = inflater.inflate(R.layout.activity_log_out, container, false);
+        View view = inflater.inflate(R.layout.activity_tareas, container, false);
         
         return view;
     }
