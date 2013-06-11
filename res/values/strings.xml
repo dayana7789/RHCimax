@@ -67,5 +67,7 @@
     <string name="empresas">Empresas</string>
     <string name="calcular">Calcular</string>
     <string name="editar_servicio">Editar Servicio</string>
+    <string name="title_activity_historicos">HistoricosActivity</string>
+    <string name="title_activity_tareas">TareasActivity</string>
 
 </resources>

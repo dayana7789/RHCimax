@@ -39,6 +39,8 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	final public static String tagFragmentDatosCliente = "fragmentDatosCliente";
 	final public static String tagFragmentDatosEmpresa = "fragmentDatosEmpresa";
 	final public static String tagFragmentServicios = "fragmentServicios";
+	final public static String tagFragmentHistoricos = "fragmentHistoricos";
+	final public static String tagFragmentTareas = "fragmentTareas";
 
 	/*Tag para identificar a los cuadros de colores en la lista de clientes*/
 	final public static String tagCuadroColor = "cuadroColor";
@@ -50,6 +52,8 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 
 	/*Principales fragments de los tabs*/
 	ClientesActivity fragmentClientes;
+	HistoricosActivity fragmentHistoricos;
+	TareasActivity fragmentTareas;
 	SettingsActivity fragmentSettings;
 	LogoutActivity fragmentLogout;
 
@@ -61,6 +65,8 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		setContentView(R.layout.activity_aplicacion);
 
 		fragmentClientes = new ClientesActivity();
+		fragmentHistoricos = new HistoricosActivity();
+		fragmentTareas = new TareasActivity();
 		fragmentSettings = new SettingsActivity();
 		fragmentLogout = new LogoutActivity();
 
@@ -168,8 +174,25 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		});
 		spec.setIndicator(" Clientes ", res.getDrawable(R.drawable.clientes));
 		mTabHost.addTab(spec);
+		
+		spec = mTabHost.newTabSpec(tagFragmentTareas);
+		spec.setContent(new TabHost.TabContentFactory() {
+			public View createTabContent(String tag) {
+				return findViewById(android.R.id.tabcontent);
+			}
+		});
+		spec.setIndicator(" Tareas ",res.getDrawable(R.drawable.tareas));
+		mTabHost.addTab(spec);
 
-
+		spec = mTabHost.newTabSpec(tagFragmentHistoricos);
+		spec.setContent(new TabHost.TabContentFactory() {
+			public View createTabContent(String tag) {
+				return findViewById(android.R.id.tabcontent);
+			}
+		});
+		spec.setIndicator(" Histórico ",res.getDrawable(R.drawable.historicos));
+		mTabHost.addTab(spec);
+		
 		spec = mTabHost.newTabSpec(tagFragmentSettings);
 		spec.setContent(new TabHost.TabContentFactory() {
 			public View createTabContent(String tag) {
@@ -187,9 +210,6 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		});
 		spec.setIndicator(" Logout ",res.getDrawable(R.drawable.logouticon));
 		mTabHost.addTab(spec);
-
-
-
 	}
 
 
@@ -219,6 +239,14 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 						return false;
 					}
 				});
+
+			}else if(tabId.equals(tagFragmentHistoricos)){
+
+				pushFragments(tagFragmentHistoricos, fragmentHistoricos, false);
+
+			}else if(tabId.equals(tagFragmentTareas)){
+
+				pushFragments(tagFragmentTareas, fragmentTareas, false);
 
 			}else if(tabId.equals(tagFragmentSettings)){
 
@@ -283,8 +311,8 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 
 		String fragmentoTag = fragmentoActual.getTag().toString();
 
-		//Si hacemos click en el back button desde el fragmento de clientes, settings o logout, se nos muestra alert.
-		if (fragmentoTag.equals(tagFragmentClientes) || fragmentoTag.equals(tagFragmentSettings) || fragmentoTag.equals(tagFragmentLogout)){
+		//Si hacemos click en el back button desde el fragmento de clientes, historicos, tareas, settings o logout, se nos muestra alert.
+		if (fragmentoTag.equals(tagFragmentClientes) || fragmentoTag.equals(tagFragmentHistoricos) ||  fragmentoTag.equals(tagFragmentTareas) || fragmentoTag.equals(tagFragmentSettings) || fragmentoTag.equals(tagFragmentLogout)){
 
 			mostrarAvisoCierreApp();
 
