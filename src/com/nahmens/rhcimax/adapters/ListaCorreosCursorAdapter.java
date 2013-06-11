@@ -1,23 +1,25 @@
 package com.nahmens.rhcimax.adapters;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.database.modelo.Empleado;
+import com.nahmens.rhcimax.utils.Par;
 
 
 
@@ -34,7 +36,9 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 	private int[] to;
 	private String idEmpleado;
 	private static HashMap<Integer, Boolean> correosSeleccionados; //Almacena los checkboxes que fueron seleccionados <idEmpleado, booleano>
-
+	private Button bFinalizar; //referencia al boton finalizar
+	 
+	
 	public static HashMap<Integer,Boolean> getCorreosSeleccionados(){
 		return correosSeleccionados;
 	}
@@ -45,7 +49,7 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 	}
 
 	public ListaCorreosCursorAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to, int flags, String idEmpleado) {
+			String[] from, int[] to, int flags, String idEmpleado, Button bFinalizar) {
 
 		super(context, layout, c, from, to, flags);
 
@@ -53,6 +57,7 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 		this.from = from;
 		this.to = to;
 		this.idEmpleado = idEmpleado;
+		this.bFinalizar = bFinalizar;
 
 		inicializarCorreosSeleccionados(c);
 
@@ -162,6 +167,32 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				getCorreosSeleccionados().remove(mArgumentos.getInt("idEmpleado"));
 				getCorreosSeleccionados().put(mArgumentos.getInt("idEmpleado"), isChecked);
+				
+				boolean flagServicio = false;
+				boolean flagCorreo = false;
+				Par par = null;
+				
+				for (Map.Entry<Integer, Par> entry : ListaServiciosCursorAdapter.getServiciosSeleccionados().entrySet()) {
+					par = entry.getValue();
+					//si tengo algun servicio seleccionado..
+					if( par.getBooleano() == true){
+						flagServicio = true;
+					}
+				}
+				
+				for (Map.Entry<Integer, Boolean> entry : getCorreosSeleccionados().entrySet()) {
+					//si tengo algun correo seleccionado..
+					if( entry.getValue() == true){
+						flagCorreo = true;
+					}
+				}
+
+				//si flag es falso es porque ningun servicio o correo fue seleccionado.
+				if(flagServicio==false || flagCorreo == false){
+					bFinalizar.setEnabled(false);
+				}else{
+					bFinalizar.setEnabled(true);
+				}
 			}
 		});
 

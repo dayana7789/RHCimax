@@ -1,6 +1,7 @@
 package com.nahmens.rhcimax.adapters;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -38,6 +40,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	private String[] from;
 	private int[] to;
 	private static HashMap<Integer, Par> status; //Almacena los checkboxes que fueron seleccionados <idServicio, Par(booleano, medida)>
+	private Button bFinalizar; //referencia al boton finalizar
 	
 	@SuppressLint("UseSparseArrays")
 	private final HashMap<Integer, EditText> hmEditText = new HashMap<Integer, EditText>(); //almacena las referencias a los EditText
@@ -52,13 +55,14 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	}
 
 	public ListaServiciosCursorAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to, int flags) {
+			String[] from, int[] to, int flags, Button bFinalizar) {
 
 		super(context, layout, c, from, to, flags);
 
 		this.layout = layout;
 		this.from = from;
 		this.to = to;
+		this.bFinalizar = bFinalizar;
 
 		inicializarServiciosSeleccionados(c);
 	}
@@ -242,6 +246,32 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 
 				getServiciosSeleccionados().remove(mArgumentos.getInt("idServicio"));
 				getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Par(isChecked, medida));
+				
+				boolean flagServicio = false;
+				boolean flagCorreo = false;
+				par = null;
+
+				for (Map.Entry<Integer, Par> entry : getServiciosSeleccionados().entrySet()) {
+					par = entry.getValue();
+					//si tengo algun servicio seleccionado..
+					if( par.getBooleano() == true){
+						flagServicio = true;
+					}
+				}
+				
+				for (Map.Entry<Integer, Boolean> entry : ListaCorreosCursorAdapter.getCorreosSeleccionados().entrySet()) {
+					//si tengo algun correo seleccionado..
+					if( entry.getValue() == true){
+						flagCorreo = true;
+					}
+				}
+
+				//si flag es falso es porque ningun servicio fue seleccionado.
+				if(flagServicio==false || flagCorreo == false){
+					bFinalizar.setEnabled(false);
+				}else{
+					bFinalizar.setEnabled(true);
+				}
 			}
 		});
 

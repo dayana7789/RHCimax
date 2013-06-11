@@ -109,8 +109,10 @@ public class ServiciosActivity extends Fragment {
 			int[] to = new int[] { R.id.checkBoxServicio};
 			ListView lvServicios = (ListView) v.findViewById (R.id.listViewServicios);
 
+			Button buttonFinalizar= (Button)  v.findViewById(R.id.buttonFinalizar);
+
 			//Creamos un array adapter para desplegar cada una de las filas
-			ListaServiciosCursorAdapter notes = new ListaServiciosCursorAdapter(getActivity(), R.layout.activity_fila_servicio, mCursorServicios, from, to, 0);
+			ListaServiciosCursorAdapter notes = new ListaServiciosCursorAdapter(getActivity(), R.layout.activity_fila_servicio, mCursorServicios, from, to, 0, buttonFinalizar);
 			lvServicios.setAdapter(notes);
 			lvServicios.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 			final EditText etMensual = (EditText) v.findViewById(R.id.textEditMensual);
@@ -167,153 +169,75 @@ public class ServiciosActivity extends Fragment {
 			final TextView tvErrorCorreo = (TextView) v.findViewById(R.id.textViewErrorCorreo);
 			final TextView tvErrorServicio = (TextView) v.findViewById(R.id.textViewErrorServicio);
 
-			Button buttonFinalizar= (Button)  v.findViewById(R.id.buttonFinalizar);
 			buttonFinalizar.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v){
-					tvErrorServicio.setVisibility(View.GONE);
-					tvErrorServicio.setError(null);
-					tvErrorCorreo.setVisibility(View.GONE);
-					tvErrorCorreo.setError(null);
+
 					Mensaje mToast = null;
 
-					//Verificamos que hayan correos seleccionados
-					boolean hayErrorCorreos = hayErrorCorreos();
+					//Obtenemos al usuario
+					SharedPreferences prefs = getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
+					int idUsuario = prefs.getInt(Usuario.ID, 0);
 
-					//Verificamos que hayan servicios seleccionados
-					boolean hayErrorServicios = hayErrorServicios();
+					//creamos una cotizacion
+					CotizacionSqliteDao cotizacionDao = new CotizacionSqliteDao();
+					long idCotizacion = cotizacionDao.insertarCotizacion(getActivity(), ""+idUsuario, ""+idEmpresa);
 
-					if(hayErrorCorreos || hayErrorServicios){
+					//creamos un registro en la tabla empleadoCotizacion
+					boolean hayErrorResultEC = crearEmpleadoCotizacion(idCotizacion);
 
-						mToast = new Mensaje(inflater, getActivity(), "error_formulario");
+					if(hayErrorResultEC){
+						mToast = new Mensaje(inflater, getActivity(), "error_creacion_cotizacion");
 						try {
 							mToast.controlMensajesToast();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 
-						//no hay errores en la pagina..
+						//Si ocurrio un error, eliminamos la cotizacion que recien agregamos
+						//para evitar que haya inconsistencias en la BD
+						cotizacionDao.eliminarCotizacion(getActivity(), ""+idCotizacion);
+
 					}else{
 
-						//Obtenemos al usuario
-						SharedPreferences prefs = getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
-						int idUsuario = prefs.getInt(Usuario.ID, 0);
+						//creamos un registro en la tabla cotizacionServicio
+						boolean hayErrorResultCS = crearCotizacionServicio(idCotizacion);
 
-						//creamos una cotizacion
-						CotizacionSqliteDao cotizacionDao = new CotizacionSqliteDao();
-						long idCotizacion = cotizacionDao.insertarCotizacion(getActivity(), ""+idUsuario, ""+idEmpresa);
-
-						//creamos un registro en la tabla empleadoCotizacion
-						boolean hayErrorResultEC = crearEmpleadoCotizacion(idCotizacion);
-
-						if(hayErrorResultEC){
+						if(hayErrorResultCS){
 							mToast = new Mensaje(inflater, getActivity(), "error_creacion_cotizacion");
 							try {
 								mToast.controlMensajesToast();
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
-							
+
 							//Si ocurrio un error, eliminamos la cotizacion que recien agregamos
 							//para evitar que haya inconsistencias en la BD
 							cotizacionDao.eliminarCotizacion(getActivity(), ""+idCotizacion);
-							
+
+							//finalmente.. si no errores de ningun tipo..
 						}else{
 
-							//creamos un registro en la tabla cotizacionServicio
-							boolean hayErrorResultCS = crearCotizacionServicio(idCotizacion);
-							
-							if(hayErrorResultCS){
-								mToast = new Mensaje(inflater, getActivity(), "error_creacion_cotizacion");
-								try {
-									mToast.controlMensajesToast();
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-								
-								//Si ocurrio un error, eliminamos la cotizacion que recien agregamos
-								//para evitar que haya inconsistencias en la BD
-								cotizacionDao.eliminarCotizacion(getActivity(), ""+idCotizacion);
-								
-						    //finalmente.. si no errores de ningun tipo..
-							}else{
-
-								mToast = new Mensaje(inflater, getActivity(), "ok_creacion_cotizacion");
-								try {
-									mToast.controlMensajesToast();
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-																
-								//Redirigimos la pantalla a FragmentClientes
-								cambiarFragmento();
-
-								//seteamos la lista de correos seleccionados a null de la vista servicios
-								ListaCorreosCursorAdapter.setCorreosSeleccionados(null);
-								
-								//seteamos la lista de servicios seleccionados a null de la vista servicios
-								ListaServiciosCursorAdapter.setServiciosSeleccionados(null);
+							mToast = new Mensaje(inflater, getActivity(), "ok_creacion_cotizacion");
+							try {
+								mToast.controlMensajesToast();
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
+
+							//Redirigimos la pantalla a FragmentClientes
+							cambiarFragmento();
+
+							//seteamos la lista de correos seleccionados a null de la vista servicios
+							ListaCorreosCursorAdapter.setCorreosSeleccionados(null);
+
+							//seteamos la lista de servicios seleccionados a null de la vista servicios
+							ListaServiciosCursorAdapter.setServiciosSeleccionados(null);
 						}
 					}
 				}
 
-				/**
-				 * Funcion que detecta si ningun correo fue seleccionado.
-				 * @return si existe error.
-				 */
-				private boolean hayErrorCorreos() {
-					HashMap<Integer, Boolean> correosSeleccionados = ListaCorreosCursorAdapter.getCorreosSeleccionados();
-					boolean flagCorreo = false;
-
-					for (Map.Entry<Integer, Boolean> entry : correosSeleccionados.entrySet()) {
-						//si tengo algun correo seleccionado..
-						if( entry.getValue() == true){
-							flagCorreo = true;
-						}
-					}
-
-					//si flag es falso es porque ningun correo fue seleccionado.
-					if(flagCorreo==false){
-						//mostramos mensaje de error en pantalla
-						tvErrorCorreo.setVisibility(View.VISIBLE);
-						tvErrorCorreo.setError(Mensaje.ERROR_CHECK_CORREO);
-						tvErrorCorreo.setText(Mensaje.ERROR_CHECK_CORREO);
-
-						return true;
-					}
-					return false;
-				}
-
-				/**
-				 * Funcion que detecta si ningun servicio fue seleccionado.
-				 * @return si existe error.
-				 */
-				private boolean hayErrorServicios() {
-					HashMap<Integer, Par> serviciosSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
-					boolean flagServicio = false;
-					Par par = null;
-
-					for (Map.Entry<Integer, Par> entry : serviciosSeleccionados.entrySet()) {
-						par = entry.getValue();
-						//si tengo algun servicio seleccionado..
-						if( par.getBooleano() == true){
-							flagServicio = true;
-						}
-					}
-
-					//si flag es falso es porque ningun servicio fue seleccionado.
-					if(flagServicio==false){
-						//mostramos mensaje de error en pantalla
-						tvErrorServicio.setVisibility(View.VISIBLE);
-						tvErrorServicio.setError(Mensaje.ERROR_CHECK_SERVICIO);
-						tvErrorServicio.setText(Mensaje.ERROR_CHECK_SERVICIO);
-
-						return true;
-					}
-					return false;
-				}
 
 				/**
 				 * Funcion que carga el fragmento FragmentClientes
@@ -436,10 +360,12 @@ public class ServiciosActivity extends Fragment {
 			//Creamos un array adapter para desplegar cada una de las filas
 			ListaCorreosCursorAdapter notes = null;
 
+			Button buttonFinalizar= (Button)  v.findViewById(R.id.buttonFinalizar);
+
 			if(idEmpleado==null){
-				notes = new ListaCorreosCursorAdapter(getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0, null);
+				notes = new ListaCorreosCursorAdapter(getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0, null,buttonFinalizar);
 			}else{
-				notes = new ListaCorreosCursorAdapter(getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0, idEmpleado);
+				notes = new ListaCorreosCursorAdapter(getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0, idEmpleado, buttonFinalizar);
 			}
 			lvEmpleados.setAdapter(notes);
 		}
