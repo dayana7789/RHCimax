@@ -42,9 +42,6 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	private static HashMap<Integer, Tripleta> status; //Almacena los checkboxes que fueron seleccionados <idServicio, Tripleta(booleano, medida, descripcion)>
 	private Button bFinalizar; //referencia al boton finalizar
 
-	@SuppressLint("UseSparseArrays")
-	private final HashMap<Integer, EditText> hmEditText = new HashMap<Integer, EditText>(); //almacena las referencias a los EditText
-
 	public static HashMap<Integer,Tripleta> getServiciosSeleccionados(){
 		return status;
 	}
@@ -84,7 +81,6 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 			while (!c.isAfterLast()) {
 				int idServicio = c.getInt(c.getColumnIndex(Servicio.ID));
 				getServiciosSeleccionados().put(idServicio, new Tripleta(false, "", ""));
-				hmEditText.put(idServicio,null);
 				c.moveToNext();
 			}
 		}
@@ -116,10 +112,19 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		holder = new ViewHolder();
 		holder.cbServicio = (CheckBox) v.findViewById(R.id.checkBoxServicio);
 		holder.tvUnidadMedicion = (TextView) v.findViewById(R.id.textViewUnidadMedicion);
+				
 		holder.etMedida = (EditText) v.findViewById(R.id.editTextMedida);
+		holder.etMedida.setFocusable(false);
+		holder.etMedida.setFocusableInTouchMode(false);
+		holder.etMedida.setEnabled(false);
+		holder.etMedida.setText("");
+		holder.etMedida.setError(null);
+		
 		holder.ibVerServicio = (ImageButton) v.findViewById(R.id.imageButtonVerServicio);
+		
 		holder.ibDescripcionServ = (ImageButton) v.findViewById(R.id.imageButtonDescripcionServ);
 		holder.ibDescripcionServ.setEnabled(false);
+		
 		v.setTag(holder);
 
 		return v;
@@ -188,10 +193,6 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 			tvUnidadMedicion.setText(unidadMedicion);
 		}
 
-		//guardamos la referencia del edit text de cada fila
-		hmEditText.remove(idServicio);
-		hmEditText.put(idServicio, holder.etMedida);
-
 		ImageButton buttonVerServicio = holder.ibVerServicio;
 
 		//almacenamos en un bundle, precio y descripcion del servicio.
@@ -220,6 +221,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 				alert.show();
 			}});
 
+		final EditText etMedida = holder.etMedida;
 		final ImageButton ibDescripcionServ = holder.ibDescripcionServ;
 
 		ibDescripcionServ.setOnClickListener(new View.OnClickListener() {
@@ -269,35 +271,35 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 			}});
 
 
+
 		//Creamos un listener para actualizar la lista de checkboxes seleccionados
 		CheckBox cb = ( CheckBox ) holder.cbServicio;
 		cb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getInt("idServicio"));
-				EditText et = (EditText) hmEditText.get(mArgumentos.getInt("idServicio"));
 				String medida = tripleta.getMedida();
 				String descripcion = tripleta.getDescripcion();
 
 				if(isChecked){
-					et.setFocusable(true);
-					et.setFocusableInTouchMode(true);
-					et.setSelected(true);
-					et.setEnabled(true);
+					etMedida.setFocusable(true);
+					etMedida.setFocusableInTouchMode(true);
+					etMedida.setSelected(true);
+					etMedida.setEnabled(true);
 					ibDescripcionServ.setClickable(true);
 					ibDescripcionServ.setEnabled(true);
 					if(medida.equals("") || medida==null){
-						et.requestFocus();
-						et.setError(Mensaje.ERROR_CAMPO_OBLIGATORIO);
+						etMedida.requestFocus();
+						etMedida.setError(Mensaje.ERROR_CAMPO_OBLIGATORIO);
 					}
 				}else{
-					et.setFocusable(false);
-					et.setFocusableInTouchMode(false);
-					et.setEnabled(false);
+					etMedida.setFocusable(false);
+					etMedida.setFocusableInTouchMode(false);
+					etMedida.setEnabled(false);
 					ibDescripcionServ.setClickable(false);
 					ibDescripcionServ.setEnabled(false);
-					et.setText("");
+					etMedida.setText("");
 					medida = "";
-					et.setError(null);
+					etMedida.setError(null);
 				}
 
 				getServiciosSeleccionados().remove(mArgumentos.getInt("idServicio"));
@@ -332,7 +334,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		});
 
 		//Creamos un listener para actualizar la lista de edit texts seleccionados
-		EditText etMedida = holder.etMedida;
+		
 		/*etMedida.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -342,7 +344,6 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 				Log.e("aqi","idservicio: " + mArgumentos.getInt("idServicio"));
 				Par par = status.get(mArgumentos.getInt("idServicio"));
             	boolean cheked = par.getBooleano();
-            	//EditText et = (EditText) hmEditText.get(mArgumentos.getInt("idServicio"));
             	status.remove(mArgumentos.getInt("idServicio"));
 				status.put(mArgumentos.getInt("idServicio"), new Par(cheked, s.toString()));
 				}
@@ -371,9 +372,8 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 					Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getInt("idServicio"));
 					boolean cheked = tripleta.getBooleano();
 					String descripcion = tripleta.getDescripcion(); 
-					EditText et = (EditText) hmEditText.get(mArgumentos.getInt("idServicio"));
 					getServiciosSeleccionados().remove(mArgumentos.getInt("idServicio"));
-					getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Tripleta(cheked, et.getText().toString(), descripcion));
+					getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Tripleta(cheked, etMedida.getText().toString(), descripcion));
 				}
 			}
 		});
@@ -381,8 +381,8 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		//Esta linea de codigo es importante para evitar que se pierdan los checkboxes seleccionados
 		//cuando hacemos scroll de la lista. De aqui la importancia del setOnCheckedChangeListener
 		//y la lista status.
-		Tripleta par = getServiciosSeleccionados().get(idServicio);
-		cb.setChecked(par.getBooleano());
-		etMedida.setText(par.getMedida());
+		Tripleta tripleta = getServiciosSeleccionados().get(idServicio);
+		cb.setChecked(tripleta.getBooleano());
+		etMedida.setText(tripleta.getMedida());
 	}
 }
