@@ -55,10 +55,12 @@
         android:text="@string/descripcion" />	
         
 	<EditText
-        android:id="@+id/textEditDescripcion"
-        android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:inputType="textCapSentences|textMultiLine"/>
+		android:id="@+id/textEditDescripcion"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+    	android:maxLines="4"
+    	android:scrollbars="vertical"
+		android:inputType="textCapSentences|textMultiLine"/>
 
     <TableLayout
         android:layout_width="match_parent"
