@@ -1,16 +1,278 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".TareasActivity" >
+    style="@style/ContenedorPrincipal"
+    tools:context=".ClientesActivity" >
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:id="@+id/textViewTareas"
+        style="@style/FuenteTitulos"
+        android:text="@string/tareas" />
 
-</RelativeLayout>
+    <!-- ____________________ Seccion: boton actualizar y colores sync ____________________ -->
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#9D9B9B"
+        android:stretchColumns="0,1" >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            tools:ignore="UselessParent" >
+
+            <Button
+                android:id="@+id/buttonActualizarTareas"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:text="@string/actualizar" />
+
+            <LinearLayout
+                android:layout_gravity="center"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/avisoVerdeTarea"
+                    style="@style/CuadroNotificacion"
+                    android:textIsSelectable="false"
+                    android:background="@drawable/borde_blanco"/>
+
+                <TextView
+                    android:id="@+id/avisoAmarilloTarea"
+					style="@style/CuadroNotificacion"
+					android:textIsSelectable="false"
+                    android:background="@drawable/borde_blanco"/>
+
+                <TextView
+                    android:id="@+id/avisoRojoTarea"
+                    style="@style/CuadroNotificacion"
+                    android:textIsSelectable="false"
+                    android:background="@drawable/borde_blanco"/>
+            </LinearLayout>
+
+        </TableRow>
+    </TableLayout>
+    <!--____________________ Seccion: subtitulo: tarea y boton finalizar ______________________________-->
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:stretchColumns="0" >
+        
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent" 
+            android:gravity="center">
+        
+        <TextView
+		    android:id="@+id/textViewTareaSub"
+		    style="@style/FuenteSubTitulos"
+		    android:text="@string/tarea"/>
+	
+		<Button
+		    android:id="@+id/imageButtonFinalizar"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/finalizar"/>
+		</TableRow>
+	</TableLayout>
+	
+    <!--____________________ Seccion: formulario, campo: tarea______________________________-->
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="3dip"
+        android:stretchColumns="1" >
+        
+        <TableRow
+            tools:ignore="UselessParent" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        
+			<TextView
+			    android:id="@+id/textViewTarea"
+			    style="@style/FuenteFormularios"
+			    android:text="@string/tarea" />
+	
+	        <EditText
+	            android:id="@+id/editTextTarea"
+	            android:inputType="textCapSentences" >
+	        </EditText>
+        </TableRow>
+	</TableLayout>
+	
+    <!--______________________________ Seccion: formulario, campos: empresa, empleado____________________-->
+	<TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="3dip"
+        android:stretchColumns="1,4" >
+        
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        
+			<TextView
+			    android:id="@+id/textViewEmpresa"
+			    style="@style/FuenteFormularios"
+			    android:text="@string/empresa" />
+	
+	        <AutoCompleteTextView 
+			    android:id="@+id/autocompleteEmpresa" />
+	        
+	        <ImageButton
+				android:id="@+id/imageButtonVerEmpresa"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@android:drawable/ic_menu_view" 
+				android:contentDescription="@string/ver_empresa"/>
+	        
+	        <TextView
+			    android:id="@+id/textViewEmpleado"
+			    style="@style/FuenteFormularios"
+			    android:text="@string/empleado" />
+	
+	        <AutoCompleteTextView 
+			    android:id="@+id/autocompleteEmpleado" />
+	        
+	        <ImageButton
+				android:id="@+id/imageButtonVerEmpleado"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@android:drawable/ic_menu_view" 
+				android:contentDescription="@string/ver_empleado"/>
+        </TableRow>
+        
+        <!--____________________ Seccion: formulario, campos: fecha, hora ______________________________-->
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        
+			<TextView
+			    android:id="@+id/textViewFecha"
+			    style="@style/FuenteFormularios"
+			    android:text="@string/fecha" />
+	
+	        <Button
+	            android:id="@+id/editTextFecha" >
+	        </Button>
+	        <TextView />
+	        
+	        <TextView
+			    android:id="@+id/textViewTime"
+			    style="@style/FuenteFormularios"
+			    android:text="@string/hora" />
+	
+	        <Button
+	            android:id="@+id/editTextTime">
+	        </Button>
+
+        </TableRow>
+	</TableLayout>
+	<!--____________________ Seccion: formulario, campo descripcion ______________________________-->
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="3dip"
+        android:stretchColumns="1" >
+        
+        <TableRow
+            tools:ignore="UselessParent" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        
+			<TextView
+			    android:id="@+id/textViewDescripcion"
+			    style="@style/FuenteFormularios"
+			    android:text="@string/descripcion" />
+	
+	        <EditText
+	            android:id="@+id/editTextDescripcion"
+	            android:inputType="textCapSentences|textMultiLine|textLongMessage" >
+	        </EditText>
+        </TableRow>
+	</TableLayout>
+	<!--____________________ Seccion: botones: salvar y limpiar ______________________________-->
+     <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="3dip" 
+        android:stretchColumns="0,1">
+        
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent"  >
+
+			<Button
+			    android:id="@+id/buttonSalvar"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="@string/salvar" />
+	
+	       <Button
+	           android:id="@+id/buttonLimpiar"
+	           android:layout_width="wrap_content"
+	           android:layout_height="wrap_content"
+	           android:text="@string/limpiar" />
+	       
+        </TableRow>
+    </TableLayout>
+    
+	<!--____________________ Seccion: titulo tareas y spinner ______________________________-->
+	
+	<TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#9D9B9B"
+        android:layout_gravity="center"
+        android:stretchColumns="0" >
+        
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="UselessParent" 
+            android:gravity="center">
+        
+			<TextView
+				android:id="@+id/textViewTareasSub"
+			    style="@style/FuenteSubTitulos"
+			    android:text="@string/tareas" />
+	            
+            <Spinner
+			    android:id="@+id/spinnerTareas"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content" />
+    	</TableRow>
+	</TableLayout>
+
+	<!--______________________________ Seccion: buscador ______________________________-->
+	
+    <EditText
+        android:id="@+id/editTextBuscar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+		android:layout_marginTop="10dp"
+		android:layout_marginBottom="10dp"
+		android:drawableRight="@android:drawable/ic_menu_search"
+        android:hint="@string/buscar" >
+    </EditText>
+
+    
+    <!--____________________ Seccion: lista de tareas ______________________________-->
+    <ListView
+        android:id="@id/android:list"
+        android:textFilterEnabled="true"
+        android:layout_width="match_parent"
+        android:fadeScrollbars="false"
+        android:layout_height="0dp"
+        android:layout_weight="1" >
+    </ListView>
+
+
+</LinearLayout>

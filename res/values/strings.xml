@@ -71,6 +71,13 @@
     <string name="title_activity_tareas">TareasActivity</string>
     <string name="actualizar">Actualizar</string>
     <string name="historicos">Históricos</string>
+    <string name="tareas">Tareas</string>
+    <string name="tarea">Tarea</string>
+    <string name="fecha">Fecha</string>
+    <string name="hora">Hora</string>
+    <string name="minutos">Minutos</string>
+    <string name="ver_empleado">Ver Empleado</string>
+    <string name="limpiar">Limpiar</string>
     
     <string-array name="historicos_filtro_array">
         <item>Hoy</item>

@@ -69,7 +69,7 @@
 
     
     <TextView
-		android:id="@+id/textViewEmpleados"
+		android:id="@+id/textViewHistoricosSub"
 	    style="@style/FuenteSubTitulos"
 	    android:text="@string/historicos" />
     
