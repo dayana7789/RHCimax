@@ -27,6 +27,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	public static final String TABLA_SERVICIO= "servicio";
 	public static final String TABLA_COTIZACION_SERVICIO = "cotizacion_servicio";
 	public static final String TABLA_CONFIGURACION= "configuracion";
+	public static final String TABLA_TAREA= "tarea";
 
 	/*Creacion de tablas*/
 	private static final String DATABASE_CREATE_ROL = "CREATE table " + TABLA_ROL + " ("
@@ -132,6 +133,23 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															  + "key TEXT NOT NULL, "
 															  + "value TEXT NOT NULL);";
 	
+	private static final String DATABASE_CREATE_TAREA = "CREATE table " + TABLA_TAREA + " ("
+													  + "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+													  + "nombre TEXT NOT NULL, "
+													  + "fecha DATE NOT NULL, "
+													  + "hora TIME NOT NULL, "
+													  + "descripcion TEXT, "
+													  + "finalizada INTEGER NOT NULL DEFAULT 0, "
+													  + "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
+													  + "fechaSincronizacion DATETIME DEFAULT NULL, "
+													  + "idUsuario INTEGER NOT NULL, "
+													  + "idEmpresa INTEGER NOT NULL, "
+													  + "idEmpleado INTEGER NOT NULL, "
+													  + "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id), " 
+													  + "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id), " 
+													  + "FOREIGN KEY(idEmpleado) REFERENCES " + TABLA_EMPLEADO + "(_id));";
+	
+	
 	public DataBaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -150,6 +168,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL(DATABASE_CREATE_SERVICIO);
 		database.execSQL(DATABASE_CREATE_COTIZACION_SERVICIO);
 		database.execSQL(DATABASE_CREATE_CONFIGURACION);
+		database.execSQL(DATABASE_CREATE_TAREA);
 
 		this.insertarConfiguracion(database);
 		this.insertarRegistros(database);
@@ -175,6 +194,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL("DROP TABLE IF EXISTS "+TABLA_COTIZACION_SERVICIO);
 		database.execSQL("DROP TABLE IF EXISTS "+TABLA_COTIZACION);
 		database.execSQL("DROP TABLE IF EXISTS "+TABLA_SERVICIO);
+		database.execSQL("DROP TABLE IF EXISTS "+TABLA_CONFIGURACION);
+		database.execSQL("DROP TABLE IF EXISTS "+TABLA_TAREA);
 		onCreate(database);
 
 	}

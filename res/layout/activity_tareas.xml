@@ -51,8 +51,8 @@
             
             <Button
 			    android:id="@+id/buttonTarea"
+			    android:layout_height="35dp"
 			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
 			    android:text="@string/agregar_tarea"/>
         </TableRow>
     </TableLayout>

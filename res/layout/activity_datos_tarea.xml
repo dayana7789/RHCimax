@@ -6,7 +6,7 @@
     <TextView
         android:id="@+id/textViewTareas"
         style="@style/FuenteTitulos"
-        android:text="@string/tareas" />
+        android:text="@string/nueva_tarea" />
 
 
     <!--____________________ Seccion: formulario, campo: tarea______________________________-->

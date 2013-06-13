@@ -248,6 +248,21 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 			}else if(tabId.equals(tagFragmentTareas)){
 
 				pushFragments(tagFragmentTareas, fragmentTareas, false);
+				
+				//Creamos listener para cuando hagamos click sobre el tab previamente seleccionado
+				//nos lleve al fragmento correspondiente.
+				mTabHost.getCurrentTabView().setOnTouchListener(new OnTouchListener(){
+					@Override
+					public boolean onTouch(View v, MotionEvent event){
+
+						if (event.getAction() == MotionEvent.ACTION_DOWN){
+							if (mTabHost.getCurrentTabTag().equals(tagFragmentTareas)){
+								pushFragments(tagFragmentTareas, fragmentTareas, false);
+							}
+						}
+						return false;
+					}
+				});
 
 			}else if(tabId.equals(tagFragmentSettings)){
 
