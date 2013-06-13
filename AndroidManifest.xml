@@ -72,6 +72,10 @@
             android:name="com.nahmens.rhcimax.controlador.TareasActivity"
             android:label="@string/title_activity_tareas" >
         </activity>
+        <activity
+            android:name="com.nahmens.rhcimax.controlador.DatosTareaActivity"
+            android:label="@string/title_activity_datos_tarea" >
+        </activity>
     </application>
 
 </manifest>

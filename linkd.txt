@@ -1,0 +1,3 @@
+https://groups.google.com/forum/?fromgroups#!topic/android-developers/bgY_K3Hm28I
+http://stackoverflow.com/questions/8619576/android-drawing-a-button-as-a-spinner
+http://www.mkyong.com/android/android-spinner-drop-down-list-example/

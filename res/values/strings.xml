@@ -72,18 +72,24 @@
     <string name="actualizar">Actualizar</string>
     <string name="historicos">Históricos</string>
     <string name="tareas">Tareas</string>
-    <string name="tarea">Tarea</string>
+    <string name="tarea">"Tarea      "</string>
     <string name="fecha">Fecha</string>
     <string name="hora">Hora</string>
     <string name="minutos">Minutos</string>
     <string name="ver_empleado">Ver Empleado</string>
     <string name="limpiar">Limpiar</string>
+    <string name="agregar_tarea">Agregar Tarea</string>
+    <string name="title_activity_datos_tarea">DatosTareaActivity</string>
+    <string name="marcar_como_finalizado">Marcar como tarea finalizada</string>
     
+	<!-- \u0020 = espacios en blanco -->
     <string-array name="historicos_filtro_array">
-        <item>Hoy</item>
-        <item>Ayer</item>
-        <item>Esta semana</item>
+        <item>Filtrar ninguno</item>
+        <item>Hoy\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020</item>
+        <item>Ayer\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020</item>
+        <item>Esta semana\u0020\u0020\u0020\u0020</item>
     </string-array>
 
+    
 
 </resources>

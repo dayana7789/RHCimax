@@ -41,6 +41,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	final public static String tagFragmentServicios = "fragmentServicios";
 	final public static String tagFragmentHistoricos = "fragmentHistoricos";
 	final public static String tagFragmentTareas = "fragmentTareas";
+	final public static String tagFragmentDatosTareas = "fragmentDatosTareas";
 
 	/*Tag para identificar a los cuadros de colores en la lista de clientes*/
 	final public static String tagCuadroColor = "cuadroColor";
