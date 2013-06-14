@@ -16,11 +16,12 @@ import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 
 /**
  * Adaptador utilizado para mostrar lista de autocomplete de nombres 
- * de empresas haciendo uso de cursores.
+ * de empleados dado un id de empresa haciendo uso de cursores.
  * 
  * Para poder usarlo se debe usar los ids:
+ * (EditText) mView.findViewById(R.id.textEditHiddenIdEmpresa); 
  * (EditText) mView.findViewById(R.id.textEditHiddenIdEmpleado); 
- * (AutoCompleteTextView) mView.findViewById(R.id.autocompleteEmpleado);
+ *
  */
 public class AutocompleteEmpleadoCursorAdapter extends CursorAdapter implements android.widget.AdapterView.OnItemClickListener {
 	private Context contexto;

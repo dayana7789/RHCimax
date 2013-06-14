@@ -99,7 +99,7 @@
 			    android:text="@string/fecha" />
 	
 	        <Button
-	            android:id="@+id/editTextFecha" >
+	            android:id="@+id/buttonFecha" >
 	        </Button>
 	        <TextView />
 	        
@@ -109,7 +109,7 @@
 			    android:text="@string/hora" />
 	
 	        <Button
-	            android:id="@+id/editTextTime">
+	            android:id="@+id/buttonHora">
 	        </Button>
 
         </TableRow>
