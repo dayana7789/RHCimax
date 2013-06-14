@@ -3,31 +3,29 @@ package com.nahmens.rhcimax.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
-import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
+import com.nahmens.rhcimax.database.modelo.Empleado;
+import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 
 /**
  * Adaptador utilizado para mostrar lista de autocomplete de nombres 
  * de empresas haciendo uso de cursores.
  * 
  * Para poder usarlo se debe usar los ids:
- * (EditText) mView.findViewById(R.id.textEditHiddenIdEmpresa); 
- * (AutoCompleteTextView) mView.findViewById(R.id.autocompleteEmpresa);
+ * (EditText) mView.findViewById(R.id.textEditHiddenIdEmpleado); 
+ * (AutoCompleteTextView) mView.findViewById(R.id.autocompleteEmpleado);
  */
-public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements android.widget.AdapterView.OnItemClickListener, TextWatcher {
+public class AutocompleteEmpleadoCursorAdapter extends CursorAdapter implements android.widget.AdapterView.OnItemClickListener {
 	private Context contexto;
+	private EditText etIdEmpleado;
 	private EditText etIdEmpresa;
-	private AutoCompleteTextView acNombreEmpresa;
 
 
 	/**
@@ -35,12 +33,12 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 	 * adaptador. En cambio, los cursores son creados a medida que completaciones
 	 * son necesitadas por el campo.
 	 */
-	public AutocompleteEmpresaCursorAdapter(View mView){
+	public AutocompleteEmpleadoCursorAdapter(View mView){
 		//llamamos a super con cursor en null
 		super(mView.getContext(), null, 0);
 		this.contexto = mView.getContext();
+		this.etIdEmpleado = (EditText) mView.findViewById(R.id.textEditHiddenIdEmpleado); 
 		this.etIdEmpresa = (EditText) mView.findViewById(R.id.textEditHiddenIdEmpresa); 
-		this.acNombreEmpresa = (AutoCompleteTextView) mView.findViewById(R.id.autocompleteEmpresa);
 	}
 
 	/**
@@ -105,21 +103,29 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 		if (getFilterQueryProvider() != null){
 			return getFilterQueryProvider().runQuery(constraint);
 		}
-
+		
+		
 		String args = "";
 
 		if (constraint != null){
 			args = constraint.toString();       
 		}
 
-		EmpresaSqliteDao empresaDao =  new EmpresaSqliteDao();
-		currentCursor = empresaDao.listarNombresEmpresas(contexto, args);
+
+		EmpleadoSqliteDao empleadoDao =  new EmpleadoSqliteDao();
+		String idEmpresa = etIdEmpresa.getText().toString();
+
+		//Nos aseguramos que idEmpresa no sea vacio
+		if((idEmpresa.equals("")==false)){
+			currentCursor = empleadoDao.listarEmpleadosPorEmpresaPorArgs(contexto, idEmpresa, args);
+		}
 
 		return currentCursor;
 	}
 
+	
 	private String createItem(Cursor cursor){
-		String item = cursor.getString(1);       
+		String item = cursor.getString(cursor.getColumnIndex(Empleado.NOMBRE))+" " +cursor.getString(cursor.getColumnIndex(Empleado.APELLIDO));
 		return item;
 	}
 
@@ -136,7 +142,7 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 	 */
 	@Override 
 	public	String convertToString(Cursor cursor) { 
-		return cursor.getString(1); 
+		return cursor.getString(cursor.getColumnIndex(Empleado.NOMBRE))+" " +cursor.getString(cursor.getColumnIndex(Empleado.APELLIDO)); 
 	}
 
 
@@ -162,44 +168,12 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 		// Get the cursor, positioned to the corresponding row in the result set
 		Cursor cursor = (Cursor) listView.getItemAtPosition(position);
 
-		// Obtenemos el id de la empresa
-		String idEmpresa = cursor.getString(0);
+		// Obtenemos el id del empleado
+		String idEmpleado = cursor.getString(0);
 
 		// Update the parent class's TextView
-		etIdEmpresa.setText(""+idEmpresa);
+		etIdEmpleado.setText(""+idEmpleado);
 	}
 
-	/**
-	 * Se implementa este metodo para actualizar el valor del id de la empresa del campo oculto
-	 * cuando la persona no selecciona ninguna opcion de la lista sino que escribe completamente
-	 * el contenido del campo autocomplete.
-	 */
-	@Override
-	public void afterTextChanged(Editable s) {
-		
-		String nombreEmpresa = acNombreEmpresa.getText().toString();
-
-		EmpresaSqliteDao empresaDao =  new EmpresaSqliteDao();
-		Cursor cursor = empresaDao.buscarEmpresaPorNombre(contexto, nombreEmpresa);
-
-		if(cursor.getCount()!=0){
-
-			// Obtenemos el id de la empresa
-			String idEmpresa = cursor.getString(0);
-
-			// Update the parent class's TextView
-			etIdEmpresa.setText(""+idEmpresa);
-		}
-	}
-
-	@Override
-	public void beforeTextChanged(CharSequence s, int start, int count,
-			int after) {
-	}
-
-	@Override
-	public void onTextChanged(CharSequence s, int start, int before, int count) {
-		
-	}
 }
 

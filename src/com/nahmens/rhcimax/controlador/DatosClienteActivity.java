@@ -77,8 +77,8 @@ public class DatosClienteActivity extends Fragment {
 				//estamos agregando un nuevo empleado, a partir del id de la empresa
 				String idEmpresa = mArgumentos.getString("idEmpresa");
 
-				EditText etIdEmpresa = (EditText) view.findViewById(R.id.textEditIdEmpresaEmpleado);
-				AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpresaEmpleado);
+				EditText etIdEmpresa = (EditText) view.findViewById(R.id.textEditHiddenIdEmpresa);
+				AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpresa);
 
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				Empresa empresa = empresaDao.buscarEmpresa(view.getContext(), idEmpresa);
@@ -95,7 +95,7 @@ public class DatosClienteActivity extends Fragment {
 			@Override
 			public void onClick(View v) {
 
-				EditText etIdEmpresa = (EditText) mView.findViewById(R.id.textEditIdEmpresaEmpleado);
+				EditText etIdEmpresa = (EditText) mView.findViewById(R.id.textEditHiddenIdEmpresa);
 				String idEmpresa = etIdEmpresa.getText().toString();
 
 				if(idEmpresa.equals("") || idEmpresa.equals(null)){
@@ -171,7 +171,7 @@ public class DatosClienteActivity extends Fragment {
 
 		AutocompleteEmpresaCursorAdapter mAutocompleteCursor = new AutocompleteEmpresaCursorAdapter(view);
 
-		AutoCompleteTextView textView = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpresaEmpleado);
+		AutoCompleteTextView textView = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpresa);
 		textView.setAdapter(mAutocompleteCursor);
 		//seteamos este listener definido en la clase AutocompleteEmpresaCursorAdapter
 		textView.setOnItemClickListener(mAutocompleteCursor);
@@ -197,8 +197,8 @@ public class DatosClienteActivity extends Fragment {
 		EditText etPin = (EditText) v.findViewById(R.id.textEditPinEmpleado);
 		EditText etLinkedin = (EditText) v.findViewById(R.id.textEditLinkedinEmpleado);
 		EditText etDescripcion = (EditText) v.findViewById(R.id.textEditDescripEmpleado);
-		EditText etIdEmpresa = (EditText) v.findViewById(R.id.textEditIdEmpresaEmpleado);
-		AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) v.findViewById(R.id.autocompleteEmpresaEmpleado);
+		EditText etIdEmpresa = (EditText) v.findViewById(R.id.textEditHiddenIdEmpresa);
+		AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) v.findViewById(R.id.autocompleteEmpresa);
 
 		etNombre.setText(empleado.getNombre());
 		etApellido.setText(empleado.getApellido());
@@ -221,7 +221,7 @@ public class DatosClienteActivity extends Fragment {
 		Mensaje mToast = null;
 		boolean error = false;
 
-		EditText etIdEmpresa = (EditText) getActivity().findViewById(R.id.textEditIdEmpresaEmpleado);
+		EditText etIdEmpresa = (EditText) getActivity().findViewById(R.id.textEditHiddenIdEmpresa);
 		EditText etNombre = (EditText) getActivity().findViewById(R.id.textEditNombEmpleado);
 		EditText etApellido = (EditText) getActivity().findViewById(R.id.textEditApellidoEmpleado);
 		EditText etPosicion = (EditText) getActivity().findViewById(R.id.textEditPosEmpleado);
@@ -231,7 +231,7 @@ public class DatosClienteActivity extends Fragment {
 		EditText etPin = (EditText) getActivity().findViewById(R.id.textEditPinEmpleado);
 		EditText etLinkedin = (EditText) getActivity().findViewById(R.id.textEditLinkedinEmpleado);
 		EditText etDescripcion = (EditText) getActivity().findViewById(R.id.textEditDescripEmpleado);
-		AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) getActivity().findViewById(R.id.autocompleteEmpresaEmpleado);
+		AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) getActivity().findViewById(R.id.autocompleteEmpresa);
 
 		int idEmpresa = 0;
 

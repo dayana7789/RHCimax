@@ -34,12 +34,12 @@
 		
             <!-- Este campo muestra el nombre de la empresa donde trabaja el empleado -->
 			<AutoCompleteTextView 
-			    android:id="@+id/autocompleteEmpresaEmpleado" />
+			    android:id="@+id/autocompleteEmpresa" />
 			
 			<!-- Campo que almacena id de la empresa del empleado. 
-                 Este campo esta oculto. -->
+                 Este campo esta oculto. Se necesita para el boton ver Empresa. -->
 			<EditText
-				android:id="@+id/textEditIdEmpresaEmpleado"
+				android:id="@+id/textEditHiddenIdEmpresa"
 				android:visibility="gone"
 				android:inputType="number" >
 			</EditText>

@@ -271,6 +271,64 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 		return sincronizado;
 	}
-	
+
+	@Override
+	public Cursor listarNombresEmpleados(Context contexto, String args) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		String sqlQuery = "";
+		try{
+			conexion.open();
+
+			sqlQuery  = " SELECT " + Empleado.ID + ", " + Empleado.NOMBRE + ", " + Empleado.APELLIDO;
+			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
+			sqlQuery += " WHERE " + Empleado.NOMBRE + " LIKE '%" + args + "%' ";
+			sqlQuery += " OR " + Empleado.APELLIDO + " LIKE '%" + args + "%' ";
+			sqlQuery += " ORDER BY " + Empleado.NOMBRE;
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
+			
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+			
+		}finally{
+			conexion.close();
+		}
+		
+		return mCursor;		
+	}
+
+	@Override
+	public Cursor listarEmpleadosPorEmpresaPorArgs(Context contexto,
+			String idEmpresa, String args) {
+		
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		String sqlQuery = "";
+		try{
+
+			conexion.open();
+			
+			sqlQuery  = " SELECT " + Empleado.ID + ", " + Empleado.NOMBRE + ", " + Empleado.APELLIDO;
+			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
+			sqlQuery += " WHERE " +  Empleado.EMPRESA_ID + " = " + idEmpresa;
+			sqlQuery += " AND (" + Empleado.NOMBRE + " LIKE '%" + args + "%' ";
+			sqlQuery += " OR " + Empleado.APELLIDO + " LIKE '%" + args + "%') ";
+			sqlQuery += " ORDER BY " + Empleado.NOMBRE;
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
+			//mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.EMPRESA_ID + " = ? ", new String [] {idEmpresa}, null, null, Empleado.NOMBRE);
+			
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+			
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;	
+	}
 
 }

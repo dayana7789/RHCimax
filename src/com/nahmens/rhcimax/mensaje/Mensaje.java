@@ -128,6 +128,11 @@ public class Mensaje {
 			mensaje =  "Empresa no existe. Verifique el nombre de la empresa ingresado.";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
+		}else if(this.tipoMensaje == "error_empleado_no_existe"){
+
+			mensaje =  "Empleado no registrado para la empresa indicada. Verifique el nombre del empleado ingresado.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
 		}else if(this.tipoMensaje == "ok_modificar_servidor"){
 
 			mensaje =  "Nombre de servidor guardado.";

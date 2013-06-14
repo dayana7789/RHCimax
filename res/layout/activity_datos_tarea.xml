@@ -50,7 +50,7 @@
 	
 	        <AutoCompleteTextView 
 			    android:id="@+id/autocompleteEmpresa" />
-	        
+
 	        <ImageButton
 				android:id="@+id/imageButtonVerEmpresa"
 				android:layout_width="wrap_content"
@@ -63,8 +63,22 @@
 			    style="@style/FuenteFormularios"
 			    android:text="@string/empleado" />
 	
-	        <AutoCompleteTextView 
+	        <com.nahmens.rhcimax.utils.InstantAutoComplete  
 			    android:id="@+id/autocompleteEmpleado" />
+	        
+	        <!-- Campo que almacena id de la empresa. 
+                 Este campo esta oculto. Se necesita para el boton ver Empresa. -->
+			<EditText
+				android:id="@+id/textEditHiddenIdEmpresa"
+				android:visibility="gone"
+				android:inputType="number" />
+			
+	        <!-- Campo que almacena id del empleado. 
+                 Este campo esta oculto. Se necesita para el boton ver Empleado. -->
+			<EditText
+				android:id="@+id/textEditHiddenIdEmpleado"
+				android:visibility="gone"
+				android:inputType="number" />
 	        
 	        <ImageButton
 				android:id="@+id/imageButtonVerEmpleado"
@@ -112,7 +126,7 @@
 		    android:text="@string/descripcion" />
 	
 		<EditText
-	        android:id="@+id/textEditDescripcion"
+	        android:id="@+id/editTextDescripcion"
 		    android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -123,6 +137,7 @@
 	</LinearLayout>
 	
     <CheckBox 
+        android:id="@+id/checkBoxFinalizada"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/marcar_como_finalizado"/>

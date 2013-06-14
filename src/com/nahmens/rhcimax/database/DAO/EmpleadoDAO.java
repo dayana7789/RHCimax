@@ -21,6 +21,26 @@ public interface EmpleadoDAO {
 	Cursor listarEmpleadosPorEmpresa(Context contexto, String idEmpresa);
 	
 	/**
+	 * Funcion para autocomplete. 
+	 * Lista a todos los empleados asociados a una empresa.
+	 * @param contexto
+	 * @param idEmpresa
+	 * @param args Argumentos pasados al sql como los caracteres que se ingresan en el 
+	 *             campo autocomplete.
+	 * @return
+	 */
+	Cursor listarEmpleadosPorEmpresaPorArgs(Context contexto, String idEmpresa, String args);
+	
+	/**
+	 * Funcion utilizada para autocomplete.
+	 * @param contexto
+	 * @param args Argumentos pasados al sql como los caracteres que se ingresan en el 
+	 *             campo autocomplete.
+	 * @return Nombres de empleados
+	 */
+	Cursor listarNombresEmpleados(Context contexto, String args);
+	
+	/**
 	 * Funcion utilizada por el buscador para filtrar la lista de empleados.
 	 * Esta funcion compara el valor de args con el nombre del empleado, apellido 
 	 * del empleado y nombre de la empresa donde trabaja el empleado.
