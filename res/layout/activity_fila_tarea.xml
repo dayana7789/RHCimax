@@ -1,0 +1,160 @@
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:stretchColumns="1"
+    tools:ignore="UselessParent" 
+    android:descendantFocusability="blocksDescendants">
+    <!-- android:descendantFocusability="blocksDescendants": 
+    Esta linea es SUPER IMPORTANTE de lo contrario, no se podra hacer click en cada fila -->
+        
+	<TableRow
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="10dp"
+		android:layout_marginTop="10dp"
+		
+		tools:ignore="UselessParent" >
+			
+		<LinearLayout 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+
+			<ImageView
+			     android:id="@+id/imageViewAgenda"
+			     android:layout_width="wrap_content"
+			     android:layout_height="wrap_content"
+			     android:contentDescription="@string/historicos"
+			     android:src="@android:drawable/ic_menu_agenda" />
+			
+			<LinearLayout 
+			    android:orientation="horizontal"
+			    android:layout_width="wrap_content"
+			  	android:layout_height="wrap_content">
+			        
+				<TextView
+		            android:id="@+id/avisoVerdeFilaHist"
+		            android:textIsSelectable="false"
+		            style="@style/CuadroNotificacion"
+	                android:background="@drawable/borde_blanco"/>
+				        
+		        <TextView
+		            android:id="@+id/avisoRojoFilaHist"
+		            android:textIsSelectable="false"
+		            style="@style/CuadroNotificacion"
+	                android:background="@drawable/borde_blanco"/>
+			        
+		  	</LinearLayout>
+		</LinearLayout>
+		<LinearLayout 
+		    android:id="@+id/linearLayoutTarea"
+		   	android:layout_marginLeft="20dp"
+		   	android:layout_marginRight="20dp"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+			
+		    <!--______________________ Titulo ___________________________________-->
+		    <LinearLayout 
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+		        
+			    <TextView
+					android:id="@+id/textViewTarea"
+					android:textIsSelectable="true"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:textStyle="bold"
+				    android:layout_marginRight="5dp"
+				    android:text="@string/tarea2"/>
+				
+			    <TextView
+					android:id="@+id/textViewTitulo"
+					android:textIsSelectable="true"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:text="Titulo"/>
+			    
+			</LinearLayout>
+		    
+		    <TableLayout
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:stretchColumns="0,1">
+        
+				<TableRow
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+			        
+				    <TextView
+						android:id="@+id/textViewFil1Col1"
+						android:textIsSelectable="true"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:text="f1c1"/>
+				    
+				    <TextView
+						android:id="@+id/textViewFil1Col2"
+						android:textIsSelectable="true"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:text="f1c2"/>
+
+			    </TableRow>
+			    <TableRow
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content">
+				    
+			        <TextView
+						android:id="@+id/textViewFil2Col1"
+						android:textIsSelectable="true"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:text="f2c1"/>
+				    
+				    <TextView
+						android:id="@+id/textViewFil2Col2"
+						android:textIsSelectable="true"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:text="f2c2"/>
+
+			    </TableRow>
+			</TableLayout>
+		</LinearLayout>
+			
+		<LinearLayout 
+			android:gravity="right"
+			android:layout_gravity="center_vertical"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<ImageButton
+				android:id="@+id/imageButtonSync"
+			    android:layout_width="wrap_content"
+			    android:layout_height="match_parent"
+			    android:src="@android:drawable/stat_notify_sync"
+			    tools:ignore="ContentDescription" />
+			
+			 <ImageButton
+			    android:id="@+id/imageButtonBorrar"
+			    android:layout_width="wrap_content"
+			    android:layout_height="match_parent"
+			    android:src="@android:drawable/ic_menu_delete"
+			    tools:ignore="ContentDescription" />
+			 
+			 <ImageButton
+			    android:id="@+id/imageButtonModificar"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:src="@android:drawable/ic_menu_edit"
+			    tools:ignore="ContentDescription" />
+					    
+		</LinearLayout>
+	</TableRow>
+
+	
+
+</TableLayout>

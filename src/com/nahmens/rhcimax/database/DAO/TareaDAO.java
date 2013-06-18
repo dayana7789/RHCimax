@@ -12,5 +12,17 @@ public interface TareaDAO {
 	boolean eliminarTarea(Context contexto, String idTarea);
 	Tarea buscarTarea(Context contexto, String idTarea);
 	Cursor listarTareas(Context contexto);
+	/**
+	 * Funcion utilizada por el buscador para filtrar la lista de tareas.
+	 * Esta funcion compara el valor de args con todos los campos de la tarea.
+	 * 
+	 * @param args Argumentos pasados al query como los caracteres que se ingresan en el campo
+	 *             de buscador
+	 * @return Cursor Lista filtrada
+	 * 
+	 */
+	Cursor buscarTareaFilter(Context contexto, String args);
+	
+	
 
 }

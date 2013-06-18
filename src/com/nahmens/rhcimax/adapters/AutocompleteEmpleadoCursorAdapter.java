@@ -3,6 +3,8 @@ package com.nahmens.rhcimax.adapters;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 
 /**
  * Adaptador utilizado para mostrar lista de autocomplete de nombres 
@@ -23,7 +26,7 @@ import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
  * (EditText) mView.findViewById(R.id.textEditHiddenIdEmpleado); 
  *
  */
-public class AutocompleteEmpleadoCursorAdapter extends CursorAdapter implements android.widget.AdapterView.OnItemClickListener {
+public class AutocompleteEmpleadoCursorAdapter extends CursorAdapter implements android.widget.AdapterView.OnItemClickListener, TextWatcher {
 	private Context contexto;
 	private EditText etIdEmpleado;
 	private EditText etIdEmpresa;
@@ -174,6 +177,26 @@ public class AutocompleteEmpleadoCursorAdapter extends CursorAdapter implements 
 
 		// Update the parent class's TextView
 		etIdEmpleado.setText(""+idEmpleado);
+	}
+	
+	/**
+	 * Se implementa este metodo para actualizar el valor del id de la empresa del campo oculto
+	 * cuando la persona no selecciona ninguna opcion de la lista sino que escribe completamente
+	 * el contenido del campo autocomplete.
+	 */
+	@Override
+	public void afterTextChanged(Editable s) {
+		etIdEmpleado.setText("");
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count,
+			int after) {
+	}
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count) {
+		
 	}
 
 }

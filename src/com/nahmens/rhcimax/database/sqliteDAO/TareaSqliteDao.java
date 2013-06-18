@@ -3,10 +3,13 @@ package com.nahmens.rhcimax.database.sqliteDAO;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.TareaDAO;
+import com.nahmens.rhcimax.database.modelo.Empleado;
+import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 
 public class TareaSqliteDao implements TareaDAO{
@@ -25,7 +28,7 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.FECHA, tarea.getFecha());
 			values.put(Tarea.HORA, tarea.getHora());
 			values.put(Tarea.DESCRIPCION, tarea.getDescripcion());
-			values.put(Tarea.FINALIZADA, tarea.getFinalizada());
+			values.put(Tarea.FECHA_FINALIZACION, tarea.getFechaFinalizacion());
 			values.put(Tarea.ID_USUARIO, tarea.getIdUsuario());
 			values.put(Tarea.ID_EMPLEADO,tarea.getIdEmpleado());
 			values.put(Tarea.ID_EMPRESA,tarea.getIdEmpresa());
@@ -52,7 +55,8 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.FECHA, tarea.getFecha());
 			values.put(Tarea.HORA, tarea.getHora());
 			values.put(Tarea.DESCRIPCION, tarea.getDescripcion());
-			values.put(Tarea.FINALIZADA, tarea.getFinalizada());
+			values.put(Tarea.FECHA_FINALIZACION, tarea.getFechaFinalizacion());
+			values.put(Tarea.FECHA_MODIFICACION, tarea.getFechaModificacion());
 			values.put(Tarea.ID_USUARIO, tarea.getIdUsuario());
 			values.put(Tarea.ID_EMPLEADO,tarea.getIdEmpleado());
 			values.put(Tarea.ID_EMPRESA,tarea.getIdEmpresa());
@@ -109,10 +113,10 @@ public class TareaSqliteDao implements TareaDAO{
 						mCursor.getString(mCursor.getColumnIndex(Tarea.FECHA)), 
 						mCursor.getString(mCursor.getColumnIndex(Tarea.HORA)), 
 						mCursor.getString(mCursor.getColumnIndex(Tarea.DESCRIPCION)), 
-						mCursor.getInt(mCursor.getColumnIndex(Tarea.FINALIZADA)), 
 						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_USUARIO)),
 						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_EMPRESA)),
-						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_EMPLEADO)));
+						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_EMPLEADO)),
+						mCursor.getString(mCursor.getColumnIndex(Tarea.FECHA_FINALIZACION)));
 			}
 
 		}finally{
@@ -126,11 +130,25 @@ public class TareaSqliteDao implements TareaDAO{
 	public Cursor listarTareas(Context contexto) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
+		String sql = null;
 		try{
 
 			conexion.open();
+			
+			sql = "SELECT tarea." + Tarea.ID  + ", tarea." + Tarea.NOMBRE + ", " + Tarea.FECHA + ", " 
+				+ Tarea.HORA + ", tarea." + Tarea.DESCRIPCION + ", " + Tarea.FECHA_FINALIZACION + ", "
+				+ "tarea."+Tarea.ID_EMPLEADO + ", tarea." + Tarea.ID_EMPRESA 
+				+ ", empresa." + Empresa.NOMBRE + " as " + Tarea.NOMBRE_EMPRESA
+				+ ", empleado." + Empleado.NOMBRE + " as " + Tarea.NOMBRE_EMPLEADO
+				+ ", empleado." + Empleado.APELLIDO + " as " + Tarea.APELLIDO_EMPLEADO
+				+ " FROM " + DataBaseHelper.TABLA_EMPLEADO + ", " + DataBaseHelper.TABLA_EMPRESA + ", " + DataBaseHelper.TABLA_TAREA
+				+ " WHERE " 
+				+ "(tarea." + Tarea.ID_EMPRESA + "= Empresa." + Empresa.ID + ") AND "
+				+ "(tarea." + Tarea.ID_EMPLEADO + "= Empleado." + Empleado.ID + ") "
+				+ "ORDER BY " + Tarea.FECHA + " DESC";
+			
+			mCursor = conexion.getDatabase().rawQuery(sql, null);
 
-			mCursor = conexion.getDatabase().rawQuery("SELECT * FROM " + DataBaseHelper.TABLA_TAREA  + " order by " + Tarea.FECHA, null);
 
 			if (mCursor != null) {
 				mCursor.moveToFirst();
@@ -142,7 +160,43 @@ public class TareaSqliteDao implements TareaDAO{
 
 		return mCursor;
 	}
-	
 
+	@Override
+	public Cursor buscarTareaFilter(Context contexto, String args) {
+		
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		String sqlQuery = "";
+		String [] palabras = args.split("");
+		
+		try{
+			conexion.open();
+			
+			sqlQuery = "SELECT tarea." + Tarea.ID  + ", tarea." + Tarea.NOMBRE + ", " + Tarea.FECHA + ", " 
+					+ Tarea.HORA + ", tarea." + Tarea.DESCRIPCION + ", " + Tarea.FECHA_FINALIZACION + ", "
+					+ "tarea."+Tarea.ID_EMPLEADO + ", tarea." + Tarea.ID_EMPRESA 
+					+ ", empresa." + Empresa.NOMBRE + " as " + Tarea.NOMBRE_EMPRESA
+					+ ", empleado." + Empleado.NOMBRE + " as " + Tarea.NOMBRE_EMPLEADO
+					+ ", empleado." + Empleado.APELLIDO + " as " + Tarea.APELLIDO_EMPLEADO
+					+ " FROM " + DataBaseHelper.TABLA_EMPLEADO + ", " + DataBaseHelper.TABLA_EMPRESA + ", " + DataBaseHelper.TABLA_TAREA
+					+ " WHERE " 
+					+ "(tarea." + Tarea.ID_EMPRESA + "= Empresa." + Empresa.ID + ") AND "
+					+ "(tarea." + Tarea.ID_EMPLEADO + "= Empleado." + Empleado.ID + ") AND "
+					+ "tarea."+Tarea.NOMBRE + " LIKE '%" + args + "%' "
+					+ "ORDER BY " + Tarea.FECHA + " DESC";
+
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;	
+	}
 
 }

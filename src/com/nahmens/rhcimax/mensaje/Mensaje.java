@@ -17,6 +17,7 @@ public class Mensaje {
 	private String tipoMensaje;
 	public static final String ERROR_CAMPO_VACIO = "Este campo no puede estar vacio";
 	public static final String ERROR_EMPRESA_NO_VALIDA = "Empresa no válida";
+	public static final String ERROR_EMPLEADO_NO_VALIDO = "Empleado no válido";
 	public static final String ERROR_EMAIL_INVALIDO =  "Email no válido";
 	public static final String ERROR_TELF_INVALIDO =  "Número no válido";
 	public static final String ERROR_CAMPO_OBLIGATORIO =  "Campo obligatorio";
@@ -173,6 +174,26 @@ public class Mensaje {
 			mensaje =  "Cotización creada satisfactoriamente.";
 			layoutWhere = R.layout.toast_layout_mensaje_ok;
 
+		}else if(this.tipoMensaje == "error_ingreso_tarea"){
+
+			mensaje =  "Error: la tarea no pudo crearse.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
+		}else if(this.tipoMensaje == "ok_ingreso_tarea"){
+
+			mensaje =  "Tarea creada satisfactoriamente.";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
+		}else if(this.tipoMensaje == "ok_eliminado_tarea"){
+
+			mensaje =  "Tarea eliminada satisfactoriamente";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
+		}else if(this.tipoMensaje == "error_eliminado_tarea"){
+
+			mensaje =  "Error: la tarea no pudo ser eliminada";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
 		}else{
 			throw new Exception("Mensaje invalido. Revisa el atributo tipoMensaje que utiliza el constructor de la clase Mensaje.");
 		}
@@ -213,6 +234,11 @@ public class Mensaje {
 			
 			mensaje =  "No puede agregar un empleado sin haber guardado la empresa. Desea guardar los cambios?.";
 			titulo = "Guardar Cambios";
+
+		}else if(this.tipoMensaje == "eliminar_tarea"){
+			
+			mensaje =  "Está seguro de eliminar esta tarea: "+args +"?.";
+			titulo = "Eliminar Tarea";
 
 		}else{
 			throw new Exception("Mensaje invalido. Revisa el atributo tipoMensaje que utiliza el constructor de la clase Mensaje.");
