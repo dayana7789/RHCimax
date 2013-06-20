@@ -109,7 +109,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 
 
 
-	/*
+	/**
 	 * Funcion que se llama antes de de destruir el layout al cambiarse la orientacion
 	 * del dispositivo. Guarda el tag del frame que estaba activo antes de producirse
 	 * el cambio de orientacion de manera que pueda ser recuperado en el onCreate.
@@ -139,7 +139,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	}
 
 
-	/*
+	/**
 	 * Funcion que establece el layout correspondiente cuando se cambia la orientacion
 	 * del dispositivo.
 	 * 
@@ -155,7 +155,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		}
 	}
 
-	/*
+	/**
 	 * Inicializa los tabs y setea los views e identificadores para los tabs.
 	 */
 	public void inicializarTab() {
@@ -214,7 +214,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	}
 
 
-	/*
+	/**
 	 * TabChangeListener para cambiar el contenido del FrameLayout cuando uno de los 
 	 * tabs es presionado.
 	 */
@@ -292,7 +292,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		}
 	};
 
-	/*
+	/**
 	 * Reemplaza el contenido del FrameLayout por el nuevo fragment.
 	 * 
 	 * @param tag Tag del fragment que se va a invocar.
@@ -301,7 +301,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	 *                   al presionar back button
 	 */
 	public void pushFragments(String tag, Fragment fragment, boolean backStack){
-
+ 
 		FragmentManager manager = getSupportFragmentManager();
 		FragmentTransaction ft = manager.beginTransaction();
 
@@ -315,7 +315,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 	}
 
 
-	/*
+	/**
 	 * Metodo que confirma la salida de la aplicacion.
 	 * @see android.support.v4.app.FragmentActivity#onBackPressed()
 	 */
@@ -416,7 +416,7 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		}
 	}   
 
-	/*
+	/**
 	 * Funcion que muestra mensaje de alerta cuando hacemos logout
 	 * o cuando llegamos a la raiz de la app y presionamos back button.
 	 */
@@ -438,6 +438,8 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		alert.show();
 
 	}
+	
+	
 
 	/***INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA ****/
 	public void onEmpleadoSelected(String id) {
@@ -449,29 +451,35 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 
 		//pasamos al fragment el id del empleado
 		fragment.setArguments(arguments); 
-
-		getSupportFragmentManager().beginTransaction()
-		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
-		.addToBackStack(null)
-		.commit();
-
+		
+		pushFragments(tagFragmentDatosCliente, fragment, true);
 	}
 
 	public void onEmpresaSelected(String id) {
 		//creamos un bundle para poder enviar al fragment, el id de la empresa
 		Bundle arguments = new Bundle();
 		arguments.putString("idEmpresa", id);
-
+		
 		DatosEmpresaActivity fragment = new DatosEmpresaActivity();
-
+		
 		//pasamos al fragment el id de la empresa
 		fragment.setArguments(arguments); 
-
-		getSupportFragmentManager().beginTransaction()
-		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosEmpresa)
-		.addToBackStack(null)
-		.commit();
-
+		
+		pushFragments(tagFragmentDatosEmpresa, fragment, true);
+	}
+	
+	public void onTareaSelected(Bundle mArgumentos, String id) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+		builder.setMessage("prueba")//mArgumentos.getInt("idServicio") +","+mArgumentos.getString("unidadMedicion") + ", " + mArgumentos.getString("descripcion"))
+		.setTitle("nombre prueba")//mArgumentos.getString("nombre"))
+		.setCancelable(false)
+		.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
 	}
 	/***************FIN ****************************/
 

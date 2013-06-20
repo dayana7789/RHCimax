@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.AutocompleteEmpresaCursorAdapter;
@@ -123,6 +125,26 @@ public class DatosClienteActivity extends Fragment {
 					ft.commit();
 				}
 
+			}
+		});
+
+		// Registro del evento OnClick del LinearLayoutButtonTareas
+		LinearLayout bTareas = (LinearLayout) view.findViewById(R.id.LinearLayoutButtonTareas);
+		bTareas.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Log.e("tareas", "me presionaron");
+			}
+		});
+
+		// Registro del evento OnClick del LinearLayoutButtonHistoricos
+		LinearLayout bHistoricos = (LinearLayout) view.findViewById(R.id.LinearLayoutButtonHistoricos);
+		bHistoricos.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Log.e("historicos", "me presionaron");
 			}
 		});
 
@@ -271,19 +293,19 @@ public class DatosClienteActivity extends Fragment {
 			etEmail.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
-		
+
 		Pattern pattern = Patterns.EMAIL_ADDRESS;
-	    if(!pattern.matcher(email).matches()){
-	    	etEmail.setError(Mensaje.ERROR_EMAIL_INVALIDO);
+		if(!pattern.matcher(email).matches()){
+			etEmail.setError(Mensaje.ERROR_EMAIL_INVALIDO);
 			error = true;
-	    }
-	    
-	    /*pattern = Patterns.PHONE;
+		}
+
+		/*pattern = Patterns.PHONE;
 	    if(!pattern.matcher(celular).matches()){
 	    	etCelular.setError(Mensaje.ERROR_TELF_INVALIDO);
 			error = true;
 	    }
-	    
+
 	    if(!pattern.matcher(telfOficina).matches()){
 	    	etCelular.setError(Mensaje.ERROR_TELF_INVALIDO);
 			error = true;
@@ -309,12 +331,12 @@ public class DatosClienteActivity extends Fragment {
 		if(!error){
 
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-			
+
 			SharedPreferences prefs = this.getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
 			int idUsuario = prefs.getInt(Usuario.ID, 0);
 
 			if(id!=null){
-				
+
 				//cada vez que hagamos una modificacion, colocamos el valor de fechaSincronizacion en null 
 				//para saber que este empleado esta desactualizado en la nube
 				String fechaSincronizacion = null;
@@ -332,11 +354,11 @@ public class DatosClienteActivity extends Fragment {
 
 			}else{
 				//Estamos creando un nuevo registro
-				
+
 				//cada vez que hagamos una modificacion, colocamos el valor de fechaSincronizacion en null 
 				//para saber que este empleado esta desactualizado en la nube
 				String fechaSincronizacion = null;
-				
+
 				Empleado empleado = new Empleado(nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, idUsuario, fechaSincronizacion);
 				Boolean insertado = empleadoDao.insertarEmpleado(getActivity(), empleado, idUsuario);
 

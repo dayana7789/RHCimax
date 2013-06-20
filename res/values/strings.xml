@@ -34,15 +34,17 @@
     <string name="nombre">Nombre</string>
     <string name="telefono">Teléfono</string>
     <string name="sitioWeb">Sitio Web</string>
-    <string name="direccionFiscal">Dirección Fiscal</string>
-    <string name="direccionComercial">Dirección Comercial</string>
+    <string name="dir_fiscal">Dir. Fiscal</string>
+    <string name="direccion_fiscal">Dirección Fiscal</string>
+    <string name="dir_Comercial">Dir. Comercial</string>
+    <string name="direccion_comercial">Dirección Comercial</string>
     <string name="title_activity_datos_empresa">DatosEmpresaActivity</string>
-    <string name="empleado">Empleado</string>
+    <string name="empleado">Contacto</string>
     <string name="datosEmpresa">Datos de Empresa</string>
     <string name="cliente">Cliente</string>
     <string name="rif">Rif</string>
     <string name="copiar">Copiar</string>
-    <string name="empleados">Empleados</string>
+    <string name="empleados">Contactos</string>
     <string name="historialCotizaciones">Historial de cotizaciones</string>
     <string name="salvar">Salvar</string>
     <string name="cotizar">Cotizar</string>
@@ -53,11 +55,12 @@
     <string name="descripcion">Descripción</string>
     <string name="linkedin">Linkedin</string>
     <string name="telf_oficina">Telf. Oficina</string>
+    <string name="telefono_oficina">Teléfono Oficina</string>
     <string name="ver_empresa">Ver Empresa</string>
     <string name="pin">Pin</string>
     <string name="title_activity_fila_empleado">FilaEmpleadoActivity</string>
     <string name="mas">+</string>
-    <string name="agregarEmpleado">Agregar Empleado</string>
+    <string name="agregarEmpleado">Agregar Contacto</string>
     <string name="enviarA">Enviar a:</string>
     <string name="totalPorServicio">Total por el servicio</string>
     <string name="mensual">Mensual</string>
@@ -77,12 +80,13 @@
     <string name="finalizar">Finalizar</string>
     <string name="hora">Hora</string>
     <string name="minutos">Minutos</string>
-    <string name="ver_empleado">Ver Empleado</string>
+    <string name="ver_empleado">Ver Contacto</string>
     <string name="limpiar">Limpiar</string>
     <string name="agregar_tarea">Agregar Tarea</string>
     <string name="title_activity_datos_tarea">DatosTareaActivity</string>
     <string name="marcar_como_finalizado">Marcar tarea como finalizada</string>
     <string name="nueva_tarea">Nueva tarea</string>
+    <string name="checkin">Check-In</string>
     
     
 	<!-- \u0020 = espacios en blanco -->

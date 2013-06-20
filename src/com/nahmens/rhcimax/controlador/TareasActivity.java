@@ -1,11 +1,12 @@
 package com.nahmens.rhcimax.controlador;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -22,7 +23,7 @@ import com.nahmens.rhcimax.adapters.ListaTareasCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 
-public class TareasActivity extends Fragment {
+public class TareasActivity extends ListFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,4 +109,54 @@ public class TareasActivity extends Fragment {
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
 	}
+	
+	
+	/**
+	 * INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA 
+	 * NOTA: Es importante que en el layout de la fila (activity_fila_tarea.xml)
+	 * en la layout raiz tenga: android:descendantFocusability="blocksDescendants"
+	 * De lo contrario, el onListItemClick no va a funcionar!.
+	 * 
+	 * NOTA2: En AplicacionActivity, se implementa la interfaz OnTareaSelectedListener
+	 * con su metodo onTareaSelected.
+	 */
+
+/*	OnTareaSelectedListener mTareaListener;
+
+	/**
+	 * interface utilizada para comunicar la lista con el detalle
+	 * de cada fila.
+	 */
+/*	public interface OnTareaSelectedListener {
+		public void onTareaSelected(Bundle mArgumentos, String id);
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			mTareaListener = (OnTareaSelectedListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString() + " se debe implementar OnTareaSelectedListener ");
+		}
+	}
+
+	@Override
+	/**
+	 * @param position numero de posicion en la lista
+	 * @param id Id del cliente sobre el cual se hizo click. Puede pertenecer a un empleado o a una empresa.
+	 *           Este Id se asigna automaticamente por la definicion de _id en la BD.
+	 */
+/*	public void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+
+		String idString = String.valueOf(id); 
+
+		if (l.getId() == android.R.id.list) {
+		//	mTareaListener.onTareaSelected(mArgumentos, id);
+		}
+
+	}
+
+	/*********** FIN ******************/
 }

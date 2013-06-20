@@ -43,7 +43,7 @@ public class DatosTareaActivity extends Fragment {
 
 	Calendar myCalendar = Calendar.getInstance();
 	LayoutInflater inflater;
-	
+
 	//Campos formulario:
 	EditText etNombre;
 	AutoCompleteTextView etEmpresa;
@@ -62,9 +62,11 @@ public class DatosTareaActivity extends Fragment {
 
 		final View view = inflater.inflate(R.layout.activity_datos_tarea, container, false);
 		this.inflater = inflater;
-		
+
 		//inicializamos la referencia a los campos del formulario
 		setReferenciaCampos(view);
+
+		setUpFocus(view);
 
 		final Bundle mArgumentos = this.getArguments();
 
@@ -163,6 +165,15 @@ public class DatosTareaActivity extends Fragment {
 		cbFinalizada = (CheckBox) view.findViewById(R.id.checkBoxFinalizada);
 	}
 
+	private void setUpFocus(View view){
+		etNombre.setNextFocusDownId(R.id.autocompleteEmpresa);
+		etEmpresa.setNextFocusDownId(R.id.imageButtonVerEmpresa);// you can give focus to any id
+		ImageButton ver = (ImageButton) view.findViewById(R.id.imageButtonVerEmpresa);
+		ver.setFocusableInTouchMode(true);
+		//ver.requestFocus();
+		// editText3.setNextFocusDownId(R.id.editText9);
+	}
+
 
 	/**
 	 * Funcion que prepara el campo de empleado para que sea autocomplete.
@@ -171,7 +182,7 @@ public class DatosTareaActivity extends Fragment {
 	private void setAutocompleteEmpleado(View view) {
 		AutocompleteEmpleadoCursorAdapter mAutocompleteCursor = new AutocompleteEmpleadoCursorAdapter(view);
 		etEmpleado.setAdapter(mAutocompleteCursor);
-		
+
 		//seteamos este listener definido en la clase AutocompleteEmpresaCursorAdapter
 		etEmpleado.setOnItemClickListener(mAutocompleteCursor);
 		etEmpleado.addTextChangedListener(mAutocompleteCursor);
@@ -417,7 +428,7 @@ public class DatosTareaActivity extends Fragment {
 		}
 
 		/** Verificacion de errores **/
-		
+
 		if (idEmpresa==null || idEmpresa.equals("")){
 			etEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
 			error = true;
@@ -433,12 +444,12 @@ public class DatosTareaActivity extends Fragment {
 				error = true;
 			}
 		}
-		
+
 		if (idEmpleado==null || idEmpleado.equals("")){
 			etEmpleado.setError(Mensaje.ERROR_EMPLEADO_NO_VALIDO);
 			error = true;
 		}
-		
+
 		if(nombre.equals("") || nombre==null){
 			etNombre.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
@@ -484,7 +495,7 @@ public class DatosTareaActivity extends Fragment {
 					mToast = new Mensaje(inflater, getActivity(), "error_modificar_empleado");
 				}
 
-			//Estamos creando un nuevo registro..
+				//Estamos creando un nuevo registro..
 			}else{
 
 				Tarea tarea = new Tarea(nombre, fecha, hora, descripcion, idUsuario, Integer.parseInt(idEmpresa), Integer.parseInt(idEmpleado), fechaFinalizacion);

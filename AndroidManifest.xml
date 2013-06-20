@@ -37,7 +37,7 @@
         <activity
             android:name="com.nahmens.rhcimax.controlador.AplicacionActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <!-- android:windowSoftInputMode="adjustPan": Esta linea es super importante cuando se tiene edit text dentro de list view -->
         <activity

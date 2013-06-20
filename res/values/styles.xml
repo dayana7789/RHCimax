@@ -46,6 +46,13 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
     
+    <style name="FuenteSubTitulos2">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">#9D9B9B</item>
+    </style>
+    
     <style name="FuenteSubSubTitulos">
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">#000000</item>
@@ -58,11 +65,45 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
     
+    
+    
     <style name="FuenteFormularios">
         <item name="android:textSize">16sp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
 
+    </style>
+    
+    <style name="FuenteEditTextBasico">
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:inputType">textCapSentences|textMultiLine</item>
+    </style>
+    
+    <style name="FuenteEditTextTelefono">
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:inputType">textCapSentences|textMultiLine|phone</item>
+    </style>
+    
+    <style name="FuenteEditTextEmail">
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:inputType">textCapSentences|textMultiLine|textEmailAddress</item>
+    </style>
+    
+    <style name="FuenteEditTextUrl">
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:inputType">textCapSentences|textMultiLine|textEmailAddress</item>
     </style>
     
     <style name="FuenteError">
@@ -71,6 +112,34 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
 
+    </style>
+    
+    <style name="BotonPersonalizadoContenedor">
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <style name="BotonPersonalizadoImagen">
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:duplicateParentState">true</item>
+    </style>
+    
+    <!-- android:duplicateParentState="true": When this attribute is set to true, 
+		        the view gets its drawable state (focused, pressed, etc.) from its direct 
+		        parent rather than from itself.  -->
+		        
+    <style name="BotonPersonalizadoTexto">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:duplicateParentState">true</item>
     </style>
     
     <style name="CuadroNotificacion">
@@ -89,7 +158,5 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-
-    
 
 </resources>

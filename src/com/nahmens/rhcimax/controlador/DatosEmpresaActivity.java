@@ -8,12 +8,14 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.nahmens.rhcimax.R;
@@ -24,6 +26,7 @@ import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
+import com.nahmens.rhcimax.utils.UtilityScroll;
 
 public class DatosEmpresaActivity extends Fragment {
 
@@ -110,9 +113,9 @@ public class DatosEmpresaActivity extends Fragment {
 					.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
 					.addToBackStack(null)
 					.commit();
-					
+
 				}else{
-					
+
 					AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
 					String[] mensArray = null;
 					Mensaje mensajeDialog = new Mensaje("guardar_cambios_empresa");
@@ -146,6 +149,36 @@ public class DatosEmpresaActivity extends Fragment {
 					AlertDialog alertDialog = alert.create();
 					alertDialog.show();
 				}
+			}
+		});
+
+		// Registro del evento OnClick del LinearLayoutButtonTareas
+		LinearLayout bTareas = (LinearLayout) view.findViewById(R.id.LinearLayoutButtonTareas);
+		bTareas.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Log.e("tareas", "me presionaron");
+			}
+		});
+
+		// Registro del evento OnClick del LinearLayoutButtonHistoricos
+		LinearLayout bHistoricos = (LinearLayout) view.findViewById(R.id.LinearLayoutButtonHistoricos);
+		bHistoricos.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Log.e("historicos", "me presionaron");
+			}
+		});
+
+		// Registro del evento OnClick del buttonCheckin
+		Button bCheckin = (Button) view.findViewById(R.id.buttonCheckin);
+		bCheckin.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Log.e("bCheckin", "me presionaron");
 			}
 		});
 
@@ -204,6 +237,7 @@ public class DatosEmpresaActivity extends Fragment {
 			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_empleado, mCursor, from, to);
 			ListaEmpleadosCursorAdapter notes = new ListaEmpleadosCursorAdapter(context, R.layout.activity_fila_empleado, mCursorEmpleados, from, to, 0,fragmentManager);
 			lvEmpleados.setAdapter(notes);
+			UtilityScroll.setListViewHeightBasedOnChildren(lvEmpleados);
 
 		}
 	}
@@ -264,14 +298,14 @@ public class DatosEmpresaActivity extends Fragment {
 
 			SharedPreferences prefs = this.getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
 			int idUsuario = prefs.getInt(Usuario.ID, 0);
-			
+
 			if(id!=null){
 				//Estamos modificando un registro
-				
+
 				//cada vez que hagamos una modificacion, colocamos el valor de fechaSincronizacion en null 
 				//para saber que este empleado esta desactualizado en la nube
 				String fechaSincronizacion = null;
-				
+
 				Empresa empresa = new Empresa(Integer.parseInt(id), nombre, telefono, rif, web, dirFiscal, dirComercial, idUsuario, fechaSincronizacion);
 
 				Boolean modificado = empresaDao.modificarEmpresa(getActivity(), empresa);
@@ -284,11 +318,11 @@ public class DatosEmpresaActivity extends Fragment {
 				}
 			}else{
 				//Estamos creando un nuevo registro
-				
+
 				//cada vez que hagamos una modificacion, colocamos el valor de fechaSincronizacion en null 
 				//para saber que este empleado esta desactualizado en la nube
 				String fechaSincronizacion = null;
-				
+
 				Empresa empresa = new Empresa(nombre, telefono, rif, web, dirFiscal, dirComercial, idUsuario,fechaSincronizacion);
 
 				long idFilaInsertada = empresaDao.insertarEmpresa(getActivity(), empresa, idUsuario);

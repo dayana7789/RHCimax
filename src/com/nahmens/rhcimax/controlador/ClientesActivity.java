@@ -43,13 +43,7 @@ public class ClientesActivity extends ListFragment {
 	//y lo registramos al adaptor con la funcion registerDataSetObserver().
 	private DataSetObserver observer = new DataSetObserver() {
 		public void onChanged(){
-			Log.e("onchanged","me llamaron");
-			cambiarColorCuadroNotificacion(null);
-	//		try{
-		//	cambiarColorCuadroNotificacion(AplicacionActivity.tagVerde);
-		//	}catch (Exception e) {
-				// TODO: handle exception
-			//}
+			//cambiarColorCuadroNotificacion(null);
 		}
 	};
 
