@@ -66,8 +66,6 @@ public class DatosTareaActivity extends Fragment {
 		//inicializamos la referencia a los campos del formulario
 		setReferenciaCampos(view);
 
-		setUpFocus(view);
-
 		final Bundle mArgumentos = this.getArguments();
 
 		//Si me pasaron argumentos, relleno la vista con la informacion. 
@@ -154,7 +152,7 @@ public class DatosTareaActivity extends Fragment {
 	 * @param view
 	 */
 	private void setReferenciaCampos(View view) {
-		etNombre = (EditText) view.findViewById(R.id.editTextTarea);
+		etNombre = (EditText) view.findViewById(R.id.editTextNombre);
 		etEmpresa = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpresa);
 		etHiddenIdEmpresa = (EditText) view.findViewById(R.id.textEditHiddenIdEmpresa);
 		etEmpleado = (InstantAutoComplete) view.findViewById(R.id.autocompleteEmpleado);
@@ -165,14 +163,7 @@ public class DatosTareaActivity extends Fragment {
 		cbFinalizada = (CheckBox) view.findViewById(R.id.checkBoxFinalizada);
 	}
 
-	private void setUpFocus(View view){
-		etNombre.setNextFocusDownId(R.id.autocompleteEmpresa);
-		etEmpresa.setNextFocusDownId(R.id.imageButtonVerEmpresa);// you can give focus to any id
-		ImageButton ver = (ImageButton) view.findViewById(R.id.imageButtonVerEmpresa);
-		ver.setFocusableInTouchMode(true);
-		//ver.requestFocus();
-		// editText3.setNextFocusDownId(R.id.editText9);
-	}
+
 
 
 	/**

@@ -1,174 +1,166 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    style="@style/ContenedorPrincipal"
-    tools:context=".DatosTareaActivity" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textViewTareas"
-        style="@style/FuenteTitulos"
-        android:text="@string/nueva_tarea" />
-
-
-    <!--____________________ Seccion: formulario, campo: tarea______________________________-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
-        android:padding="3dp"
-        android:orientation="horizontal">
-        
-		<TextView
-		    android:id="@+id/textViewTarea"
-		    style="@style/FuenteFormularios"
-		    android:text="@string/tarea" />
+    <!--_____________________ Botones barra superior _____________________-->
+	<include layout="@layout/barra_tareas_superior"/>
 	
-	    <EditText
-	        android:id="@+id/editTextTarea"
-	        android:layout_width="0dip"
-		    android:layout_height="wrap_content"
-		    android:layout_weight="1"
-	        android:inputType="textCapSentences" >
-	    </EditText>
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-	</LinearLayout>
-	
-    <!--______________________________ Seccion: formulario, campos: empresa, empleado____________________-->
-	<TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="3dip"
-        android:stretchColumns="1,4" >
-        
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        
-			<TextView
-			    android:id="@+id/textViewEmpresa"
-			    style="@style/FuenteFormularios"
-			    android:text="@string/empresa" />
-	
-	        <AutoCompleteTextView 
-			    android:id="@+id/autocompleteEmpresa"
-			    android:imeOptions="actionNext" />
+		<LinearLayout
+		    style="@style/ContenedorPrincipal"
+		    tools:context=".DatosTareaActivity" >
+		
+		    <TextView
+		        android:id="@+id/textViewTareas"
+		        style="@style/FuenteTitulos"
+		        android:text="@string/tarea" />
+		
+		
+		    <!--____________________ Inicio formulario ______________________________-->
 
-	        <ImageButton
-				android:id="@+id/imageButtonVerEmpresa"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@android:drawable/ic_menu_view" 
-				android:contentDescription="@string/ver_empresa"/>
-	        
-	        <TextView
-			    android:id="@+id/textViewEmpleado"
-			    style="@style/FuenteFormularios"
-			    android:text="@string/empleado" />
-	
-	        <com.nahmens.rhcimax.utils.InstantAutoComplete  
-			    android:id="@+id/autocompleteEmpleado" />
-	        
-	        <!-- Campo que almacena id de la empresa. 
-                 Este campo esta oculto. Se necesita para el boton ver Empresa. -->
-			<EditText
-				android:id="@+id/textEditHiddenIdEmpresa"
-				android:visibility="gone"
-				android:inputType="number" />
 			
-	        <!-- Campo que almacena id del empleado. 
-                 Este campo esta oculto. Se necesita para el boton ver Empleado. -->
-			<EditText
-				android:id="@+id/textEditHiddenIdEmpleado"
-				android:visibility="gone"
-				android:inputType="number" />
-	        
-	        <ImageButton
-				android:id="@+id/imageButtonVerEmpleado"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@android:drawable/ic_menu_view" 
-				android:contentDescription="@string/ver_empleado"/>
-        </TableRow>
-        
-        <!--____________________ Seccion: formulario, campos: fecha, hora ______________________________-->
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-        
-			<TextView
-			    android:id="@+id/textViewFecha"
-			    style="@style/FuenteFormularios"
-			    android:text="@string/fecha" />
-	
-	        <Button
-	            android:id="@+id/buttonFecha" >
-	        </Button>
-	        <TextView />
-	        
-	        <TextView
-			    android:id="@+id/textViewTime"
-			    style="@style/FuenteFormularios"
-			    android:text="@string/hora" />
-	
-	        <Button
-	            android:id="@+id/buttonHora">
-	        </Button>
+			<TableLayout
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center"
+		        android:padding="3dip"
+		        android:stretchColumns="1" >
+			    
+			    <TableRow
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content" >
+		            
+			        <TextView
+					    android:id="@+id/textViewNombre"
+					    style="@style/FuenteFormularios"
+					    android:text="@string/nombre" />
+			
+				    <EditText
+				        android:id="@+id/editTextNombre"
+				        android:hint="@string/nombre"
+				        style="@style/FuenteEditTextBasico" >
+				    </EditText>
+		        </TableRow>
+		        
+		        <TableRow
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:gravity="center" >
+		        
+					<TextView
+					    android:id="@+id/textViewEmpresa"
+					    style="@style/FuenteFormularios"
+					    android:text="@string/empresa" />
+			
+			        <AutoCompleteTextView 
+					    android:id="@+id/autocompleteEmpresa"
+					    android:hint="@string/empresa"
+					    android:imeOptions="actionNext"
+					    style="@style/FuenteEditTextBasico" />
+			        
+			        <!-- Campo que almacena id de la empresa. 
+		                 Este campo esta oculto. Se necesita para el boton ver Empresa. -->
+					<EditText
+						android:id="@+id/textEditHiddenIdEmpresa"
+						android:visibility="gone"
+						android:inputType="number" />
+		
+			        <ImageButton
+						android:id="@+id/imageButtonVerEmpresa"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:src="@android:drawable/ic_menu_view" 
+						android:contentDescription="@string/ver_empresa"/>
+			        
+				</TableRow>
+				<TableRow
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:gravity="center" >
+			        
+			        <TextView
+					    android:id="@+id/textViewEmpleado"
+					    style="@style/FuenteFormularios"
+					    android:text="@string/empleado" />
+			
+			        <com.nahmens.rhcimax.utils.InstantAutoComplete  
+					    android:id="@+id/autocompleteEmpleado"
+					    android:hint="@string/empleado"
+					    android:imeOptions="actionNext"
+					    style="@style/FuenteEditTextBasico" />
 
-        </TableRow>
-	</TableLayout>
-	<!--____________________ Seccion: formulario, campo descripcion ______________________________-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
-        android:orientation="horizontal">
-    
-		<TextView
-		    android:id="@+id/textViewDescripcion"
-		    style="@style/FuenteFormularios"
-		    android:text="@string/descripcion" />
-	
-		<EditText
-	        android:id="@+id/editTextDescripcion"
-		    android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:lines="5"
-            android:gravity="top|left"
-            android:scrollbars="vertical"
-            android:inputType="textMultiLine|textCapSentences"/>
-	</LinearLayout>
-	
-    <CheckBox 
-        android:id="@+id/checkBoxFinalizada"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/marcar_como_finalizado"/>
-    
-	<!--____________________ Seccion: botones: salvar y limpiar ______________________________-->
-     <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="3dip" 
-        android:stretchColumns="0,1">
-        
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:ignore="UselessParent"  >
+			        <!-- Campo que almacena id del empleado. 
+		                 Este campo esta oculto. Se necesita para el boton ver Empleado. -->
+					<EditText
+						android:id="@+id/textEditHiddenIdEmpleado"
+						android:visibility="gone"
+						android:inputType="number" />
+			        
+			        <ImageButton
+						android:id="@+id/imageButtonVerEmpleado"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:src="@android:drawable/ic_menu_view" 
+						android:contentDescription="@string/ver_empleado"/>
+		        </TableRow>
+		        
+		        <TableRow
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content" >
+		        
+					<TextView
+					    android:id="@+id/textViewFecha"
+					    style="@style/FuenteFormularios"
+					    android:text="@string/fecha" />
+			
+			        <Button
+			            android:id="@+id/buttonFecha" >
+			        </Button>
+			        
+			    </TableRow>
+				<TableRow
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content" >
 
-			<Button
-			    android:id="@+id/buttonSalvar"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:text="@string/salvar" />
-	
-	       <Button
-	           android:id="@+id/buttonLimpiar"
-	           android:layout_width="wrap_content"
-	           android:layout_height="wrap_content"
-	           android:text="@string/limpiar" />
-	       
-        </TableRow>
-    </TableLayout>
+			        <TextView
+					    android:id="@+id/textViewTime"
+					    style="@style/FuenteFormularios"
+					    android:text="@string/hora" />
+			
+			        <Button
+			            android:id="@+id/buttonHora">
+			        </Button>
+		
+		        </TableRow>
+				<TableRow
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content" >
+			        
+					<TextView
+					    android:id="@+id/textViewDescripcion"
+					    style="@style/FuenteFormularios"
+					    android:text="@string/descripcion" />
+				
+					<EditText
+				        android:id="@+id/editTextDescripcion"
+				        android:hint="@string/descripcion"
+			            style="@style/FuenteEditTextBasico"/>
+				    
+				</TableRow>
+			</TableLayout>
 
+			
+		    <CheckBox 
+		        android:id="@+id/checkBoxFinalizada"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:text="@string/marcar_como_finalizado"/>
+
+		</LinearLayout>
+	</ScrollView>
 </LinearLayout>
