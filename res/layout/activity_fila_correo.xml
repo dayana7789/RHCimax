@@ -1,29 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayoutRow"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal" >
-    
-    <CheckBox
-    	android:id="@+id/checkBoxServEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/FuenteFormularios"
-        android:paddingRight="10dp"
-        android:checked="true" />
-    
-    <TextView
-	    android:id="@+id/textViewServNombreEmp"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_marginRight="5dp"
-	    style="@style/FuenteFormularios"/>
-		
-	<TextView
-	    android:id="@+id/textViewServApellidoEmp"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    style="@style/FuenteFormularios" />
-    
+    android:layout_height="match_parent">
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:orientation="horizontal">
+        
+	    <CheckBox
+	    	android:id="@+id/checkBoxServEmail"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        style="@style/FuenteFormularios"
+	        android:paddingRight="10dp"
+	        android:checked="true" />
+
+		<TextView
+			android:id="@+id/textViewServNombreEmp"
+			android:layout_marginRight="5dp"
+			android:textIsSelectable="true"
+			style="@style/FuenteFormularios"/>
+			
+		<TextView
+			android:id="@+id/textViewServApellidoEmp"
+			android:textIsSelectable="true"
+		    style="@style/FuenteFormularios" />  
+
+	</LinearLayout>
+
+</TableRow>

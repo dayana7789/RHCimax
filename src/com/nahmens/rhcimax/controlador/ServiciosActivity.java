@@ -3,24 +3,27 @@ package com.nahmens.rhcimax.controlador;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.TableRow.LayoutParams;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
@@ -36,31 +39,74 @@ import com.nahmens.rhcimax.database.sqliteDAO.Empleado_CotizacionSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.ServicioSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
+import com.nahmens.rhcimax.utils.InstantAutoComplete;
 import com.nahmens.rhcimax.utils.Tripleta;
+import com.nahmens.rhcimax.utils.UtilityScroll;
 
 public class ServiciosActivity extends Fragment {
 
 	private FragmentManager fragmentManager; 
 	private LayoutInflater inflater;
 
+	//Campos formulario
+	TextView tvEmpresa;
+	Button buttonFinalizar;
+	TableLayout tlListCorreos;
+	EditText etMensual;
+	EditText etTotal;
+	TableRow trTotal;
+	Button buttonCalcular;
+	ListView lvServicios;
+	EditText etDescripcion;
+
+
+	/**
+	 * Funcion que almacena la referencia de los campos de tal manera que estos
+	 * sean calculados una sola vez.
+	 * @param view
+	 */
+	private void setReferenciaCampos(View v) {
+		tlListCorreos = (TableLayout) v.findViewById(R.id.tableLayoutListaCorreos);
+		tvEmpresa = (TextView) v.findViewById(R.id.textViewEmpresa);
+		buttonFinalizar= (Button)  v.findViewById(R.id.buttonFinalizar);
+		etMensual = (EditText) v.findViewById(R.id.textEditMensual);
+		etTotal = (EditText) v.findViewById(R.id.textEditTotal);
+		trTotal = (TableRow) v.findViewById(R.id.tableRowTotal);
+		buttonCalcular= (Button)  v.findViewById(R.id.buttonCalcular);
+		lvServicios = (ListView) v.findViewById (R.id.listViewServicios);
+		etDescripcion = (EditText) v.findViewById(R.id.textEditDescripcion);
+	}
+
+
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-
+		
 		View view = inflater.inflate(R.layout.activity_servicios, container, false);
-		this.inflater=inflater;
-		this.fragmentManager = this.getFragmentManager();
-		final Bundle mArgumentos = this.getArguments();
+		
+		//OJO: evitamos que la pantalla se vuelva a recrear verificando el valor
+		//de savedInstanceState. De esta manera evitamos la doble llamada que se
+		//realiza al metodo onCreateView, cuando cambiamos la orientacion del 
+		//dispositivo.
+		if (savedInstanceState==null){
 
-		//Nos aseguramos que nos hayan pasado argumentos
-		if(mArgumentos!= null){
-			String idEmpresa = mArgumentos.getString("idEmpresa");
+			this.inflater=inflater;
+			this.fragmentManager = this.getFragmentManager();
+			
+			setReferenciaCampos(view);
 
-			if(idEmpresa != null){
-				llenarCampos(view, idEmpresa, "empresa");
-			}else{
-				String idEmpleado = mArgumentos.getString("id");
-				if(idEmpleado != null){
-					llenarCampos(view, idEmpleado, "empleado");
+			Bundle mArgumentos = this.getArguments();
+
+			//Nos aseguramos que nos hayan pasado argumentos
+			if(mArgumentos!= null){
+				String idEmpresa = mArgumentos.getString("idEmpresa");
+
+				if(idEmpresa != null){
+					llenarCampos(idEmpresa, "empresa");
+				}else{
+					String idEmpleado = mArgumentos.getString("id");
+					if(idEmpleado != null){
+						llenarCampos(idEmpleado, "empleado");
+					}
 				}
 			}
 		}
@@ -68,22 +114,23 @@ public class ServiciosActivity extends Fragment {
 		return view;
 	}
 
+
 	/**
 	 * Funcion que llena la informacion de servicios y clientes.
 	 * @param id Se refiere al idEmpresa o al idEmpleado segun el tipoCliente.
 	 * @param tipoCliente Posibles valores: empleado o empresa.
 	 */
 
-	private void llenarCampos(View v, String id, String tipoCliente){
+	private void llenarCampos(String id, String tipoCliente){
 
 		if(tipoCliente.equals("empresa")){
-			llenarCamposCliente(v,id, null);
+			llenarCamposCliente(id, null);
 
 		}else if(tipoCliente.equals("empleado")){
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 			Empleado empleado = empleadoDao.buscarEmpleado(getActivity(), id);
 
-			llenarCamposCliente(v, ""+empleado.getIdEmpresa(), id);
+			llenarCamposCliente(""+empleado.getIdEmpresa(), id);
 
 			id = ""+empleado.getIdEmpresa();
 
@@ -91,18 +138,17 @@ public class ServiciosActivity extends Fragment {
 			Log.e("ServiciosActivity: llenarCampos(..)", "Tipo de cliente no valido: " + tipoCliente);
 		}
 
-		llenarCamposServicios(v,id,tipoCliente);
+		llenarCamposServicios(id,tipoCliente);
 	}
 
 	/**
 	 * Funcion que llena en pantalla los datos relacionados a los servicios:
 	 * lista de servicios.
 	 * 
-	 * @param v  View del fragmento
 	 * @param idEmpresa Identificador de la empresa
 	 * @param tipoCliente Posibles valores: empresa o empleado
 	 */
-	private void llenarCamposServicios(View v, final String idEmpresa, String tipoCliente) {
+	private void llenarCamposServicios(final String idEmpresa, String tipoCliente) {
 		ServicioSqliteDao servicioDao = new ServicioSqliteDao();
 		Cursor mCursorServicios = servicioDao.listarServicios(getActivity());
 
@@ -111,19 +157,14 @@ public class ServiciosActivity extends Fragment {
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
 			String[] from = new String[] { Servicio.NOMBRE};
 			int[] to = new int[] { R.id.checkBoxServicio};
-			ListView lvServicios = (ListView) v.findViewById (R.id.listViewServicios);
-
-			Button buttonFinalizar= (Button)  v.findViewById(R.id.buttonFinalizar);
 
 			//Creamos un array adapter para desplegar cada una de las filas
 			ListaServiciosCursorAdapter notes = new ListaServiciosCursorAdapter(getActivity(), R.layout.activity_fila_servicio, mCursorServicios, from, to, 0, buttonFinalizar);
 			lvServicios.setAdapter(notes);
 			lvServicios.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-			final EditText etMensual = (EditText) v.findViewById(R.id.textEditMensual);
-			final EditText etTotal = (EditText) v.findViewById(R.id.textEditTotal);
 
-			
-			Button buttonCalcular= (Button)  v.findViewById(R.id.buttonCalcular);
+			UtilityScroll.setListViewHeightBasedOnChildren(lvServicios);
+
 			buttonCalcular.setOnClickListener(new View.OnClickListener() {
 
 				@Override
@@ -169,11 +210,10 @@ public class ServiciosActivity extends Fragment {
 					etMensual.setText(""+mensual);
 					etTotal.setText(""+total);
 
+					trTotal.requestFocus();
+
 				}});
 
-
-			final EditText etDescripcion = (EditText) v.findViewById(R.id.textEditDescripcion);
-			
 
 			buttonFinalizar.setOnClickListener(new View.OnClickListener() {
 
@@ -334,22 +374,19 @@ public class ServiciosActivity extends Fragment {
 		}
 	}
 
-
 	/**
 	 * Funcion que llena en pantalla los datos relacionados al cliente:
 	 * lista de correos de todos los empleados.
 	 * 
-	 * @param v  View del fragmento
 	 * @param idEmpresa Identificador de la empresa
 	 * @param idEmpleado Identificador del empleado. 
 	 *                   Si idEmpleado==null, se marcan todos los correos (checkbox).
 	 *                   Si no, se marca solo el correo de idEmpleado.
 	 */
-	private void llenarCamposCliente(View v, String idEmpresa, String idEmpleado) {
+	private void llenarCamposCliente(String idEmpresa, String idEmpleado) {
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 		Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
 
-		TextView tvEmpresa = (TextView) v.findViewById(R.id.textViewEmpresa);
 		tvEmpresa.setText(empresa.getNombre());
 
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
@@ -358,22 +395,17 @@ public class ServiciosActivity extends Fragment {
 		//Lista de correos de empleados
 		if(mCursorEmpleados.getCount()>0){
 
-			//indicamos los campos que queremos mostrar (from) y en donde (to)
 			String[] from = new String[] { Empleado.NOMBRE, Empleado.APELLIDO, Empleado.EMAIL};
 			int[] to = new int[] { R.id.textViewServNombreEmp,R.id.textViewServApellidoEmp, R.id.checkBoxServEmail};
-			ListView lvEmpleados = (ListView) v.findViewById (R.id.listViewCorreos);
 
-			//Creamos un array adapter para desplegar cada una de las filas
+			//Creamos un adaptador personalizado para desplegar cada una de las filas
 			ListaCorreosCursorAdapter notes = null;
 
-			Button buttonFinalizar= (Button)  v.findViewById(R.id.buttonFinalizar);
-
 			if(idEmpleado==null){
-				notes = new ListaCorreosCursorAdapter(getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0, null,buttonFinalizar);
+				notes = new ListaCorreosCursorAdapter(tlListCorreos, getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0, null,buttonFinalizar);
 			}else{
-				notes = new ListaCorreosCursorAdapter(getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0, idEmpleado, buttonFinalizar);
+				notes = new ListaCorreosCursorAdapter(tlListCorreos, getActivity(), R.layout.activity_fila_correo, mCursorEmpleados, from, to, 0, idEmpleado, buttonFinalizar);
 			}
-			lvEmpleados.setAdapter(notes);
 		}
 	}
 }

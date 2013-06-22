@@ -6,61 +6,58 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TableLayout;
+import android.widget.TableLayout.LayoutParams;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.utils.Tripleta;
 
-
-
 /**
  * Adaptador personalizado para iterar sobre los resultados de la BD,
  * relacionados con la lista de correos de empleados asociados a una empresa.
  * Se utiliza en la pagina de servicios y se implementa para saber cuales
  * checkboxes de la lista de correos se marcan por default.
+ * 
+ * Alternativa para evitar usar ListView dentro de ScrollView.
  */
-public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
+public class ListaCorreosCursorAdapter{
 
-	private int layout;
 	private String[] from;
 	private int[] to;
 	private String idEmpleado;
 	private static HashMap<Integer, Boolean> correosSeleccionados; //Almacena los checkboxes que fueron seleccionados <idEmpleado, booleano>
 	private Button bFinalizar; //referencia al boton finalizar
-	 
-	
+	private TableLayout tlListCorreos;
+
 	public static HashMap<Integer,Boolean> getCorreosSeleccionados(){
 		return correosSeleccionados;
 	}
-
 
 	public static void setCorreosSeleccionados( HashMap<Integer,Boolean> nuevo){
 		correosSeleccionados = nuevo;
 	}
 
-	public ListaCorreosCursorAdapter(Context context, int layout, Cursor c,
+	public ListaCorreosCursorAdapter(TableLayout tlListCorreos, Context context, int layout, Cursor c,
 			String[] from, int[] to, int flags, String idEmpleado, Button bFinalizar) {
 
-		super(context, layout, c, from, to, flags);
-
-		this.layout = layout;
 		this.from = from;
 		this.to = to;
 		this.idEmpleado = idEmpleado;
 		this.bFinalizar = bFinalizar;
+		this.tlListCorreos = tlListCorreos;
 
 		inicializarCorreosSeleccionados(c);
-
+		mbindView(context, c);
 	}
 
 
@@ -90,7 +87,7 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 						getCorreosSeleccionados().put(idEmpleadoNuevo, false);
 					}
 
-				//De resto marcamos todos los correos como seleccionados por default
+					//De resto marcamos todos los correos como seleccionados por default
 				}else{
 					getCorreosSeleccionados().put(idEmpleadoNuevo, true);
 				}
@@ -98,39 +95,16 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 				c.moveToNext();
 			}
 		}
+		c.moveToFirst();
 	}
 
 
-	//Clase que permite guardar referencia de los childs en el layout
-	private class ViewHolder {
-		CheckBox cbCorreo;
-	}
-
-	@Override
-	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-
-		final LayoutInflater inflater = LayoutInflater.from(context);
-		View v = inflater.inflate(layout, parent, false);
-
-		//Este holder se encarga de guardar las referencias a los elementos de las filas
-		//de manera de que estas no se calculen cada vez que se entra en el bind view.
-		//(operacion costosa en android)
-		ViewHolder holder = null;
-		holder = new ViewHolder();
-		holder.cbCorreo = (CheckBox) v.findViewById(R.id.checkBoxServEmail);
-		v.setTag(holder);
-
-		return v;
-	}
-
-	@Override
-	public void bindView(View v, Context context, Cursor cursor) { 
-
-		//Obtenemos el holder de las referencias a los elementos.
-		//de esta manera evitamos hacer v.findViewById 
-		//(operacion costosa en android)
-		ViewHolder holder = (ViewHolder) v.getTag();
-
+	/**
+	 * Funcion que se encarga de llenar las filas de la tabla: tlListCorreos dinamicamente.
+	 * @param context
+	 * @param cursor Contiene los datos de los empleados.
+	 */
+	public void mbindView(Context context, Cursor cursor) { 
 		//Columna de la BD que queremos recuperar
 		String columna = null;
 
@@ -140,66 +114,102 @@ public class ListaCorreosCursorAdapter extends SimpleCursorAdapter{
 		//Resultado de obtener el indice de la columna de BD 
 		String nombre = null;
 
-		//Nombre del textView en nuestro Layout donde queremos
+		//Nombre del view en nuestro Layout donde queremos
 		//que aparezca el resultado.
-		TextView nombre_text = null;
+		View mView = null;
+		TextView tv = null;
+		CheckBox cb = null;
+
+		int idEmpleadoNuevo = 0;
+		boolean chequeado = false;
+
+		View mTableRow = null;
 
 		//Para cada valor de la BD solicitado, lo mostramos en el text view.
-		for (int i=0; i<from.length; i++){
-			columna = from[i];
-			nombreCol = cursor.getColumnIndex(columna);
-			nombre = cursor.getString(nombreCol);
-			nombre_text = (TextView) v.findViewById(to[i]);
+		while(!cursor.isAfterLast()){
+
+			//obtenemos la referencia a la fila descrita en activity_fila_correo.xml
+			mTableRow = (TableRow) View.inflate(context, R.layout.activity_fila_correo, null);
+
+			for (int i=0; i<from.length; i++){
+
+				columna = from[i];
+				nombreCol = cursor.getColumnIndex(columna);
+				nombre = cursor.getString(nombreCol);
+
+				idEmpleadoNuevo = cursor.getInt(cursor.getColumnIndex(Empleado.ID));
+
+				mView = (View) mTableRow.findViewById(to[i]);
+
+				if(mView instanceof CheckBox){
+					cb = (CheckBox) mView;
+					cb.setText(nombre);
+					chequeado = getCorreosSeleccionados().get(idEmpleadoNuevo);
+					cb.setChecked(chequeado);
+
+					final Bundle mArgumentos = new Bundle();
+					mArgumentos.putInt("idEmpleado", idEmpleadoNuevo);
+
+					cb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+						public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+							mOnCheckedChanged(mArgumentos, isChecked);
+						}
+					});
+
+				}else if(mView instanceof TextView){
+					tv = (TextView) mView;
+					tv.setText(nombre);
+				}
+			}
+
+			//agregamos las filas o TableRows a TableLayout
+			tlListCorreos.addView(mTableRow);
 			
-			if (nombre_text != null) {
-				nombre_text.setText(nombre);
+			//Creamos una linea divisora entre las filas
+			View line = new View(context);
+			line.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 1));
+			line.setBackgroundColor(Color.LTGRAY);
+			tlListCorreos.addView(line);
+
+			cursor.moveToNext();
+		}
+	}
+
+
+	/**
+	 * Funcion que se ejecuta cuando se presiona un check.
+	 * @param mArgumentos
+	 * @param isChecked
+	 */
+	protected void mOnCheckedChanged(Bundle mArgumentos, boolean isChecked) {
+		getCorreosSeleccionados().remove(mArgumentos.getInt("idEmpleado"));
+		getCorreosSeleccionados().put(mArgumentos.getInt("idEmpleado"), isChecked);
+
+		boolean flagServicio = false;
+		boolean flagCorreo = false;
+		Tripleta par = null;
+
+		for (Map.Entry<Integer, Tripleta> entry : ListaServiciosCursorAdapter.getServiciosSeleccionados().entrySet()) {
+			par = entry.getValue();
+			//si tengo algun servicio seleccionado..
+			if( par.getBooleano() == true){
+				flagServicio = true;
 			}
 		}
 
-		int idEmpleado = cursor.getInt(cursor.getColumnIndex(Empleado.ID));
-
-		//almacenamos en un bundle id del usuario.
-		final Bundle mArgumentos = new Bundle();
-		mArgumentos.putInt("idEmpleado", idEmpleado);
-
-		CheckBox cb = ( CheckBox ) holder.cbCorreo;
-		cb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				getCorreosSeleccionados().remove(mArgumentos.getInt("idEmpleado"));
-				getCorreosSeleccionados().put(mArgumentos.getInt("idEmpleado"), isChecked);
-				
-				boolean flagServicio = false;
-				boolean flagCorreo = false;
-				Tripleta par = null;
-				
-				for (Map.Entry<Integer, Tripleta> entry : ListaServiciosCursorAdapter.getServiciosSeleccionados().entrySet()) {
-					par = entry.getValue();
-					//si tengo algun servicio seleccionado..
-					if( par.getBooleano() == true){
-						flagServicio = true;
-					}
-				}
-				
-				for (Map.Entry<Integer, Boolean> entry : getCorreosSeleccionados().entrySet()) {
-					//si tengo algun correo seleccionado..
-					if( entry.getValue() == true){
-						flagCorreo = true;
-					}
-				}
-
-				//si flag es falso es porque ningun servicio o correo fue seleccionado.
-				if(flagServicio==false || flagCorreo == false){
-					bFinalizar.setEnabled(false);
-				}else{
-					bFinalizar.setEnabled(true);
-				}
+		for (Map.Entry<Integer, Boolean> entry : getCorreosSeleccionados().entrySet()) {
+			//si tengo algun correo seleccionado..
+			if( entry.getValue() == true){
+				flagCorreo = true;
 			}
-		});
+		}
 
-		//Esta linea de codigo es importante para evitar que se pierdan los checkboxes seleccionados
-		//cuando hacemos scroll de la lista. De aqui la importancia del setOnCheckedChangeListener
-		//y la lista correosSeleccionados.
-		cb.setChecked(getCorreosSeleccionados().get(idEmpleado));
+		//si flag es falso es porque ningun servicio o correo fue seleccionado.
+		if(flagServicio==false || flagCorreo == false){
+			bFinalizar.setEnabled(false);
+		}else{
+			bFinalizar.setEnabled(true);
+		}
 	}
 }
 

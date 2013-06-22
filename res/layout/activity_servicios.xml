@@ -1,134 +1,123 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    style="@style/ContenedorPrincipal"
-    tools:context=".ServiciosActivity" >
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textViewServicios"
-        style="@style/FuenteTitulos"
-        android:text="@string/servicios" />
-    
-
-    <TextView
-        android:id="@+id/textViewEmpresa"
-        android:textIsSelectable="false"
-        style="@style/FuenteSubSubTitulos"/>
-    
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="128dp"
-        android:orientation="horizontal"
-        android:background="#FFFFFF" >
-        
-        <TextView 
-            android:id="@+id/textViewEnviarA"
-            style="@style/FuenteFormularios"
-            android:text="@string/enviarA"
-            android:paddingRight="10dp"/>
-  
-        <ListView
-	        android:id="@+id/listViewCorreos"
-	        android:fadeScrollbars="false"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1" >
-    	</ListView>
-
-    </LinearLayout>
-    <TextView 
-    	android:id="@+id/textViewServ"
-        style="@style/FuenteSubTitulos"
-        android:text="@string/servicios"/>
-
-    
-    <ListView
-	    android:id="@+id/listViewServicios"
-	    android:layout_width="match_parent"
-	    android:fadeScrollbars="false"
-	    android:layout_height="0dp"
-		android:layout_weight="1"/>
-    
-    <TextView
-    	android:id="@+id/textViewDescripcion"
-        style="@style/FuenteSubTitulos"
-        android:text="@string/descripcion" />	
-        
-	<EditText
-		android:id="@+id/textEditDescripcion"
+    <!--_____________________ Botones barra superior _____________________-->
+	<include layout="@layout/barra_servicios_superior"/>
+	
+	<ScrollView 
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-    	android:maxLines="4"
-    	android:scrollbars="vertical"
-		android:inputType="textCapSentences|textMultiLine"/>
+		android:layout_height="match_parent">
+		<LinearLayout
+		    style="@style/ContenedorPrincipal"
+		    tools:context=".ServiciosActivity" >
+		
+		    <TextView
+		        android:id="@+id/textViewServicios"
+		        style="@style/FuenteTitulos"
+		        android:text="@string/servicios" />
+		    
+		
+		    <TextView
+		        android:id="@+id/textViewEmpresa"
+		        android:textIsSelectable="false"
+		        style="@style/FuenteSubSubTitulos"/>
+		    
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:stretchColumns="0" >
+		        
+		        <TextView 
+		            android:id="@+id/textViewEnviarA"
+		            style="@style/FuenteFormularios"
+		            android:text="@string/enviarA"
+		            android:paddingRight="10dp"/>
+		        
+		        
+		        <HorizontalScrollView 
+        			android:layout_width="match_parent" 
+        			android:layout_height="wrap_content">
         
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="UselessParent" 
-            android:gravity="center">
-        
-	        <TextView 
-		    	android:id="@+id/textViewTotalPorServicio"
+			        <TableLayout
+		                android:id="@+id/tableLayoutListaCorreos"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content" />
+			        
+		  		</HorizontalScrollView>
+		     <!--   <ListView
+			        android:id="@+id/listViewCorreos"
+			        android:layout_width="match_parent"
+			        android:layout_height="0dp"
+			        android:layout_weight="1" /> -->
+
+
+		    <TextView 
+		    	android:id="@+id/textViewServ"
 		        style="@style/FuenteSubTitulos"
-		        android:text="@string/totalPorServicio"/>
-	    	<Button
-				android:id="@+id/buttonCalcular"
-			    android:layout_width="200dp"
-			    android:layout_height="wrap_content"
-			    android:text="@string/calcular" />
-		</TableRow>
-	</TableLayout>
-    
-    
-	
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="3dip"
-        android:stretchColumns="1,3" >
+		        android:text="@string/servicios"/>
+		
+		    
+		    <ListView
+			    android:id="@+id/listViewServicios"
+			    android:layout_width="match_parent"
+			    android:fadeScrollbars="false"
+			    android:layout_height="0dp"
+				android:layout_weight="1"/>
+		    
+		    <TextView
+		    	android:id="@+id/textViewDescripcion"
+		        style="@style/FuenteSubTitulos"
+		        android:text="@string/descripcion" />	
+		        
+			<EditText
+				android:id="@+id/textEditDescripcion"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				style="@style/FuenteEditTextBasico"/>
+		
+		    
+		    <TextView 
+			   	android:id="@+id/textViewTotalPorServicio"
+			    style="@style/FuenteSubTitulos"
+			    android:text="@string/totalPorServicio"/>
 
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:ignore="UselessParent" >
-
-            <TextView
-                android:id="@+id/textViewMensual"
-                style="@style/FuenteFormularios"
-                android:text="@string/mensual" />
-
-            <EditText
-                android:id="@+id/textEditMensual"
-                android:inputType="numberDecimal" 
-                android:enabled="false">
-            </EditText>
-            
-            <TextView
-                android:id="@+id/textViewTotal"
-                style="@style/FuenteFormularios"
-                android:text="@string/total" />
-
-            <EditText
-                android:id="@+id/textEditTotal"
-                android:inputType="numberDecimal"
-                android:enabled="false" />
-
-        </TableRow>
-	</TableLayout>
-	
-	<Button
-		android:id="@+id/buttonFinalizar"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:enabled="false"
-	    android:text="@string/finalizar" />
-
+		
+		    <TableLayout
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="center"
+		        android:padding="3dip"
+		        android:stretchColumns="1,3" >
+		
+		        <TableRow
+		            android:id="@+id/tableRowTotal"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            tools:ignore="UselessParent" >
+		
+		            <TextView
+		                android:id="@+id/textViewMensual"
+		                style="@style/FuenteFormularios"
+		                android:text="@string/mensual" />
+		
+		            <EditText
+		                android:id="@+id/textEditMensual"
+		                android:inputType="numberDecimal" 
+		                android:enabled="false">
+		            </EditText>
+		            
+		            <TextView
+		                android:id="@+id/textViewTotal"
+		                style="@style/FuenteFormularios"
+		                android:text="@string/total" />
+		
+		            <EditText
+		                android:id="@+id/textEditTotal"
+		                android:inputType="numberDecimal"
+		                android:enabled="false" />
+		
+		        </TableRow>
+			</TableLayout>
+		</LinearLayout>
+	</ScrollView>
 </LinearLayout>

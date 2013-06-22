@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Usado en pagina de servicios -->
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center|right"
+    android:background="#D8D8D8">
+
+	    
+		<Button
+			android:id="@+id/buttonCalcular"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/calcular" />
+        
+		<Button
+			android:id="@+id/buttonFinalizar"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:enabled="false"
+		    android:text="@string/finalizar" />
+
+</LinearLayout>

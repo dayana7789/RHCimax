@@ -367,14 +367,14 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		etMedida.setOnFocusChangeListener(new OnFocusChangeListener() {
 			public void onFocusChange(View v, boolean hasFocus) {
 
-				if(!hasFocus){
+				/*if(!hasFocus){
 					//	Log.e("setOnFocusChangeListener","idservicio: " + mArgumentos.getInt("idServicio"));
 					Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getInt("idServicio"));
 					boolean cheked = tripleta.getBooleano();
 					String descripcion = tripleta.getDescripcion(); 
 					getServiciosSeleccionados().remove(mArgumentos.getInt("idServicio"));
 					getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Tripleta(cheked, etMedida.getText().toString(), descripcion));
-				}
+				}*/
 			}
 		});
 
