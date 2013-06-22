@@ -205,6 +205,8 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			sqlQuery += " WHERE empleado.nombre LIKE '%" + args + "%' ";
 			sqlQuery += " OR empleado.apellido LIKE '%" + args + "%' ";
 			sqlQuery += " OR empresa.nombre LIKE '%" + args + "%' ";
+			sqlQuery += " ORDER BY empleado.nombre";
+			
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 						

@@ -216,6 +216,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			sqlQuery  = " SELECT * ";
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " WHERE " + Empresa.NOMBRE + " LIKE '%" + args + "%' ";
+			sqlQuery += " ORDER BY " + Empresa.NOMBRE;
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 
