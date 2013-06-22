@@ -52,11 +52,11 @@ public class ServiciosActivity extends Fragment {
 	TextView tvEmpresa;
 	Button buttonFinalizar;
 	TableLayout tlListCorreos;
+	TableLayout tlListServicios;
 	EditText etMensual;
 	EditText etTotal;
 	TableRow trTotal;
 	Button buttonCalcular;
-	ListView lvServicios;
 	EditText etDescripcion;
 
 
@@ -67,13 +67,13 @@ public class ServiciosActivity extends Fragment {
 	 */
 	private void setReferenciaCampos(View v) {
 		tlListCorreos = (TableLayout) v.findViewById(R.id.tableLayoutListaCorreos);
+		tlListServicios = (TableLayout) v.findViewById (R.id.tableLayoutListaServicios);
 		tvEmpresa = (TextView) v.findViewById(R.id.textViewEmpresa);
 		buttonFinalizar= (Button)  v.findViewById(R.id.buttonFinalizar);
 		etMensual = (EditText) v.findViewById(R.id.textEditMensual);
 		etTotal = (EditText) v.findViewById(R.id.textEditTotal);
 		trTotal = (TableRow) v.findViewById(R.id.tableRowTotal);
 		buttonCalcular= (Button)  v.findViewById(R.id.buttonCalcular);
-		lvServicios = (ListView) v.findViewById (R.id.listViewServicios);
 		etDescripcion = (EditText) v.findViewById(R.id.textEditDescripcion);
 	}
 
@@ -159,11 +159,7 @@ public class ServiciosActivity extends Fragment {
 			int[] to = new int[] { R.id.checkBoxServicio};
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			ListaServiciosCursorAdapter notes = new ListaServiciosCursorAdapter(getActivity(), R.layout.activity_fila_servicio, mCursorServicios, from, to, 0, buttonFinalizar);
-			lvServicios.setAdapter(notes);
-			lvServicios.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-
-			UtilityScroll.setListViewHeightBasedOnChildren(lvServicios);
+			ListaServiciosCursorAdapter notes = new ListaServiciosCursorAdapter(tlListServicios, getActivity(), R.layout.activity_fila_servicio, mCursorServicios, from, to, 0, buttonFinalizar);
 
 			buttonCalcular.setOnClickListener(new View.OnClickListener() {
 
@@ -210,7 +206,7 @@ public class ServiciosActivity extends Fragment {
 					etMensual.setText(""+mensual);
 					etTotal.setText(""+total);
 
-					trTotal.requestFocus();
+					etTotal.requestFocus();
 
 				}});
 
