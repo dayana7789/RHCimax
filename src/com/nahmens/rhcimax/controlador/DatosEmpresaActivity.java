@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,27 +29,30 @@ import com.nahmens.rhcimax.utils.UtilityScroll;
 
 public class DatosEmpresaActivity extends Fragment {
 
-	private LayoutInflater inflater;
-	private View mView;
-	private FragmentManager fragmentManager; 
-	private Bundle mArgumentos;
+	//Campos formulario:
+	EditText etNombre;
+	EditText etTelefono;
+	EditText etWeb;
+	EditText etRif;
+	EditText etDirFiscal;
+	EditText etDirComercial;
 
 	/* Flag que permite saber si al crear una nueva empresa, esta se guardo
 	 * antes de hacer click en el boton + para agregar un nuevo empleado. 
 	 */
 	private boolean flagGuardado;
+	private Bundle mArgumentos;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.activity_datos_empresa, container, false);
-		this.inflater=inflater;
-		this.mView =  view;
-		this.fragmentManager = this.getFragmentManager();
 
+		//inicializamos la referencia a los campos del formulario
+		setReferenciaCampos(view);
+		
 		mArgumentos = this.getArguments();
-
 
 		//Si me pasaron argumentos, relleno la vista con la informacion. 
 		//De lo contrario, dejo todo vacio.
@@ -88,9 +90,6 @@ public class DatosEmpresaActivity extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				EditText etDirFiscal = (EditText) mView.findViewById(R.id.textEditDirFiscEmpresa);
-				EditText etDirComercial = (EditText) mView.findViewById(R.id.textEditDirComerEmpresa);
-
 				String dirFiscal = etDirFiscal.getText().toString();
 				etDirComercial.setText(dirFiscal);
 			}
@@ -109,7 +108,7 @@ public class DatosEmpresaActivity extends Fragment {
 					//pasamos al fragment el id de la empresa
 					fragment.setArguments(mArgumentos); 
 
-					fragmentManager.beginTransaction()
+					getFragmentManager().beginTransaction()
 					.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
 					.addToBackStack(null)
 					.commit();
@@ -209,7 +208,7 @@ public class DatosEmpresaActivity extends Fragment {
 				//pasamos al fragment el id de la empresa
 				fragment.setArguments(mArgumentos); 
 
-				fragmentManager.beginTransaction()
+				getFragmentManager().beginTransaction()
 				.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentServicios)
 				.addToBackStack(null)
 				.commit();
@@ -217,6 +216,20 @@ public class DatosEmpresaActivity extends Fragment {
 		});
 
 		return view;
+	}
+	
+	/**
+	 * Funcion que almacena la referencia de los campos de tal manera que estos
+	 * sean calculados una sola vez.
+	 * @param view
+	 */
+	private void setReferenciaCampos(View v) {
+		etNombre = (EditText) v.findViewById(R.id.textEditNombEmpresa);
+		etTelefono = (EditText) v.findViewById(R.id.textEditTelfEmpresa);
+		etWeb = (EditText) v.findViewById(R.id.textEditWebEmpresa);
+		etRif = (EditText) v.findViewById(R.id.textEditRifEmpresa);
+		etDirFiscal = (EditText) v.findViewById(R.id.textEditDirFiscEmpresa);
+		etDirComercial = (EditText) v.findViewById(R.id.textEditDirComerEmpresa);
 	}
 
 	private void listarEmpleados(View view, String idEmpresa){
@@ -235,7 +248,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 			//Creamos un array adapter para desplegar cada una de las filas
 			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_empleado, mCursor, from, to);
-			ListaEmpleadosCursorAdapter notes = new ListaEmpleadosCursorAdapter(context, R.layout.activity_fila_empleado, mCursorEmpleados, from, to, 0,fragmentManager);
+			ListaEmpleadosCursorAdapter notes = new ListaEmpleadosCursorAdapter(context, R.layout.activity_fila_empleado, mCursorEmpleados, from, to, 0, getFragmentManager());
 			lvEmpleados.setAdapter(notes);
 			UtilityScroll.setListViewHeightBasedOnChildren(lvEmpleados);
 
@@ -249,13 +262,6 @@ public class DatosEmpresaActivity extends Fragment {
 	 * @param empresa Empresa cuya informacion se esta cargando.
 	 */
 	private void llenarCamposEmpresa(View v, Empresa empresa) {
-		EditText etNombre = (EditText) v.findViewById(R.id.textEditNombEmpresa);
-		EditText etTelefono = (EditText) v.findViewById(R.id.textEditTelfEmpresa);
-		EditText etWeb = (EditText) v.findViewById(R.id.textEditWebEmpresa);
-		EditText etRif = (EditText) v.findViewById(R.id.textEditRifEmpresa);
-		EditText etDirFiscal = (EditText) v.findViewById(R.id.textEditDirFiscEmpresa);
-		EditText etDirComercial = (EditText) v.findViewById(R.id.textEditDirComerEmpresa);
-
 		etNombre.setText(empresa.getNombre());
 		etTelefono.setText(empresa.getTelefono());
 		etWeb.setText(empresa.getWeb());
@@ -271,13 +277,7 @@ public class DatosEmpresaActivity extends Fragment {
 	public void onClickSalvar(String id){
 		Mensaje mToast = null;
 		boolean error = false;
-
-		EditText etNombre = (EditText) getActivity().findViewById(R.id.textEditNombEmpresa);
-		EditText etTelefono = (EditText) getActivity().findViewById(R.id.textEditTelfEmpresa);
-		EditText etWeb = (EditText) getActivity().findViewById(R.id.textEditWebEmpresa);
-		EditText etRif = (EditText) getActivity().findViewById(R.id.textEditRifEmpresa);
-		EditText etDirFiscal = (EditText) getActivity().findViewById(R.id.textEditDirFiscEmpresa);
-		EditText etDirComercial = (EditText) getActivity().findViewById(R.id.textEditDirComerEmpresa);
+		LayoutInflater mInflater = getActivity().getLayoutInflater();
 
 		String nombre = etNombre.getText().toString();
 		String telefono = etTelefono.getText().toString();
@@ -326,10 +326,10 @@ public class DatosEmpresaActivity extends Fragment {
 				Boolean modificado = empresaDao.modificarEmpresa(getActivity(), empresa);
 
 				if(modificado){
-					mToast = new Mensaje(inflater, getActivity(), "ok_modificar_empresa");
+					mToast = new Mensaje(mInflater, getActivity(), "ok_modificar_empresa");
 
 				}else{
-					mToast = new Mensaje(inflater, getActivity(), "error_modificar_empresa");
+					mToast = new Mensaje(mInflater, getActivity(), "error_modificar_empresa");
 				}
 			}else{
 				//Estamos creando un nuevo registro
@@ -343,18 +343,18 @@ public class DatosEmpresaActivity extends Fragment {
 				long idFilaInsertada = empresaDao.insertarEmpresa(getActivity(), empresa, idUsuario);
 
 				if(idFilaInsertada != -1){
-					mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empresa");
+					mToast = new Mensaje(mInflater, getActivity(), "ok_ingreso_empresa");
 					mArgumentos = new Bundle();
 					mArgumentos.putString("idEmpresa", ""+idFilaInsertada);
 					flagGuardado = true;
 
 				}else{
-					mToast = new Mensaje(inflater, getActivity(), "error_ingreso_empresa");
+					mToast = new Mensaje(mInflater, getActivity(), "error_ingreso_empresa");
 					flagGuardado = false;
 				}
 			}
 		}else{
-			mToast = new Mensaje(inflater, getActivity(), "error_formulario");
+			mToast = new Mensaje(mInflater, getActivity(), "error_formulario");
 		}
 
 		try {

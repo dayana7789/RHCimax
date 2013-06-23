@@ -23,7 +23,7 @@
                 android:id="@+id/buttonSincClient"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:text="@string/sincronizar" />
+                android:text="@string/actualizar" />
 
             <LinearLayout
                 android:layout_gravity="center"

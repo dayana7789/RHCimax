@@ -146,22 +146,22 @@ public class Mensaje {
 
 		}else if(this.tipoMensaje == "error_sincronizado_empresa"){
 
-			mensaje =  "Error: la empresa no pudo ser sincronizada.";
+			mensaje =  "Error: la empresa no pudo ser actualizada.";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
 		}else if(this.tipoMensaje == "ok_sincronizado_empresa"){
 
-			mensaje =  "Empresa sincronizada satisfactoriamente.";
+			mensaje =  "Empresa actualizada satisfactoriamente.";
 			layoutWhere = R.layout.toast_layout_mensaje_ok;
 
 		}else if(this.tipoMensaje == "error_sincronizado_empleado"){
 
-			mensaje =  "Error: el contacto no pudo ser sincronizado.";
+			mensaje =  "Error: el contacto no pudo ser actualizado.";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
 		}else if(this.tipoMensaje == "ok_sincronizado_empleado"){
 
-			mensaje =  "Contacto sincronizado satisfactoriamente.";
+			mensaje =  "Contacto actualizado satisfactoriamente.";
 			layoutWhere = R.layout.toast_layout_mensaje_ok;
 
 		}else if(this.tipoMensaje == "error_creacion_cotizacion"){
