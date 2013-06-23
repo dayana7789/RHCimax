@@ -291,6 +291,21 @@ public class DatosEmpresaActivity extends Fragment {
 			etNombre.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
+		
+		if(rif.equals("") || rif==null){
+			etRif.setError(Mensaje.ERROR_CAMPO_VACIO);
+			error = true;
+		}
+		
+		if(telefono.equals("") || telefono==null){
+			etTelefono.setError(Mensaje.ERROR_CAMPO_VACIO);
+			error = true;
+		}
+		
+		if(dirFiscal.equals("") || dirFiscal==null){
+			etDirFiscal.setError(Mensaje.ERROR_CAMPO_VACIO);
+			error = true;
+		}
 		/** Fin Verificacion de errores **/
 
 		if(!error){

@@ -38,7 +38,7 @@
 			        <TextView
 					    android:id="@+id/textViewNombre"
 					    style="@style/FuenteFormularios"
-					    android:text="@string/nombre" />
+					    android:text="@string/nombre_campo_oblig" />
 			
 				    <EditText
 				        android:id="@+id/editTextNombre"
@@ -116,7 +116,7 @@
 					<TextView
 					    android:id="@+id/textViewFecha"
 					    style="@style/FuenteFormularios"
-					    android:text="@string/fecha" />
+					    android:text="@string/fecha_campo_oblig" />
 			
 			        <Button
 			            android:id="@+id/buttonFecha" >
@@ -130,7 +130,7 @@
 			        <TextView
 					    android:id="@+id/textViewTime"
 					    style="@style/FuenteFormularios"
-					    android:text="@string/hora" />
+					    android:text="@string/hora_campo_oblig" />
 			
 			        <Button
 			            android:id="@+id/buttonHora">

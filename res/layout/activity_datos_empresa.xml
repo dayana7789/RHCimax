@@ -65,7 +65,7 @@
 		            <TextView
 		                android:id="@+id/textViewNombEmpresa"
 		                style="@style/FuenteFormularios"
-		                android:text="@string/nombre" />
+		                android:text="@string/nombre_campo_oblig" />
 		
 		            <EditText
 		                android:id="@+id/textEditNombEmpresa"
@@ -79,7 +79,7 @@
 		            <TextView
 		                android:id="@+id/textViewTelfEmpresa"
 		                style="@style/FuenteFormularios"
-		                android:text="@string/telefono" />
+		                android:text="@string/telefono_campo_oblig" />
 		
 		            <EditText
 		                android:id="@+id/textEditTelfEmpresa"
@@ -108,7 +108,7 @@
 		            <TextView
 		                android:id="@+id/textViewRifEmpresa"
 		                style="@style/FuenteFormularios"
-		                android:text="@string/rif" />
+		                android:text="@string/rif_campo_oblig" />
 		
 		            <EditText
 		                android:id="@+id/textEditRifEmpresa"
@@ -133,7 +133,7 @@
 					<TextView
 					    android:id="@+id/textViewDirFiscEmpresa"
 					    style="@style/FuenteFormularios"
-					    android:text="@string/dir_fiscal" />
+					    android:text="@string/dir_fiscal_campo_oblig" />
 			
 			        <EditText
 			            android:id="@+id/textEditDirFiscEmpresa"

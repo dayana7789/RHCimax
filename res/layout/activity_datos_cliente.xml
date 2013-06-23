@@ -85,7 +85,7 @@
 		            <TextView
 		                android:id="@+id/textViewNombEmpleado"
 		                style="@style/FuenteFormularios"
-		                android:text="@string/nombre" />
+		                android:text="@string/nombre_campo_oblig" />
 		
 		            <EditText
 		                android:id="@+id/textEditNombEmpleado"
@@ -101,7 +101,7 @@
 		            <TextView
 		                android:id="@+id/textViewApellidoEmpleado"
 		                style="@style/FuenteFormularios"
-		                android:text="@string/apellido" />
+		                android:text="@string/apellido_campo_oblig" />
 		
 		            <EditText
 		                android:id="@+id/textEditApellidoEmpleado"
@@ -133,7 +133,7 @@
 					<TextView
 		                android:id="@+id/textViewEmail"
 		                style="@style/FuenteFormularios"
-		                android:text="@string/email" />
+		                android:text="@string/email_campo_oblig" />
 		
 		            <EditText
 		                android:id="@+id/textEditEmailEmpleado"

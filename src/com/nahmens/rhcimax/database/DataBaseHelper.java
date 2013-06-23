@@ -80,11 +80,11 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "pin TEXT, "
 															+ "linkedin TEXT, "
 															+ "descripcion TEXT, "
-															+ "idEmpresa INTEGER NOT NULL, "
+															+ "idEmpresa INTEGER, "
 															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 															+ "idUsuario INTEGER NOT NULL, "
-															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id), "
+															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id) ON DELETE CASCADE, "
 															+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id));";
 	
 	private static final String DATABASE_CREATE_COTIZACION = "CREATE table " + TABLA_COTIZACION + " ("
@@ -145,8 +145,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 													  + "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 													  + "fechaSincronizacion DATETIME DEFAULT NULL, "
 													  + "idUsuario INTEGER NOT NULL, "
-													  + "idEmpresa INTEGER NOT NULL, "
-													  + "idEmpleado INTEGER NOT NULL, "
+													  + "idEmpresa INTEGER, "
+													  + "idEmpleado INTEGER, "
 													  + "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id), " 
 													  + "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id), " 
 													  + "FOREIGN KEY(idEmpleado) REFERENCES " + TABLA_EMPLEADO + "(_id));";

@@ -30,21 +30,27 @@ import com.nahmens.rhcimax.mensaje.Mensaje;
 
 public class DatosClienteActivity extends Fragment {
 
-	private LayoutInflater inflater;
-	private View mView;
-	private FragmentManager fragmentManager; 
+	//campos formulario:
+	EditText etNombre;
+	EditText etApellido;
+	EditText etPosicion;
+	EditText etEmail;
+	EditText etTelfOficina;
+	EditText etCelular;
+	EditText etPin;
+	EditText etLinkedin;
+	EditText etDescripcion;
+	EditText etIdEmpresa;
+	AutoCompleteTextView acNombreEmpresa;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.activity_datos_cliente, container, false);
-		this.inflater=inflater;
-		this.mView = view;
-		this.fragmentManager = this.getFragmentManager();
-
-		//usando dentro del metodo onclick del boton ver empresa
-		final LayoutInflater inf = inflater;
+		
+		//inicializamos la referencia a los campos del formulario
+		setReferenciaCampos(view);
 
 		setAutocompleteEmpresa(view);
 
@@ -62,9 +68,19 @@ public class DatosClienteActivity extends Fragment {
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				Empleado empleado  = empleadoDao.buscarEmpleado(getActivity(),idEmpleado);
 
+
 				if(empleado !=null){
-					Empresa empresa = empresaDao.buscarEmpresa(view.getContext(), String.valueOf(empleado.getIdEmpresa()));
-					llenarCamposEmpleado(view, empleado,empresa.getNombre());
+
+					//Si el empleado tiene una empresa asociada, la buscamos
+					if(empleado.getIdEmpresa() != 0){
+
+						Empresa empresa = empresaDao.buscarEmpresa(getActivity(), String.valueOf(empleado.getIdEmpresa()));
+						llenarCamposEmpleado(view, empleado,empresa.getNombre());
+
+						// si no, mostramos el campo de empresa en blanco
+					}else{
+						llenarCamposEmpleado(view, empleado,"");
+					}
 
 				}else{
 					//Esto nunca deberia llamarse
@@ -78,9 +94,6 @@ public class DatosClienteActivity extends Fragment {
 			}else{
 				//estamos agregando un nuevo empleado, a partir del id de la empresa
 				String idEmpresa = mArgumentos.getString("idEmpresa");
-
-				EditText etIdEmpresa = (EditText) view.findViewById(R.id.textEditHiddenIdEmpresa);
-				AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpresa);
 
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				Empresa empresa = empresaDao.buscarEmpresa(view.getContext(), idEmpresa);
@@ -97,11 +110,10 @@ public class DatosClienteActivity extends Fragment {
 			@Override
 			public void onClick(View v) {
 
-				EditText etIdEmpresa = (EditText) mView.findViewById(R.id.textEditHiddenIdEmpresa);
 				String idEmpresa = etIdEmpresa.getText().toString();
 
-				if(idEmpresa.equals("") || idEmpresa.equals(null)){
-					Mensaje mToast = new Mensaje(inf, getActivity(), "error_empresa_no_existe");
+				if(idEmpresa.equals("") || idEmpresa.equals(null) || idEmpresa.equals("0") ){
+					Mensaje mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_empresa_no_existe");
 
 					try {
 						mToast.controlMensajesToast();
@@ -175,7 +187,7 @@ public class DatosClienteActivity extends Fragment {
 				//pasamos al fragment el id de la empresa
 				fragment.setArguments(mArgumentos); 
 
-				fragmentManager.beginTransaction()
+				getFragmentManager().beginTransaction()
 				.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentServicios)
 				.addToBackStack(null)
 				.commit();
@@ -184,22 +196,38 @@ public class DatosClienteActivity extends Fragment {
 		return view;
 	}
 
+	/**
+	 * Funcion que almacena la referencia de los campos de tal manera que estos
+	 * sean calculados una sola vez.
+	 * @param view
+	 */
+	private void setReferenciaCampos(View v) {
+		etNombre = (EditText) v.findViewById(R.id.textEditNombEmpleado);
+		etApellido = (EditText) v.findViewById(R.id.textEditApellidoEmpleado);
+		etPosicion = (EditText) v.findViewById(R.id.textEditPosEmpleado);
+		etEmail = (EditText) v.findViewById(R.id.textEditEmailEmpleado);
+		etTelfOficina = (EditText) v.findViewById(R.id.textEditTelfOficEmpleado);
+		etCelular = (EditText) v.findViewById(R.id.textEditCelularEmpleado);
+		etPin = (EditText) v.findViewById(R.id.textEditPinEmpleado);
+		etLinkedin = (EditText) v.findViewById(R.id.textEditLinkedinEmpleado);
+		etDescripcion = (EditText) v.findViewById(R.id.textEditDescripEmpleado);
+		etIdEmpresa = (EditText) v.findViewById(R.id.textEditHiddenIdEmpresa);
+		acNombreEmpresa = (AutoCompleteTextView) v.findViewById(R.id.autocompleteEmpresa);
+	}
+
 	/*
 	 * Funcion que prepara el campo de empresa para que sea autocomplete.
 	 * @param view View de la actividad.
 	 */
 	private void setAutocompleteEmpresa(View view){
-
-
 		AutocompleteEmpresaCursorAdapter mAutocompleteCursor = new AutocompleteEmpresaCursorAdapter(view);
-
-		AutoCompleteTextView textView = (AutoCompleteTextView) view.findViewById(R.id.autocompleteEmpresa);
-		textView.setAdapter(mAutocompleteCursor);
+		
+		acNombreEmpresa.setAdapter(mAutocompleteCursor);
 		//seteamos este listener definido en la clase AutocompleteEmpresaCursorAdapter
-		textView.setOnItemClickListener(mAutocompleteCursor);
-		textView.addTextChangedListener(mAutocompleteCursor);
+		acNombreEmpresa.setOnItemClickListener(mAutocompleteCursor);
+		acNombreEmpresa.addTextChangedListener(mAutocompleteCursor);
 		//modificamos el siguiente valor para que despliegue lista a partir del ingreso de un caracter
-		textView.setThreshold(1);
+		acNombreEmpresa.setThreshold(1);
 	}
 
 
@@ -210,18 +238,6 @@ public class DatosClienteActivity extends Fragment {
 	 * @param emplado Empleado cuya informacion se esta cargando.
 	 */
 	private void llenarCamposEmpleado(View v, Empleado empleado, String nombreEmpresa) {
-		EditText etNombre = (EditText) v.findViewById(R.id.textEditNombEmpleado);
-		EditText etApellido = (EditText) v.findViewById(R.id.textEditApellidoEmpleado);
-		EditText etPosicion = (EditText) v.findViewById(R.id.textEditPosEmpleado);
-		EditText etEmail = (EditText) v.findViewById(R.id.textEditEmailEmpleado);
-		EditText etTelfOficina = (EditText) v.findViewById(R.id.textEditTelfOficEmpleado);
-		EditText etCelular = (EditText) v.findViewById(R.id.textEditCelularEmpleado);
-		EditText etPin = (EditText) v.findViewById(R.id.textEditPinEmpleado);
-		EditText etLinkedin = (EditText) v.findViewById(R.id.textEditLinkedinEmpleado);
-		EditText etDescripcion = (EditText) v.findViewById(R.id.textEditDescripEmpleado);
-		EditText etIdEmpresa = (EditText) v.findViewById(R.id.textEditHiddenIdEmpresa);
-		AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) v.findViewById(R.id.autocompleteEmpresa);
-
 		etNombre.setText(empleado.getNombre());
 		etApellido.setText(empleado.getApellido());
 		etPosicion.setText(empleado.getPosicion());
@@ -233,7 +249,6 @@ public class DatosClienteActivity extends Fragment {
 		etDescripcion.setText(empleado.getDescripcion());
 		etIdEmpresa.setText(""+empleado.getIdEmpresa());
 		acNombreEmpresa.setText(nombreEmpresa);
-
 	}
 
 	/*
@@ -242,25 +257,14 @@ public class DatosClienteActivity extends Fragment {
 	public void onClickSalvar(String id){
 		Mensaje mToast = null;
 		boolean error = false;
-
-		EditText etIdEmpresa = (EditText) getActivity().findViewById(R.id.textEditHiddenIdEmpresa);
-		EditText etNombre = (EditText) getActivity().findViewById(R.id.textEditNombEmpleado);
-		EditText etApellido = (EditText) getActivity().findViewById(R.id.textEditApellidoEmpleado);
-		EditText etPosicion = (EditText) getActivity().findViewById(R.id.textEditPosEmpleado);
-		EditText etEmail = (EditText) getActivity().findViewById(R.id.textEditEmailEmpleado);
-		EditText etTelfOficina = (EditText) getActivity().findViewById(R.id.textEditTelfOficEmpleado);
-		EditText etCelular = (EditText) getActivity().findViewById(R.id.textEditCelularEmpleado);
-		EditText etPin = (EditText) getActivity().findViewById(R.id.textEditPinEmpleado);
-		EditText etLinkedin = (EditText) getActivity().findViewById(R.id.textEditLinkedinEmpleado);
-		EditText etDescripcion = (EditText) getActivity().findViewById(R.id.textEditDescripEmpleado);
-		AutoCompleteTextView acNombreEmpresa = (AutoCompleteTextView) getActivity().findViewById(R.id.autocompleteEmpresa);
-
 		int idEmpresa = 0;
+		LayoutInflater mInflater = getActivity().getLayoutInflater();
 
 		//este try catch es para evitar errores de tipo de campo
 		try{
 			idEmpresa = Integer.parseInt(etIdEmpresa.getText().toString());
-		}catch (Exception e) {}
+		}catch (Exception e) {
+		}
 
 		String nombre = etNombre.getText().toString();
 		String apellido = etApellido.getText().toString();
@@ -284,10 +288,6 @@ public class DatosClienteActivity extends Fragment {
 			error = true;
 		}
 
-		if(nombreEmpresa.equals("") || nombreEmpresa==null){
-			acNombreEmpresa.setError(Mensaje.ERROR_CAMPO_VACIO);
-			error = true;
-		}
 
 		if(email.equals("") || email==null){
 			etEmail.setError(Mensaje.ERROR_CAMPO_VACIO);
@@ -300,30 +300,24 @@ public class DatosClienteActivity extends Fragment {
 			error = true;
 		}
 
-		/*pattern = Patterns.PHONE;
-	    if(!pattern.matcher(celular).matches()){
-	    	etCelular.setError(Mensaje.ERROR_TELF_INVALIDO);
-			error = true;
-	    }
-
-	    if(!pattern.matcher(telfOficina).matches()){
-	    	etCelular.setError(Mensaje.ERROR_TELF_INVALIDO);
-			error = true;
-	    }*/
-
-		if (idEmpresa==0){
-			acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
-			error = true;
-		}else{
-			//Verificamos que el nombre de empresa ingresado se corresponda con alguno de la BD.
-
-			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-			Empresa empresa = empresaDao.buscarEmpresa(getActivity(), String.valueOf(idEmpresa));
-
-			if(!nombreEmpresa.equals(empresa.getNombre()) && empresa.getNombre() !=null){
+		//Si  el nombre de la empresa no es vacio..
+		if(!nombreEmpresa.equals("") && nombreEmpresa!=null){
+			if (idEmpresa==0){
 				acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
 				error = true;
+			}else{
+				//Verificamos que el nombre de empresa ingresado se corresponda con alguno de la BD.
+				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+				Empresa empresa = empresaDao.buscarEmpresa(getActivity(), String.valueOf(idEmpresa));
+
+				if(!nombreEmpresa.equals(empresa.getNombre()) && empresa.getNombre() !=null){
+					acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
+					error = true;
+				}
 			}
+			//Si el nombre de la empresa es vacio, le asignamos idEmpresa=0
+		}else{
+			idEmpresa = 0;
 		}
 
 		/** FIN  Verificacion de errores **/
@@ -334,6 +328,7 @@ public class DatosClienteActivity extends Fragment {
 
 			SharedPreferences prefs = this.getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
 			int idUsuario = prefs.getInt(Usuario.ID, 0);
+			
 
 			if(id!=null){
 
@@ -346,10 +341,10 @@ public class DatosClienteActivity extends Fragment {
 				Boolean modificado = empleadoDao.modificarEmpleado(getActivity(), empleado);
 
 				if(modificado){
-					mToast = new Mensaje(inflater, getActivity(), "ok_modificar_empleado");
+					mToast = new Mensaje(mInflater, getActivity(), "ok_modificar_empleado");
 
 				}else{
-					mToast = new Mensaje(inflater, getActivity(), "error_modificar_empleado");
+					mToast = new Mensaje(mInflater, getActivity(), "error_modificar_empleado");
 				}
 
 			}else{
@@ -360,19 +355,19 @@ public class DatosClienteActivity extends Fragment {
 				String fechaSincronizacion = null;
 
 				Empleado empleado = new Empleado(nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, idUsuario, fechaSincronizacion);
-				Boolean insertado = empleadoDao.insertarEmpleado(getActivity(), empleado, idUsuario);
+				Boolean insertado = empleadoDao.insertarEmpleado(getActivity(), empleado);
 
 				if(insertado){
-					mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_empleado");
+					mToast = new Mensaje(mInflater, getActivity(), "ok_ingreso_empleado");
 
 				}else{
-					mToast = new Mensaje(inflater, getActivity(), "error_ingreso_empleado");
+					mToast = new Mensaje(mInflater, getActivity(), "error_ingreso_empleado");
 				}
 			}
 
 
 		}else{
-			mToast = new Mensaje(inflater, getActivity(), "error_formulario");
+			mToast = new Mensaje(mInflater, getActivity(), "error_formulario");
 		}
 
 		try {

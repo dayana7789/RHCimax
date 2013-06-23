@@ -17,7 +17,7 @@ public class Mensaje {
 	private String tipoMensaje;
 	public static final String ERROR_CAMPO_VACIO = "Este campo no puede estar vacio";
 	public static final String ERROR_EMPRESA_NO_VALIDA = "Empresa no válida";
-	public static final String ERROR_EMPLEADO_NO_VALIDO = "Empleado no válido";
+	public static final String ERROR_EMPLEADO_NO_VALIDO = "Contacto no válido";
 	public static final String ERROR_EMAIL_INVALIDO =  "Email no válido";
 	public static final String ERROR_TELF_INVALIDO =  "Número no válido";
 	public static final String ERROR_CAMPO_OBLIGATORIO =  "Campo obligatorio";
@@ -56,12 +56,12 @@ public class Mensaje {
 
 		if (tipoMensaje == "error_ingreso_empleado"){
 
-			mensaje =  "Error: el empleado no pudo ser ingresado";
+			mensaje =  "Error: el contacto no pudo ser ingresado";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
 		}else if(this.tipoMensaje == "ok_ingreso_empleado"){
 
-			mensaje =  "Empleado ingresado satisfactoriamente";
+			mensaje =  "Contacto ingresado satisfactoriamente";
 			layoutWhere = R.layout.toast_layout_mensaje_ok;
 
 		}else if(this.tipoMensaje == "error_ingreso_empresa"){
@@ -86,22 +86,22 @@ public class Mensaje {
 
 		}else if(this.tipoMensaje == "error_eliminado_empleado"){
 
-			mensaje =  "Error: el empleado no pudo ser eliminado";
+			mensaje =  "Error: el contacto no pudo ser eliminado";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
 		}else if(this.tipoMensaje == "ok_eliminado_empleado"){
 
-			mensaje =  "Empleado eliminado satisfactoriamente";
+			mensaje =  "Contacto eliminado satisfactoriamente";
 			layoutWhere = R.layout.toast_layout_mensaje_ok;
 
 		}else if(this.tipoMensaje == "ok_modificar_empleado"){
 
-			mensaje =  "Empleado modificado satisfactoriamente.";
+			mensaje =  "Contacto modificado satisfactoriamente.";
 			layoutWhere = R.layout.toast_layout_mensaje_ok;
 
 		}else if(this.tipoMensaje == "error_modificar_empleado"){
 
-			mensaje =  "Error: el empleado no pudo ser modificado";
+			mensaje =  "Error: el contacto no pudo ser modificado";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
 		}else if(this.tipoMensaje == "ok_modificar_empresa"){
@@ -131,7 +131,7 @@ public class Mensaje {
 
 		}else if(this.tipoMensaje == "error_empleado_no_existe"){
 
-			mensaje =  "Empleado no registrado para la empresa indicada. Verifique el nombre del empleado ingresado.";
+			mensaje =  "Contacto no registrado para la empresa indicada. Verifique el nombre del contacto ingresado.";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
 		}else if(this.tipoMensaje == "ok_modificar_servidor"){
@@ -156,12 +156,12 @@ public class Mensaje {
 
 		}else if(this.tipoMensaje == "error_sincronizado_empleado"){
 
-			mensaje =  "Error: el empleado no pudo ser sincronizado.";
+			mensaje =  "Error: el contacto no pudo ser sincronizado.";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
 		}else if(this.tipoMensaje == "ok_sincronizado_empleado"){
 
-			mensaje =  "Empleado sincronizado satisfactoriamente.";
+			mensaje =  "Contacto sincronizado satisfactoriamente.";
 			layoutWhere = R.layout.toast_layout_mensaje_ok;
 
 		}else if(this.tipoMensaje == "error_creacion_cotizacion"){
@@ -222,17 +222,17 @@ public class Mensaje {
 
 		if (tipoMensaje == "eliminar_empresa"){
 			
-			mensaje =  "Está seguro de eliminar esta empresa: "+args+ "?. Todos los empleados asociados a la misma serán eliminados!.";
+			mensaje =  "Está seguro de eliminar esta empresa: "+args+ "?. Todos los contactos asociados a la misma serán eliminados!.";
 			titulo = "Eliminar Empresa";
 
 		}else if(this.tipoMensaje == "eliminar_empleado"){
 			
-			mensaje =  "Está seguro de eliminar este empleado: "+args +"?.";
-			titulo = "Eliminar Empleado";
+			mensaje =  "Está seguro de eliminar este contacto: "+args +"?.";
+			titulo = "Eliminar contacto";
 
 		}else if(this.tipoMensaje == "guardar_cambios_empresa"){
 			
-			mensaje =  "No puede agregar un empleado sin haber guardado la empresa. Desea guardar los cambios?.";
+			mensaje =  "No puede agregar un contacto sin haber guardado la empresa. Desea guardar los cambios?.";
 			titulo = "Guardar Cambios";
 
 		}else if(this.tipoMensaje == "eliminar_tarea"){

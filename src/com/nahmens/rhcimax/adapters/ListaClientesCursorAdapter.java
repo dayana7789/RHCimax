@@ -114,7 +114,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 			nombre_text = (TextView) v.findViewById(to[i]);
 			if (nombre_text != null) {
-				if(nombre.equals("")){
+				if(nombre==null || nombre.equals("")){
 					nombre_text.setText("--");
 				}else{
 					nombre_text.setText(nombre);
@@ -134,7 +134,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		final Bundle mArgumentos = new Bundle();
 		mArgumentos.putString("id", id);
 		mArgumentos.putString("nombreE", nombreE);
-
 
 		ImageButton buttonSincronizar = (ImageButton)  v.findViewById(R.id.imageButtonSync);
 		buttonSincronizar.setOnClickListener(new View.OnClickListener() {

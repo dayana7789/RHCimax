@@ -19,6 +19,7 @@ public class ConexionBD {
 	public ConexionBD open() throws SQLException {
 		this.dbHelper = new DataBaseHelper(context);
 		this.database = dbHelper.getWritableDatabase();
+		database.execSQL("PRAGMA foreign_keys=ON");
 		return this;
 	}
 

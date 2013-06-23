@@ -18,10 +18,15 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 	@Override
-	public boolean insertarEmpleado(Context contexto, Empleado empleado, int idUsuario) {
+	public boolean insertarEmpleado(Context contexto, Empleado empleado) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Boolean insertado = false;
-
+		String idEmpleado = null;
+		
+		if(empleado.getIdEmpresa()!=0){
+			idEmpleado = ""+empleado.getIdEmpresa();
+		}
+		
 		try{
 			conexion.open();
 
@@ -36,8 +41,8 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			values.put("pin",empleado.getPin());
 			values.put("linkedin",empleado.getLinkedin());
 			values.put("descripcion",empleado.getDescripcion());
-			values.put("idEmpresa",empleado.getIdEmpresa());
-			values.put("idUsuario",idUsuario);
+			values.put("idEmpresa",idEmpleado);
+			values.put("idUsuario",empleado.getIdUsuario());
 
 			long value = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPLEADO, null,values);
 
@@ -57,13 +62,19 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean modificado = false;
 		
+		String idEmpleado = null;
+		
+		if(empleado.getIdEmpresa()!=0){
+			idEmpleado = ""+empleado.getIdEmpresa();
+		}
+		
 		try{
 			conexion.open();
 			
 			String fechaSync= null;
 			
 			ContentValues contenido = new ContentValues();
-			contenido.put("idEmpresa", empleado.getIdEmpresa());
+			contenido.put("idEmpresa",idEmpleado);
 			contenido.put("nombre", empleado.getNombre());
 			contenido.put("apellido", empleado.getApellido());
 			contenido.put("posicion", empleado.getPosicion());
@@ -113,15 +124,18 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 	public Cursor listarEmpleados(Context contexto) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
+		String sqlQuery = null;
 		try{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().rawQuery("SELECT empresa._id, empresa._id as " + Empleado.EMPRESA_ID + ", empleado._id as " + Empleado.ID + ", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA
-												   + ", empleado."+Empleado.FECHA_CREACION +", empleado." + Empleado.FECHA_SINCRONIZACION + ", empleado." + Empleado.ID_USUARIO
-					                               + " FROM " + DataBaseHelper.TABLA_EMPLEADO 
-												   + " INNER JOIN " + DataBaseHelper.TABLA_EMPRESA 
-												   + " ON (empleado.idEmpresa=empresa._id) ORDER BY empleado.nombre", null);
+			sqlQuery  = "SELECT empresa._id, empresa._id as " + Empleado.EMPRESA_ID + ", empleado._id as " + Empleado.ID + ", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA;
+			sqlQuery  += ", empleado."+Empleado.FECHA_CREACION +", empleado." + Empleado.FECHA_SINCRONIZACION + ", empleado." + Empleado.ID_USUARIO;
+			sqlQuery  += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA;
+			sqlQuery  += " ON (empleado.idEmpresa=empresa._id) ORDER BY empleado.nombre";
+			
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery , null);
 
 			if (mCursor != null) {
 				mCursor.moveToFirst();
@@ -179,7 +193,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 						mCursor.getString(mCursor.getColumnIndex("pin")), 
 						mCursor.getString(mCursor.getColumnIndex("linkedin")), 
 						mCursor.getString(mCursor.getColumnIndex("descripcion")), 
-						mCursor.getInt(mCursor.getColumnIndex("idEmpresa")),
+						mCursor.getInt(mCursor.getColumnIndexOrThrow("idEmpresa")), //NOTA: getColumnIndexOrThrow hace que devuelva 0, si este campo es null en la BD
 						mCursor.getInt(mCursor.getColumnIndex("idUsuario")));
 			}
 			
@@ -200,7 +214,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			conexion.open();
 			sqlQuery  = " SELECT  empresa._id, empresa._id as " + Empleado.EMPRESA_ID + ", empleado._id as " + Empleado.ID + ", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA  + ", empleado."+Empleado.FECHA_CREACION +", empleado." + Empleado.FECHA_SINCRONIZACION + ", empleado." + Empleado.ID_USUARIO;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
-			sqlQuery += " INNER JOIN " + DataBaseHelper.TABLA_EMPRESA;
+			sqlQuery += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " ON (empleado.idEmpresa=empresa._id)";
 			sqlQuery += " WHERE empleado.nombre LIKE '%" + args + "%' ";
 			sqlQuery += " OR empleado.apellido LIKE '%" + args + "%' ";

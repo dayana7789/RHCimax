@@ -117,7 +117,7 @@ public class ClientesActivity extends ListFragment {
 		//Reviso si me pasaron argumentos: notificacion de cambio de color en cuadro de notificacion
 		//if(mArgumentos!= null){
 			//String color = mArgumentos.getString(AplicacionActivity.tagCuadroColor);
-			cambiarColorCuadroNotificacion(view);
+			//cambiarColorCuadroNotificacion(view);
 		//}
 
 		// Registro del evento OnClick del buttonEmpresa
@@ -279,8 +279,7 @@ public class ClientesActivity extends ListFragment {
 	 * @param view
 	 */
 	private void listarEmpresas(View view){
-		
-		
+
 		//Cargamos la lista de empresas
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 		Context contexto = getActivity();

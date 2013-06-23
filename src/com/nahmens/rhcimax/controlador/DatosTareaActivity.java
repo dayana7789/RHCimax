@@ -446,7 +446,7 @@ public class DatosTareaActivity extends Fragment {
 			error = true;
 		}
 
-		if(nombreEmpresa.equals("") || nombreEmpresa==null){
+	/*	if(nombreEmpresa.equals("") || nombreEmpresa==null){
 			etEmpresa.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
@@ -455,8 +455,8 @@ public class DatosTareaActivity extends Fragment {
 			etEmpleado.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
-
-		/*if(descripcion.equals("") || descripcion==null){
+		
+		if(descripcion.equals("") || descripcion==null){
 			etDescripcion.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}*/
