@@ -10,6 +10,15 @@ public interface EmpleadoDAO {
 	boolean modificarEmpleado(Context contexto, Empleado empleado);
 	boolean eliminarEmpleado(Context contexto, String idEmpleado);
 	Empleado buscarEmpleado(Context contexto, String idEmpleado);
+	
+	/**
+	 * Esta funcion actua igual que buscarEmpleado(Context contexto, String idEmpleado);
+	 * La diferencia esta en que esta retorna un cursor y no genera el objeto Empleado.
+	 * @param contexto
+	 * @param idEmpleado
+	 * @return
+	 */
+	Cursor buscarEmpleadoCursor(Context contexto, String idEmpleado);
 	Cursor listarEmpleados(Context contexto);
 	
 	/**

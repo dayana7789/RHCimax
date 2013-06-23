@@ -347,4 +347,25 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		return mCursor;	
 	}
 
+	@Override
+	public Cursor buscarEmpleadoCursor(Context contexto, String idEmpleado) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		
+		try{
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? ", new String [] {idEmpleado}, null, null, null);
+
+			if (mCursor.getCount() > 0) {
+				mCursor.moveToFirst();
+			}
+			
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;
+	}
+
 }

@@ -382,11 +382,16 @@ public class ServiciosActivity extends Fragment {
 	private void llenarCamposCliente(String idEmpresa, String idEmpleado) {
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 		Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
-
-		tvEmpresa.setText(empresa.getNombre());
-
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-		Cursor mCursorEmpleados = empleadoDao.listarEmpleadosPorEmpresa(getActivity(), idEmpresa);
+		Cursor mCursorEmpleados = null;
+		
+		if(empresa !=null){
+			tvEmpresa.setText(empresa.getNombre());
+			mCursorEmpleados = empleadoDao.listarEmpleadosPorEmpresa(getActivity(), idEmpresa);
+		}else{
+			tvEmpresa.setText("");
+			mCursorEmpleados = empleadoDao.buscarEmpleadoCursor(getActivity(), idEmpleado);
+		}
 
 		//Lista de correos de empleados
 		if(mCursorEmpleados.getCount()>0){
