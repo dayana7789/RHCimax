@@ -42,6 +42,8 @@ public class DatosEmpresaActivity extends Fragment {
 	 */
 	private boolean flagGuardado;
 	private Bundle mArgumentos;
+	
+	private int numContactos;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,6 +55,7 @@ public class DatosEmpresaActivity extends Fragment {
 		setReferenciaCampos(view);
 		
 		mArgumentos = this.getArguments();
+		numContactos = 0;
 
 		//Si me pasaron argumentos, relleno la vista con la informacion. 
 		//De lo contrario, dejo todo vacio.
@@ -205,13 +208,24 @@ public class DatosEmpresaActivity extends Fragment {
 			public void onClick(View v) {
 				ServiciosActivity fragment = new ServiciosActivity();
 
-				//pasamos al fragment el id de la empresa
-				fragment.setArguments(mArgumentos); 
+				if(numContactos==0){
+					Mensaje mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_empresa_sin_empleados");
 
-				getFragmentManager().beginTransaction()
-				.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentServicios)
-				.addToBackStack(null)
-				.commit();
+					try {
+						mToast.controlMensajesToast();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+				}else{
+					//pasamos al fragment el id de la empresa
+					fragment.setArguments(mArgumentos); 
+	
+					getFragmentManager().beginTransaction()
+					.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentServicios)
+					.addToBackStack(null)
+					.commit();
+				}
 			}
 		});
 
@@ -237,6 +251,7 @@ public class DatosEmpresaActivity extends Fragment {
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 		Context context = getActivity();
 		Cursor mCursorEmpleados = empleadoDao.listarEmpleadosPorEmpresa(getActivity(),idEmpresa);
+		numContactos = mCursorEmpleados.getCount();
 
 		if(mCursorEmpleados.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)

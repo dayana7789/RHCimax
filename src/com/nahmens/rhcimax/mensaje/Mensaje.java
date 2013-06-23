@@ -129,6 +129,11 @@ public class Mensaje {
 			mensaje =  "Empresa no existe. Verifique el nombre de la empresa ingresado.";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
+		}else if(this.tipoMensaje == "error_empresa_sin_empleados"){
+
+			mensaje =  "La empresa debe poseer al menos un contacto para poder cotizar.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
 		}else if(this.tipoMensaje == "error_empleado_no_existe"){
 
 			mensaje =  "Contacto no registrado para la empresa indicada. Verifique el nombre del contacto ingresado.";
