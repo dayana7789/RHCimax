@@ -8,6 +8,7 @@ import java.util.Locale;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -35,17 +36,18 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			ContentValues values = new ContentValues();
 
-			values.put("nombre",empleado.getNombre());
-			values.put("apellido",empleado.getApellido());
-			values.put("posicion",empleado.getPosicion());
-			values.put("email", empleado.getEmail());
-			values.put("telfOficina",empleado.getTelfOficina());
-			values.put("celular",empleado.getCelular());
-			values.put("pin",empleado.getPin());
-			values.put("linkedin",empleado.getLinkedin());
-			values.put("descripcion",empleado.getDescripcion());
-			values.put("idEmpresa",idEmpresa);
-			values.put("idUsuario",empleado.getIdUsuario());
+			values.put(Empleado.NOMBRE,empleado.getNombre());
+			values.put(Empleado.APELLIDO,empleado.getApellido());
+			values.put(Empleado.POSICION,empleado.getPosicion());
+			values.put(Empleado.EMAIL, empleado.getEmail());
+			values.put(Empleado.TELF_OFICINA,empleado.getTelfOficina());
+			values.put(Empleado.CELULAR,empleado.getCelular());
+			values.put(Empleado.PIN,empleado.getPin());
+			values.put(Empleado.LINKEDIN,empleado.getLinkedin());
+			values.put(Empleado.DESCRIPCION,empleado.getDescripcion());
+			values.put(Empleado.EMPRESA_ID,idEmpresa);
+			values.put(Empleado.ID_USUARIO_CREADOR, empleado.getIdUsuarioCreador());
+			values.put(Empleado.ID_USUARIO_MODIFICADOR,empleado.getIdUsuarioModificador());
 
 			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPLEADO, null,values);
 
@@ -64,30 +66,29 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		
 		//Debemos asegurarnos de guardar los registros en null
 		//cuando lo amerite para evitar errores de clave foranea
-		String idEmpleado = null;
+		String idEmpresa = null;
 		if(empleado.getIdEmpresa()!=0){
-			idEmpleado = ""+empleado.getIdEmpresa();
+			idEmpresa= ""+empleado.getIdEmpresa();
 		}
 		
 		try{
 			conexion.open();
-			
-			String fechaSync= null;
-			
-			ContentValues contenido = new ContentValues();
-			contenido.put("idEmpresa",idEmpleado);
-			contenido.put("nombre", empleado.getNombre());
-			contenido.put("apellido", empleado.getApellido());
-			contenido.put("posicion", empleado.getPosicion());
-			contenido.put("email", empleado.getEmail());
-			contenido.put("telfOficina", empleado.getTelfOficina());
-			contenido.put("celular", empleado.getCelular());
-			contenido.put("pin", empleado.getPin());
-			contenido.put("linkedin", empleado.getLinkedin());
-			contenido.put("descripcion", empleado.getDescripcion());
-			contenido.put(Empleado.FECHA_SINCRONIZACION, fechaSync);
 
-			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, contenido, "_id=?", new String []{Integer.toString(empleado.getId())});
+			ContentValues values = new ContentValues();
+			
+			values.put(Empleado.NOMBRE,empleado.getNombre());
+			values.put(Empleado.APELLIDO,empleado.getApellido());
+			values.put(Empleado.POSICION,empleado.getPosicion());
+			values.put(Empleado.EMAIL, empleado.getEmail());
+			values.put(Empleado.TELF_OFICINA,empleado.getTelfOficina());
+			values.put(Empleado.CELULAR,empleado.getCelular());
+			values.put(Empleado.PIN,empleado.getPin());
+			values.put(Empleado.LINKEDIN,empleado.getLinkedin());
+			values.put(Empleado.DESCRIPCION,empleado.getDescripcion());
+			values.put(Empleado.EMPRESA_ID,idEmpresa);
+			values.put(Empleado.ID_USUARIO_MODIFICADOR,empleado.getIdUsuarioModificador());
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, values, "_id=?", new String []{Integer.toString(empleado.getId())});
 
 			if(value!=0){
 				modificado = true;
@@ -130,12 +131,14 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			conexion.open();
 
-			sqlQuery  = "SELECT empresa._id, empresa._id as " + Empleado.EMPRESA_ID + ", empleado._id as " + Empleado.ID + ", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA;
-			sqlQuery  += ", empleado."+Empleado.FECHA_CREACION +", empleado." + Empleado.FECHA_SINCRONIZACION + ", empleado." + Empleado.ID_USUARIO;
+			sqlQuery  = "SELECT empresa._id, empresa._id as " + Empleado.EMPRESA_ID + ", empleado._id as " + Empleado.ID;
+			sqlQuery  +=", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO;
+			sqlQuery  +=", empresa.nombre as "+Empleado.EMPRESA;
+			sqlQuery  += ", empleado." + Empleado.FECHA_SINCRONIZACION;
 			sqlQuery  += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
 			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery  += " ON (empleado.idEmpresa=empresa._id) ORDER BY empleado.nombre";
-			
+
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery , null);
 
 			if (mCursor != null) {
@@ -185,17 +188,18 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
 
-				empleado = new Empleado( mCursor.getString(mCursor.getColumnIndex("nombre")), 
-						mCursor.getString(mCursor.getColumnIndex("apellido")), 
-						mCursor.getString(mCursor.getColumnIndex("posicion")), 
-						mCursor.getString(mCursor.getColumnIndex("email")), 
-						mCursor.getString(mCursor.getColumnIndex("telfOficina")), 
-						mCursor.getString(mCursor.getColumnIndex("celular")), 
-						mCursor.getString(mCursor.getColumnIndex("pin")), 
-						mCursor.getString(mCursor.getColumnIndex("linkedin")), 
-						mCursor.getString(mCursor.getColumnIndex("descripcion")), 
-						mCursor.getInt(mCursor.getColumnIndexOrThrow("idEmpresa")), //NOTA: getColumnIndexOrThrow hace que devuelva 0, si este campo es null en la BD
-						mCursor.getInt(mCursor.getColumnIndex("idUsuario")));
+				empleado = new Empleado( mCursor.getString(mCursor.getColumnIndex(Empleado.NOMBRE)), 
+						mCursor.getString(mCursor.getColumnIndex(Empleado.APELLIDO)), 
+						mCursor.getString(mCursor.getColumnIndex(Empleado.POSICION)), 
+						mCursor.getString(mCursor.getColumnIndex(Empleado.EMAIL)), 
+						mCursor.getString(mCursor.getColumnIndex(Empleado.TELF_OFICINA)), 
+						mCursor.getString(mCursor.getColumnIndex(Empleado.CELULAR)), 
+						mCursor.getString(mCursor.getColumnIndex(Empleado.PIN)), 
+						mCursor.getString(mCursor.getColumnIndex(Empleado.LINKEDIN)), 
+						mCursor.getString(mCursor.getColumnIndex(Empleado.DESCRIPCION)), 
+						mCursor.getInt(mCursor.getColumnIndexOrThrow(Empleado.EMPRESA_ID)), //NOTA: getColumnIndexOrThrow hace que devuelva 0, si este campo es null en la BD
+						mCursor.getInt(mCursor.getColumnIndexOrThrow(Empleado.ID_USUARIO_CREADOR)),
+						mCursor.getInt(mCursor.getColumnIndex(Empleado.ID_USUARIO_MODIFICADOR)));
 			}
 			
 		}finally{
@@ -213,15 +217,17 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		
 		try{
 			conexion.open();
-			sqlQuery  = " SELECT  empresa._id, empresa._id as " + Empleado.EMPRESA_ID + ", empleado._id as " + Empleado.ID + ", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO+", empresa.nombre as "+Empleado.EMPRESA  + ", empleado."+Empleado.FECHA_CREACION +", empleado." + Empleado.FECHA_SINCRONIZACION + ", empleado." + Empleado.ID_USUARIO;
+			sqlQuery  = "SELECT empresa._id, empresa._id as " + Empleado.EMPRESA_ID + ", empleado._id as " + Empleado.ID;
+			sqlQuery +=", empleado.nombre as "+Empleado.NOMBRE+", empleado.apellido as "+Empleado.APELLIDO;
+			sqlQuery +=", empresa.nombre as "+Empleado.EMPRESA;
+			sqlQuery += ", empleado." + Empleado.FECHA_SINCRONIZACION;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
 			sqlQuery += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA;
-			sqlQuery += " ON (empleado.idEmpresa=empresa._id)";
+			sqlQuery += " ON (empleado.idEmpresa=empresa._id) ORDER BY empleado.nombre";
 			sqlQuery += " WHERE empleado.nombre LIKE '%" + args + "%' ";
 			sqlQuery += " OR empleado.apellido LIKE '%" + args + "%' ";
 			sqlQuery += " OR empresa.nombre LIKE '%" + args + "%' ";
 			sqlQuery += " ORDER BY empleado.nombre";
-			
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 						

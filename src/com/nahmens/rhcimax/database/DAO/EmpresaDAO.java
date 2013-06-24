@@ -11,10 +11,9 @@ public interface EmpresaDAO {
 	 * Funcion que inserta una nueva empresa.
 	 * 
 	 * @param empresa Datos de la empresa a ingresar.
-	 * @param idUsuario Usuario que ingresa la empresa.
 	 * @return Id de la empresa ingresada o -1 en caso de error.
 	 */
-	long insertarEmpresa(Context contexto, Empresa empresa, int idUsuario);
+	long insertarEmpresa(Context contexto, Empresa empresa);
 	boolean modificarEmpresa(Context contexto, Empresa empresa);
 	boolean eliminarEmpresa(Context contexto, String idEmpresa);
 	

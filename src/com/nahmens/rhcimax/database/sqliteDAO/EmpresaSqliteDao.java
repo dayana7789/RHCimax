@@ -17,7 +17,7 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 public class EmpresaSqliteDao implements EmpresaDAO{
 
 	@Override
-	public long insertarEmpresa(Context contexto, Empresa empresa, int idUsuario) {
+	public long insertarEmpresa(Context contexto, Empresa empresa) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		long idFila = 0;
 
@@ -26,13 +26,14 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 			ContentValues values = new ContentValues();
 
-			values.put("nombre",empresa.getNombre());
-			values.put("telefono",empresa.getTelefono());
-			values.put("web",empresa.getWeb());
-			values.put("rif", empresa.getRif());
-			values.put("dirFiscal",empresa.getDirFiscal());
-			values.put("dirComercial",empresa.getDirComercial());
-			values.put("idUsuario",idUsuario);
+			values.put(Empresa.NOMBRE,empresa.getNombre());
+			values.put(Empresa.TELEFONO,empresa.getTelefono());
+			values.put(Empresa.WEB, empresa.getWeb());
+			values.put(Empresa.RIF, empresa.getRif());
+			values.put(Empresa.DIR_FISCAL, empresa.getDirFiscal());
+			values.put(Empresa.DIR_COMERCIAL, empresa.getDirComercial());
+			values.put(Empresa.ID_USUARIO_CREADOR,empresa.getIdUsuarioCreador());
+			values.put(Empresa.ID_USUARIO_MODIFICADOR,empresa.getIdUsuarioModificador());
 
 			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPRESA, null,values);
 
@@ -53,17 +54,20 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			
 			String fechaSync= null;
 
-			ContentValues contenido = new ContentValues();
-			contenido.put("nombre", empresa.getNombre());
-			contenido.put("telefono", empresa.getTelefono());
-			contenido.put("rif", empresa.getRif());
-			contenido.put("web", empresa.getWeb());
-			contenido.put("dirFiscal", empresa.getDirFiscal());
-			contenido.put("dirComercial", empresa.getDirComercial());
-			contenido.put(Empresa.MODIFICADO, 1);
-			contenido.put(Empresa.FECHA_SINCRONIZACION, fechaSync);
+			ContentValues values = new ContentValues();
+			
+			values.put(Empresa.NOMBRE,empresa.getNombre());
+			values.put(Empresa.TELEFONO,empresa.getTelefono());
+			values.put(Empresa.WEB, empresa.getWeb());
+			values.put(Empresa.RIF, empresa.getRif());
+			values.put(Empresa.DIR_FISCAL, empresa.getDirFiscal());
+			values.put(Empresa.DIR_COMERCIAL, empresa.getDirComercial());
+			values.put(Empresa.FECHA_MODIFICACION,empresa.getFechaModificacion());
+			values.put(Empresa.ID_USUARIO_MODIFICADOR,empresa.getIdUsuarioModificador());
+			values.put(Empresa.MODIFICADO, 1);
 
-			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPRESA, contenido, "_id=?", new String []{Integer.toString(empresa.getId())});
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPRESA, values, "_id=?", new String []{Integer.toString(empresa.getId())});
 
 			if(value!=0){
 				modificado = true;
@@ -113,13 +117,14 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
 
-				empresa = new Empresa( mCursor.getString(mCursor.getColumnIndex("nombre")), 
-						mCursor.getString(mCursor.getColumnIndex("telefono")), 
-						mCursor.getString(mCursor.getColumnIndex("rif")), 
-						mCursor.getString(mCursor.getColumnIndex("web")), 
-						mCursor.getString(mCursor.getColumnIndex("dirFiscal")), 
-						mCursor.getString(mCursor.getColumnIndex("dirComercial")),
-						mCursor.getInt(mCursor.getColumnIndex("idUsuario")));
+				empresa = new Empresa( mCursor.getString(mCursor.getColumnIndex(Empresa.NOMBRE)), 
+						mCursor.getString(mCursor.getColumnIndex(Empresa.TELEFONO)), 
+						mCursor.getString(mCursor.getColumnIndex(Empresa.RIF)), 
+						mCursor.getString(mCursor.getColumnIndex(Empresa.WEB)), 
+						mCursor.getString(mCursor.getColumnIndex(Empresa.DIR_FISCAL)), 
+						mCursor.getString(mCursor.getColumnIndex(Empresa.DIR_COMERCIAL)),
+						mCursor.getInt(mCursor.getColumnIndex(Empresa.ID_USUARIO_CREADOR)),
+						mCursor.getInt(mCursor.getColumnIndex(Empresa.ID_USUARIO_MODIFICADOR)));
 			}
 
 		}finally{

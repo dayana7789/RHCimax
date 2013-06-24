@@ -1,5 +1,8 @@
 package com.nahmens.rhcimax.controlador;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import android.content.Context;
@@ -268,6 +271,11 @@ public class DatosClienteActivity extends Fragment {
 		boolean error = false;
 		int idEmpresa = 0;
 		LayoutInflater mInflater = getActivity().getLayoutInflater();
+		
+		Date dateFechaModif = new Date();
+		String myFormat = "dd/MM/yyyy HH:mm:ss"; 
+		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
+		String fechaModif = sdf.format(dateFechaModif);
 
 		//este try catch es para evitar errores de tipo de campo
 		try{
@@ -340,13 +348,10 @@ public class DatosClienteActivity extends Fragment {
 			
 
 			if(id!=null){
-
-				//cada vez que hagamos una modificacion, colocamos el valor de fechaSincronizacion en null 
-				//para saber que este empleado esta desactualizado en la nube
-				String fechaSincronizacion = null;
-				Empleado empleado = new Empleado( Integer.parseInt(id),nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, idUsuario, fechaSincronizacion);
-
 				//Estamos modificando un registro
+
+				Empleado empleado = new Empleado(Integer.parseInt(id),nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, fechaModif, idUsuario);
+				
 				Boolean modificado = empleadoDao.modificarEmpleado(getActivity(), empleado);
 
 				if(modificado){
@@ -359,11 +364,7 @@ public class DatosClienteActivity extends Fragment {
 			}else{
 				//Estamos creando un nuevo registro
 
-				//cada vez que hagamos una modificacion, colocamos el valor de fechaSincronizacion en null 
-				//para saber que este empleado esta desactualizado en la nube
-				String fechaSincronizacion = null;
-
-				Empleado empleado = new Empleado(nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, idUsuario, fechaSincronizacion);
+				Empleado empleado = new Empleado(nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, idUsuario, idUsuario);
 				long idFilaInsertada = empleadoDao.insertarEmpleado(getActivity(), empleado);
 
 				if(idFilaInsertada != -1){

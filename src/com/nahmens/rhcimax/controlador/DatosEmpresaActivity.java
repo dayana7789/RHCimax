@@ -1,5 +1,9 @@
 package com.nahmens.rhcimax.controlador;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -293,6 +297,11 @@ public class DatosEmpresaActivity extends Fragment {
 		Mensaje mToast = null;
 		boolean error = false;
 		LayoutInflater mInflater = getActivity().getLayoutInflater();
+		
+		Date dateFechaModif = new Date();
+		String myFormat = "dd/MM/yyyy HH:mm:ss"; 
+		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
+		String fechaModif = sdf.format(dateFechaModif);
 
 		String nombre = etNombre.getText().toString();
 		String telefono = etTelefono.getText().toString();
@@ -336,7 +345,7 @@ public class DatosEmpresaActivity extends Fragment {
 				//para saber que este empleado esta desactualizado en la nube
 				String fechaSincronizacion = null;
 
-				Empresa empresa = new Empresa(Integer.parseInt(id), nombre, telefono, rif, web, dirFiscal, dirComercial, idUsuario, fechaSincronizacion);
+				Empresa empresa = new Empresa(Integer.parseInt(id), nombre, telefono, rif, web, dirFiscal, dirComercial, fechaModif, idUsuario);
 
 				Boolean modificado = empresaDao.modificarEmpresa(getActivity(), empresa);
 
@@ -353,9 +362,9 @@ public class DatosEmpresaActivity extends Fragment {
 				//para saber que este empleado esta desactualizado en la nube
 				String fechaSincronizacion = null;
 
-				Empresa empresa = new Empresa(nombre, telefono, rif, web, dirFiscal, dirComercial, idUsuario,fechaSincronizacion);
+				Empresa empresa = new Empresa(nombre, telefono, rif, web, dirFiscal, dirComercial, idUsuario, idUsuario);
 
-				long idFilaInsertada = empresaDao.insertarEmpresa(getActivity(), empresa, idUsuario);
+				long idFilaInsertada = empresaDao.insertarEmpresa(getActivity(), empresa);
 
 				if(idFilaInsertada != -1){
 					mToast = new Mensaje(mInflater, getActivity(), "ok_ingreso_empresa");

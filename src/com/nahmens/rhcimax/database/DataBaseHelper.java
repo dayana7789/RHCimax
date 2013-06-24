@@ -64,10 +64,13 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "dirFiscal TEXT, "
 															+ "dirComercial TEXT, "
 															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
+															+ "idUsuarioCreador INTEGER NOT NULL, "
+															+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
+															+ "idUsuarioModificador INTEGER NOT NULL, "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 															+ "modificado INTEGER DEFAULT 0, " 
-															+ "idUsuario INTEGER NOT NULL, "
-															+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id));";
+															+ "FOREIGN KEY(idUsuarioCreador) REFERENCES " + TABLA_USUARIO + "(_id), "
+															+ "FOREIGN KEY(idUsuarioModificador) REFERENCES " + TABLA_USUARIO + "(_id));";
 	
 	private static final String DATABASE_CREATE_EMPLEADO = "CREATE table " + TABLA_EMPLEADO + " ("
 															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -82,10 +85,13 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "descripcion TEXT, "
 															+ "idEmpresa INTEGER, "
 															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
+															+ "idUsuarioCreador INTEGER NOT NULL, "
+															+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
+															+ "idUsuarioModificador INTEGER NOT NULL, "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
-															+ "idUsuario INTEGER NOT NULL, "
+															+ "FOREIGN KEY(idUsuarioModificador) REFERENCES " + TABLA_USUARIO + "(_id), "
 															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id) ON DELETE CASCADE, "
-															+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id));";
+															+ "FOREIGN KEY(idUsuarioCreador) REFERENCES " + TABLA_USUARIO + "(_id));";
 	
 	private static final String DATABASE_CREATE_COTIZACION = "CREATE table " + TABLA_COTIZACION + " ("
 															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -141,13 +147,15 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 													  + "descripcion TEXT, "
 													  + "finalizada INTEGER NOT NULL DEFAULT 0, "
 													  + "fechaFinalizacion DATETIME DEFAULT NULL, "
-													  + "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
-													  + "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
-													  + "fechaSincronizacion DATETIME DEFAULT NULL, "
-													  + "idUsuario INTEGER NOT NULL, "
 													  + "idEmpresa INTEGER, "
 													  + "idEmpleado INTEGER, "
-													  + "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id), " 
+													  + "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
+													  + "idUsuarioCreador INTEGER NOT NULL, "
+													  + "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
+													  + "idUsuarioModificador INTEGER NOT NULL, "
+													  + "fechaSincronizacion DATETIME DEFAULT NULL, "
+													  + "FOREIGN KEY(idUsuarioCreador) REFERENCES " + TABLA_USUARIO + "(_id), " 
+													  + "FOREIGN KEY(idUsuarioModificador) REFERENCES " + TABLA_USUARIO + "(_id), " 
 													  + "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id) ON DELETE CASCADE, " 
 													  + "FOREIGN KEY(idEmpleado) REFERENCES " + TABLA_EMPLEADO + "(_id) ON DELETE CASCADE);";
 	

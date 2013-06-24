@@ -406,16 +406,17 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		}
 
 
+		
 		//solo para imprimir
-		String strFechaCreacion = cursor.getString(cursor.getColumnIndex(Empleado.FECHA_CREACION));
+		/*String strFechaCreacion = cursor.getString(cursor.getColumnIndex(Empleado.FECHA_CREACION));
 		Date now = new Date();
 
 
 		Log.d("Lista clientes", "tipoCliente: "+ tipoCliente+ ", Nombre: " +  cursor.getString(cursor.getColumnIndex("nombre")) 
-				+ ", idUsuario: " + cursor.getInt(cursor.getColumnIndex("idUsuario")) 
+				+ ", idUsuario: " + cursor.getInt(cursor.getColumnIndex("idUsuarioCreador")) 
 				+ ", fechaCreacion: " + strFechaCreacion
 				+ ", fechaSincronizacion: " + strFechaSincronizacion
-				+ ", now: " + formatoDelTexto.format(now));
+				+ ", now: " + formatoDelTexto.format(now));*/
 
 	}
 
@@ -539,7 +540,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		}
 
 		Log.d("Lista clientes", "tipoCliente: "+ tipoCliente+ ", Nombre: " +  cursor.getString(cursor.getColumnIndex("nombre")) 
-				+ ", idUsuario: " + cursor.getInt(cursor.getColumnIndex("idUsuario")) 
+				+ ", idUsuario: " + cursor.getInt(cursor.getColumnIndex("idUsuarioCreador")) 
 				+ ", fechaCreacion: " + strFechaCreacion
 				+ ", fechaSincronizacion: " + strFechaSincronizacion
 				+ ", now: " + formatoDelTexto.format(now));

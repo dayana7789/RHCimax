@@ -441,7 +441,7 @@ public class DatosTareaActivity extends Fragment {
 		boolean finalizada = cbFinalizada.isChecked();
 		String fechaFinalizacion = null;
 
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss",Locale.getDefault());
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault());
 
 		if(finalizada){
 			fechaFinalizacion = dateFormat.format(new Date());
