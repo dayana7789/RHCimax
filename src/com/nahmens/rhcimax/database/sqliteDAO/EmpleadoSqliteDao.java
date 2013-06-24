@@ -18,13 +18,16 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 	@Override
-	public boolean insertarEmpleado(Context contexto, Empleado empleado) {
+	public long insertarEmpleado(Context contexto, Empleado empleado) {
 		ConexionBD conexion = new ConexionBD(contexto);
-		Boolean insertado = false;
-		String idEmpleado = null;
 		
+		long idFila = 0;
+		
+		//Debemos asegurarnos de guardar los registros en null
+		//cuando lo amerite para evitar errores de clave foranea
+		String idEmpresa = null;
 		if(empleado.getIdEmpresa()!=0){
-			idEmpleado = ""+empleado.getIdEmpresa();
+			idEmpresa = ""+empleado.getIdEmpresa();
 		}
 		
 		try{
@@ -41,20 +44,17 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			values.put("pin",empleado.getPin());
 			values.put("linkedin",empleado.getLinkedin());
 			values.put("descripcion",empleado.getDescripcion());
-			values.put("idEmpresa",idEmpleado);
+			values.put("idEmpresa",idEmpresa);
 			values.put("idUsuario",empleado.getIdUsuario());
 
-			long value = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPLEADO, null,values);
+			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPLEADO, null,values);
 
-			if(value!=-1){
-				insertado = true;
-			}
 
 		}finally{
 			conexion.close();
 		}
 
-		return insertado;
+		return idFila;
 	}
 
 	@Override
@@ -62,8 +62,9 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean modificado = false;
 		
+		//Debemos asegurarnos de guardar los registros en null
+		//cuando lo amerite para evitar errores de clave foranea
 		String idEmpleado = null;
-		
 		if(empleado.getIdEmpresa()!=0){
 			idEmpleado = ""+empleado.getIdEmpresa();
 		}
@@ -346,6 +347,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 		return mCursor;	
 	}
+	
 
 	@Override
 	public Cursor buscarEmpleadoCursor(Context contexto, String idEmpleado) {

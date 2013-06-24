@@ -42,6 +42,14 @@ public class DatosClienteActivity extends Fragment {
 	EditText etDescripcion;
 	EditText etIdEmpresa;
 	AutoCompleteTextView acNombreEmpresa;
+	
+	/* Flag que permite saber si el empleado ya fue 
+	 * insertado cuando se presiona el boton salvar dos veces.
+	 * Evita que se duplique el registro.
+	 */
+	@SuppressWarnings("unused")
+	private boolean flagGuardado;
+	private Bundle mArgumentos;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,15 +62,16 @@ public class DatosClienteActivity extends Fragment {
 
 		setAutocompleteEmpresa(view);
 
-		final Bundle mArgumentos = this.getArguments();
+		mArgumentos = this.getArguments();
+		flagGuardado = false;
 
 		//Si me pasaron argumentos, relleno la vista con la informacion. 
 		//De lo contrario, dejo todo vacio.
 		if(mArgumentos!= null){
-
 			String idEmpleado = mArgumentos.getString("id");
 
 			if(idEmpleado !=null){
+
 				//estamos modificando a un empleado
 				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
@@ -355,13 +364,18 @@ public class DatosClienteActivity extends Fragment {
 				String fechaSincronizacion = null;
 
 				Empleado empleado = new Empleado(nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, idUsuario, fechaSincronizacion);
-				Boolean insertado = empleadoDao.insertarEmpleado(getActivity(), empleado);
+				long idFilaInsertada = empleadoDao.insertarEmpleado(getActivity(), empleado);
 
-				if(insertado){
+				if(idFilaInsertada != -1){
 					mToast = new Mensaje(mInflater, getActivity(), "ok_ingreso_empleado");
+					mArgumentos = new Bundle();
+					mArgumentos.putString("id", ""+idFilaInsertada);
+
+					flagGuardado = true;
 
 				}else{
 					mToast = new Mensaje(mInflater, getActivity(), "error_ingreso_empleado");
+					flagGuardado = false;
 				}
 			}
 

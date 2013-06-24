@@ -1,7 +1,6 @@
 package com.nahmens.rhcimax.controlador;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;

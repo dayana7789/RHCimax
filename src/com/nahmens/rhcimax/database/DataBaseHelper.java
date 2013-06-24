@@ -148,8 +148,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 													  + "idEmpresa INTEGER, "
 													  + "idEmpleado INTEGER, "
 													  + "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id), " 
-													  + "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id), " 
-													  + "FOREIGN KEY(idEmpleado) REFERENCES " + TABLA_EMPLEADO + "(_id));";
+													  + "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id) ON DELETE CASCADE, " 
+													  + "FOREIGN KEY(idEmpleado) REFERENCES " + TABLA_EMPLEADO + "(_id) ON DELETE CASCADE);";
 	
 	
 	public DataBaseHelper(Context context) {

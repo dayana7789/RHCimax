@@ -19,6 +19,17 @@ public class TareaSqliteDao implements TareaDAO{
 		ConexionBD conexion = new ConexionBD(contexto);
 		long idFila = 0;
 
+		//Debemos asegurarnos de guardar los registros en null
+		//cuando lo amerite para evitar errores de clave foranea
+		String idEmpresa = null;
+		String idEmpleado = null;
+		if(tarea.getIdEmpresa()!=0){
+			idEmpresa = ""+tarea.getIdEmpresa();
+		}
+		if(tarea.getIdEmpleado()!=0){
+			idEmpleado = ""+tarea.getIdEmpleado();
+		}
+
 		try{
 			conexion.open();
 
@@ -30,8 +41,8 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.DESCRIPCION, tarea.getDescripcion());
 			values.put(Tarea.FECHA_FINALIZACION, tarea.getFechaFinalizacion());
 			values.put(Tarea.ID_USUARIO, tarea.getIdUsuario());
-			values.put(Tarea.ID_EMPLEADO,tarea.getIdEmpleado());
-			values.put(Tarea.ID_EMPRESA,tarea.getIdEmpresa());
+			values.put(Tarea.ID_EMPLEADO,idEmpleado);
+			values.put(Tarea.ID_EMPRESA,idEmpresa);
 
 			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_TAREA, null,values);
 
@@ -47,9 +58,20 @@ public class TareaSqliteDao implements TareaDAO{
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean modificado = false;
 
+		//Debemos asegurarnos de guardar los registros en null
+		//cuando lo amerite para evitar errores de clave foranea
+		String idEmpresa = null;
+		String idEmpleado = null;
+		if(tarea.getIdEmpresa()!=0){
+			idEmpresa = ""+tarea.getIdEmpresa();
+		}
+		if(tarea.getIdEmpleado()!=0){
+			idEmpleado = ""+tarea.getIdEmpleado();
+		}
+
 		try{
 			conexion.open();
-			
+
 			ContentValues values = new ContentValues();
 			values.put(Tarea.NOMBRE, tarea.getNombre());
 			values.put(Tarea.FECHA, tarea.getFecha());
@@ -58,8 +80,8 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.FECHA_FINALIZACION, tarea.getFechaFinalizacion());
 			values.put(Tarea.FECHA_MODIFICACION, tarea.getFechaModificacion());
 			values.put(Tarea.ID_USUARIO, tarea.getIdUsuario());
-			values.put(Tarea.ID_EMPLEADO,tarea.getIdEmpleado());
-			values.put(Tarea.ID_EMPRESA,tarea.getIdEmpresa());
+			values.put(Tarea.ID_EMPLEADO,idEmpleado);
+			values.put(Tarea.ID_EMPRESA,idEmpresa);
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, values, "_id=?", new String []{Integer.toString(tarea.getId())});
 
@@ -130,24 +152,21 @@ public class TareaSqliteDao implements TareaDAO{
 	public Cursor listarTareas(Context contexto) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
-		String sql = null;
+		String sqlQuery = null;
 		try{
 
 			conexion.open();
+
 			
-			sql = "SELECT tarea." + Tarea.ID  + ", tarea." + Tarea.NOMBRE + ", " + Tarea.FECHA + ", " 
-				+ Tarea.HORA + ", tarea." + Tarea.DESCRIPCION + ", " + Tarea.FECHA_FINALIZACION + ", "
-				+ "tarea."+Tarea.ID_EMPLEADO + ", tarea." + Tarea.ID_EMPRESA 
-				+ ", empresa." + Empresa.NOMBRE + " as " + Tarea.NOMBRE_EMPRESA
-				+ ", empleado." + Empleado.NOMBRE + " as " + Tarea.NOMBRE_EMPLEADO
-				+ ", empleado." + Empleado.APELLIDO + " as " + Tarea.APELLIDO_EMPLEADO
-				+ " FROM " + DataBaseHelper.TABLA_EMPLEADO + ", " + DataBaseHelper.TABLA_EMPRESA + ", " + DataBaseHelper.TABLA_TAREA
-				+ " WHERE " 
-				+ "(tarea." + Tarea.ID_EMPRESA + "= Empresa." + Empresa.ID + ") AND "
-				+ "(tarea." + Tarea.ID_EMPLEADO + "= Empleado." + Empleado.ID + ") "
-				+ "ORDER BY " + Tarea.FECHA + " DESC";
-			
-			mCursor = conexion.getDatabase().rawQuery(sql, null);
+			sqlQuery = "SELECT DISTINCT tarea._id, tarea.nombre, fecha, hora, tarea.descripcion, fechaFinalizacion, tarea.idEmpleado, tarea.idEmpresa, empresa.nombre as nombreEmpresa, empleado.nombre as nombreEmpleado, empleado.apellido as apellidoEmpleado "
+					+ "FROM tarea "
+					+ "LEFT JOIN empleado ON ( tarea.idEmpleado = empleado._id ) "
+					+ "LEFT JOIN empresa ON ( tarea.idEmpresa = empresa._id ) "
+                    + "ORDER BY " + Tarea.FECHA + " DESC";
+
+
+			//Log.e("query", " "+ sqlQuery);
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery, null);
 
 
 			if (mCursor != null) {
@@ -163,27 +182,21 @@ public class TareaSqliteDao implements TareaDAO{
 
 	@Override
 	public Cursor buscarTareaFilter(Context contexto, String args) {
-		
+
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
 		String sqlQuery = "";
 		String [] palabras = args.split("");
-		
+
 		try{
 			conexion.open();
-			
-			sqlQuery = "SELECT tarea." + Tarea.ID  + ", tarea." + Tarea.NOMBRE + ", " + Tarea.FECHA + ", " 
-					+ Tarea.HORA + ", tarea." + Tarea.DESCRIPCION + ", " + Tarea.FECHA_FINALIZACION + ", "
-					+ "tarea."+Tarea.ID_EMPLEADO + ", tarea." + Tarea.ID_EMPRESA 
-					+ ", empresa." + Empresa.NOMBRE + " as " + Tarea.NOMBRE_EMPRESA
-					+ ", empleado." + Empleado.NOMBRE + " as " + Tarea.NOMBRE_EMPLEADO
-					+ ", empleado." + Empleado.APELLIDO + " as " + Tarea.APELLIDO_EMPLEADO
-					+ " FROM " + DataBaseHelper.TABLA_EMPLEADO + ", " + DataBaseHelper.TABLA_EMPRESA + ", " + DataBaseHelper.TABLA_TAREA
-					+ " WHERE " 
-					+ "(tarea." + Tarea.ID_EMPRESA + "= Empresa." + Empresa.ID + ") AND "
-					+ "(tarea." + Tarea.ID_EMPLEADO + "= Empleado." + Empleado.ID + ") AND "
-					+ "tarea."+Tarea.NOMBRE + " LIKE '%" + args + "%' "
-					+ "ORDER BY " + Tarea.FECHA + " DESC";
+
+
+			sqlQuery = "SELECT DISTINCT tarea._id, tarea.nombre, fecha, hora, tarea.descripcion, fechaFinalizacion, tarea.idEmpleado, tarea.idEmpresa, empresa.nombre as nombreEmpresa, empleado.nombre as nombreEmpleado, empleado.apellido as apellidoEmpleado "
+					+ "FROM tarea "
+					+ "LEFT JOIN empleado ON ( tarea.idEmpleado = empleado._id ) "
+					+ "LEFT JOIN empresa ON ( tarea.idEmpresa = empresa._id ) "
+					 + "ORDER BY " + Tarea.FECHA + " DESC";
 
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);

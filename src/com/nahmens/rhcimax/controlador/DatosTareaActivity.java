@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -42,7 +43,6 @@ import com.nahmens.rhcimax.utils.InstantAutoComplete;
 public class DatosTareaActivity extends Fragment {
 
 	Calendar myCalendar = Calendar.getInstance();
-	LayoutInflater inflater;
 
 	//Campos formulario:
 	EditText etNombre;
@@ -55,18 +55,27 @@ public class DatosTareaActivity extends Fragment {
 	EditText etDescripcion;
 	CheckBox cbFinalizada;
 
+	/* Flag que permite saber si la tarea ya fue 
+	 * insertada cuando se presiona el boton salvar dos veces.
+	 * Evita que se duplique el registro.
+	 */
+	@SuppressWarnings("unused")
+	private boolean flagGuardado;
+	private Bundle mArgumentos;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 
 		final View view = inflater.inflate(R.layout.activity_datos_tarea, container, false);
-		this.inflater = inflater;
+
+		flagGuardado = false;
 
 		//inicializamos la referencia a los campos del formulario
 		setReferenciaCampos(view);
 
-		final Bundle mArgumentos = this.getArguments();
+		mArgumentos = this.getArguments();
 
 		//Si me pasaron argumentos, relleno la vista con la informacion. 
 		//De lo contrario, dejo todo vacio.
@@ -163,9 +172,6 @@ public class DatosTareaActivity extends Fragment {
 		cbFinalizada = (CheckBox) view.findViewById(R.id.checkBoxFinalizada);
 	}
 
-
-
-
 	/**
 	 * Funcion que prepara el campo de empleado para que sea autocomplete.
 	 * @param view View de la actividad.
@@ -206,7 +212,7 @@ public class DatosTareaActivity extends Fragment {
 		String idEmpleado = etHiddenIdEmpleado.getText().toString();
 
 		if(idEmpleado.equals("") || idEmpleado.equals(null)){
-			Mensaje mToast = new Mensaje(inflater, getActivity(), "error_empleado_no_existe");
+			Mensaje mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_empleado_no_existe");
 
 			try {
 				mToast.controlMensajesToast();
@@ -239,7 +245,7 @@ public class DatosTareaActivity extends Fragment {
 		String idEmpresa = etHiddenIdEmpresa.getText().toString();
 
 		if(idEmpresa.equals("") || idEmpresa.equals(null)){
-			Mensaje mToast = new Mensaje(inflater, getActivity(), "error_empresa_no_existe");
+			Mensaje mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_empresa_no_existe");
 
 			try {
 				mToast.controlMensajesToast();
@@ -280,10 +286,23 @@ public class DatosTareaActivity extends Fragment {
 		}
 
 		etNombre.setText(tarea.getNombre());
-		etEmpresa.setText(empresa.getNombre());
-		etHiddenIdEmpresa.setText(tarea.getIdEmpresa()+"");
-		etEmpleado.setText(empleado.getNombre()+" " + empleado.getApellido());
-		etHiddenIdEmpleado.setText(tarea.getIdEmpleado()+"");
+
+		if(empresa!=null){
+			etEmpresa.setText(empresa.getNombre());
+			etHiddenIdEmpresa.setText(tarea.getIdEmpresa()+"");
+		}else{
+			etEmpresa.setText("");
+			etHiddenIdEmpresa.setText("0");
+		}
+
+		if(empleado!=null){
+			etEmpleado.setText(empleado.getNombre()+" " + empleado.getApellido());
+			etHiddenIdEmpleado.setText(tarea.getIdEmpleado()+"");
+		}else{
+			etEmpleado.setText("");
+			etHiddenIdEmpleado.setText("0");
+		}
+
 		bFecha.setText(tarea.getFecha());
 		bHora.setText(tarea.getHora());
 		etDescripcion.setText(tarea.getDescripcion());
@@ -400,12 +419,22 @@ public class DatosTareaActivity extends Fragment {
 	public void onClickSalvar(String idTarea){
 		Mensaje mToast = null;
 		boolean error = false;
+		int idEmpresa = 0;
+		int idEmpleado = 0;
+
+		//este try catch es para evitar errores de tipo de campo
+		try{
+			idEmpresa = Integer.parseInt(etHiddenIdEmpresa.getText().toString());
+		}catch (Exception e) {}
+
+		//este try catch es para evitar errores de tipo de campo
+		try{
+			idEmpleado = Integer.parseInt(etHiddenIdEmpleado.getText().toString());
+		}catch (Exception e) {}
 
 		String nombre = etNombre.getText().toString();
 		String nombreEmpresa = etEmpresa.getText().toString();
 		String nombreEmpleado = etEmpleado.getText().toString();
-		String idEmpresa = etHiddenIdEmpresa.getText().toString();
-		String idEmpleado = etHiddenIdEmpleado.getText().toString();
 		String fecha = bFecha.getText().toString();
 		String hora = bHora.getText().toString();
 		String descripcion = etDescripcion.getText().toString();
@@ -419,26 +448,32 @@ public class DatosTareaActivity extends Fragment {
 		}
 
 		/** Verificacion de errores **/
-
-		if (idEmpresa==null || idEmpresa.equals("")){
-			etEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
-			error = true;
-		}else{
-			//Verificamos que el nombre de empresa ingresado se corresponda con alguno de la BD.
-
-			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-			Empresa empresa = empresaDao.buscarEmpresa(getActivity(), idEmpresa);
-
-			if(empresa==null || (!nombreEmpresa.equals(empresa.getNombre()) && 
-					empresa.getNombre() !=null)){
+		//Si  el nombre de la empresa no es vacio..
+		if(!nombreEmpresa.equals("") && nombreEmpresa!=null){
+			if (idEmpresa==0){
 				etEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
 				error = true;
+			}else{
+				//Verificamos que el nombre de empresa ingresado se corresponda con alguno de la BD.
+
+				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+				Empresa empresa = empresaDao.buscarEmpresa(getActivity(), ""+idEmpresa);
+
+				if(empresa==null || (!nombreEmpresa.equals(empresa.getNombre()) && 
+						empresa.getNombre() !=null)){
+					etEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
+					error = true;
+				}
 			}
 		}
 
-		if (idEmpleado==null || idEmpleado.equals("")){
-			etEmpleado.setError(Mensaje.ERROR_EMPLEADO_NO_VALIDO);
-			error = true;
+		//Si  el nombre de la empresa no es vacio..
+		if(!nombreEmpleado.equals("") && nombreEmpleado!=null){
+
+			if (idEmpleado==0){
+				etEmpleado.setError(Mensaje.ERROR_EMPLEADO_NO_VALIDO);
+				error = true;
+			}
 		}
 
 		if(nombre.equals("") || nombre==null){
@@ -446,7 +481,7 @@ public class DatosTareaActivity extends Fragment {
 			error = true;
 		}
 
-	/*	if(nombreEmpresa.equals("") || nombreEmpresa==null){
+		/*	if(nombreEmpresa.equals("") || nombreEmpresa==null){
 			etEmpresa.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
@@ -455,7 +490,7 @@ public class DatosTareaActivity extends Fragment {
 			etEmpleado.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
-		
+
 		if(descripcion.equals("") || descripcion==null){
 			etDescripcion.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
@@ -475,33 +510,37 @@ public class DatosTareaActivity extends Fragment {
 			if(idTarea!=null){
 
 				String fechaModificacion = dateFormat.format(new Date());
-				Tarea tarea = new Tarea(Integer.parseInt(idTarea), nombre, fecha, hora, descripcion, idUsuario, Integer.parseInt(idEmpresa), Integer.parseInt(idEmpleado),fechaFinalizacion, fechaModificacion);
+				Tarea tarea = new Tarea(Integer.parseInt(idTarea), nombre, fecha, hora, descripcion, idUsuario, idEmpresa, idEmpleado,fechaFinalizacion, fechaModificacion);
 
 				Boolean modificado = tareaoDao.modificarTarea(getActivity(), tarea);
 
 				if(modificado){
-					mToast = new Mensaje(inflater, getActivity(), "ok_modificar_empleado");
+					mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "ok_modificar_tarea");
 
 				}else{
-					mToast = new Mensaje(inflater, getActivity(), "error_modificar_empleado");
+					mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_modificar_tarea");
 				}
 
 				//Estamos creando un nuevo registro..
 			}else{
 
-				Tarea tarea = new Tarea(nombre, fecha, hora, descripcion, idUsuario, Integer.parseInt(idEmpresa), Integer.parseInt(idEmpleado), fechaFinalizacion);
-				long insertado = tareaoDao.insertarTarea(getActivity(), tarea);
+				Tarea tarea = new Tarea(nombre, fecha, hora, descripcion, idUsuario, idEmpresa, idEmpleado, fechaFinalizacion);
+				long idFilaInsertada = tareaoDao.insertarTarea(getActivity(), tarea);
 
-				if(insertado != -1){
-					mToast = new Mensaje(inflater, getActivity(), "ok_ingreso_tarea");
+				if(idFilaInsertada != -1){
+					mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "ok_ingreso_tarea");
+					mArgumentos = new Bundle();
+					mArgumentos.putString("idTarea", ""+idFilaInsertada);
+					flagGuardado = true;
 
 				}else{
-					mToast = new Mensaje(inflater, getActivity(), "error_ingreso_tarea");
+					mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_ingreso_tarea");
+					flagGuardado = false;
 				}
 			}
 
 		}else{
-			mToast = new Mensaje(inflater, getActivity(), "error_formulario");
+			mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_formulario");
 		}
 
 		try {

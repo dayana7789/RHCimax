@@ -189,6 +189,8 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 
 			// Update the parent class's TextView
 			etIdEmpresa.setText(""+idEmpresa);
+		}else{
+			etIdEmpresa.setText("");
 		}
 	}
 

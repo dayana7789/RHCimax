@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
-import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 
 /**
  * Adaptador utilizado para mostrar lista de autocomplete de nombres 
@@ -119,9 +118,12 @@ public class AutocompleteEmpleadoCursorAdapter extends CursorAdapter implements 
 		EmpleadoSqliteDao empleadoDao =  new EmpleadoSqliteDao();
 		String idEmpresa = etIdEmpresa.getText().toString();
 
-		//Nos aseguramos que idEmpresa no sea vacio
-		if((idEmpresa.equals("")==false)){
+		//Listamos los empleados por empresa
+		if(((idEmpresa.equals("")==false) && (idEmpresa.equals("0")==false))){
 			currentCursor = empleadoDao.listarEmpleadosPorEmpresaPorArgs(contexto, idEmpresa, args);
+		//si no, listamos a todos los empleados
+		}else{
+			currentCursor = empleadoDao.listarNombresEmpleados(contexto, args);
 		}
 
 		return currentCursor;

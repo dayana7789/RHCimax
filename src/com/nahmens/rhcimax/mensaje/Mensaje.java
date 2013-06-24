@@ -199,6 +199,16 @@ public class Mensaje {
 			mensaje =  "Error: la tarea no pudo ser eliminada";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
+		}else if(this.tipoMensaje == "ok_modificar_tarea"){
+
+			mensaje =  "Tarea modificada satisfactoriamente.";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
+		}else if(this.tipoMensaje == "error_modificar_tarea"){
+
+			mensaje =  "Error: la tarea no pudo ser modificada";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
 		}else{
 			throw new Exception("Mensaje invalido. Revisa el atributo tipoMensaje que utiliza el constructor de la clase Mensaje.");
 		}

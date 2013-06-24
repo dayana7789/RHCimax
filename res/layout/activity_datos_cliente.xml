@@ -51,6 +51,7 @@
 					    android:id="@+id/autocompleteEmpresa"
 					    android:hint="@string/empresa"
 					    android:imeOptions="actionNext"
+					    android:textColor="@android:color/black"
 					    style="@style/FuenteEditTextBasico" />
 					
 					<!-- Campo que almacena id de la empresa del empleado. 
