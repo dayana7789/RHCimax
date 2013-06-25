@@ -68,7 +68,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "idUsuarioModificador INTEGER NOT NULL, "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
-															+ "modificado INTEGER DEFAULT 0, " 
+															+ "modificado INTEGER DEFAULT 0, "
+															+ "status TEXT NOT NULL DEFAULT 'activo', "
 															+ "FOREIGN KEY(idUsuarioCreador) REFERENCES " + TABLA_USUARIO + "(_id), "
 															+ "FOREIGN KEY(idUsuarioModificador) REFERENCES " + TABLA_USUARIO + "(_id));";
 	
@@ -89,6 +90,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "idUsuarioModificador INTEGER NOT NULL, "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
+															+ "status TEXT NOT NULL DEFAULT 'activo', "
 															+ "FOREIGN KEY(idUsuarioModificador) REFERENCES " + TABLA_USUARIO + "(_id), "
 															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id) ON DELETE CASCADE, "
 															+ "FOREIGN KEY(idUsuarioCreador) REFERENCES " + TABLA_USUARIO + "(_id));";
@@ -154,6 +156,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 													  + "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 													  + "idUsuarioModificador INTEGER NOT NULL, "
 													  + "fechaSincronizacion DATETIME DEFAULT NULL, "
+													  + "status TEXT NOT NULL DEFAULT 'activo', "
 													  + "FOREIGN KEY(idUsuarioCreador) REFERENCES " + TABLA_USUARIO + "(_id), " 
 													  + "FOREIGN KEY(idUsuarioModificador) REFERENCES " + TABLA_USUARIO + "(_id), " 
 													  + "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id) ON DELETE CASCADE, " 

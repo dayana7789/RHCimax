@@ -1,6 +1,5 @@
 package com.nahmens.rhcimax.database.modelo;
 
-import java.util.Date;
 
 public class Tarea {
 	public final static String ID = "_id";

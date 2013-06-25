@@ -3,7 +3,6 @@ package com.nahmens.rhcimax.database.sqliteDAO;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -105,7 +104,13 @@ public class TareaSqliteDao implements TareaDAO{
 		try{
 			conexion.open();
 
-			long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_TAREA, "_id=?", new String[]{idTarea});
+			ContentValues values = new ContentValues();
+			values.put("status", "inactivo");
+			
+			//long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_TAREA, "_id=?", new String[]{idTarea});
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, values, "_id=?", new String []{idTarea});
+
+			
 
 			if(value!=0){
 				eliminado = true;
@@ -127,7 +132,7 @@ public class TareaSqliteDao implements TareaDAO{
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA , null , Tarea.ID + " = ? ", new String [] {idTarea}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA , null , Tarea.ID + " = ? AND status='activo'", new String [] {idTarea}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
@@ -167,6 +172,7 @@ public class TareaSqliteDao implements TareaDAO{
 					+ "FROM tarea "
 					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
 					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
+					+ "WHERE tarea.status='activo' "
 					 + "ORDER BY " + Tarea.FECHA + " DESC";
 
 
@@ -204,6 +210,7 @@ public class TareaSqliteDao implements TareaDAO{
 					+ "FROM tarea "
 					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
 					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
+					+ "WHERE tarea.status='activo' "
 					 + "ORDER BY " + Tarea.FECHA + " DESC";
 
 

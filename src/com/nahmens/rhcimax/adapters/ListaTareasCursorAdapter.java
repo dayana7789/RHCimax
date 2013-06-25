@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,7 +82,6 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 			nombreCol = cursor.getColumnIndex(columna);
 			nombre = cursor.getString(nombreCol);
 			
-			Log.e("columna " + columna, "nombre " + nombre);
 			if(nombre==null){
 				nombre = "--";
 			}
