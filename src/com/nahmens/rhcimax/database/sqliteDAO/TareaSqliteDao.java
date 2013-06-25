@@ -160,11 +160,14 @@ public class TareaSqliteDao implements TareaDAO{
 			conexion.open();
 
 			
-			sqlQuery = "SELECT DISTINCT tarea._id, tarea.nombre, fecha, hora, tarea.descripcion, fechaFinalizacion, tarea.idEmpleado, tarea.idEmpresa, empresa.nombre as nombreEmpresa, empleado.nombre as nombreEmpleado, empleado.apellido as apellidoEmpleado "
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
+					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
 					+ "FROM tarea "
-					+ "LEFT JOIN empleado ON ( tarea.idEmpleado = empleado._id ) "
-					+ "LEFT JOIN empresa ON ( tarea.idEmpresa = empresa._id ) "
-                    + "ORDER BY " + Tarea.FECHA + " DESC";
+					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
+					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
+					 + "ORDER BY " + Tarea.FECHA + " DESC";
 
 
 			//Log.e("query", " "+ sqlQuery);
@@ -194,10 +197,13 @@ public class TareaSqliteDao implements TareaDAO{
 			conexion.open();
 
 
-			sqlQuery = "SELECT DISTINCT tarea._id, tarea.nombre, fecha, hora, tarea.descripcion, fechaFinalizacion, tarea.idEmpleado, tarea.idEmpresa, empresa.nombre as nombreEmpresa, empleado.nombre as nombreEmpleado, empleado.apellido as apellidoEmpleado "
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
+					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
 					+ "FROM tarea "
-					+ "LEFT JOIN empleado ON ( tarea.idEmpleado = empleado._id ) "
-					+ "LEFT JOIN empresa ON ( tarea.idEmpresa = empresa._id ) "
+					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
+					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
 					 + "ORDER BY " + Tarea.FECHA + " DESC";
 
 
