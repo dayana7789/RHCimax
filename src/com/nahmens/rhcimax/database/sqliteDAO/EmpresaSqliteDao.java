@@ -12,6 +12,7 @@ import android.database.Cursor;
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.EmpresaDAO;
+import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 
 public class EmpresaSqliteDao implements EmpresaDAO{
@@ -89,9 +90,35 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		try{
 			conexion.open();
 
-			long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_EMPRESA, "_id=?", new String[]{idEmpresa});
+			//long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_EMPRESA, "_id=?", new String[]{idEmpresa});
 
-			if(value!=0){
+			ContentValues values = new ContentValues();
+			values.put("status", "inactivo");
+			
+			//Actualizamos el status de la empresa
+			//long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_TAREA, "_id=?", new String[]{idTarea});
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPRESA, values, "_id=?", new String []{idEmpresa});
+			
+
+			//Actualizamos el status de los empleados y tareas
+			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+			
+			Cursor mEmpleados = empleadoDao.listarEmpleadosPorEmpresa(contexto, idEmpresa);
+			
+			if(mEmpleados!=null){
+				mEmpleados.moveToFirst();
+				boolean elim = false;
+				while(!mEmpleados.isAfterLast()){
+					int idEmpleado = mEmpleados.getInt(mEmpleados.getColumnIndex(Empleado.ID));
+					elim = empleadoDao.eliminarEmpleado(contexto, ""+idEmpleado);
+					eliminado = eliminado || elim;
+
+					mEmpleados.moveToNext();
+				}
+			}
+			
+			
+			if(value!=0 && eliminado==true){
 				eliminado = true;
 			}
 
@@ -112,7 +139,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA , null , Empresa.ID + " = ? ", new String [] {id}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA , null , Empresa.ID + " = ? AND status='activo'", new String [] {id}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
@@ -143,7 +170,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().rawQuery("SELECT * FROM " + DataBaseHelper.TABLA_EMPRESA  + " order by nombre", null);
+			mCursor = conexion.getDatabase().rawQuery("SELECT * FROM " + DataBaseHelper.TABLA_EMPRESA  + " WHERE status='activo' ORDER BY nombre", null);
 
 			if (mCursor != null) {
 				mCursor.moveToFirst();
@@ -168,6 +195,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			sqlQuery  = " SELECT " + Empresa.ID + ", " + Empresa.NOMBRE;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " WHERE " + Empresa.NOMBRE + " LIKE '%" + args + "%' ";
+			sqlQuery += " AND status='activo' ";
 			sqlQuery += " ORDER BY " + Empresa.NOMBRE;
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
@@ -195,6 +223,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			sqlQuery  = " SELECT " + Empresa.ID + ", " + Empresa.NOMBRE;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " WHERE " + Empresa.NOMBRE + " = '" + args +"'";
+			sqlQuery += " AND status='activo' ";
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 			
@@ -221,6 +250,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			sqlQuery  = " SELECT * ";
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " WHERE " + Empresa.NOMBRE + " LIKE '%" + args + "%' ";
+			sqlQuery += " AND status='activo' ";
 			sqlQuery += " ORDER BY " + Empresa.NOMBRE;
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);

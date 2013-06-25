@@ -110,8 +110,6 @@ public class TareaSqliteDao implements TareaDAO{
 			//long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_TAREA, "_id=?", new String[]{idTarea});
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, values, "_id=?", new String []{idTarea});
 
-			
-
 			if(value!=0){
 				eliminado = true;
 			}

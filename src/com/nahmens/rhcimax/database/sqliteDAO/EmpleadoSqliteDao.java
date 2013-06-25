@@ -8,13 +8,13 @@ import java.util.Locale;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.EmpleadoDAO;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
+import com.nahmens.rhcimax.database.modelo.Tarea;
 
 public class EmpleadoSqliteDao implements EmpleadoDAO{
 
@@ -109,7 +109,16 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		try{
 			conexion.open();
 
-			long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_EMPLEADO, "_id=?", new String[]{idEmpleado});
+			//long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_EMPLEADO, "_id=?", new String[]{idEmpleado});
+			
+			ContentValues values = new ContentValues();
+			values.put("status", "inactivo");
+			
+			//Actualizamos el status del empleado
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, values, "_id=?", new String []{idEmpleado});
+			
+			//Actualizamos el status de las tareas
+			int value2 = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, values, Tarea.ID_EMPLEADO + "=?", new String []{idEmpleado});
 
 			if(value!=0){
 				eliminado = true;
@@ -137,7 +146,9 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			sqlQuery  += ", empleado." + Empleado.FECHA_SINCRONIZACION;
 			sqlQuery  += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
 			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA;
-			sqlQuery  += " ON (empleado.idEmpresa=empresa._id) ORDER BY empleado.nombre";
+			sqlQuery  += " ON (empleado.idEmpresa=empresa._id)";
+			sqlQuery  += " WHERE empleado.status = 'activo'";
+			sqlQuery  += " ORDER BY empleado.nombre";
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery , null);
 
@@ -160,7 +171,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.EMPRESA_ID + " = ? ", new String [] {idEmpresa}, null, null, Empleado.NOMBRE);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.EMPRESA_ID + " = ? AND status='activo'", new String [] {idEmpresa}, null, null, Empleado.NOMBRE);
 			
 			if (mCursor != null) {
 				mCursor.moveToFirst();
@@ -183,7 +194,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? ", new String [] {idEmpleado}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? AND status='activo'", new String [] {idEmpleado}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
@@ -224,9 +235,10 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
 			sqlQuery += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " ON (empleado.idEmpresa=empresa._id) ORDER BY empleado.nombre";
-			sqlQuery += " WHERE empleado.nombre LIKE '%" + args + "%' ";
+			sqlQuery += " WHERE empleado.status = 'activo'";
+			sqlQuery +=	" AND (empleado.nombre LIKE '%" + args + "%' ";
 			sqlQuery += " OR empleado.apellido LIKE '%" + args + "%' ";
-			sqlQuery += " OR empresa.nombre LIKE '%" + args + "%' ";
+			sqlQuery += " OR empresa.nombre LIKE '%" + args + "%') ";
 			sqlQuery += " ORDER BY empleado.nombre";
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
@@ -305,8 +317,9 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			sqlQuery  = " SELECT " + Empleado.ID + ", " + Empleado.NOMBRE + ", " + Empleado.APELLIDO;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
-			sqlQuery += " WHERE " + Empleado.NOMBRE + " LIKE '%" + args + "%' ";
-			sqlQuery += " OR " + Empleado.APELLIDO + " LIKE '%" + args + "%' ";
+			sqlQuery += " WHERE status='activo'"; 
+			sqlQuery += " AND (" + Empleado.NOMBRE + " LIKE '%" + args + "%' ";
+			sqlQuery += " OR " + Empleado.APELLIDO + " LIKE '%" + args + "%') ";
 			sqlQuery += " ORDER BY " + Empleado.NOMBRE;
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
@@ -335,7 +348,8 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			
 			sqlQuery  = " SELECT " + Empleado.ID + ", " + Empleado.NOMBRE + ", " + Empleado.APELLIDO;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
-			sqlQuery += " WHERE " +  Empleado.EMPRESA_ID + " = " + idEmpresa;
+			sqlQuery += " WHERE status='activo'" ;
+			sqlQuery += " AND " + Empleado.EMPRESA_ID + " = " + idEmpresa;
 			sqlQuery += " AND (" + Empleado.NOMBRE + " LIKE '%" + args + "%' ";
 			sqlQuery += " OR " + Empleado.APELLIDO + " LIKE '%" + args + "%') ";
 			sqlQuery += " ORDER BY " + Empleado.NOMBRE;
@@ -363,7 +377,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? ", new String [] {idEmpleado}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? AND status='activo'", new String [] {idEmpleado}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
