@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -524,7 +523,7 @@ public class DatosTareaActivity extends Fragment {
 				//Estamos creando un nuevo registro..
 			}else{
 
-				Tarea tarea = new Tarea(nombre, fecha, hora, descripcion, idUsuario, idEmpresa, idEmpleado, fechaFinalizacion);
+				Tarea tarea = new Tarea(nombre, fecha, hora, descripcion, idUsuario, idUsuario, idEmpresa, idEmpleado, fechaFinalizacion);
 				long idFilaInsertada = tareaoDao.insertarTarea(getActivity(), tarea);
 
 				if(idFilaInsertada != -1){

@@ -40,7 +40,8 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.HORA, tarea.getHora());
 			values.put(Tarea.DESCRIPCION, tarea.getDescripcion());
 			values.put(Tarea.FECHA_FINALIZACION, tarea.getFechaFinalizacion());
-			values.put(Tarea.ID_USUARIO, tarea.getIdUsuario());
+			values.put(Tarea.ID_USUARIO_CREADOR, tarea.getIdUsuarioCreador());
+			values.put(Tarea.ID_USUARIO_MODIFICADOR, tarea.getIdUsuarioModificador());
 			values.put(Tarea.ID_EMPLEADO,idEmpleado);
 			values.put(Tarea.ID_EMPRESA,idEmpresa);
 
@@ -79,7 +80,7 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.DESCRIPCION, tarea.getDescripcion());
 			values.put(Tarea.FECHA_FINALIZACION, tarea.getFechaFinalizacion());
 			values.put(Tarea.FECHA_MODIFICACION, tarea.getFechaModificacion());
-			values.put(Tarea.ID_USUARIO, tarea.getIdUsuario());
+			values.put(Tarea.ID_USUARIO_MODIFICADOR, tarea.getIdUsuarioModificador());
 			values.put(Tarea.ID_EMPLEADO,idEmpleado);
 			values.put(Tarea.ID_EMPRESA,idEmpresa);
 
@@ -135,7 +136,8 @@ public class TareaSqliteDao implements TareaDAO{
 						mCursor.getString(mCursor.getColumnIndex(Tarea.FECHA)), 
 						mCursor.getString(mCursor.getColumnIndex(Tarea.HORA)), 
 						mCursor.getString(mCursor.getColumnIndex(Tarea.DESCRIPCION)), 
-						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_USUARIO)),
+						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_USUARIO_CREADOR)),
+						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_USUARIO_MODIFICADOR)),
 						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_EMPRESA)),
 						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_EMPLEADO)),
 						mCursor.getString(mCursor.getColumnIndex(Tarea.FECHA_FINALIZACION)));
