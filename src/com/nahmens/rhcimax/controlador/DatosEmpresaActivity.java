@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TableLayout;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaEmpleadosCursorAdapter;
@@ -40,13 +41,14 @@ public class DatosEmpresaActivity extends Fragment {
 	EditText etRif;
 	EditText etDirFiscal;
 	EditText etDirComercial;
+	TableLayout tlListEmpleados;
 
 	/* Flag que permite saber si al crear una nueva empresa, esta se guardo
 	 * antes de hacer click en el boton + para agregar un nuevo empleado. 
 	 */
 	private boolean flagGuardado;
 	private Bundle mArgumentos;
-	
+
 	private int numContactos;
 
 	@Override
@@ -55,187 +57,194 @@ public class DatosEmpresaActivity extends Fragment {
 
 		View view = inflater.inflate(R.layout.activity_datos_empresa, container, false);
 
-		//inicializamos la referencia a los campos del formulario
-		setReferenciaCampos(view);
-		
-		mArgumentos = this.getArguments();
-		numContactos = 0;
+		//OJO: evitamos que la pantalla se vuelva a recrear verificando el valor
+		//de savedInstanceState. De esta manera evitamos la doble llamada que se
+		//realiza al metodo onCreateView, cuando cambiamos la orientacion del 
+		//dispositivo.
+		if (savedInstanceState==null){
+			
+			//inicializamos la referencia a los campos del formulario
+			setReferenciaCampos(view);
 
-		//Si me pasaron argumentos, relleno la vista con la informacion. 
-		//De lo contrario, dejo todo vacio.
-		if(mArgumentos!= null){
-			flagGuardado = true;
+			mArgumentos = this.getArguments();
+			numContactos = 0;
 
-			String idEmpresa = mArgumentos.getString("idEmpresa");
-			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-			Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
+			//Si me pasaron argumentos, relleno la vista con la informacion. 
+			//De lo contrario, dejo todo vacio.
+			if(mArgumentos!= null){
+				flagGuardado = true;
 
-
-			if(empresa !=null){
-				llenarCamposEmpresa(view, empresa);
-				listarEmpleados(view, idEmpresa);
-
-			}else{
-				//Esto nunca deberia llamarse
-				Mensaje mToast = new Mensaje("error_general");
-				try {
-					mToast.controlMensajesToast();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}else{
-			//creacion de empresa nueva
-			flagGuardado = false;
-		}
+				String idEmpresa = mArgumentos.getString("idEmpresa");
+				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+				Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
 
 
-
-		// Registro del evento OnClick del buttonCopiar
-		ImageButton bCopiar= (ImageButton)view.findViewById(R.id.imageButtonCopiar);
-		bCopiar.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				String dirFiscal = etDirFiscal.getText().toString();
-				etDirComercial.setText(dirFiscal);
-			}
-		});
-
-		// Registro del evento OnClick del buttonAgregarEmpleado
-		ImageButton bAgregar= (ImageButton)view.findViewById(R.id.imageButtonAgregarEmpleado);
-		bAgregar.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				if(flagGuardado){
-					DatosClienteActivity fragment = new DatosClienteActivity();
-
-					//pasamos al fragment el id de la empresa
-					fragment.setArguments(mArgumentos); 
-
-					getFragmentManager().beginTransaction()
-					.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
-					.addToBackStack(null)
-					.commit();
+				if(empresa !=null){
+					llenarCamposEmpresa(view, empresa);
+					listarEmpleados(view, idEmpresa);
 
 				}else{
-
-					AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
-					String[] mensArray = null;
-					Mensaje mensajeDialog = new Mensaje("guardar_cambios_empresa");
-
-					try {
-						mensArray = mensajeDialog.controlMensajesDialog(null);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-
-					alert.setMessage(mensArray[0]); 
-					alert.setTitle(mensArray[1]); 
-
-					alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int whichButton) {
-							dialog.cancel();
-						}});
-
-					alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int whichButton) {
-							String id = null;
-
-							if(mArgumentos!=null){
-								id = mArgumentos.getString("idEmpresa");
-							}
-
-							onClickSalvar(id);
-						}
-					});
-
-					AlertDialog alertDialog = alert.create();
-					alertDialog.show();
-				}
-			}
-		});
-
-		// Registro del evento OnClick del LinearLayoutButtonTareas
-		LinearLayout bTareas = (LinearLayout) view.findViewById(R.id.LinearLayoutButtonTareas);
-		bTareas.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Log.e("tareas", "me presionaron");
-			}
-		});
-
-		// Registro del evento OnClick del LinearLayoutButtonHistoricos
-		LinearLayout bHistoricos = (LinearLayout) view.findViewById(R.id.LinearLayoutButtonHistoricos);
-		bHistoricos.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Log.e("historicos", "me presionaron");
-			}
-		});
-
-		// Registro del evento OnClick del buttonCheckin
-		Button bCheckin = (Button) view.findViewById(R.id.buttonCheckin);
-		bCheckin.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Log.e("bCheckin", "me presionaron");
-			}
-		});
-
-		// Registro del evento OnClick del buttonSalvar
-		Button bSalvar = (Button)view.findViewById(R.id.buttonSalvar);
-		bSalvar.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				String id = null;
-
-				if(mArgumentos!=null){
-					id = mArgumentos.getString("idEmpresa");
-				}
-
-				onClickSalvar(id);
-			}
-		});
-
-		// Registro del evento OnClick del buttonCotizar
-		Button bCotizar = (Button)view.findViewById(R.id.buttonCotizar);
-		bCotizar.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				ServiciosActivity fragment = new ServiciosActivity();
-
-				if(numContactos==0){
-					Mensaje mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_empresa_sin_empleados");
-
+					//Esto nunca deberia llamarse
+					Mensaje mToast = new Mensaje("error_general");
 					try {
 						mToast.controlMensajesToast();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-
-				}else{
-					//pasamos al fragment el id de la empresa
-					fragment.setArguments(mArgumentos); 
-	
-					getFragmentManager().beginTransaction()
-					.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentServicios)
-					.addToBackStack(null)
-					.commit();
 				}
+			}else{
+				//creacion de empresa nueva
+				flagGuardado = false;
 			}
-		});
+
+
+
+			// Registro del evento OnClick del buttonCopiar
+			ImageButton bCopiar= (ImageButton)view.findViewById(R.id.imageButtonCopiar);
+			bCopiar.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					String dirFiscal = etDirFiscal.getText().toString();
+					etDirComercial.setText(dirFiscal);
+				}
+			});
+
+			// Registro del evento OnClick del buttonAgregarEmpleado
+			ImageButton bAgregar= (ImageButton)view.findViewById(R.id.imageButtonAgregarEmpleado);
+			bAgregar.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					if(flagGuardado){
+						DatosClienteActivity fragment = new DatosClienteActivity();
+
+						//pasamos al fragment el id de la empresa
+						fragment.setArguments(mArgumentos); 
+
+						getFragmentManager().beginTransaction()
+						.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
+						.addToBackStack(null)
+						.commit();
+
+					}else{
+
+						AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
+						String[] mensArray = null;
+						Mensaje mensajeDialog = new Mensaje("guardar_cambios_empresa");
+
+						try {
+							mensArray = mensajeDialog.controlMensajesDialog(null);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+						alert.setMessage(mensArray[0]); 
+						alert.setTitle(mensArray[1]); 
+
+						alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int whichButton) {
+								dialog.cancel();
+							}});
+
+						alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int whichButton) {
+								String id = null;
+
+								if(mArgumentos!=null){
+									id = mArgumentos.getString("idEmpresa");
+								}
+
+								onClickSalvar(id);
+							}
+						});
+
+						AlertDialog alertDialog = alert.create();
+						alertDialog.show();
+					}
+				}
+			});
+
+			// Registro del evento OnClick del LinearLayoutButtonTareas
+			LinearLayout bTareas = (LinearLayout) view.findViewById(R.id.LinearLayoutButtonTareas);
+			bTareas.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Log.e("tareas", "me presionaron");
+				}
+			});
+
+			// Registro del evento OnClick del LinearLayoutButtonHistoricos
+			LinearLayout bHistoricos = (LinearLayout) view.findViewById(R.id.LinearLayoutButtonHistoricos);
+			bHistoricos.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Log.e("historicos", "me presionaron");
+				}
+			});
+
+			// Registro del evento OnClick del buttonCheckin
+			Button bCheckin = (Button) view.findViewById(R.id.buttonCheckin);
+			bCheckin.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					Log.e("bCheckin", "me presionaron");
+				}
+			});
+
+			// Registro del evento OnClick del buttonSalvar
+			Button bSalvar = (Button)view.findViewById(R.id.buttonSalvar);
+			bSalvar.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					String id = null;
+
+					if(mArgumentos!=null){
+						id = mArgumentos.getString("idEmpresa");
+					}
+
+					onClickSalvar(id);
+				}
+			});
+
+			// Registro del evento OnClick del buttonCotizar
+			Button bCotizar = (Button)view.findViewById(R.id.buttonCotizar);
+			bCotizar.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					ServiciosActivity fragment = new ServiciosActivity();
+
+					if(numContactos==0){
+						Mensaje mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_empresa_sin_empleados");
+
+						try {
+							mToast.controlMensajesToast();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}else{
+						//pasamos al fragment el id de la empresa
+						fragment.setArguments(mArgumentos); 
+
+						getFragmentManager().beginTransaction()
+						.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentServicios)
+						.addToBackStack(null)
+						.commit();
+					}
+				}
+			});
+		}
 
 		return view;
 	}
-	
+
 	/**
 	 * Funcion que almacena la referencia de los campos de tal manera que estos
 	 * sean calculados una sola vez.
@@ -261,15 +270,12 @@ public class DatosEmpresaActivity extends Fragment {
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
 			//OJO: Aqui pasamos  Empleado.ID para no invocarlo directamente en el ListaClientesCursorAdapter
 			// y lo relacionamos en el arreglo 'to' con el valor 0.
-			String[] from = new String[] { Empleado.ID, Empleado.NOMBRE, Empleado.APELLIDO, Empleado.POSICION};
-			int[] to = new int[] { 0, R.id.textViewNombreEmp,  R.id.textViewApellidoEmp, R.id.textViewPosicionEmp };
-			ListView lvEmpleados = (ListView) view.findViewById (R.id.listViewEmpleados);
+			String[] from = new String[] { Empleado.NOMBRE, Empleado.APELLIDO, Empleado.POSICION};
+			int[] to = new int[] {R.id.textViewNombreEmp,  R.id.textViewApellidoEmp, R.id.textViewPosicionEmp };
+
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			//SimpleCursorAdapter notes = new SimpleCursorAdapter(context, R.layout.activity_fila_empleado, mCursor, from, to);
-			ListaEmpleadosCursorAdapter notes = new ListaEmpleadosCursorAdapter(context, R.layout.activity_fila_empleado, mCursorEmpleados, from, to, 0, getFragmentManager());
-			lvEmpleados.setAdapter(notes);
-			UtilityScroll.setListViewHeightBasedOnChildren(lvEmpleados);
+			ListaEmpleadosCursorAdapter notes = new ListaEmpleadosCursorAdapter(tlListEmpleados, context, R.layout.activity_fila_empleado, mCursorEmpleados, from, to, 0, getFragmentManager());
 
 		}
 	}
@@ -287,6 +293,7 @@ public class DatosEmpresaActivity extends Fragment {
 		etRif.setText(empresa.getRif());
 		etDirFiscal.setText(empresa.getDirFiscal());
 		etDirComercial.setText(empresa.getDirComercial());
+		tlListEmpleados = (TableLayout) v.findViewById (R.id.tableLayoutListaEmpleados);
 	}
 
 
@@ -297,7 +304,7 @@ public class DatosEmpresaActivity extends Fragment {
 		Mensaje mToast = null;
 		boolean error = false;
 		LayoutInflater mInflater = getActivity().getLayoutInflater();
-		
+
 		Date dateFechaModif = new Date();
 		String myFormat = "dd/MM/yyyy HH:mm:ss"; 
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
@@ -315,17 +322,17 @@ public class DatosEmpresaActivity extends Fragment {
 			etNombre.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
-		
+
 		if(rif.equals("") || rif==null){
 			etRif.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
-		
+
 		if(telefono.equals("") || telefono==null){
 			etTelefono.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}
-		
+
 		if(dirFiscal.equals("") || dirFiscal==null){
 			etDirFiscal.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;

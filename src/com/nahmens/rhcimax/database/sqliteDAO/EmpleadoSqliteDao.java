@@ -234,7 +234,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			sqlQuery += ", empleado." + Empleado.FECHA_SINCRONIZACION;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
 			sqlQuery += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA;
-			sqlQuery += " ON (empleado.idEmpresa=empresa._id) ORDER BY empleado.nombre";
+			sqlQuery += " ON (empleado.idEmpresa=empresa._id)";
 			sqlQuery += " WHERE empleado.status = 'activo'";
 			sqlQuery +=	" AND (empleado.nombre LIKE '%" + args + "%' ";
 			sqlQuery += " OR empleado.apellido LIKE '%" + args + "%' ";

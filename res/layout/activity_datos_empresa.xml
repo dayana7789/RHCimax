@@ -201,15 +201,19 @@
 				    android:contentDescription="@string/agregarEmpleado"/>
 				</TableRow>
 			</TableLayout>
+			
+		    <TableLayout 
+		        android:id="@+id/tableLayoutListaEmpleados"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:stretchColumns="0,1" />
 		
-			<ListView
+			<!-- <ListView
 			    android:id="@+id/listViewEmpleados"
 			    android:layout_width="match_parent"
 			    android:layout_height="0dp"
 			    android:layout_weight="1"
-			    tools:ignore="NestedScrolling,InefficientWeight" >
-
-		    </ListView>
+			    tools:ignore="NestedScrolling,InefficientWeight" /> -->
 
 		</LinearLayout>
 	</ScrollView>
