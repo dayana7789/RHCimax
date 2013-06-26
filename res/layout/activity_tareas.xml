@@ -49,11 +49,14 @@
                     android:background="@drawable/borde_blanco"/>
             </LinearLayout>
             
-            <Button
-			    android:id="@+id/buttonAgregarTarea"
-			    android:layout_height="35dp"
-			    android:layout_width="wrap_content"
-			    android:text="@string/agregar_tarea"/>
+            <ImageButton
+				    android:id="@+id/ImageButtonAgregarTarea"
+				    android:layout_width="wrap_content"
+				    android:layout_height="35dp"
+				    android:src="@android:drawable/ic_menu_add" 
+				    android:contentDescription="@string/agregar_tarea"/>
+            
+
         </TableRow>
     </TableLayout>
 

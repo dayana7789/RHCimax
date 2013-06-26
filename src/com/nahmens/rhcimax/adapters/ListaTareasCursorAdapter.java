@@ -1,25 +1,17 @@
 package com.nahmens.rhcimax.adapters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filterable;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.nahmens.rhcimax.R;
-import com.nahmens.rhcimax.controlador.AplicacionActivity;
-import com.nahmens.rhcimax.controlador.DatosTareaActivity;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
-import com.nahmens.rhcimax.mensaje.Mensaje;
 
 public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Filterable{
 
@@ -27,14 +19,14 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	private int layout;
 	private String[] from;
 	private int[] to;
-	private FragmentManager fragmentManager;
+
 
 	/**
 	 * @param tipoCliente Puede ser empleado o empresa. Se utiliza para saber sobre
 	 * 					  que tipo de lista estoy iterando.
 	 */
 	public ListaTareasCursorAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to, int flags, FragmentManager fragmentManager) {
+			String[] from, int[] to, int flags) {
 
 		super(context, layout, c, from, to, flags);
 
@@ -42,7 +34,6 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 		this.layout = layout;
 		this.from = from;
 		this.to = to;
-		this.fragmentManager=fragmentManager;
 	}
 
 
@@ -126,121 +117,6 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 		mArgumentos.putInt("id", id);
 		mArgumentos.putString("nombre", nombreTarea);
 
-
-		ImageButton buttonSincronizar = (ImageButton)  v.findViewById(R.id.imageButtonSync);
-		buttonSincronizar.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v){
-				int id = mArgumentos.getInt("id");
-			}
-
-		});
-
-		ImageButton buttonModificar = (ImageButton)  v.findViewById(R.id.imageButtonModificar);
-		buttonModificar.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v){
-				int id = mArgumentos.getInt("id");
-				modificarTarea(id);
-			}
-
-		});
-
-		ImageButton buttonBorrar = (ImageButton)  v.findViewById(R.id.imageButtonBorrar);
-		buttonBorrar.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v){
-
-				AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
-				String[] mensArray = null;
-				Mensaje mensajeDialog = null;
-				String nombre = mArgumentos.getString("nombre");
-				mensajeDialog = new Mensaje("eliminar_tarea");
-
-
-				try {
-					mensArray = mensajeDialog.controlMensajesDialog(nombre);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				alert.setMessage(mensArray[0]); 
-				alert.setTitle(mensArray[1]); 
-
-				alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int whichButton) {
-						dialog.cancel();
-					}});
-
-				alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int whichButton) {
-						int id = mArgumentos.getInt("id");
-						borrarTarea(id);
-					}
-				});
-
-				AlertDialog alertDialog = alert.create();
-				alertDialog.show();
-
-			}});
-	}
-
-	protected void modificarTarea(int id) {
-		//creamos un bundle para poder enviar al fragment, el id de la tarea
-		Bundle arguments = new Bundle();
-		arguments.putString("idTarea", ""+id);
-
-		DatosTareaActivity fragment = new DatosTareaActivity();
-
-		//pasamos al fragment el id del empleado
-		fragment.setArguments(arguments); 
-
-		fragmentManager.beginTransaction()
-		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosTareas)
-		.addToBackStack(null)
-		.commit();
-	}
-
-
-
-	/** 
-	 * Funcion que elimina de la BD y del list view tareas.
-	 * @param id Id de la tarea
-	 *
-	 */
-	private void borrarTarea(int id) {
-		final LayoutInflater inflater = LayoutInflater.from(context);
-		Boolean eliminado =  false;
-		Mensaje mToast = null;
-		String mensajeError = null;
-		String mensajeOk = null;
-
-		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		eliminado = tareaDao.eliminarTarea(this.context, ""+id);
-		mensajeOk = "ok_eliminado_tarea";
-		mensajeError = "error_eliminado_empresa";
-
-		if(eliminado){
-			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
-
-			//Actualizamos los valores del cursor de la lista de empleados
-			this.changeCursor(tareaDao.listarTareas(context));
-
-			//Notificamos que la lista cambio
-			this.notifyDataSetChanged();
-
-		}else{
-			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeError);
-		}
-
-		try {
-			mToast.controlMensajesToast();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**

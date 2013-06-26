@@ -1,11 +1,12 @@
-<!-- VISTA EN VERTICAL -->
+<!-- VISTA EN HORIZONTAL -->
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:stretchColumns="1"
 	android:clickable="false"
-	android:descendantFocusability="blocksDescendants">
+	android:descendantFocusability="blocksDescendants"
+	>
 	
     <!-- Para que la fila se pueda seleccionar se debe tener:
     1. En tableLayout:
@@ -76,7 +77,6 @@
 				    android:layout_height="wrap_content"
 				    android:textStyle="bold"
 				    android:layout_marginRight="5dp"
-
 				    android:text="@string/tarea2"/>
 				
 			    <TextView
@@ -105,8 +105,14 @@
 					    android:layout_height="wrap_content"
 					    android:text="f1c1"/>
 				    
-				</TableRow>
-			    
+				    <TextView
+						android:id="@+id/textViewFil1Col2"
+						android:textIsSelectable="false"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:text="f1c2"/>
+
+			    </TableRow>
 			    <TableRow
 					android:layout_width="match_parent"
 					android:layout_height="wrap_content">
@@ -117,24 +123,7 @@
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"
 					    android:text="f2c1"/>
-				</TableRow>
-				
-			    <TableRow
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">
 				    
-				    <TextView
-						android:id="@+id/textViewFil1Col2"
-						android:textIsSelectable="false"
-					    android:layout_width="wrap_content"
-					    android:layout_height="wrap_content"
-					    android:text="f1c2"/>
-
-			    </TableRow>
-			    
-			    <TableRow
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content">				    
 				    <TextView
 						android:id="@+id/textViewFil2Col2"
 						android:textIsSelectable="false"
@@ -179,3 +168,4 @@
 	
 
 </TableLayout>
+

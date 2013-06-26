@@ -1,19 +1,24 @@
 package com.nahmens.rhcimax.controlador;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
 
@@ -21,13 +26,15 @@ import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaTareasCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
+import com.nahmens.rhcimax.mensaje.Mensaje;
 
-public class TareasActivity extends ListFragment {
+public class TareasActivity extends ListFragment{
+
+	ListaTareasCursorAdapter listCursorAdapterTareas;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 
 		View view = inflater.inflate(R.layout.activity_tareas, container, false);
 
@@ -37,7 +44,7 @@ public class TareasActivity extends ListFragment {
 		listarTareas(view);
 
 		// Registro del evento OnClick del buttonTarea
-		Button bTarea = (Button)view.findViewById(R.id.buttonAgregarTarea);
+		ImageButton bTarea = (ImageButton)view.findViewById(R.id.ImageButtonAgregarTarea);
 		bTarea.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -69,10 +76,22 @@ public class TareasActivity extends ListFragment {
 			int[] to = new int[] {R.id.textViewTitulo,  R.id.textViewFil1Col2, R.id.textViewFil1Col2, R.id.textViewFil2Col1, R.id.textViewFil2Col1, R.id.textViewFil1Col1, R.id.textViewFil2Col2 };
 			ListView lvTareas = (ListView) view.findViewById (android.R.id.list);
 
+
 			//Creamos un array adapter para desplegar cada una de las filas
-			final ListaTareasCursorAdapter listCursorAdapterTareas = new ListaTareasCursorAdapter(context, R.layout.activity_fila_tarea, mCursorTareas, from, to, 0,this.getFragmentManager());
+			listCursorAdapterTareas = new ListaTareasCursorAdapter(context, R.layout.activity_fila_tarea, mCursorTareas, from, to, 0);
 			lvTareas.setAdapter(listCursorAdapterTareas);
-			
+
+			lvTareas.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+						int position, long id) {
+					mostrarListaOpciones(position);
+
+					return true;
+				}
+			}); 
+
+
 			//Registro del evento addTextChangedListener cuando utilizamos el buscador
 			EditText etBuscar = (EditText) view.findViewById(R.id.editTextBuscar);
 			etBuscar.addTextChangedListener(new TextWatcher() {
@@ -95,6 +114,62 @@ public class TareasActivity extends ListFragment {
 		}
 	}
 
+	/**
+	 * Funcion que muestra opciones al dejar una fila preionada
+	 * @param position Numero de positicion que ocupa la fila que se longClikeo
+	 */
+	protected void mostrarListaOpciones(int position) {
+		Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
+		final int idTarea = cursor.getInt(cursor.getColumnIndex(Tarea.ID));
+		final String nombreTarea = cursor.getString(cursor.getColumnIndex(Tarea.NOMBRE));
+		Log.v("long clicked","pos"+" "+idTarea);
+
+		String[] arr = {"Actualizar","Eliminar"};
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(""+nombreTarea)
+		.setItems(arr, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case 0:
+
+					break;
+
+				case 1:
+					mensajeAlertaEliminar(nombreTarea, idTarea);
+					break;
+				}
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+
+
+	@Override
+	/**
+	 * Funcion que se llama cuando una fila es seleccionada.
+	 */
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+		Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
+
+		int idTarea = cursor.getInt(cursor.getColumnIndex(Tarea.ID));
+
+		Bundle arguments = new Bundle();
+		arguments.putString("idTarea", ""+idTarea);
+
+		DatosTareaActivity fragment = new DatosTareaActivity();
+
+		//pasamos al fragment el id de la tarea
+		fragment.setArguments(arguments); 
+
+		getFragmentManager().beginTransaction()
+		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosTareas)
+		.addToBackStack(null)
+		.commit();
+
+	}
 
 	/**
 	 * Funcion que inicializa los valores del spinner o combo box
@@ -108,54 +183,82 @@ public class TareasActivity extends ListFragment {
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
 	}
-	
-	
-	/**
-	 * INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA 
-	 * NOTA: Es importante que en el layout de la fila (activity_fila_tarea.xml)
-	 * en la layout raiz tenga: android:descendantFocusability="blocksDescendants"
-	 * De lo contrario, el onListItemClick no va a funcionar!.
-	 * 
-	 * NOTA2: En AplicacionActivity, se implementa la interfaz OnTareaSelectedListener
-	 * con su metodo onTareaSelected.
-	 */
 
-/*	OnTareaSelectedListener mTareaListener;
 
 	/**
-	 * interface utilizada para comunicar la lista con el detalle
-	 * de cada fila.
+	 * Funcion que muestra mensaje de alerta ante el intento de eliminacion
+	 * @param v
+	 * @param nombre Nombre de la tarea
+	 * @param idTarea Id de la tarea
 	 */
-/*	public interface OnTareaSelectedListener {
-		public void onTareaSelected(Bundle mArgumentos, String id);
-	}
+	public void mensajeAlertaEliminar(String nombre, final int idTarea){
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
+		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+		String[] mensArray = null;
+		Mensaje mensajeDialog = null;
+		mensajeDialog = new Mensaje("eliminar_tarea");
+
+
 		try {
-			mTareaListener = (OnTareaSelectedListener) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString() + " se debe implementar OnTareaSelectedListener ");
+			mensArray = mensajeDialog.controlMensajesDialog(nombre);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+
+		alert.setMessage(mensArray[0]); 
+		alert.setTitle(mensArray[1]); 
+
+		alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				dialog.cancel();
+			}});
+
+		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+
+				borrarTarea(idTarea);
+			}
+		});
+
+		AlertDialog alertDialog = alert.create();
+		alertDialog.show();
+
 	}
 
-	@Override
-	/**
-	 * @param position numero de posicion en la lista
-	 * @param id Id del cliente sobre el cual se hizo click. Puede pertenecer a un empleado o a una empresa.
-	 *           Este Id se asigna automaticamente por la definicion de _id en la BD.
+	/** 
+	 * Funcion que elimina de la BD y del list view tareas.
+	 * @param id Id de la tarea
+	 *
 	 */
-/*	public void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
+	private void borrarTarea(int id) {
+		final LayoutInflater inflater = LayoutInflater.from(getActivity());
+		Boolean eliminado =  false;
+		Mensaje mToast = null;
+		String mensajeError = null;
+		String mensajeOk = null;
 
-		String idString = String.valueOf(id); 
+		TareaSqliteDao tareaDao = new TareaSqliteDao();
+		eliminado = tareaDao.eliminarTarea(getActivity(), ""+id);
+		mensajeOk = "ok_eliminado_tarea";
+		mensajeError = "error_eliminado_empresa";
 
-		if (l.getId() == android.R.id.list) {
-		//	mTareaListener.onTareaSelected(mArgumentos, id);
+		if(eliminado){
+			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeOk);
+
+			//Actualizamos los valores del cursor de la lista de tareas
+			listCursorAdapterTareas.changeCursor(tareaDao.listarTareas(getActivity()));
+
+			//Notificamos que la lista cambio
+			listCursorAdapterTareas.notifyDataSetChanged();
+
+		}else{
+			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeError);
 		}
 
+		try {
+			mToast.controlMensajesToast();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-
-	/*********** FIN ******************/
 }
