@@ -35,11 +35,6 @@
                     android:textIsSelectable="false"
                     android:background="@drawable/borde_blanco"/>
 
-                <TextView
-                    android:id="@+id/avisoAmarillo"
-					style="@style/CuadroNotificacion"
-					android:textIsSelectable="false"
-                    android:background="@drawable/borde_blanco"/>
 
                 <TextView
                     android:id="@+id/avisoRojo"

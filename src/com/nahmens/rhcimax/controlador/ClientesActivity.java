@@ -153,7 +153,7 @@ public class ClientesActivity extends ListFragment {
 		if(v==null){
 			v = getView();
 		}
-		TextView tvAmarillo = (TextView) v.findViewById(R.id.avisoAmarillo);
+
 		TextView tvVerde = (TextView) v.findViewById(R.id.avisoVerde);
 		TextView tvRojo = (TextView) v.findViewById(R.id.avisoRojo);
 
@@ -180,21 +180,17 @@ public class ClientesActivity extends ListFragment {
 		}
 
 		if(arr.contains(true) && arr.contains(false)){
-			tvAmarillo.setBackgroundResource(R.drawable.borde_amarillo);
 			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
 			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
 
 		}else if(arr.contains(true)){
-			tvAmarillo.setBackgroundResource(R.drawable.borde_blanco);
 			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
 			tvVerde.setBackgroundResource(R.drawable.borde_verde);
 
 		}else if(arr.contains(false)){
-			tvAmarillo.setBackgroundResource(R.drawable.borde_blanco);
 			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
 			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
 		}else if(arr.contains(null)){
-			tvAmarillo.setBackgroundResource(R.drawable.borde_amarillo);
 			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
 			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
 		}/*else{

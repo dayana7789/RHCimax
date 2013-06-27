@@ -45,7 +45,6 @@ public class AplicacionActivity extends FragmentActivity {
 
 	/*Tag para identificar a los cuadros de colores en la lista de clientes*/
 	final public static String tagCuadroColor = "cuadroColor";
-	final public static String tagAmarillo = "amarillo";
 	final public static String tagVerde = "verde";
 	final public static String tagRojo = "rojo";
 

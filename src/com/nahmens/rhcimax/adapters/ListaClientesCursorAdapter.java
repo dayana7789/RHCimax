@@ -438,7 +438,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 		TextView tvAvisoRojoFila = (TextView) v.findViewById(R.id.avisoRojoFila);
 		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
-		TextView tvAvisoAmarilloFila = (TextView) v.findViewById(R.id.avisoAmarilloFila);
 
 		int idEmpresa =  cursor.getInt(cursor.getColumnIndex(Empresa.ID));
 		EmpleadoSqliteDao empleadosDao = new EmpleadoSqliteDao();
@@ -461,7 +460,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		}
 
 		if(arr.contains(true) && arr.contains(false)){
-			tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_amarillo);
 			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
 			tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 
@@ -472,7 +470,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 			if(modificado == 1){
 				//Si la empresa SI fue modificada y mis empleados SI estan sincronizados..
-				tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_amarillo);
 				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
 				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 
@@ -481,7 +478,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 			}else{
 
 				//Si la empresa NO fue modificada y mis empleados SI estan sincronizados..
-				tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
 				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
 				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_verde);
 
@@ -493,7 +489,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 			if(modificado == 0){
 				//Si la empresa NO fue modificada y mis empleados NO estan sincronizados..
-				tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_amarillo);
 				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
 				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 
@@ -502,7 +497,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 			}else{
 
 				//Si la empresa SI fue modificada y mis empleados NO estan sincronizados..
-				tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
 				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
 				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 
@@ -513,11 +507,9 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		}else{
 			//caso empresa sin empleados
 			if(strFechaSincronizacion==null){
-				tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
 				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
 				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 			}else{
-				tvAvisoAmarilloFila.setBackgroundResource(R.drawable.borde_blanco);
 				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
 				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_verde);
 			}
