@@ -57,7 +57,7 @@ public class ClientesActivity extends ListFragment {
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.activity_clientes, container, false);
-
+				
 		//primero listamos a los empleados donde vamos a inicializar el valor de listCursorAdapterEmpleados
 		listarEmpleados(view);
 

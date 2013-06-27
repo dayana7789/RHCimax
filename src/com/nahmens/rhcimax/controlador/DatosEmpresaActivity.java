@@ -57,6 +57,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 		View view = inflater.inflate(R.layout.activity_datos_empresa, container, false);
 
+			
 		//OJO: evitamos que la pantalla se vuelva a recrear verificando el valor
 		//de savedInstanceState. De esta manera evitamos la doble llamada que se
 		//realiza al metodo onCreateView, cuando cambiamos la orientacion del 
@@ -96,7 +97,6 @@ public class DatosEmpresaActivity extends Fragment {
 				//creacion de empresa nueva
 				flagGuardado = false;
 			}
-
 
 
 			// Registro del evento OnClick del buttonCopiar
@@ -172,7 +172,13 @@ public class DatosEmpresaActivity extends Fragment {
 
 				@Override
 				public void onClick(View v) {
+					String id = null;
 					Log.e("tareas", "me presionaron");
+					if(mArgumentos!=null){
+						id = mArgumentos.getString("idEmpresa");
+					}
+					
+					onButtonTareaSelected(id);
 				}
 			});
 
@@ -393,6 +399,25 @@ public class DatosEmpresaActivity extends Fragment {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Metodo que se llama al seleccionar el boton tareas
+	 * @param idEmpleado
+	 */
+	public void onButtonTareaSelected(String idEmpresa) {
+		Bundle arguments = new Bundle();
+		arguments.putString("idEmpresa", idEmpresa);
+
+		TareasActivity fragment = new TareasActivity();
+
+		//pasamos al fragment el id de la tarea
+		fragment.setArguments(arguments); 
+
+		getFragmentManager().beginTransaction()
+		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentTareas)
+		.addToBackStack(null)
+		.commit();
 	}
 
 }

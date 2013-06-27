@@ -38,6 +38,7 @@ public class TareasActivity extends ListFragment{
 
 		View view = inflater.inflate(R.layout.activity_tareas, container, false);
 
+		
 		//Asociamos los valores al combo box o spinner
 		inicializarSpinner(view);
 

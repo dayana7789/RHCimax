@@ -48,7 +48,7 @@ public class AplicacionActivity extends FragmentActivity {
 	final public static String tagVerde = "verde";
 	final public static String tagRojo = "rojo";
 
-	TabHost mTabHost;
+	public static TabHost mTabHost;
 
 	/*Principales fragments de los tabs*/
 	ClientesActivity fragmentClientes;

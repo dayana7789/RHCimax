@@ -45,7 +45,7 @@ public class DatosClienteActivity extends Fragment {
 	EditText etDescripcion;
 	EditText etIdEmpresa;
 	AutoCompleteTextView acNombreEmpresa;
-	
+
 	/* Flag que permite saber si el empleado ya fue 
 	 * insertado cuando se presiona el boton salvar dos veces.
 	 * Evita que se duplique el registro.
@@ -59,7 +59,7 @@ public class DatosClienteActivity extends Fragment {
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.activity_datos_cliente, container, false);
-		
+
 		//inicializamos la referencia a los campos del formulario
 		setReferenciaCampos(view);
 
@@ -233,7 +233,7 @@ public class DatosClienteActivity extends Fragment {
 	 */
 	private void setAutocompleteEmpresa(View view){
 		AutocompleteEmpresaCursorAdapter mAutocompleteCursor = new AutocompleteEmpresaCursorAdapter(view);
-		
+
 		acNombreEmpresa.setAdapter(mAutocompleteCursor);
 		//seteamos este listener definido en la clase AutocompleteEmpresaCursorAdapter
 		acNombreEmpresa.setOnItemClickListener(mAutocompleteCursor);
@@ -271,7 +271,7 @@ public class DatosClienteActivity extends Fragment {
 		boolean error = false;
 		int idEmpresa = 0;
 		LayoutInflater mInflater = getActivity().getLayoutInflater();
-		
+
 		Date dateFechaModif = new Date();
 		String myFormat = "dd/MM/yyyy HH:mm:ss"; 
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
@@ -345,13 +345,13 @@ public class DatosClienteActivity extends Fragment {
 
 			SharedPreferences prefs = this.getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
 			int idUsuario = prefs.getInt(Usuario.ID, 0);
-			
+
 
 			if(id!=null){
 				//Estamos modificando un registro
 
 				Empleado empleado = new Empleado(Integer.parseInt(id),nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, fechaModif, idUsuario);
-				
+
 				Boolean modificado = empleadoDao.modificarEmpleado(getActivity(), empleado);
 
 				if(modificado){
