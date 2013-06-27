@@ -78,7 +78,7 @@ public class TareasActivity extends ListFragment{
 
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterTareas = new ListaTareasCursorAdapter(context, R.layout.activity_fila_tarea, mCursorTareas, from, to, 0);
+			listCursorAdapterTareas = new ListaTareasCursorAdapter(context, R.layout.activity_fila_tarea, mCursorTareas, from, to, 0, getFragmentManager());
 			lvTareas.setAdapter(listCursorAdapterTareas);
 
 			lvTareas.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -152,6 +152,9 @@ public class TareasActivity extends ListFragment{
 	 */
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
+		
+		//OJO: aqui estamos usando  getListView() porq tenemos un solo ListView
+		//pero de tener mas de uno, no debemos usar esto (Ver ClientesActivity.java)
 		Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
 
 		int idTarea = cursor.getInt(cursor.getColumnIndex(Tarea.ID));

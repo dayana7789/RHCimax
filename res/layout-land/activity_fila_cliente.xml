@@ -1,4 +1,4 @@
-<!-- VISTA VERTICAL -->
+<!-- VISTA HORIZONAL -->
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -79,7 +79,7 @@
 	    	</LinearLayout>
 		</LinearLayout>
 			
-	<!-- 	<LinearLayout 
+	 	<LinearLayout 
 			android:gravity="right"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content">
@@ -98,6 +98,6 @@
 			    android:src="@android:drawable/ic_menu_delete"
 			    tools:ignore="ContentDescription" />
 					    
-		</LinearLayout> -->
+		</LinearLayout> 
 	</TableRow>
 </TableLayout>

@@ -2,8 +2,9 @@ package com.nahmens.rhcimax.controlador;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.os.Bundle;
@@ -27,7 +28,10 @@ import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
+import com.nahmens.rhcimax.mensaje.Mensaje;
+
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 
 public class ClientesActivity extends ListFragment {
 
@@ -47,57 +51,6 @@ public class ClientesActivity extends ListFragment {
 		}
 	};
 
-	/**
-	 * INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA 
-	 * NOTA: Es importante que en el layout de la fila (activity_fila_cliente.xml)
-	 * en la layout raiz tenga: android:descendantFocusability="blocksDescendants"
-	 * De lo contrario, el onListItemClick no va a funcionar!.
-	 * 
-	 * NOTA2: En AplicacionActivity, se implementa la interfaz OnEmpleadoSelectedListener
-	 * con su metodo onEmpleadoSelected.
-	 */
-
-	OnClienteSelectedListener mClienteListener;
-
-	/**
-	 * interface utilizada para comunicar la lista con el detalle
-	 * de cada fila.
-	 */
-	public interface OnClienteSelectedListener {
-		public void onEmpleadoSelected(String id);
-		public void onEmpresaSelected(String id);
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			mClienteListener = (OnClienteSelectedListener) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString() + " se debe implementar OnClientSelectedListener ");
-		}
-	}
-
-	@Override
-	/**
-	 * @param position numero de posicion en la lista
-	 * @param id Id del cliente sobre el cual se hizo click. Puede pertenecer a un empleado o a una empresa.
-	 *           Este Id se asigna automaticamente por la definicion de _id en la BD.
-	 */
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-
-		String idString = String.valueOf(id); 
-
-		if (l.getId() == android.R.id.list) {
-			mClienteListener.onEmpleadoSelected(idString);
-		} else if (l.getId() == R.id.listEmpresas) {
-			mClienteListener.onEmpresaSelected(idString);
-		}
-
-	}
-
-	/*********** FIN ******************/
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -312,6 +265,18 @@ public class ClientesActivity extends ListFragment {
 				}
 			});
 			
+			lvEmpresas.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+						int position, long id) {
+					
+					ListView lv = (ListView) arg0;
+					mostrarListaOpciones(lv,position);
+
+					return true;
+				}
+			}); 
+			
 			
 		}
 		
@@ -347,9 +312,238 @@ public class ClientesActivity extends ListFragment {
 			//OJO: como en el layout la lista que contiene a las empleados es android:id="@id/android:list", 
 			// no hay necesidad de hacer el setOnItemClickListener como se hizo en listarEmpresas. Esto
 			//android lo hace automaticamente.
+			
+			lvEmpleados.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+						int position, long id) {
+					
+					ListView lv = (ListView) arg0;
+
+					mostrarListaOpciones(lv, position);
+
+					return true;
+				}
+			}); 
 
 			//enables filtering for the contents of the given ListView
 			//lvEmpleados.setTextFilterEnabled(true);
 		}
+	}
+	
+	/**
+	 * Funcion que muestra opciones al dejar una fila preionada
+	 * @param lv ListView que llamo al evento onLongClick
+	 * @param position Numero de positicion que ocupa la fila que se longClikeo
+	 */
+	protected void mostrarListaOpciones(ListView l, int position) {
+
+		Cursor cursor = (Cursor) l.getItemAtPosition(position);
+		final int id = cursor.getInt(cursor.getColumnIndex("_id"));
+		final String nombre = cursor.getString(cursor.getColumnIndex("nombre"));
+		String tipoCliente = null;
+		
+		if (l.getId() == android.R.id.list) {
+			tipoCliente = "empleado";
+		} else if (l.getId() == R.id.listEmpresas) {
+			tipoCliente = "empresa";
+		}
+
+		final Bundle mArgumentos = new Bundle();
+		mArgumentos.putString("tipoCliente", tipoCliente);
+
+		String[] arr = {"Actualizar","Eliminar"};
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(""+nombre)
+		.setItems(arr, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case 0:
+					break;
+
+				case 1:
+					mensajeAlertaEliminar(nombre, id, mArgumentos.getString("tipoCliente"));
+					break;
+				}
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+	
+	/**
+	 * Funcion que muestra mensaje de alerta ante el intento de eliminacion
+	 * @param v
+	 * @param nombre Nombre de la tarea
+	 * @param idTarea Id de la tarea
+	 */
+	public void mensajeAlertaEliminar(String nombre, final int id, final String tipoCliente){
+
+		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+		String[] mensArray = null;
+		Mensaje mensajeDialog = null;
+
+
+		if(tipoCliente.equals("empresa")){
+			mensajeDialog = new Mensaje("eliminar_empresa");
+
+		}else if(tipoCliente.equals("empleado")){
+			mensajeDialog = new Mensaje("eliminar_empleado");
+
+		}else{
+			Log.e("ListaClientesCursorAdapter","tipoCliente no soportado en funcion onClick de boton eliminar: " + tipoCliente);
+		}
+
+		try {
+			mensArray = mensajeDialog.controlMensajesDialog(nombre);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		alert.setMessage(mensArray[0]); 
+		alert.setTitle(mensArray[1]); 
+
+		alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				dialog.cancel();
+			}});
+
+		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				borrarCliente(id+"", tipoCliente);
+			}
+		});
+
+		AlertDialog alertDialog = alert.create();
+		alertDialog.show();
+
+	
+
+	}
+	
+	/** Funcion que elimina de la BD y del list view empleados o empresas.
+	 * 
+	 * @param id Id del empleado o empresa
+	 * @param tipoCliente Posibles valores: empresa o empleado
+	 *
+	 */
+	private void borrarCliente(String id, String tipoCliente) {
+		final LayoutInflater inflater = LayoutInflater.from(getActivity());
+		Boolean eliminado =  false;
+		Mensaje mToast = null;
+		String mensajeError = null;
+		String mensajeOk = null;
+
+		if(tipoCliente.equals("empresa")){
+			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+			eliminado = empresaDao.eliminarEmpresa(getActivity(), id);
+			mensajeOk = "ok_eliminado_empresa";
+			mensajeError = "error_eliminado_empresa";
+		}else if(tipoCliente.equals("empleado")){
+			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+			eliminado = empleadoDao.eliminarEmpleado(getActivity(), id);
+			mensajeOk = "ok_eliminado_empleado";
+			mensajeError = "error_eliminado_empleado";
+		}else{
+			Log.e("ListaClientesCursorAdapter","tipoCliente no soportado en funcion borrarCliente: " + tipoCliente);
+		}
+
+		if(eliminado){
+			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeOk);
+
+			if(tipoCliente.equals("empresa")){
+				//Actualizamos los valores del cursor de la lista de empresas
+				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+				listCursorAdapterEmpresas.changeCursor(empresaDao.listarEmpresas(getActivity()));
+				//Notificamos que la lista cambio
+				listCursorAdapterEmpresas.notifyDataSetChanged();
+
+				//Cuando eliminamos a una empresa, eliminamos tambien a sus empleados
+				//Actualizamos los valores del cursor de la lista de empleados
+				if(listCursorAdapterEmpleados!=null){
+					EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+					listCursorAdapterEmpleados.changeCursor(empleadoDao.listarEmpleados(getActivity()));
+					//Notificamos que la lista cambio
+					listCursorAdapterEmpleados.notifyDataSetChanged();
+				}
+
+			}else if(tipoCliente.equals("empleado")){
+				//Actualizamos los valores del cursor de la lista de empleados
+				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+				listCursorAdapterEmpleados.changeCursor(empleadoDao.listarEmpleados(getActivity()));
+				//Notificamos que la lista cambio
+				listCursorAdapterEmpleados.notifyDataSetChanged();
+			}
+
+
+		}else{
+			mToast = new Mensaje(inflater, getActivity(), mensajeError);
+		}
+
+		try {
+			mToast.controlMensajesToast();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	/**
+	 * Metodo que se llama cuando se selecciona a un empleado o empresa
+	 * de la lista.
+	 */
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+
+		String idString = String.valueOf(id); 
+
+		if (l.getId() == android.R.id.list) {
+			onEmpleadoSelected(idString);
+		} else if (l.getId() == R.id.listEmpresas) {
+			onEmpresaSelected(idString);
+		}
+
+	}
+	
+	
+	/**
+	 * Metodo que se llama al seleccionar un empleado del listView
+	 * @param idEmpleado
+	 */
+	public void onEmpleadoSelected(String idEmpleado) {
+		Bundle arguments = new Bundle();
+		arguments.putString("id", idEmpleado);
+
+		DatosClienteActivity fragment = new DatosClienteActivity();
+
+		//pasamos al fragment el id de la tarea
+		fragment.setArguments(arguments); 
+
+		getFragmentManager().beginTransaction()
+		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
+		.addToBackStack(null)
+		.commit();
+	}
+
+	/**
+	 * Metodo que se llama al seleccionar una empresa del ListView
+	 * @param idEmpresa
+	 */
+	public void onEmpresaSelected(String idEmpresa) {
+
+		Bundle arguments = new Bundle();
+		arguments.putString("idEmpresa", idEmpresa);
+		
+		DatosEmpresaActivity fragment = new DatosEmpresaActivity();
+
+		//pasamos al fragment el id de la tarea
+		fragment.setArguments(arguments); 
+
+		getFragmentManager().beginTransaction()
+		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosEmpresa)
+		.addToBackStack(null)
+		.commit();
 	}
 }

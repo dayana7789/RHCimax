@@ -4,13 +4,11 @@
 	android:layout_width="match_parent"
 	android:layout_height="wrap_content"
 	android:stretchColumns="1"
-	android:clickable="false"
 	android:descendantFocusability="blocksDescendants"
 	>
 	
     <!-- Para que la fila se pueda seleccionar se debe tener:
     1. En tableLayout:
-       - android:clickable="false"
 	   - android:descendantFocusability="blocksDescendants"  
 	   
 	2. En cada textView:
@@ -135,7 +133,7 @@
 			</TableLayout>
 		</LinearLayout>
 			
-		<!-- <LinearLayout 
+		<LinearLayout 
 			android:gravity="right"
 			android:layout_gravity="center_vertical"
 			android:layout_width="wrap_content"
@@ -155,14 +153,14 @@
 			    android:src="@android:drawable/ic_menu_delete"
 			    tools:ignore="ContentDescription" />
 			 
-			 <ImageButton
+		<!-- 	 <ImageButton
 			    android:id="@+id/imageButtonModificar"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:src="@android:drawable/ic_menu_edit"
-			    tools:ignore="ContentDescription" /> 
+			    tools:ignore="ContentDescription" /> -->
 					    
-		</LinearLayout>-->
+		</LinearLayout>
 	</TableRow>
 
 	

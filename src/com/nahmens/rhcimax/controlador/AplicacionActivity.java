@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -20,14 +19,14 @@ import android.widget.TabHost;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
-import com.nahmens.rhcimax.controlador.ClientesActivity.OnClienteSelectedListener;
+//import com.nahmens.rhcimax.controlador.ClientesActivity.OnClienteSelectedListener;
 import com.nahmens.rhcimax.utils.Tripleta;
 
 /*
  * Contenedor principal de todos los fragmentos
  */
 
-public class AplicacionActivity extends FragmentActivity implements OnClienteSelectedListener {
+public class AplicacionActivity extends FragmentActivity {
 
 	/* Identificadores de los fragments que se cargan en este activity.
 	 * Por cada activity nuevo de tipo Fragment, se debe inicializar el
@@ -438,52 +437,6 @@ public class AplicacionActivity extends FragmentActivity implements OnClienteSel
 		alert.show();
 
 	}
-	
-	
-
-	/***INICIO DE CODIGO PARA PERMITIR QUE UNA FILA PUEDA SER SELECCIONADA ****/
-	public void onEmpleadoSelected(String id) {
-		//creamos un bundle para poder enviar al fragment, el id del empleado
-		Bundle arguments = new Bundle();
-		arguments.putString("id", id);
-
-		DatosClienteActivity fragment = new DatosClienteActivity();
-
-		//pasamos al fragment el id del empleado
-		fragment.setArguments(arguments); 
-		
-		pushFragments(tagFragmentDatosCliente, fragment, true);
-	}
-
-	public void onEmpresaSelected(String id) {
-		//creamos un bundle para poder enviar al fragment, el id de la empresa
-		Bundle arguments = new Bundle();
-		arguments.putString("idEmpresa", id);
-		
-		DatosEmpresaActivity fragment = new DatosEmpresaActivity();
-		
-		//pasamos al fragment el id de la empresa
-		fragment.setArguments(arguments); 
-		
-		pushFragments(tagFragmentDatosEmpresa, fragment, true);
-	}
-	
-	public void onTareaSelected(Bundle mArgumentos, String id) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-		builder.setMessage("prueba")//mArgumentos.getInt("idServicio") +","+mArgumentos.getString("unidadMedicion") + ", " + mArgumentos.getString("descripcion"))
-		.setTitle("nombre prueba")//mArgumentos.getString("nombre"))
-		.setCancelable(false)
-		.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				dialog.cancel();
-			}
-		});
-		AlertDialog alert = builder.create();
-		alert.show();
-	}
-	/***************FIN ****************************/
-
-
 
 	/*@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

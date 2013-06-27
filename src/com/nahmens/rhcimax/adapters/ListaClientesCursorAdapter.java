@@ -4,8 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -130,68 +128,76 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 		setIconoCliente(v);
 
-		//almacenamos en un bundle, el id de empresa o id empleado y nombre de la empresa.
-		final Bundle mArgumentos = new Bundle();
-		mArgumentos.putString("id", id);
-		mArgumentos.putString("nombreE", nombreE);
+		//Si la pantalla esta horizontal, mostramos los botones. 
+		//De lo contrario, no mostramos los botones
+		int display_mode = context.getResources().getConfiguration().orientation;
 
-		ImageButton buttonSincronizar = (ImageButton)  v.findViewById(R.id.imageButtonSync);
-		buttonSincronizar.setOnClickListener(new View.OnClickListener() {
+		if (display_mode != 1) {
+			//almacenamos en un bundle, el id de empresa o id empleado y nombre de la empresa.
+			final Bundle mArgumentos = new Bundle();
+			mArgumentos.putString("id", id);
+			mArgumentos.putString("nombreE", nombreE);
 
-			@Override
-			public void onClick(View v){
-				String id = mArgumentos.getString("id");
-				sincronizarCliente(id);
-			}
+			ImageButton buttonSincronizar = (ImageButton)  v.findViewById(R.id.imageButtonSync);
+			buttonSincronizar.setOnClickListener(new View.OnClickListener() {
 
-		});
-
-		ImageButton buttonBorrar = (ImageButton)  v.findViewById(R.id.imageButtonBorrar);
-		buttonBorrar.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v){
-
-				AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
-				String[] mensArray = null;
-				Mensaje mensajeDialog = null;
-				String nombreE = mArgumentos.getString("nombreE");
-
-				if(tipoCliente.equals("empresa")){
-					mensajeDialog = new Mensaje("eliminar_empresa");
-
-				}else if(tipoCliente.equals("empleado")){
-					mensajeDialog = new Mensaje("eliminar_empleado");
-
-				}else{
-					Log.e("ListaClientesCursorAdapter","tipoCliente no soportado en funcion onClick de boton eliminar: " + tipoCliente);
+				@Override
+				public void onClick(View v){
+					String id = mArgumentos.getString("id");
+					sincronizarCliente(id);
 				}
 
-				try {
-					mensArray = mensajeDialog.controlMensajesDialog(nombreE);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			});
 
-				alert.setMessage(mensArray[0]); 
-				alert.setTitle(mensArray[1]); 
+			ImageButton buttonBorrar = (ImageButton)  v.findViewById(R.id.imageButtonBorrar);
+			buttonBorrar.setOnClickListener(new View.OnClickListener() {
 
-				alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int whichButton) {
-						dialog.cancel();
-					}});
+				@Override
+				public void onClick(View v){
 
-				alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int whichButton) {
-						String id = mArgumentos.getString("id");
-						borrarCliente(id);
+					AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
+					String[] mensArray = null;
+					Mensaje mensajeDialog = null;
+					String nombreE = mArgumentos.getString("nombreE");
+
+					if(tipoCliente.equals("empresa")){
+						mensajeDialog = new Mensaje("eliminar_empresa");
+
+					}else if(tipoCliente.equals("empleado")){
+						mensajeDialog = new Mensaje("eliminar_empleado");
+
+					}else{
+						Log.e("ListaClientesCursorAdapter","tipoCliente no soportado en funcion onClick de boton eliminar: " + tipoCliente);
 					}
-				});
 
-				AlertDialog alertDialog = alert.create();
-				alertDialog.show();
+					try {
+						mensArray = mensajeDialog.controlMensajesDialog(nombreE);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 
-			}});
+					alert.setMessage(mensArray[0]); 
+					alert.setTitle(mensArray[1]); 
+
+					alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+							dialog.cancel();
+						}});
+
+					alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+							String id = mArgumentos.getString("id");
+							borrarCliente(id);
+						}
+					});
+
+					AlertDialog alertDialog = alert.create();
+					alertDialog.show();
+
+				}});
+		}    
+
+
 	}
 
 	/**
@@ -252,10 +258,10 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 			sincronizado = empleadoDao.sincronizarEmpleado(this.context, id);
 			Empleado emp = empleadoDao.buscarEmpleado(context, id);
-			
-			
-			
-			
+
+
+
+
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 			EmpleadoSqliteDao empleadosDao = new EmpleadoSqliteDao();
 
@@ -282,7 +288,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 				empresaDao.sincronizarEmpresa(context, ""+id, true);
 
 			}else if(arr.contains(true)){
-				
+
 				Log.e("####", "verde");
 				empresaDao.sincronizarEmpresa(context, ""+id, false);
 
@@ -291,10 +297,10 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 				Log.e("####", "rojo");
 				empresaDao.sincronizarEmpresa(context, ""+id, null);
 			}
-			
-			
-			
-			
+
+
+
+
 
 			mensajeOk = "ok_sincronizado_empleado";
 			mensajeError = "error_sincronizado_empleado";
@@ -406,7 +412,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		}
 
 
-		
+
 		//solo para imprimir
 		/*String strFechaCreacion = cursor.getString(cursor.getColumnIndex(Empleado.FECHA_CREACION));
 		Date now = new Date();
