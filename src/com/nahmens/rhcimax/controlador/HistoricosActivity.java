@@ -18,6 +18,10 @@ public class HistoricosActivity extends Fragment {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View view = inflater.inflate(R.layout.activity_historicos, container, false);
+		
+		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
+		//tab es el correspondiente.
+		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentHistoricos);	
 
 		//Asociamos los valores al combo box o spinner
 		Spinner spinner = (Spinner) view.findViewById(R.id.spinnerHistoricos);

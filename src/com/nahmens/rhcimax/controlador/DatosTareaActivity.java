@@ -68,6 +68,10 @@ public class DatosTareaActivity extends Fragment {
 		// TODO Auto-generated method stub
 
 		final View view = inflater.inflate(R.layout.activity_datos_tarea, container, false);
+		
+		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
+		//tab es el correspondiente.
+		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentTareas);	
 
 		flagGuardado = false;
 

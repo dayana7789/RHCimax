@@ -81,6 +81,10 @@ public class ServiciosActivity extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		
+		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
+		//tab es el correspondiente.
+		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentClientes);	
+		
 		View view = inflater.inflate(R.layout.activity_servicios, container, false);
 		
 		//OJO: evitamos que la pantalla se vuelva a recrear verificando el valor

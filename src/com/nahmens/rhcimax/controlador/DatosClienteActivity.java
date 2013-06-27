@@ -60,6 +60,10 @@ public class DatosClienteActivity extends Fragment {
 
 		View view = inflater.inflate(R.layout.activity_datos_cliente, container, false);
 
+		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
+		//tab es el correspondiente.
+		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentClientes);		
+
 		//inicializamos la referencia a los campos del formulario
 		setReferenciaCampos(view);
 

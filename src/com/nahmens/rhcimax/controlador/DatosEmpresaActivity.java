@@ -57,6 +57,9 @@ public class DatosEmpresaActivity extends Fragment {
 
 		View view = inflater.inflate(R.layout.activity_datos_empresa, container, false);
 
+		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
+		//tab es el correspondiente.
+		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentClientes);	
 			
 		//OJO: evitamos que la pantalla se vuelva a recrear verificando el valor
 		//de savedInstanceState. De esta manera evitamos la doble llamada que se

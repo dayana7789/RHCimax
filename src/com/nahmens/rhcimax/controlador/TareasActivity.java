@@ -38,6 +38,9 @@ public class TareasActivity extends ListFragment{
 
 		View view = inflater.inflate(R.layout.activity_tareas, container, false);
 
+		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
+		//tab es el correspondiente.
+		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentTareas);	
 		
 		//Asociamos los valores al combo box o spinner
 		inicializarSpinner(view);

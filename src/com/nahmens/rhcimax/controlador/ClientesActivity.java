@@ -41,7 +41,7 @@ public class ClientesActivity extends ListFragment {
 	 */
 	public static ListaClientesCursorAdapter listCursorAdapterEmpleados;
 	public static ListaClientesCursorAdapter listCursorAdapterEmpresas;
-	
+
 	//Creamos un DataSetObserver para saber cuando los listView de empleados
 	//y empresas han sido modificados
 	//y lo registramos al adaptor con la funcion registerDataSetObserver().
@@ -57,7 +57,11 @@ public class ClientesActivity extends ListFragment {
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.activity_clientes, container, false);
-				
+		
+		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
+		//tab es el correspondiente.
+		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentClientes);		
+		
 		//primero listamos a los empleados donde vamos a inicializar el valor de listCursorAdapterEmpleados
 		listarEmpleados(view);
 
@@ -69,8 +73,8 @@ public class ClientesActivity extends ListFragment {
 
 		//Reviso si me pasaron argumentos: notificacion de cambio de color en cuadro de notificacion
 		//if(mArgumentos!= null){
-			//String color = mArgumentos.getString(AplicacionActivity.tagCuadroColor);
-			//cambiarColorCuadroNotificacion(view);
+		//String color = mArgumentos.getString(AplicacionActivity.tagCuadroColor);
+		//cambiarColorCuadroNotificacion(view);
 		//}
 
 		// Registro del evento OnClick del buttonEmpresa
@@ -116,7 +120,7 @@ public class ClientesActivity extends ListFragment {
 				if(listCursorAdapterEmpleados!=null){
 					listCursorAdapterEmpleados.getFilter().filter(cs);   
 				}
-				
+
 				if(listCursorAdapterEmpresas!=null){
 					listCursorAdapterEmpresas.getFilter().filter(cs); 
 				}
@@ -145,7 +149,7 @@ public class ClientesActivity extends ListFragment {
 	 * @param color Color a ser modificado
 	 */
 	private void cambiarColorCuadroNotificacion(View v) {
-		
+
 		if(v==null){
 			v = getView();
 		}
@@ -161,7 +165,7 @@ public class ClientesActivity extends ListFragment {
 		if (cursorlistEmp != null) {
 			cursorlistEmp.moveToFirst();
 		}
-		
+
 		while(!cursorlistEmp.isAfterLast()){
 
 			if(cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.FECHA_SINCRONIZACION)) == null){
@@ -204,7 +208,7 @@ public class ClientesActivity extends ListFragment {
 				tvRojo.setBackgroundResource(R.drawable.borde_blanco);
 				tvVerde.setBackgroundResource(R.drawable.borde_verde);
 			}
-			
+
 		}*/
 
 		/*if(color.equals(AplicacionActivity.tagRojo)){
@@ -249,8 +253,8 @@ public class ClientesActivity extends ListFragment {
 			//Creamos un array adapter para desplegar cada una de las filas
 			listCursorAdapterEmpresas = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa");
 			lvEmpresas.setAdapter(listCursorAdapterEmpresas);
-			
-			
+
+
 			//registramos el DataSetObserver al adaptador
 			listCursorAdapterEmpresas.registerDataSetObserver(observer);
 
@@ -264,22 +268,22 @@ public class ClientesActivity extends ListFragment {
 					onListItemClick(lvEmpresas,view,position,id);
 				}
 			});
-			
+
 			lvEmpresas.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 						int position, long id) {
-					
+
 					ListView lv = (ListView) arg0;
 					mostrarListaOpciones(lv,position);
 
 					return true;
 				}
 			}); 
-			
-			
+
+
 		}
-		
+
 	}
 
 	/**
@@ -305,19 +309,19 @@ public class ClientesActivity extends ListFragment {
 			listCursorAdapterEmpleados = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado");
 			lvEmpleados.setAdapter(listCursorAdapterEmpleados);
 
-			
+
 			//registramos el DataSetObserver al adaptador
 			listCursorAdapterEmpleados.registerDataSetObserver(observer);
-			
+
 			//OJO: como en el layout la lista que contiene a las empleados es android:id="@id/android:list", 
 			// no hay necesidad de hacer el setOnItemClickListener como se hizo en listarEmpresas. Esto
 			//android lo hace automaticamente.
-			
+
 			lvEmpleados.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 				public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 						int position, long id) {
-					
+
 					ListView lv = (ListView) arg0;
 
 					mostrarListaOpciones(lv, position);
@@ -330,7 +334,7 @@ public class ClientesActivity extends ListFragment {
 			//lvEmpleados.setTextFilterEnabled(true);
 		}
 	}
-	
+
 	/**
 	 * Funcion que muestra opciones al dejar una fila preionada
 	 * @param lv ListView que llamo al evento onLongClick
@@ -342,7 +346,7 @@ public class ClientesActivity extends ListFragment {
 		final int id = cursor.getInt(cursor.getColumnIndex("_id"));
 		final String nombre = cursor.getString(cursor.getColumnIndex("nombre"));
 		String tipoCliente = null;
-		
+
 		if (l.getId() == android.R.id.list) {
 			tipoCliente = "empleado";
 		} else if (l.getId() == R.id.listEmpresas) {
@@ -371,7 +375,7 @@ public class ClientesActivity extends ListFragment {
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-	
+
 	/**
 	 * Funcion que muestra mensaje de alerta ante el intento de eliminacion
 	 * @param v
@@ -418,10 +422,10 @@ public class ClientesActivity extends ListFragment {
 		AlertDialog alertDialog = alert.create();
 		alertDialog.show();
 
-	
+
 
 	}
-	
+
 	/** Funcion que elimina de la BD y del list view empleados o empresas.
 	 * 
 	 * @param id Id del empleado o empresa
@@ -488,7 +492,7 @@ public class ClientesActivity extends ListFragment {
 		}
 
 	}
-	
+
 	/**
 	 * Metodo que se llama cuando se selecciona a un empleado o empresa
 	 * de la lista.
@@ -506,8 +510,8 @@ public class ClientesActivity extends ListFragment {
 		}
 
 	}
-	
-	
+
+
 	/**
 	 * Metodo que se llama al seleccionar un empleado del listView
 	 * @param idEmpleado
@@ -535,7 +539,7 @@ public class ClientesActivity extends ListFragment {
 
 		Bundle arguments = new Bundle();
 		arguments.putString("idEmpresa", idEmpresa);
-		
+
 		DatosEmpresaActivity fragment = new DatosEmpresaActivity();
 
 		//pasamos al fragment el id de la tarea

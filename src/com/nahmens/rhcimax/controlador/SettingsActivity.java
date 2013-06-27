@@ -25,6 +25,10 @@ public class SettingsActivity extends Fragment {
 		View view = inflater.inflate(R.layout.activity_settings, container, false);
 		this.inflater=inflater;
 		
+		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
+		//tab es el correspondiente.
+		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentSettings);	
+		
 		llenarCamposConfiguracion(view);
 
 		// Registro del evento OnClick del buttonGuardar		

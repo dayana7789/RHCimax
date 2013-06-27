@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.TabHost;
+import android.widget.TabWidget;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
@@ -48,7 +49,19 @@ public class AplicacionActivity extends FragmentActivity {
 	final public static String tagVerde = "verde";
 	final public static String tagRojo = "rojo";
 
-	public static TabHost mTabHost;
+	TabHost mTabHost;
+	
+	/*Referencia solo a los tabs*/
+	public static TabWidget mTabsWidget;
+	/* OJO: Numero de orden en que aparecen los tabs. Si el orden de los tabs
+	 * cambia, estos numeros deben cambiar tambien */
+	final public static int posicionTagFragmentClientes = 0;
+	final public static int posicionTagFragmentTareas = 1;
+	final public static int posicionTagFragmentHistoricos = 2;
+	final public static int posicionTagFragmentSettings = 3;
+	final public static int posicionTagFragmentLogout = 4;
+	
+	
 
 	/*Principales fragments de los tabs*/
 	ClientesActivity fragmentClientes;
@@ -70,6 +83,8 @@ public class AplicacionActivity extends FragmentActivity {
 		fragmentSettings = new SettingsActivity();
 		fragmentLogout = new LogoutActivity();
 
+		mTabsWidget =  (TabWidget)findViewById(android.R.id.tabs);
+		
 		mTabHost = (TabHost)findViewById(android.R.id.tabhost);
 		mTabHost.setOnTabChangedListener(listener);
 
