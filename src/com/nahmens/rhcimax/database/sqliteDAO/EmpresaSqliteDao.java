@@ -14,6 +14,7 @@ import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.EmpresaDAO;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
+import com.nahmens.rhcimax.database.modelo.Tarea;
 
 public class EmpresaSqliteDao implements EmpresaDAO{
 
@@ -85,7 +86,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 	@Override
 	public boolean eliminarEmpresa(Context contexto, String idEmpresa) {
 		ConexionBD conexion = new ConexionBD(contexto);
-		boolean eliminado = false;
+		boolean eliminado = true;
 
 		try{
 			conexion.open();
@@ -114,6 +115,21 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 					eliminado = eliminado || elim;
 
 					mEmpleados.moveToNext();
+				}
+			}
+			
+			TareaSqliteDao tareaDao = new TareaSqliteDao();
+			
+			Cursor mTareas = tareaDao.listarTareasPorEmpresa(contexto, idEmpresa);
+			
+			if(mTareas!=null){
+				mTareas.moveToFirst();
+				boolean elim = false;
+				while(!mTareas.isAfterLast()){
+					int idTarea = mTareas.getInt(mTareas.getColumnIndex(Tarea.ID));
+					elim = tareaDao.eliminarTarea(contexto, ""+idTarea);
+					eliminado = eliminado || elim;
+					mTareas.moveToNext();
 				}
 			}
 			

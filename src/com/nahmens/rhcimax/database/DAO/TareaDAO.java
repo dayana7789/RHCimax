@@ -22,7 +22,8 @@ public interface TareaDAO {
 	 * 
 	 */
 	Cursor buscarTareaFilter(Context contexto, String args);
-	
+	Cursor listarTareasPorEmpresa(Context contexto, String idEmpresa);
+	Cursor listarTareasPorEmpleado(Context contexto, String idEmpleado);
 	
 
 }

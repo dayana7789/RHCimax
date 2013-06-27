@@ -209,7 +209,7 @@ public class TareaSqliteDao implements TareaDAO{
 					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
 					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
 					+ "WHERE tarea.status='activo' "
-					 + "ORDER BY " + Tarea.FECHA + " DESC";
+					+ "ORDER BY " + Tarea.FECHA + " DESC";
 
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
@@ -223,6 +223,72 @@ public class TareaSqliteDao implements TareaDAO{
 		}
 
 		return mCursor;	
+	}
+	
+	@Override
+	public Cursor listarTareasPorEmpresa(Context contexto, String idEmpresa) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		String sqlQuery = null;
+		try{
+			conexion.open();
+
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
+					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
+					+ "FROM tarea "
+					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
+					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
+					+ "WHERE tarea.status='activo' "
+					+ "AND tarea." + Tarea.ID_EMPRESA + " = " + idEmpresa 
+					+ " ORDER BY " + Tarea.FECHA + " DESC";
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery, null);
+
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;
+	}
+	
+	@Override
+	public Cursor listarTareasPorEmpleado(Context contexto, String idEmpleado) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		String sqlQuery = null;
+		try{
+			conexion.open();
+
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
+					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
+					+ "FROM tarea "
+					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
+					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
+					+ "WHERE tarea.status='activo' "
+					+ "AND tarea." + Tarea.ID_EMPLEADO + " = " + idEmpleado
+					+ " ORDER BY " + Tarea.FECHA + " DESC";
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery, null);
+
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;
 	}
 
 }
