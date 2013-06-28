@@ -14,6 +14,8 @@ public class Empresa {
 	public final static String ID_USUARIO_MODIFICADOR = "idUsuarioModificador";
 	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	public final static String MODIFICADO = "modificado";
+	public final static String LATITUD = "latitud";
+	public final static String LONGITUD = "longitud";
 	
 	int id;
 	String nombre;
@@ -22,6 +24,8 @@ public class Empresa {
 	String web;
 	String dirFiscal;
 	String dirComercial;
+	Double latitud;
+	Double longitud;
 	String fechaCreacion;
 	int idUsuarioCreador;
 	String fechaModificacion;
@@ -68,6 +72,29 @@ public class Empresa {
 //		this.modificado = modificado;
 	}
 	
+	//utilizado cuando se esta modificando coordenadas geoespaciales
+	public Empresa(int id, String nombre, String telefono, String rif,
+				String web, String dirFiscal, String dirComercial,
+				Double latitud, Double longitud,
+				String fechaModificacion, int idUsuarioModificador) {
+
+			this.id = id;
+			this.nombre = nombre;
+			this.telefono = telefono;
+			this.rif = rif;
+			this.web = web;
+			this.dirFiscal = dirFiscal;
+			this.dirComercial = dirComercial;
+			this.latitud = latitud;
+			this.longitud = longitud;
+//			this.fechaCreacion = fechaCreacion;
+//			this.idUsuarioCreador = idUsuarioCreador;
+			this.fechaModificacion = fechaModificacion;
+			this.idUsuarioModificador = idUsuarioModificador;
+//			this.fechaSincronizacion = fechaSincronizacion;
+//			this.modificado = modificado;
+		}
+	
 	public int getId() {
 		return id;
 	}
@@ -110,6 +137,23 @@ public class Empresa {
 	public void setDirComercial(String dirComercial) {
 		this.dirComercial = dirComercial;
 	}
+	
+	public Double getLatitud() {
+		return latitud;
+	}
+
+	public void setLatitud(Double latitud) {
+		this.latitud = latitud;
+	}
+
+	public Double getLongitud() {
+		return longitud;
+	}
+
+	public void setLongitud(Double longitud) {
+		this.longitud = longitud;
+	}
+
 	public String getFechaCreacion() {
 		return fechaCreacion;
 	}

@@ -1,18 +1,25 @@
 package com.nahmens.rhcimax.controlador;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.nahmens.rhcimax.R;
+import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Usuario;
+import com.nahmens.rhcimax.database.sqliteDAO.CheckinSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.UsuarioSqliteDao;
+import com.nahmens.rhcimax.utils.GPSTracker;
 
 public class LoginActivity extends Activity {
 
@@ -45,6 +52,28 @@ public class LoginActivity extends Activity {
 
 		if(usu!=null){
 
+			//Guardamos el geoposicionamiento
+			GPSTracker gps = new GPSTracker(LoginActivity.this);
+			// check if GPS enabled
+	        if(!gps.canGetLocation()){
+
+	            gps.showSettingsAlert();
+	        }
+	        
+	        double latitud = gps.getLatitude();
+            double longitud = gps.getLongitude();
+            
+            Log.e("Login", "Your Location is - \nLat: " + latitud + "\nLong: " +longitud);
+            
+            String myFormat = "dd/MM/yy hh:mm a"; 
+    		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+    		String fecha = sdf.format(new Date());
+
+            Checkin checkin = new Checkin(latitud, longitud, fecha, null, usu.getId());
+            CheckinSqliteDao checkinDao = new CheckinSqliteDao();
+            long idCheckin = checkinDao.insertarCheckin(getApplicationContext(), checkin);
+			
 			//Guardamos en el archivo de preferencias la sesion del usuario
 			//de manera que pueda ser accedido desde cualquier parte del codigo
 			SharedPreferences prefs = getSharedPreferences("Usuario",Context.MODE_PRIVATE);
@@ -52,6 +81,7 @@ public class LoginActivity extends Activity {
 			editor.putInt(Usuario.ID, usu.getId());
 			editor.putString(Usuario.CORREO, usu.getCorreo());
 			editor.putString(Usuario.ID_ROL, ""+usu.getIdRol());
+			editor.putString("idCheckin", ""+idCheckin);
 			editor.commit();
 
 			final Intent inte = new Intent(this, AplicacionActivity.class);

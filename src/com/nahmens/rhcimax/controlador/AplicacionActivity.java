@@ -439,6 +439,7 @@ public class AplicacionActivity extends FragmentActivity {
 		.setCancelable(false)
 		.setPositiveButton("Si", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
+				LogoutActivity.logout(getApplicationContext());
 				finish();
 			}
 		})
@@ -449,6 +450,8 @@ public class AplicacionActivity extends FragmentActivity {
 		});
 		AlertDialog alert = builder.create();
 		alert.show();
+		
+		
 
 	}
 
