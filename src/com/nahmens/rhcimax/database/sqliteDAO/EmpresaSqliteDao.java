@@ -8,6 +8,7 @@ import java.util.Locale;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -64,6 +65,8 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			values.put(Empresa.RIF, empresa.getRif());
 			values.put(Empresa.DIR_FISCAL, empresa.getDirFiscal());
 			values.put(Empresa.DIR_COMERCIAL, empresa.getDirComercial());
+			values.put(Empresa.LATITUD, empresa.getLatitud());
+			values.put(Empresa.LONGITUD, empresa.getLongitud());
 			values.put(Empresa.FECHA_MODIFICACION,empresa.getFechaModificacion());
 			values.put(Empresa.ID_USUARIO_MODIFICADOR,empresa.getIdUsuarioModificador());
 			values.put(Empresa.MODIFICADO, 1);
@@ -160,14 +163,21 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
 
-				empresa = new Empresa( mCursor.getString(mCursor.getColumnIndex(Empresa.NOMBRE)), 
+				empresa = new Empresa(  mCursor.getInt(mCursor.getColumnIndex(Empresa.ID)),
+						mCursor.getString(mCursor.getColumnIndex(Empresa.NOMBRE)), 
 						mCursor.getString(mCursor.getColumnIndex(Empresa.TELEFONO)), 
 						mCursor.getString(mCursor.getColumnIndex(Empresa.RIF)), 
 						mCursor.getString(mCursor.getColumnIndex(Empresa.WEB)), 
 						mCursor.getString(mCursor.getColumnIndex(Empresa.DIR_FISCAL)), 
 						mCursor.getString(mCursor.getColumnIndex(Empresa.DIR_COMERCIAL)),
+						mCursor.getDouble(mCursor.getColumnIndex(Empresa.LATITUD)),
+						mCursor.getDouble(mCursor.getColumnIndex(Empresa.LONGITUD)),
+						mCursor.getString(mCursor.getColumnIndex(Empresa.FECHA_CREACION)),
 						mCursor.getInt(mCursor.getColumnIndex(Empresa.ID_USUARIO_CREADOR)),
-						mCursor.getInt(mCursor.getColumnIndex(Empresa.ID_USUARIO_MODIFICADOR)));
+						mCursor.getString(mCursor.getColumnIndex(Empresa.FECHA_MODIFICACION)),
+						mCursor.getInt(mCursor.getColumnIndex(Empresa.ID_USUARIO_MODIFICADOR)),
+						mCursor.getString(mCursor.getColumnIndex(Empresa.FECHA_SINCRONIZACION)),
+						mCursor.getInt(mCursor.getColumnIndex(Empresa.MODIFICADO)));
 			}
 
 		}finally{

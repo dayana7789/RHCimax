@@ -95,6 +95,31 @@ public class Empresa {
 //			this.modificado = modificado;
 		}
 	
+	
+	//utilizado cuando se busca
+	public Empresa(int id, String nombre, String telefono, String rif,
+			String web, String dirFiscal, String dirComercial, Double latitud,
+			Double longitud, String fechaCreacion, int idUsuarioCreador,
+			String fechaModificacion, int idUsuarioModificador,
+			String fechaSincronizacion, int modificado) {
+
+		this.id = id;
+		this.nombre = nombre;
+		this.telefono = telefono;
+		this.rif = rif;
+		this.web = web;
+		this.dirFiscal = dirFiscal;
+		this.dirComercial = dirComercial;
+		this.latitud = latitud;
+		this.longitud = longitud;
+		this.fechaCreacion = fechaCreacion;
+		this.idUsuarioCreador = idUsuarioCreador;
+		this.fechaModificacion = fechaModificacion;
+		this.idUsuarioModificador = idUsuarioModificador;
+		this.fechaSincronizacion = fechaSincronizacion;
+		this.modificado = modificado;
+	}
+
 	public int getId() {
 		return id;
 	}

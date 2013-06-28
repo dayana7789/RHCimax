@@ -549,7 +549,7 @@ public class DatosTareaActivity extends Fragment {
 
 			if(finalizada){
 				//creamos un historico de la tarea
-				Historico historico = new Historico("tarea", 0 ,Integer.parseInt(idTarea));
+				Historico historico = new Historico("tarea", 0 , Integer.parseInt(idTarea), 0);
 				HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
 				historicoDao.insertarHistorico(getActivity(), historico);
 			}

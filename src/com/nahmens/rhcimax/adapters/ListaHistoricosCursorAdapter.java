@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
+import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
 import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Tarea;
@@ -26,6 +27,8 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 	private int[] toCotizacion;
 	private String[] fromTarea;
 	private int[] toTarea;
+	private String[] fromVisita;
+	private int[] toVisita;
 
 
 	/**
@@ -33,7 +36,8 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 	 * 					  que tipo de lista estoy iterando.
 	 */
 	public ListaHistoricosCursorAdapter(Context context, int layout, Cursor c,
-			String[] fromCotizacion, int[] toCotizacion, int flags, String[] fromTarea, int[] toTarea) {
+			String[] fromCotizacion, int[] toCotizacion, int flags, String[] fromTarea, int[] toTarea,
+			String[] fromVisita, int[] toVisita) {
 
 		super(context, layout, c, fromCotizacion, toCotizacion, flags);
 
@@ -43,6 +47,8 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 		this.toCotizacion = toCotizacion;
 		this.fromTarea = fromTarea;
 		this.toTarea = toTarea;
+		this.fromVisita = fromVisita;
+		this.toVisita = toVisita;
 
 	}
 
@@ -79,32 +85,47 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 		String tipoRegistro = cursor.getString(cursor.getColumnIndex(Historico.TIPO_REGISTRO));
 
 		TextView campoLetra = (TextView) v.findViewById(R.id.textViewLetra);
-		TextView campoExtra = (TextView) v.findViewById(R.id.textViewExtra);
 		LinearLayout lnCuadrosNotif = (LinearLayout) v.findViewById(R.id.cuadrosNotificacion);
 		ImageView ivCorreo = (ImageView) v.findViewById(R.id.imageViewCorreo);
-		
-		
+		ImageView ivVisita = (ImageView) v.findViewById(R.id.imageViewVisita);
+		ImageView ivAgenda = (ImageView) v.findViewById(R.id.imageViewAgenda);
+
+
 		//Para cada valor de la BD solicitado, lo mostramos en el text view.
-		for (int i=0; i<fromCotizacion.length; i++){
-			
+		for (int i=0; i<fromTarea.length; i++){
+
 			if (tipoRegistro.equals("cotizacion")){
-				
-				columna = fromCotizacion[i];
-				campoLetra.setText("C");
-				campoExtra.setVisibility(View.VISIBLE);
-				lnCuadrosNotif.setVisibility(View.GONE);
-				ivCorreo.setVisibility(View.VISIBLE);
-				
+				if(i<fromCotizacion.length){
+					columna = fromCotizacion[i];
+					campoLetra.setText("C");
+					lnCuadrosNotif.setVisibility(View.GONE);
+					ivCorreo.setVisibility(View.VISIBLE);
+					ivVisita.setVisibility(View.GONE);
+					ivAgenda.setVisibility(View.VISIBLE);
+				}
+
 			}else if(tipoRegistro.equals("tarea")){
-				
+
 				columna = fromTarea[i];
 				campoLetra.setText("T");
-				campoExtra.setVisibility(View.GONE);
 				lnCuadrosNotif.setVisibility(View.VISIBLE);
 				ivCorreo.setVisibility(View.GONE);
+				ivVisita.setVisibility(View.GONE);
+				ivAgenda.setVisibility(View.VISIBLE);
+
+			}else if(tipoRegistro.equals("visita")){
+
+				if(i<fromVisita.length){
+					columna = fromVisita[i];
+					campoLetra.setText("V");
+					lnCuadrosNotif.setVisibility(View.GONE);
+					ivCorreo.setVisibility(View.GONE);
+					ivVisita.setVisibility(View.VISIBLE);
+					ivAgenda.setVisibility(View.GONE);
+				}
 			}
-			
-			
+
+
 			nombreCol = cursor.getColumnIndex(columna);
 			nombre = cursor.getString(nombreCol);
 
@@ -114,36 +135,70 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 
 			if(columna.equals("loginUsuario")){
 				nombre = "Enviado por: " + nombre;
+
 			}else if(columna.equals("nombreTarea")){
 				nombre = "Tarea: " + nombre;
+
+			}else if(columna.equals("loginUsuarioTarea")){
+				nombre = "Creado por: " + nombre;
+
 			}else if(columna.equals("idCotizacion")){
 				nombre = "Cotización número: " + nombre;
+
 			}else if(columna.equals(Cotizacion.FECHA_ENVIO)){
 				nombre = "Enviado: " + nombre;
+
 			}else if(columna.equals(Cotizacion.FECHA_LEIDO)){
 				nombre = "Leído: " + nombre;
+
 			}else if(columna.equals("nombreEmpresaCotizacion") || columna.equals("nombreEmpresaTarea")){
 				nombre = "Empresa: " + nombre;
+
 			}else if(columna.equals("nombreEmpleadoCotizacion") || columna.equals("nombreEmpleadoTarea")){
 				nombreCompleto = nombre;
+
 			}else if(columna.equals("apellidoEmpleadoCotizacion")|| columna.equals("apellidoEmpleadoTarea")){
 				nombreCompleto = nombreCompleto + " " + nombre;
 				nombre = "Contacto: "+nombreCompleto;
+
 			}else if(columna.equals(Tarea.FECHA)){
 				fechaCompleta = "Pautado: " +nombre;
+
 			}else if(columna.equals(Tarea.HORA)){
 				fechaCompleta = fechaCompleta + " " + nombre;
 				nombre = fechaCompleta;
+
 			}else if(columna.equals(Tarea.FECHA_FINALIZACION)){
 				nombre = "Finalizado: " + nombre;
+
+			}else if(columna.equals("nombreEmpresaVisita")){
+				nombre = "Visita: " + nombre;
+
+			}else if(columna.equals("loginUsuarioVisita")){
+				nombre = "Vendedor: " + nombre;
+
+			}else if(columna.equals(Checkin.CHECKIN)){
+				nombre = "Fecha de llegada: " + nombre;
+
+			}else if(columna.equals(Checkin.CHECKOUT)){
+				nombre = "Fecha de retirada: " + nombre;
 			}
 
+
 			if (tipoRegistro.equals("cotizacion")){
-				nombre_text = (TextView) v.findViewById(toCotizacion[i]);
+				if(i<fromCotizacion.length){
+					nombre_text = (TextView) v.findViewById(toCotizacion[i]);
+				}
+
 			}else if(tipoRegistro.equals("tarea")){
 				nombre_text = (TextView) v.findViewById(toTarea[i]);
+
+			}else if(tipoRegistro.equals("visita")){
+				if(i<fromVisita.length){
+					nombre_text = (TextView) v.findViewById(toVisita[i]);
+				}
 			}
-			
+
 			if (nombre_text != null) {
 				nombre_text.setText(nombre);
 			}
@@ -163,7 +218,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 			//mArgumentos.putString("nombre", nombreTarea);
 
 
-			ImageButton buttonSincronizar = (ImageButton)  v.findViewById(R.id.imageButtonSync);
+			/*ImageButton buttonSincronizar = (ImageButton)  v.findViewById(R.id.imageButtonSync);
 			buttonSincronizar.setOnClickListener(new View.OnClickListener() {
 
 				@Override
@@ -171,9 +226,9 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 					//int id = mArgumentos.getInt("id");
 				}
 
-			});
+			});*/
 
-			
+
 		}
 	}
 

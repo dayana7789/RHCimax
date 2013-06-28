@@ -209,6 +209,21 @@ public class Mensaje {
 			mensaje =  "Error: la tarea no pudo ser modificada";
 			layoutWhere = R.layout.toast_layout_mensaje_error;
 
+		}else if(this.tipoMensaje == "error_empresa_no_guardada"){
+
+			mensaje =  "Empresa no existe. Debe guardar los datos básicos de la empresa para poder hacer checkin.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
+		}else if(this.tipoMensaje == "ok_checkin"){
+
+			mensaje =  "Checkin realizado satisfactoriamente.";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
+		}else if(this.tipoMensaje == "error_checkin"){
+
+			mensaje =  "Error: no se pudo hacer chekin a la empresa indicada.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
 		}else{
 			throw new Exception("Mensaje invalido. Revisa el atributo tipoMensaje que utiliza el constructor de la clase Mensaje.");
 		}

@@ -172,8 +172,10 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "tipoRegistro TEXT NOT NULL, "
 															+ "idCotizacion INTEGER, "
 															+ "idTarea INTEGER, "
+															+ "idEmpresa INTEGER, "
 															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
-															+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id), " 
+															+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id), "
+															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id) ON DELETE CASCADE, " 
 															+ "FOREIGN KEY(idTarea) REFERENCES " + TABLA_TAREA + "(_id));";
 	
 	private static final String DATABASE_CREATE_CHECKIN = "CREATE table " + TABLA_CHECKIN + " ("
@@ -182,7 +184,9 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 														+ "latitud REAL, "
 														+ "longitud REAL, "
 														+ "checkout DATETIME, "
+														+ "idEmpresa INTEGER DEFAULT NULL, "
 														+ "idUsuario INTEGER, "
+														+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id) ON DELETE CASCADE, " 
 														+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id));";
 	
 	public DataBaseHelper(Context context) {

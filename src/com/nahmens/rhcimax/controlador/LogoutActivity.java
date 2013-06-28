@@ -38,8 +38,6 @@ public class LogoutActivity extends Fragment {
 
 		SharedPreferences prefs = contexto.getSharedPreferences("Usuario",Context.MODE_PRIVATE);
 		String idCheckin = prefs.getString("idCheckin", ""); 
-		
-		
 
 		CheckinSqliteDao checkinDao = new CheckinSqliteDao();
 		Checkin checkin = checkinDao.buscarCheckin(contexto, idCheckin);

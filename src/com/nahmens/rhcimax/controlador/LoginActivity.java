@@ -70,7 +70,7 @@ public class LoginActivity extends Activity {
 
     		String fecha = sdf.format(new Date());
 
-            Checkin checkin = new Checkin(latitud, longitud, fecha, null, usu.getId());
+            Checkin checkin = new Checkin(latitud, longitud, fecha, null, 0, usu.getId());
             CheckinSqliteDao checkinDao = new CheckinSqliteDao();
             long idCheckin = checkinDao.insertarCheckin(getApplicationContext(), checkin);
 			

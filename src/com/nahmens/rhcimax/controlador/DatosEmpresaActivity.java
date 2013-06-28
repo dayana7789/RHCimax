@@ -19,18 +19,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TableLayout;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaEmpleadosCursorAdapter;
+import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
+import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Usuario;
+import com.nahmens.rhcimax.database.sqliteDAO.CheckinSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
-import com.nahmens.rhcimax.utils.UtilityScroll;
 
 public class DatosEmpresaActivity extends Fragment {
 
@@ -201,7 +203,64 @@ public class DatosEmpresaActivity extends Fragment {
 
 				@Override
 				public void onClick(View v) {
-					Log.e("bCheckin", "me presionaron");
+					
+
+					
+					if(!flagGuardado){
+						Mensaje mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_empresa_no_guardada");
+
+						try {
+							mToast.controlMensajesToast();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}else{
+
+						String idEmpresa = mArgumentos.getString("idEmpresa");
+						//Buscamos el id del checkin en la sesion del usuario para asignarle las coordenadas a la empresa
+						SharedPreferences prefs = getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
+						String idCheckin = prefs.getString("idCheckin", ""); 
+
+						CheckinSqliteDao checkinDao = new CheckinSqliteDao();
+						Checkin checkin = checkinDao.buscarCheckin(getActivity(), idCheckin);
+						checkin.setIdEmpresa(Integer.parseInt(idEmpresa));
+
+						//asignamo al checkin el id de la empresa para mantener historial de las visitas
+						checkinDao.modificarCheckin(getActivity(), checkin);
+						
+						//Buscamos la empresa que le vamos asignar las coordenadas
+						EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+						Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
+						empresa.setLatitud(checkin.getLatitud());
+						empresa.setLongitud(checkin.getLongitud());
+						
+						boolean modificado = empresaDao.modificarEmpresa(getActivity(), empresa);
+						
+						Mensaje mToast = null;
+						LayoutInflater mInflater = getActivity().getLayoutInflater();
+						
+						if(modificado){
+							mToast = new Mensaje(mInflater, getActivity(), "ok_checkin");
+							
+							//registramos la visita como historico
+							Historico historico = new Historico("visita", 0 , 0, Integer.parseInt(idEmpresa));
+							HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
+							historicoDao.insertarHistorico(getActivity(), historico);
+							
+
+						}else{
+							mToast = new Mensaje(mInflater, getActivity(), "error_checkin");
+						}
+						
+						try {
+							mToast.controlMensajesToast();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						
+					}
+					
 				}
 			});
 
@@ -366,6 +425,7 @@ public class DatosEmpresaActivity extends Fragment {
 				Boolean modificado = empresaDao.modificarEmpresa(getActivity(), empresa);
 
 				if(modificado){
+					
 					mToast = new Mensaje(mInflater, getActivity(), "ok_modificar_empresa");
 
 				}else{
