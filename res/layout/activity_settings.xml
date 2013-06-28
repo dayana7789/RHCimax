@@ -2,10 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/ContenedorPrincipal">
 
-    <TextView
+   <!--  <TextView
         android:id="@+id/textViewSettings"
         style="@style/FuenteTitulos"
-        android:text="@string/settings" />
+        android:text="@string/settings" /> -->
 
 	<TextView
 	    style="@style/FuenteSubTitulos"

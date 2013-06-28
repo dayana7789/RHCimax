@@ -76,6 +76,10 @@ public class CheckinSqliteDao implements CheckinDAO{
 	public boolean modificarCheckin(Context contexto, Checkin checkin) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean modificado = false;
+		String idEmp = null;
+		if(checkin.getIdEmpresa()!=0){
+			idEmp = ""+checkin.getIdEmpresa();
+		}
 		
 		try{
 			conexion.open();
@@ -86,7 +90,7 @@ public class CheckinSqliteDao implements CheckinDAO{
 			values.put(Checkin.LONGITUD, checkin.getLongitud());
 			values.put(Checkin.CHECKIN, checkin.getCheckin());
 			values.put(Checkin.CHECKOUT, checkin.getCheckout());
-			values.put(Checkin.ID_EMPRESA, checkin.getIdEmpresa());
+			values.put(Checkin.ID_EMPRESA, idEmp);
 			values.put(Checkin.ID_USUARIO, checkin.getIdUsuario());
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_CHECKIN, values, "_id=?", new String []{Integer.toString(checkin.getId())});

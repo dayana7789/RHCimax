@@ -315,6 +315,8 @@ public class AplicacionActivity extends FragmentActivity {
 	 */
 	public void pushFragments(String tag, Fragment fragment, boolean backStack){
  
+		cambiarBarTitle(tag);
+		
 		FragmentManager manager = getSupportFragmentManager();
 		FragmentTransaction ft = manager.beginTransaction();
 
@@ -326,6 +328,30 @@ public class AplicacionActivity extends FragmentActivity {
 
 		ft.commit();
 	}
+
+
+	private void cambiarBarTitle(String tag) {
+		if(tag.equals(tagFragmentClientes)){
+			setTitle("Clientes RHCimax");
+			
+		}else if(tag.equals(tagFragmentSettings)){
+			setTitle("Settings");
+			
+		}else if(tag.equals(tagFragmentServicios)){
+			setTitle("Servicios");
+			
+		}else if(tag.equals(tagFragmentHistoricos)){
+			setTitle("Históricos");
+			
+		}else if(tag.equals(tagFragmentTareas)){
+			setTitle("Tareas");
+			
+		}else{
+			setTitle("RHCimax");
+		}
+
+	}
+
 
 
 	/**

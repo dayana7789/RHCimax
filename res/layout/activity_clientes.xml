@@ -3,60 +3,69 @@
     style="@style/ContenedorPrincipal"
     tools:context=".ClientesActivity" >
 
-    <TextView
+  <!--   <TextView
         android:id="@+id/textViewClientesRHCimax"
         style="@style/FuenteTitulos"
-        android:text="@string/clientesRHClimax" />
+        android:text="@string/clientesRHClimax" /> -->
 
-    <TableLayout
-        android:layout_width="match_parent"
+	<HorizontalScrollView 
+	    android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#9D9B9B"
-        android:stretchColumns="0,1,2,3" >
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            tools:ignore="UselessParent" >
-
-            <Button
-                android:id="@+id/buttonSincClient"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:text="@string/actualizar" />
-
-            <LinearLayout
-                android:layout_gravity="center"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:id="@+id/avisoVerde"
-                    style="@style/CuadroNotificacion"
-                    android:textIsSelectable="false"
-                    android:background="@drawable/borde_blanco"/>
-
-
-                <TextView
-                    android:id="@+id/avisoRojo"
-                    style="@style/CuadroNotificacion"
-                    android:textIsSelectable="false"
-                    android:background="@drawable/borde_blanco"/>
-                
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/buttonEmpresa"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:text="@string/empresa" />
+        android:fillViewport="true"
+        android:scrollbars="horizontal">
             
-            <Button
-                android:id="@+id/buttonCliente"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:text="@string/empleado" />
-        </TableRow>
-    </TableLayout>
+	    <TableLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="#9D9B9B"
+	        android:layout_gravity="fill_horizontal"
+	        android:scrollbars="horizontal"
+	        android:stretchColumns="0,1,2,3" >
+	
+	        <TableRow
+	            android:layout_width="match_parent"
+	            android:layout_height="50dp"
+	            tools:ignore="UselessParent" >
+	
+	            <Button
+	                android:id="@+id/buttonSincClient"
+	                android:layout_width="match_parent"
+	                android:layout_height="35dp"
+	                android:text="@string/actualizar" />
+	
+	            <LinearLayout
+	                android:layout_gravity="center"
+	                android:orientation="horizontal" >
+	
+	                <TextView
+	                    android:id="@+id/avisoVerde"
+	                    style="@style/CuadroNotificacion"
+	                    android:textIsSelectable="false"
+	                    android:background="@drawable/borde_blanco"/>
+	
+	
+	                <TextView
+	                    android:id="@+id/avisoRojo"
+	                    style="@style/CuadroNotificacion"
+	                    android:textIsSelectable="false"
+	                    android:background="@drawable/borde_blanco"/>
+	                
+	            </LinearLayout>
+	
+	            <Button
+	                android:id="@+id/buttonEmpresa"
+	                android:layout_width="match_parent"
+	                android:layout_height="35dp"
+	                android:text="@string/empresa" />
+	            
+	            <Button
+	                android:id="@+id/buttonCliente"
+	                android:layout_width="match_parent"
+	                android:layout_height="35dp"
+	                android:text="@string/empleado" />
+	        </TableRow>
+	    </TableLayout>
+    </HorizontalScrollView>
 
     <EditText
         android:id="@+id/editTextBuscar"
