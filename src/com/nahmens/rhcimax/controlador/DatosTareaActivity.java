@@ -31,10 +31,12 @@ import com.nahmens.rhcimax.adapters.AutocompleteEmpleadoCursorAdapter;
 import com.nahmens.rhcimax.adapters.AutocompleteEmpresaCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
+import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.InstantAutoComplete;
@@ -68,7 +70,7 @@ public class DatosTareaActivity extends Fragment {
 		// TODO Auto-generated method stub
 
 		final View view = inflater.inflate(R.layout.activity_datos_tarea, container, false);
-		
+
 		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
 		//tab es el correspondiente.
 		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentTareas);	
@@ -444,7 +446,7 @@ public class DatosTareaActivity extends Fragment {
 		boolean finalizada = cbFinalizada.isChecked();
 		String fechaFinalizacion = null;
 
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",Locale.getDefault());
+		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm a",Locale.getDefault());
 
 		if(finalizada){
 			fechaFinalizacion = dateFormat.format(new Date());
@@ -540,6 +542,16 @@ public class DatosTareaActivity extends Fragment {
 					mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_ingreso_tarea");
 					flagGuardado = false;
 				}
+				
+				idTarea = ""+idFilaInsertada;
+			}
+
+
+			if(finalizada){
+				//creamos un historico de la tarea
+				Historico historico = new Historico("tarea", 0 ,Integer.parseInt(idTarea));
+				HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
+				historicoDao.insertarHistorico(getActivity(), historico);
 			}
 
 		}else{

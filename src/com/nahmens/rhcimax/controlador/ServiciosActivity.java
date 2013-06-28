@@ -6,7 +6,6 @@ import java.util.Map;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,22 +13,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.TableRow.LayoutParams;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
+import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Servicio;
 import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.CotizacionSqliteDao;
@@ -37,11 +32,10 @@ import com.nahmens.rhcimax.database.sqliteDAO.Cotizacion_ServicioSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.Empleado_CotizacionSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.ServicioSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
-import com.nahmens.rhcimax.utils.InstantAutoComplete;
 import com.nahmens.rhcimax.utils.Tripleta;
-import com.nahmens.rhcimax.utils.UtilityScroll;
 
 public class ServiciosActivity extends Fragment {
 
@@ -264,6 +258,12 @@ public class ServiciosActivity extends Fragment {
 
 							//finalmente.. si no errores de ningun tipo..
 						}else{
+							
+							//creamos un historico de la cotizacion
+							int idCot = (int)idCotizacion;
+							Historico historico = new Historico("cotizacion", idCot , 0);
+							HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
+							historicoDao.insertarHistorico(getActivity(), historico);
 
 							mToast = new Mensaje(inflater, getActivity(), "ok_creacion_cotizacion");
 							try {

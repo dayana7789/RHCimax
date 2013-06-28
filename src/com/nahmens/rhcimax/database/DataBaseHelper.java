@@ -28,6 +28,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	public static final String TABLA_COTIZACION_SERVICIO = "cotizacion_servicio";
 	public static final String TABLA_CONFIGURACION= "configuracion";
 	public static final String TABLA_TAREA= "tarea";
+	public static final String TABLA_HISTORICO= "historico";
 
 	/*Creacion de tablas*/
 	private static final String DATABASE_CREATE_ROL = "CREATE table " + TABLA_ROL + " ("
@@ -163,6 +164,15 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 													  + "FOREIGN KEY(idEmpleado) REFERENCES " + TABLA_EMPLEADO + "(_id) ON DELETE CASCADE);";
 	
 	
+	private static final String DATABASE_CREATE_HISTORICO = "CREATE table " + TABLA_HISTORICO + " ("
+															+ "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+															+ "tipoRegistro TEXT NOT NULL, "
+															+ "idCotizacion INTEGER, "
+															+ "idTarea INTEGER, "
+															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
+															+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id), " 
+															+ "FOREIGN KEY(idTarea) REFERENCES " + TABLA_TAREA + "(_id));";
+	
 	public DataBaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -182,6 +192,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL(DATABASE_CREATE_COTIZACION_SERVICIO);
 		database.execSQL(DATABASE_CREATE_CONFIGURACION);
 		database.execSQL(DATABASE_CREATE_TAREA);
+		database.execSQL(DATABASE_CREATE_HISTORICO);
 
 		this.insertarConfiguracion(database);
 		this.insertarRegistros(database);
@@ -209,6 +220,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL("DROP TABLE IF EXISTS "+TABLA_SERVICIO);
 		database.execSQL("DROP TABLE IF EXISTS "+TABLA_CONFIGURACION);
 		database.execSQL("DROP TABLE IF EXISTS "+TABLA_TAREA);
+		database.execSQL("DROP TABLE IF EXISTS "+TABLA_HISTORICO);
 		onCreate(database);
 
 	}

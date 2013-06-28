@@ -3,14 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:stretchColumns="1"
-    tools:ignore="UselessParent" >
+    android:descendantFocusability="blocksDescendants" >
         
 	<TableRow
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		tools:ignore="UselessParent" >
+		android:layout_marginBottom="10dp"
+		android:layout_marginTop="10dp" >
 		
 	    <LinearLayout 
+	        android:layout_gravity="center"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:orientation="horizontal">
@@ -18,11 +20,12 @@
 			<TextView
 			    android:id="@+id/textViewLetra"
 			    android:textIsSelectable="false"
+			    android:textSize="20sp"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"/>
 					
 			<LinearLayout 
-				android:gravity="center_horizontal"
+			    android:gravity="center_horizontal"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:orientation="vertical">
@@ -33,11 +36,20 @@
 				     android:layout_height="wrap_content"
 				     android:contentDescription="@string/historicos"
 				     android:src="@android:drawable/ic_menu_agenda" />
+				
+				<ImageView
+				    android:id="@+id/imageViewCorreo"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:src="@android:drawable/sym_action_email" 
+				    android:contentDescription="@string/email"/>
 			
 				<LinearLayout 
+				    android:id="@+id/cuadrosNotificacion"
 				    android:orientation="horizontal"
 				    android:layout_width="wrap_content"
-				  	android:layout_height="wrap_content">
+				  	android:layout_height="wrap_content"
+				  	android:visibility="gone">
 				        
 					<TextView
 			            android:id="@+id/avisoVerdeFilaHist"
@@ -56,14 +68,17 @@
 		</LinearLayout>
 		
 		<LinearLayout 
-			android:gravity="center_horizontal"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:orientation="vertical">
+			android:layout_marginLeft="20dp"
+		   	android:layout_marginRight="20dp"
+			android:orientation="vertical"
+			android:gravity="left|center_vertical">
 			
 		    <TextView
 				android:id="@+id/textViewTitulo"
-				android:textIsSelectable="true"
+				android:textIsSelectable="false"
+				android:textStyle="bold"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"/>
 		    
@@ -75,7 +90,8 @@
 		    
 		    <TableLayout
 			    android:layout_width="match_parent"
-			    android:layout_height="wrap_content">
+			    android:layout_height="wrap_content"
+			    android:stretchColumns="0,1">
         
 				<TableRow
 					android:layout_width="match_parent"
@@ -120,14 +136,14 @@
 			android:layout_height="wrap_content">
 
 			<ImageButton
-				android:id="@+id/imageButtonSyncHist"
+				android:id="@+id/imageButtonSync"
 			    android:layout_width="wrap_content"
 			    android:layout_height="match_parent"
 			    android:src="@android:drawable/stat_notify_sync"
 			    tools:ignore="ContentDescription" />
 			
 			 <ImageButton
-			    android:id="@+id/imageButtonVerHist"
+			    android:id="@+id/imageButtonVer"
 			    android:layout_width="wrap_content"
 			    android:layout_height="match_parent"
 			    android:src="@android:drawable/ic_menu_view"

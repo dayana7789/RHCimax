@@ -33,6 +33,25 @@ public class CotizacionSqliteDao implements CotizacionDAO{
 
 		return value;
 	}
-	
 
+	@Override
+	public boolean eliminarCotizacion(Context contexto, String idCotizacion) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean eliminado = false;
+
+		try{
+			conexion.open();
+
+			long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_COTIZACION, Cotizacion.ID+"=?", new String[]{idCotizacion});
+
+			if(value!=0){
+				eliminado = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return eliminado;
+	}
 }
