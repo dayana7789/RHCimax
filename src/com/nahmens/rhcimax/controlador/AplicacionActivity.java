@@ -1,9 +1,17 @@
 package com.nahmens.rhcimax.controlador;
 
 import java.util.HashMap;
+import java.util.List;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,7 +28,6 @@ import android.widget.TabWidget;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
-//import com.nahmens.rhcimax.controlador.ClientesActivity.OnClienteSelectedListener;
 import com.nahmens.rhcimax.utils.Tripleta;
 
 /*
@@ -49,7 +56,7 @@ public class AplicacionActivity extends FragmentActivity {
 	final public static String tagRojo = "rojo";
 
 	TabHost mTabHost;
-	
+
 	/*Referencia solo a los tabs*/
 	public static TabWidget mTabsWidget;
 	/* OJO: Numero de orden en que aparecen los tabs. Si el orden de los tabs
@@ -59,8 +66,8 @@ public class AplicacionActivity extends FragmentActivity {
 	final public static int posicionTagFragmentHistoricos = 2;
 	final public static int posicionTagFragmentSettings = 3;
 	final public static int posicionTagFragmentLogout = 4;
-	
-	
+
+
 
 	/*Principales fragments de los tabs*/
 	ClientesActivity fragmentClientes;
@@ -68,6 +75,8 @@ public class AplicacionActivity extends FragmentActivity {
 	TareasActivity fragmentTareas;
 	SettingsActivity fragmentSettings;
 	LogoutActivity fragmentLogout;
+
+	BroadcastReceiver myReceiver;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -83,7 +92,7 @@ public class AplicacionActivity extends FragmentActivity {
 		fragmentLogout = new LogoutActivity();
 
 		mTabsWidget =  (TabWidget)findViewById(android.R.id.tabs);
-		
+
 		mTabHost = (TabHost)findViewById(android.R.id.tabhost);
 		mTabHost.setOnTabChangedListener(listener);
 
@@ -92,6 +101,8 @@ public class AplicacionActivity extends FragmentActivity {
 		mTabHost.setup();
 
 		inicializarTab();
+
+		registrarInactividad();
 
 		/*
 		 * Cuando cambio la orientacion del tablet, el oncreate
@@ -112,14 +123,13 @@ public class AplicacionActivity extends FragmentActivity {
 				if(ListaServiciosCursorAdapter.getServiciosSeleccionados()!=null){
 					ListaServiciosCursorAdapter.setServiciosSeleccionados((HashMap<Integer, Tripleta>) savedInstanceState.getSerializable("serviciosSelected"));
 				}
-				
+
 				if(ListaCorreosCursorAdapter.getCorreosSeleccionados()!=null){
 					ListaCorreosCursorAdapter.setCorreosSeleccionados((HashMap<Integer, Boolean>) savedInstanceState.getSerializable("correosSelected"));
 				}
 			}
 		}
 	}
-
 
 
 	/**
@@ -144,7 +154,7 @@ public class AplicacionActivity extends FragmentActivity {
 			if(ListaServiciosCursorAdapter.getServiciosSeleccionados()!=null){
 				bundle.putSerializable("serviciosSelected", ListaServiciosCursorAdapter.getServiciosSeleccionados());
 			}
-			
+
 			if(ListaCorreosCursorAdapter.getCorreosSeleccionados()!=null){
 				bundle.putSerializable("correosSelected", ListaCorreosCursorAdapter.getCorreosSeleccionados());
 			}
@@ -188,7 +198,7 @@ public class AplicacionActivity extends FragmentActivity {
 		});
 		spec.setIndicator(" Clientes ", res.getDrawable(R.drawable.clientes));
 		mTabHost.addTab(spec);
-		
+
 		spec = mTabHost.newTabSpec(tagFragmentTareas);
 		spec.setContent(new TabHost.TabContentFactory() {
 			public View createTabContent(String tag) {
@@ -206,7 +216,7 @@ public class AplicacionActivity extends FragmentActivity {
 		});
 		spec.setIndicator(" Histórico ",res.getDrawable(R.drawable.historicos));
 		mTabHost.addTab(spec);
-		
+
 		spec = mTabHost.newTabSpec(tagFragmentSettings);
 		spec.setContent(new TabHost.TabContentFactory() {
 			public View createTabContent(String tag) {
@@ -261,7 +271,7 @@ public class AplicacionActivity extends FragmentActivity {
 			}else if(tabId.equals(tagFragmentTareas)){
 
 				pushFragments(tagFragmentTareas, fragmentTareas, false);
-				
+
 				//Creamos listener para cuando hagamos click sobre el tab previamente seleccionado
 				//nos lleve al fragmento correspondiente.
 				mTabHost.getCurrentTabView().setOnTouchListener(new OnTouchListener(){
@@ -314,9 +324,9 @@ public class AplicacionActivity extends FragmentActivity {
 	 *                   al presionar back button
 	 */
 	public void pushFragments(String tag, Fragment fragment, boolean backStack){
- 
+
 		cambiarBarTitle(tag);
-		
+
 		FragmentManager manager = getSupportFragmentManager();
 		FragmentTransaction ft = manager.beginTransaction();
 
@@ -333,19 +343,19 @@ public class AplicacionActivity extends FragmentActivity {
 	private void cambiarBarTitle(String tag) {
 		if(tag.equals(tagFragmentClientes)){
 			setTitle("Clientes RHCimax");
-			
+
 		}else if(tag.equals(tagFragmentSettings)){
 			setTitle("Settings");
-			
+
 		}else if(tag.equals(tagFragmentServicios)){
 			setTitle("Servicios");
-			
+
 		}else if(tag.equals(tagFragmentHistoricos)){
 			setTitle("Históricos");
-			
+
 		}else if(tag.equals(tagFragmentTareas)){
 			setTitle("Tareas");
-			
+
 		}else{
 			setTitle("RHCimax");
 		}
@@ -476,10 +486,82 @@ public class AplicacionActivity extends FragmentActivity {
 		});
 		AlertDialog alert = builder.create();
 		alert.show();
-		
-		
 
 	}
+
+	/*@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		isApplicationSentToBackground(getApplicationContext());
+	}*/
+
+	/**
+	 * Checks if the application is being sent in the background (i.e behind
+	 * another application's Activity).
+	 * 
+	 * @param context the context
+	 * @return <code>true</code> if another application will be above this one.
+	 */
+	/*public static boolean isApplicationSentToBackground(final Context context) {
+
+
+		Log.e("inactivo","inacitov");
+
+
+		ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+		List<RunningTaskInfo> tasks = am.getRunningTasks(1);
+		if (!tasks.isEmpty()) {
+			ComponentName topActivity = tasks.get(0).topActivity;
+			if (!topActivity.getPackageName().equals(context.getPackageName())) {
+				return true;
+			}
+		}
+
+		return false;
+	}*/
+	
+	
+
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unregisterReceiver(myReceiver);
+		Log.e("me llamaron","lamaron");
+	}
+
+	/**
+	 * Metodo que se llama cuando la pantalla del device se apaga
+	 * o queda inactivo.
+	 */
+	private void registrarInactividad() {
+		final IntentFilter theFilter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+
+		myReceiver = new BroadcastReceiver(){
+
+			@Override
+			public void onReceive(Context context, Intent intent) {  
+				Log.e("Pantalla inactiva","Registrando logout..");    
+				String action = intent.getAction();
+
+				if(action.equals(Intent.ACTION_SCREEN_OFF)){
+					//registramos el checkout
+					LogoutActivity.logout(getApplicationContext());
+					
+					//matamos la aplicacion
+					finish();
+					
+					//llamamos a loginActivity
+					final Intent inte = new Intent(getApplicationContext(), LoginActivity.class);
+					startActivity(inte);
+				} 
+			}
+
+		};  
+		registerReceiver(myReceiver, theFilter);
+	}
+
 
 	/*@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
