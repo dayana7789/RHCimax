@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filterable;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -86,42 +85,35 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 
 		TextView campoLetra = (TextView) v.findViewById(R.id.textViewLetra);
 		LinearLayout lnCuadrosNotif = (LinearLayout) v.findViewById(R.id.cuadrosNotificacion);
-		ImageView ivCorreo = (ImageView) v.findViewById(R.id.imageViewCorreo);
-		ImageView ivVisita = (ImageView) v.findViewById(R.id.imageViewVisita);
-		ImageView ivAgenda = (ImageView) v.findViewById(R.id.imageViewAgenda);
+		ImageView ivIcono= (ImageView) v.findViewById(R.id.imageViewIcono);
 
 
 		//Para cada valor de la BD solicitado, lo mostramos en el text view.
 		for (int i=0; i<fromTarea.length; i++){
 
 			if (tipoRegistro.equals("cotizacion")){
+				ivIcono.setBackgroundResource(android.R.drawable.sym_action_email);
 				if(i<fromCotizacion.length){
 					columna = fromCotizacion[i];
 					campoLetra.setText("C");
 					lnCuadrosNotif.setVisibility(View.GONE);
-					ivCorreo.setVisibility(View.VISIBLE);
-					ivVisita.setVisibility(View.GONE);
-					ivAgenda.setVisibility(View.VISIBLE);
 				}
 
 			}else if(tipoRegistro.equals("tarea")){
-
+				ivIcono.setBackgroundResource(android.R.drawable.ic_menu_agenda);
 				columna = fromTarea[i];
 				campoLetra.setText("T");
 				lnCuadrosNotif.setVisibility(View.VISIBLE);
-				ivCorreo.setVisibility(View.GONE);
-				ivVisita.setVisibility(View.GONE);
-				ivAgenda.setVisibility(View.VISIBLE);
+
 
 			}else if(tipoRegistro.equals("visita")){
+				ivIcono.setBackgroundResource(android.R.drawable.ic_menu_compass);
 
 				if(i<fromVisita.length){
 					columna = fromVisita[i];
 					campoLetra.setText("V");
 					lnCuadrosNotif.setVisibility(View.GONE);
-					ivCorreo.setVisibility(View.GONE);
-					ivVisita.setVisibility(View.VISIBLE);
-					ivAgenda.setVisibility(View.GONE);
+
 				}
 			}
 
@@ -142,7 +134,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 			}else if(columna.equals("loginUsuarioTarea")){
 				nombre = "Creado por: " + nombre;
 
-			}else if(columna.equals("idCotizacion")){
+			}else if(columna.equals("cotizacionId")){
 				nombre = "Cotización número: " + nombre;
 
 			}else if(columna.equals(Cotizacion.FECHA_ENVIO)){

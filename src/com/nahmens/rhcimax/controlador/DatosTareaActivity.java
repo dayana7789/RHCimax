@@ -409,7 +409,7 @@ public class DatosTareaActivity extends Fragment {
 	 * @param inicializar Indica si queremos obtener la fecha actual
 	 */
 	private void setFecha(boolean inicializar) {
-		String myFormat = "dd/MM/yy"; //In which you need put here
+		String myFormat = "dd/MM/yyyy"; //In which you need put here
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
 		if(inicializar){
@@ -547,13 +547,6 @@ public class DatosTareaActivity extends Fragment {
 			}
 
 
-			if(finalizada){
-				//creamos un historico de la tarea
-				Historico historico = new Historico("tarea", 0 , Integer.parseInt(idTarea), 0);
-				HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
-				historicoDao.insertarHistorico(getActivity(), historico);
-			}
-
 		}else{
 			mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_formulario");
 		}
@@ -562,6 +555,21 @@ public class DatosTareaActivity extends Fragment {
 			mToast.controlMensajesToast();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		
+		if(finalizada){
+			//creamos un historico de la tarea
+			Historico historico = new Historico("tarea", 0 , Integer.parseInt(idTarea), 0);
+			HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
+			historicoDao.insertarHistorico(getActivity(), historico);
+			
+			//y lo enviamos a la pagina de historicos
+			HistoricosActivity fragment = new HistoricosActivity();
+
+			getFragmentManager().beginTransaction()
+			.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentHistoricos)
+			.addToBackStack(null)
+			.commit();
 		}
 	}
 }

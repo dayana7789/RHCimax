@@ -20,7 +20,7 @@
         android:theme="@style/AppTheme" 
         >
         
-        <service android:name=".Autologout"></service>
+        <service android:name=".Logout"></service>
         <activity
             android:name="com.nahmens.rhcimax.controlador.LoginActivity"
             android:label="@string/app_name" >

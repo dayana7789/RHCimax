@@ -170,7 +170,7 @@ public class TareaSqliteDao implements TareaDAO{
 					+ "FROM tarea "
 					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
 					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
-					+ "WHERE tarea.status='activo' "
+					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
 					 + "ORDER BY " + Tarea.FECHA + " DESC";
 
 
@@ -208,7 +208,7 @@ public class TareaSqliteDao implements TareaDAO{
 					+ "FROM tarea "
 					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
 					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
-					+ "WHERE tarea.status='activo' "
+					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
 					+ "ORDER BY " + Tarea.FECHA + " DESC";
 
 
@@ -240,7 +240,7 @@ public class TareaSqliteDao implements TareaDAO{
 					+ "FROM tarea "
 					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
 					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
-					+ "WHERE tarea.status='activo' "
+					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
 					+ "AND tarea." + Tarea.ID_EMPRESA + " = " + idEmpresa 
 					+ " ORDER BY " + Tarea.FECHA + " DESC";
 
@@ -273,7 +273,7 @@ public class TareaSqliteDao implements TareaDAO{
 					+ "FROM tarea "
 					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
 					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
-					+ "WHERE tarea.status='activo' "
+					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
 					+ "AND tarea." + Tarea.ID_EMPLEADO + " = " + idEmpleado
 					+ " ORDER BY " + Tarea.FECHA + " DESC";
 

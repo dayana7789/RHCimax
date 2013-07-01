@@ -9,6 +9,7 @@ public class Cotizacion {
 	public final static String ID_USUARIO = "idUsuario";
 	public final static String ID_EMPRESA = "idEmpresa";
 	public final static String DESCRIPCION = "descripcion";
+	public final static String FECHA_CREACION = "fechaCreacion";
 	
 	int id;
 	String fechaEnvio;

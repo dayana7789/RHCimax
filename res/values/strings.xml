@@ -96,6 +96,7 @@
     <string name="nueva_tarea">Nueva tarea</string>
     <string name="checkin">Check-In</string>
     <string name="eliminar">Eliminar</string>
+    <string name="nota_tarea">Nota: Si marca la tarea como finalizada, luego no podrá modificarla.</string>
     
     
 	<!-- \u0020 = espacios en blanco -->

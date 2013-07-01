@@ -67,15 +67,15 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 			conexion.open();
 			
 			sqlQuery  = "SELECT ";
-			sqlQuery  += "historico." + Historico.ID + ", historico."+Historico.TIPO_REGISTRO + ", historico." + Historico.FECHA_CREACION; 
+			sqlQuery  += "historico." + Historico.ID + " as historicoId, historico."+Historico.TIPO_REGISTRO + ", historico." + Historico.FECHA_CREACION + " as historicoFechaCreacion"; 
 			sqlQuery  += ", empresaVisita." + Empresa.NOMBRE + " as nombreEmpresaVisita";
 			sqlQuery  += ", checkin."+Checkin.CHECKIN + ", checkin." + Checkin.CHECKOUT; 
 			sqlQuery  += ", usuarioVisita."+Usuario.LOGIN + " as loginUsuarioVisita";
-			sqlQuery  += ", cotizacion."+Cotizacion.ID+" as idCotizacion, cotizacion."+Cotizacion.FECHA_ENVIO+", cotizacion."+Cotizacion.FECHA_LEIDO;
+			sqlQuery  += ", cotizacion."+Cotizacion.ID+" as cotizacionId, cotizacion."+Cotizacion.FECHA_ENVIO+", cotizacion."+Cotizacion.FECHA_LEIDO + ", cotizacion."+Cotizacion.DESCRIPCION + " as cotizacionDescripcion, cotizacion." + Cotizacion.FECHA_CREACION + " as cotizacionFechaCreacion";
 			sqlQuery  += ", usuario."+Usuario.LOGIN+" as loginUsuario";
 			sqlQuery  += ", empresaCotizacion."+Empresa.ID+", empresaCotizacion."+Empresa.NOMBRE + " as nombreEmpresaCotizacion";
 			sqlQuery  += ", empleadoCotizacion."+Empleado.ID+", empleadoCotizacion."+Empleado.NOMBRE + " as nombreEmpleadoCotizacion" + ", empleadoCotizacion."+Empleado.APELLIDO+" as apellidoEmpleadoCotizacion";
-			sqlQuery  += ", tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+" as nombreTarea, tarea."+Tarea.FECHA+", tarea."+Tarea.HORA + ", tarea."+Tarea.FECHA_FINALIZACION;
+			sqlQuery  += ", tarea."+Tarea.ID+" as tareaId, tarea."+Tarea.NOMBRE+" as nombreTarea, tarea."+Tarea.FECHA+", tarea."+Tarea.HORA + ", tarea."+Tarea.FECHA_FINALIZACION+ ", tarea."+Tarea.DESCRIPCION + " as tareaDescripcion, tarea."+Tarea.FECHA_CREACION+" as tareaFechaCreacion";
 			sqlQuery  += ", usuarioTarea."+Usuario.LOGIN + " as loginUsuarioTarea";
 			sqlQuery  += ", empresaTarea."+Empresa.ID+", empresaTarea."+Empresa.NOMBRE + " as nombreEmpresaTarea";
 			sqlQuery  += ", empleadoTarea."+Empleado.ID+", empleadoTarea."+Empleado.NOMBRE + " as nombreEmpleadoTarea"+", empleadoTarea."+Empleado.APELLIDO + " as apellidoEmpleadoTarea";			

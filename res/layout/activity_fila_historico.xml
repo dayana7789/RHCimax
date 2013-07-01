@@ -32,25 +32,11 @@
 				android:orientation="vertical">
 
 				<ImageView
-				     android:id="@+id/imageViewAgenda"
+				     android:id="@+id/imageViewIcono"
 				     android:layout_width="wrap_content"
 				     android:layout_height="wrap_content"
-				     android:contentDescription="@string/historicos"
-				     android:src="@android:drawable/ic_menu_agenda" />
-				
-				<ImageView
-			        android:id="@+id/imageViewVisita"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:contentDescription="@string/historicos"
-			        android:src="@android:drawable/ic_menu_compass" />
-				
-				<ImageView
-				    android:id="@+id/imageViewCorreo"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:src="@android:drawable/sym_action_email" 
-				    android:contentDescription="@string/email"/>
+				     android:contentDescription="@string/historicos" />
+
 			
 				<LinearLayout 
 				    android:id="@+id/cuadrosNotificacion"
@@ -92,7 +78,7 @@
 		    
 		    <TextView
 		        android:textIsSelectable="false"
-				android:id="@+id/textViewExtra"
+				android:id="@+id/textViewUsuario"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"/>
 		    
@@ -107,13 +93,13 @@
 			        
 				    <TextView
 						android:id="@+id/textViewFil1Col1"
-						android:textIsSelectable="true"
+						android:textIsSelectable="false"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"/>
 				    
 				    <TextView
 						android:id="@+id/textViewFil1Col2"
-						android:textIsSelectable="true"
+						android:textIsSelectable="false"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"/>
 
@@ -124,13 +110,13 @@
 				    
 			        <TextView
 						android:id="@+id/textViewFil2Col1"
-						android:textIsSelectable="true"
+						android:textIsSelectable="false"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"/>
 				    
 				    <TextView
 						android:id="@+id/textViewFil2Col2"
-						android:textIsSelectable="true"
+						android:textIsSelectable="false"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"/>
 

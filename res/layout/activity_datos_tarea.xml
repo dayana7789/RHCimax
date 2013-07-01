@@ -162,6 +162,10 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:text="@string/marcar_como_finalizado"/>
+		    
+		    <TextView
+				style="@style/FuenteObservacion"
+				android:text="@string/nota_tarea"/>
 
 		</LinearLayout>
 	</ScrollView>
