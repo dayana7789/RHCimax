@@ -1,152 +1,308 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
+    
+    <LinearLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        
+    
 
-	<TableLayout 
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:shrinkColumns="1" >
+	    <TableLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:shrinkColumns="1" >
+	
+	        <TableRow>
+	
+	            <ImageView
+	                android:id="@+id/imageViewIcono"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_gravity="right"
+	                android:contentDescription="@string/historicos" />
+	
+	            <LinearLayout
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:orientation="vertical" >
+	
+	                <TextView
+	                    android:id="@+id/textViewTipoHistorico"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginLeft="10dp"
+	                    android:gravity="right"
+	                    android:textIsSelectable="true"
+	                    android:textStyle="bold" />
+	
+	                <TextView
+	                    android:id="@+id/textViewTitulo"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:layout_marginLeft="10dp"
+	                    android:textIsSelectable="true" />
+	            </LinearLayout>
+	        </TableRow>
+	
+	        <TableRow>
+	
+	            <TextView
+	                android:id="@+id/textViewFechaCreacionNombre"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:gravity="right"
+	                android:textIsSelectable="true"
+	                android:textStyle="bold" />
+	
+	            <TextView
+	                android:id="@+id/textViewFechaCreacion"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="10dp"
+	                android:textIsSelectable="true" />
+	        </TableRow>
+	
+	        <TableRow android:layout_marginBottom="15dp" >
+	
+	            <TextView
+	                android:id="@+id/textViewUsuarioNombre"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:gravity="right"
+	                android:textIsSelectable="true"
+	                android:textStyle="bold" />
+	
+	            <TextView
+	                android:id="@+id/textViewUsuario"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="10dp"
+	                android:textIsSelectable="true" />
+	        </TableRow>
+	
+	        <TableRow>
+	
+	            <TextView
+	                android:id="@+id/textViewEmpresaNombre"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:gravity="right"
+	                android:textIsSelectable="true"
+	                android:textStyle="bold" />
+	
+	            <TextView
+	                android:id="@+id/textViewEmpresa"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="10dp"
+	                android:textIsSelectable="true" />
+	        </TableRow>
+	
+	        <TableRow>
+	
+	            <TextView
+	                android:id="@+id/textViewContactoNombre"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:gravity="right"
+	                android:textIsSelectable="true"
+	                android:textStyle="bold" />
+	
+	            <TextView
+	                android:id="@+id/textViewContacto"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="10dp"
+	                android:textIsSelectable="true" />
+	        </TableRow>
+	
+	        <TableRow>
+	
+	            <TextView
+	                android:id="@+id/textViewFecha1Nombre"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:gravity="right"
+	                android:textIsSelectable="true"
+	                android:textStyle="bold" />
+	
+	            <TextView
+	                android:id="@+id/textViewFecha1"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="10dp"
+	                android:textIsSelectable="true" />
+	        </TableRow>
+	
+	        <TableRow>
+	
+	            <TextView
+	                android:id="@+id/textViewFecha2Nombre"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:gravity="right"
+	                android:textIsSelectable="true"
+	                android:textStyle="bold" />
+	
+	            <TextView
+	                android:id="@+id/textViewFecha2"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="10dp"
+	                android:textIsSelectable="true" />
+	        </TableRow>
+	
+	        <TableRow>
+	
+	            <TextView
+	                android:id="@+id/textViewDescripcionNombre"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:gravity="right"
+	                android:textIsSelectable="true"
+	                android:textStyle="bold" />
+	
+	            <TextView
+	                android:id="@+id/textViewDescripcion"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="10dp"
+	                android:textIsSelectable="true" />
+	        </TableRow>
+	
+	        <TableRow android:id="@+id/tableRowServiciosDestinatarios" 
+	            android:layout_marginBottom="15dp">
+	
+	            <TextView
+	                android:id="@+id/textViewDestinatariosNombre"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:gravity="right"
+	                android:text="@string/destinatario"
+	                android:textIsSelectable="true"
+	                android:textStyle="bold" />
+	            
+	            <TextView
+	                android:id="@+id/textViewDestinatarios"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="10dp"
+	                android:textIsSelectable="true" />
+
+	        </TableRow>
+
+	    </TableLayout>
+	    
+		<HorizontalScrollView 
+		    android:id="@+id/tablaServicios"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:fillViewport="true"
+		    android:scrollbars="horizontal">
+	        
 			
-	    <TableRow >
-			<ImageView
-				android:id="@+id/imageViewIcono"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:layout_gravity="right"
-			    android:contentDescription="@string/historicos" />
-				    
-			<LinearLayout
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:orientation="vertical" >
-				
-				<TextView
-				    android:id="@+id/textViewTipoHistorico"
-				    android:textIsSelectable="true"
-				    android:layout_marginLeft="10dp"
-				    android:gravity="right"
-				    android:textStyle="bold"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"/>
-				
-				<TextView
-				    android:id="@+id/textViewTitulo"
-				    android:layout_marginLeft="10dp"
-				    android:textIsSelectable="true"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content" />
-			
-			</LinearLayout>
-		</TableRow>
+			<TableLayout
+		    	android:id="@+id/tableLayoutServicios"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginLeft="10dp"
+		        android:textIsSelectable="true" 
+		        android:layout_gravity="fill_horizontal">
 		
-	    <TableRow >
-			<TextView
-			    android:id="@+id/textViewFechaCreacionNombre"
-			    android:textIsSelectable="true"
-			    android:gravity="right"
-			    android:textStyle="bold"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-	       	<TextView
-			    android:id="@+id/textViewFechaCreacion"
-			    android:layout_marginLeft="10dp"
-			    android:textIsSelectable="true"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-		</TableRow>
-		<TableRow  android:layout_marginBottom="15dp">
-			<TextView
-			    android:id="@+id/textViewUsuarioNombre"
-			    android:textIsSelectable="true"
-			    android:gravity="right"
-			    android:textStyle="bold"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-	       	<TextView
-			    android:id="@+id/textViewUsuario"
-			    android:layout_marginLeft="10dp"
-			    android:textIsSelectable="true"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-		</TableRow>
-	
-		<TableRow >
-			<TextView
-			    android:id="@+id/textViewEmpresaNombre"
-			    android:textIsSelectable="true"
-			    android:gravity="right"
-			    android:textStyle="bold"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-	       	<TextView
-			    android:id="@+id/textViewEmpresa"
-			    android:layout_marginLeft="10dp"
-			    android:textIsSelectable="true"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-		</TableRow>
-		<TableRow >
-			<TextView
-			    android:id="@+id/textViewContactoNombre"
-			    android:textIsSelectable="true"
-			    android:gravity="right"
-			    android:textStyle="bold"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-	       	<TextView
-			    android:id="@+id/textViewContacto"
-			    android:layout_marginLeft="10dp"
-			    android:textIsSelectable="true"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-		</TableRow>
-	    <TableRow >
-			<TextView
-			    android:id="@+id/textViewFecha1Nombre"
-			    android:textIsSelectable="true"
-			    android:gravity="right"
-			    android:textStyle="bold"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-	       <TextView
-			    android:id="@+id/textViewFecha1"
-			    android:layout_marginLeft="10dp"
-			    android:textIsSelectable="true"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-	    </TableRow>
-	    <TableRow >
-	        <TextView
-			    android:id="@+id/textViewFecha2Nombre"
-			    android:textIsSelectable="true"
-			    android:gravity="right"
-			    android:textStyle="bold"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-	        <TextView
-			    android:id="@+id/textViewFecha2"
-			    android:layout_marginLeft="10dp"
-			    android:textIsSelectable="true"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-	    </TableRow>
-	    <TableRow >
-	        <TextView
-			    android:id="@+id/textViewDescripcionNombre"
-			    android:textIsSelectable="true"
-			    android:gravity="right"
-			    android:textStyle="bold"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-	        <TextView
-			    android:id="@+id/textViewDescripcion"
-			    android:textIsSelectable="true"
-			    android:layout_marginLeft="10dp"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content" />
-	    </TableRow>
-	
-	</TableLayout>
+		        <TableRow tools:ignore="UselessParent"
+		        	android:background="@android:color/darker_gray">
+		
+		            <TextView
+			            android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dp"
+		                        
+		                android:text="@string/servicio"
+		                android:textIsSelectable="true"
+		                android:textStyle="bold" />
+		
+		            <TextView
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dp"
+		                android:text="@string/cantidad"
+		                android:textIsSelectable="true"
+		                android:textStyle="bold" />
+		            
+		    		<TextView
+		            	android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dp"
+		                android:text="@string/unidad"
+		                android:textIsSelectable="true"
+		                android:textStyle="bold" />
+		
+		            <TextView
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dp"
+		                android:text="@string/descripcion"
+		                android:textIsSelectable="true"
+		                android:textStyle="bold" />
+		
+		            <TextView
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dp"
+		                android:gravity="center"
+		                android:text="@string/inicial"
+		                android:textIsSelectable="true"
+		                android:textStyle="bold" />
+		
+		           <TextView
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:padding="10dp"
+		                android:gravity="center"
+		                android:text="@string/precio"
+		                android:textIsSelectable="true"
+		                android:textStyle="bold" />
+				</TableRow>
+			</TableLayout>
+		</HorizontalScrollView>
+		<TableLayout
+            android:id="@+id/tableLayoutTotal"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center"
+	        android:padding="3dip"
+	        android:layout_marginTop="20dp"
+	        android:stretchColumns="1,3" >
+		
+	        <TableRow
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            tools:ignore="UselessParent" >
+		
+	            <TextView
+	                android:textStyle="bold"
+	                android:text="@string/mensualBs" />
+		
+	            <TextView
+	                android:id="@+id/textViewMensual"
+	                android:layout_marginLeft="10dp"
+	                android:textIsSelectable="true">
+	            </TextView>
+	            
+	            <TextView
+	                android:textStyle="bold"
+	                android:text="@string/totalBs" />
+		
+	            <TextView
+	                android:id="@+id/textViewTotal"
+	                android:layout_marginLeft="10dp"
+	                android:textIsSelectable="true"/>
+		
+	        </TableRow>
+		</TableLayout>
+	</LinearLayout>
 </ScrollView>
-

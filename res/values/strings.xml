@@ -70,7 +70,9 @@
     <string name="enviarA">Enviar a:</string>
     <string name="totalPorServicio">Total por el servicio</string>
     <string name="mensual">Mensual</string>
+    <string name="mensualBs">Mensual (Bs.)</string>
     <string name="total">Total</string>
+    <string name="totalBs">Total (Bs.)</string>
     <string name="ver_servicio">Ver Servicio</string>
     <string name="empresas">Empresas</string>
     <string name="calcular">Calcular</string>
@@ -97,6 +99,13 @@
     <string name="checkin">Check-In</string>
     <string name="eliminar">Eliminar</string>
     <string name="nota_tarea">Nota: Si marca la tarea como finalizada, luego no podrá modificarla.</string>
+    <string name="destinatario">Destinatario</string>
+    <string name="opciones">Opciones</string>
+    <string name="precio">Precio</string>
+    <string name="inicial">Inicial</string>
+    <string name="unidad">Unidad</string>
+    <string name="cantidad">Cantidad</string>
+    <string name="servicio">Servicio</string>
     
     
 	<!-- \u0020 = espacios en blanco -->

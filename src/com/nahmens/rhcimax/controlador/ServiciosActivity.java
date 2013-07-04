@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
+import com.nahmens.rhcimax.database.modelo.Cotizacion_Servicio;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Historico;
@@ -182,7 +183,7 @@ public class ServiciosActivity extends Fragment {
 							}else{
 								medida = 0;
 							}
-
+							
 							if(servicio.getUnidadMedicion().equals("ninguno")){
 
 								//	if(servicio.getPrecio() != 0){
@@ -222,6 +223,8 @@ public class ServiciosActivity extends Fragment {
 
 					//creamos una cotizacion
 					CotizacionSqliteDao cotizacionDao = new CotizacionSqliteDao();
+					
+					
 					long idCotizacion = cotizacionDao.insertarCotizacion(getActivity(), ""+idUsuario, ""+idEmpresa, etDescripcion.getText().toString());
 
 					//creamos un registro en la tabla empleadoCotizacion
@@ -346,21 +349,33 @@ public class ServiciosActivity extends Fragment {
 				private boolean crearCotizacionServicio(long idCotizacion) {
 
 					HashMap<Integer, Tripleta> servSeleccionados = ListaServiciosCursorAdapter.getServiciosSeleccionados();
-					Tripleta par = null;
+					Tripleta tripleta = null;
 					int idServicio = 0;
 					String medida = null;
+					String descripcion = null;
+					double precio = 0;
+					double inicial = 0;
 					long idCotServ = 0;
 					Cotizacion_ServicioSqliteDao cotServDao = new Cotizacion_ServicioSqliteDao();
 					boolean error = false;
+					int idCot = (int) idCotizacion;
 
 					for (Map.Entry<Integer, Tripleta> entry : servSeleccionados.entrySet()) {
-						par = entry.getValue();
+						tripleta = entry.getValue();
 
 						//si este servicio fue seleccionado..
-						if(par.getBooleano()){
+						if(tripleta.getBooleano()==true){
 							idServicio = entry.getKey();
-							medida = par.getMedida();
-							idCotServ = cotServDao.insertar(getActivity(), ""+idServicio, ""+idCotizacion, medida);
+							medida = tripleta.getMedida();
+							
+							if(medida.equals("")){
+								medida = "0";
+							}
+							descripcion = tripleta.getDescripcion();
+							precio = tripleta.getPrecio();
+							inicial = tripleta.getInicial();
+							Cotizacion_Servicio cot_serv = new Cotizacion_Servicio(idCot, idServicio, Double.parseDouble(medida), precio, inicial, descripcion);
+							idCotServ = cotServDao.insertar(getActivity(),cot_serv);
 
 							if(idCotServ ==-1){
 								error = true;

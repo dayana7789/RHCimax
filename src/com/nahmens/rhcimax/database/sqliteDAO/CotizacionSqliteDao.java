@@ -14,7 +14,12 @@ public class CotizacionSqliteDao implements CotizacionDAO{
 
 		ConexionBD conexion = new ConexionBD(contexto);
 		long value = -1;
-
+		
+		
+		if(idEmpresa.equals("0")){
+			idEmpresa = null;
+		}
+		
 		try{
 			conexion.open();
 
@@ -23,7 +28,6 @@ public class CotizacionSqliteDao implements CotizacionDAO{
 			values.put(Cotizacion.ID_USUARIO, idUsuario);
 			values.put(Cotizacion.ID_EMPRESA, idEmpresa);
 			values.put(Cotizacion.DESCRIPCION, descripcion);
-
 			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_COTIZACION, null,values);
 
 

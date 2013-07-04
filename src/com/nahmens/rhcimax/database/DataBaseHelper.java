@@ -106,7 +106,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "enviado INTEGER NOT NULL DEFAULT 0, "
 															+ "recibido INTEGER NOT NULL DEFAULT 0, "
 															+ "idUsuario INTEGER NOT NULL, "
-															+ "idEmpresa INTEGER NOT NULL, "
+															+ "idEmpresa INTEGER, "
 															+ "descripcion TEXT, "
 															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
@@ -135,6 +135,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 																	+ "idServicio INTEGER NOT NULL, "
 																	+ "medida TEXT, "
 																	+ "descripcion TEXT, "
+																	+ "precio REAL NOT NULL, "
+																	+ "inicial REAL NOT NULL, "
 																	+ "primary key (idCotizacion, idServicio), "
 																	+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id), " 
 																	+ "FOREIGN KEY(idServicio) REFERENCES " + TABLA_SERVICIO + "(_id));";
@@ -296,7 +298,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		String serv2 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Merchandiser',300,0,'horas', 'Merchandiser: Es un servicio para Merchandiser.','Activo')";
 		String serv3 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Laptop Apple',0,20000,'ninguno', 'Laptop Apple: Laptop marque Apple 13.','Activo')";
 		String serv4 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Mantenimiento y limpieza',800,0,'dias', 'Mantenimiento y limpieza: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
-		String serv5 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Canal Makro comercializadora',300,0,'semanas', 'Canal Makro comercializadora: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
+		String serv5 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Canal Makro comercializadora de bienes y servicios',300,0,'semanas', 'Canal Makro comercializadora: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
 		String serv6 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Canales',0,40,'persona', 'Canales: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
 		String serv7 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Comercio',300,0,'horas', 'Comercio: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
 		String serv8 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('servicios',300,100,'ninguno', 'servicios: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";

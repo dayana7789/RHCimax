@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,18 +17,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.TableRow.LayoutParams;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaHistoricosCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
+import com.nahmens.rhcimax.database.modelo.Cotizacion_Servicio;
 import com.nahmens.rhcimax.database.modelo.Historico;
+import com.nahmens.rhcimax.database.modelo.Servicio;
 import com.nahmens.rhcimax.database.modelo.Tarea;
+import com.nahmens.rhcimax.database.sqliteDAO.Cotizacion_ServicioSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.ServicioSqliteDao;
+import com.nahmens.rhcimax.utils.Tripleta;
 
 public class HistoricosActivity extends ListFragment{
 
@@ -97,7 +107,14 @@ public class HistoricosActivity extends ListFragment{
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 	    LayoutInflater inflater = getActivity().getLayoutInflater();
 	    View mLayout = inflater.inflate(R.layout.dialog_historico, null);
-		
+	    
+	    //Filas solo visibles para cotizaciones
+	    TableRow tbServiciosDest = (TableRow) mLayout.findViewById(R.id.tableRowServiciosDestinatarios);
+	    HorizontalScrollView hsServicios = (HorizontalScrollView) mLayout.findViewById(R.id.tablaServicios);
+	    TableLayout tlServicios = (TableLayout) mLayout.findViewById(R.id.tableLayoutServicios);
+	    TableLayout tlTotal = (TableLayout) mLayout.findViewById(R.id.tableLayoutTotal);
+	    TextView tvServicioDestinatario = (TextView) mLayout.findViewById(R.id.textViewDestinatarios);
+	    
 	    ImageView ivIcono = (ImageView) mLayout.findViewById(R.id.imageViewIcono);
 	    
 		TextView tvTipoRegistro = (TextView) mLayout.findViewById(R.id.textViewTipoHistorico);
@@ -141,6 +158,7 @@ public class HistoricosActivity extends ListFragment{
 		String fecha1Nombre = null;
 		String fecha2Nombre = null;
 		String descripcionNombre = null;
+		String destinatario = null;
 
 
 		if (tipoRegistro.equals("cotizacion")){
@@ -152,16 +170,37 @@ public class HistoricosActivity extends ListFragment{
 			fecha2Nombre = "Leído ";
 			descripcionNombre = "Descripción ";
 			
-			titulo = "Número "+cursor.getString(cursor.getColumnIndex("cotizacionId"));
+			String idCotizacion = cursor.getString(cursor.getColumnIndex("cotizacionId"));
+			
+			titulo = "Número "+ idCotizacion;
 			empresa = cursor.getString(cursor.getColumnIndex("nombreEmpresaCotizacion"));
 			usuario = cursor.getString(cursor.getColumnIndex("loginUsuario"));
 			fechaCreacion = cursor.getString(cursor.getColumnIndex("cotizacionFechaCreacion"));
 			fecha1 = cursor.getString(cursor.getColumnIndex(Cotizacion.FECHA_ENVIO));
 			fecha2 = cursor.getString(cursor.getColumnIndex(Cotizacion.FECHA_LEIDO));
 			descripcion = cursor.getString(cursor.getColumnIndex("cotizacionDescripcion"));
+			String nombreContacto = cursor.getString(cursor.getColumnIndex("nombreEmpleadoCotizacion"));
+			String apellidoContacto = cursor.getString(cursor.getColumnIndex("apellidoEmpleadoCotizacion"));
 			
-			tvContactoNombre.setVisibility(View.GONE);
-			tvContacto.setVisibility(View.GONE);
+			if(nombreContacto==null){
+				nombreContacto = "--";
+			}
+			
+			if(apellidoContacto==null){
+				apellidoContacto = "--";
+			}
+			
+			destinatario =  cursor.getString(cursor.getColumnIndex("emailEmpleadoCotizacion"));
+			contacto = nombreContacto+ " " + apellidoContacto;
+			listarServicios(tlServicios, tlTotal, idCotizacion);
+
+			//usados en cotizacion
+			tbServiciosDest.setVisibility(View.VISIBLE);
+			hsServicios.setVisibility(View.VISIBLE);
+			tlTotal.setVisibility(View.VISIBLE);
+			
+			tvContactoNombre.setVisibility(View.VISIBLE);
+			tvContacto.setVisibility(View.VISIBLE);
 			tvEmpresaNombre.setVisibility(View.VISIBLE);
 			tvEmpresa.setVisibility(View.VISIBLE);
 			tvDescripcionNombre.setVisibility(View.VISIBLE);
@@ -195,6 +234,11 @@ public class HistoricosActivity extends ListFragment{
 			fecha2 = cursor.getString(cursor.getColumnIndex(Tarea.FECHA_FINALIZACION));
 			descripcion = cursor.getString(cursor.getColumnIndex("tareaDescripcion"));
 			
+			//usados en cotizacion
+			tbServiciosDest.setVisibility(View.GONE);
+			hsServicios.setVisibility(View.GONE);
+			tlTotal.setVisibility(View.GONE);
+			
 			tvContactoNombre.setVisibility(View.VISIBLE);
 			tvContacto.setVisibility(View.VISIBLE);
 			tvEmpresaNombre.setVisibility(View.VISIBLE);
@@ -217,6 +261,11 @@ public class HistoricosActivity extends ListFragment{
 			fecha1 = cursor.getString(cursor.getColumnIndex(Checkin.CHECKIN));
 			fecha2 = cursor.getString(cursor.getColumnIndex(Checkin.CHECKOUT));
 			descripcion = "--";
+			
+			//usados en cotizacion
+			tbServiciosDest.setVisibility(View.GONE);
+			hsServicios.setVisibility(View.GONE);
+			tlTotal.setVisibility(View.GONE);
 			
 			tvContactoNombre.setVisibility(View.GONE);
 			tvContacto.setVisibility(View.GONE);
@@ -256,6 +305,12 @@ public class HistoricosActivity extends ListFragment{
 			tvUsuario.setText(usuario);
 		}else{
 			tvUsuario.setText("--");
+		}
+		
+		if(destinatario!=null){
+			tvServicioDestinatario.setText(destinatario);
+		}else{
+			tvServicioDestinatario.setText("--");
 		}
 		
 		if(fechaCreacion!=null){
@@ -313,4 +368,76 @@ public class HistoricosActivity extends ListFragment{
 
 	}
 
+	/**
+	 * Funcion que lista los servicios asociados a una cotizacion
+	 * y calcula los valores mensual y total
+	 * @param tlServicios
+	 * @param idCotizacion
+	 */
+	private void listarServicios(TableLayout tlServicios, TableLayout tlTotal, String idCotizacion) {
+		Cotizacion_ServicioSqliteDao cot_servDao = new Cotizacion_ServicioSqliteDao();
+		Cursor cServicios = cot_servDao.listarCotizacion_Servicio(getActivity(), idCotizacion);
+		double mensual = 0;
+		double total = 0;
+		
+		while(!cServicios.isAfterLast()){
+			String nombreServ = cServicios.getString(cServicios.getColumnIndex(Servicio.NOMBRE));
+			String unidadMed =  cServicios.getString(cServicios.getColumnIndex(Servicio.UNIDAD_MEDICION));
+			String medida = cServicios.getString(cServicios.getColumnIndex(Cotizacion_Servicio.MEDIDA));
+			String descripcionServ = cServicios.getString(cServicios.getColumnIndex(Cotizacion_Servicio.DESCRIPCION));
+			double inicial = cServicios.getDouble(cServicios.getColumnIndex(Cotizacion_Servicio.INICIAL));
+			double precio = cServicios.getDouble(cServicios.getColumnIndex(Cotizacion_Servicio.PRECIO));
+			
+			TableRow tr = new TableRow(getActivity());
+			TextView tvNombreServ=new TextView(getActivity());
+			tvNombreServ.setPadding(10,10, 10, 10);
+			tvNombreServ.setLayoutParams(new LayoutParams(200, LayoutParams.WRAP_CONTENT));
+			TextView tvUnidadMed=new TextView(getActivity());
+			tvUnidadMed.setPadding(10,10, 10, 10);
+			TextView tvMedida=new TextView(getActivity());
+			tvMedida.setPadding(10,10, 10, 10);
+			TextView tvDescripcionServ=new TextView(getActivity());
+			tvDescripcionServ.setPadding(10,10, 10, 10);
+			tvDescripcionServ.setLayoutParams(new LayoutParams(200, LayoutParams.WRAP_CONTENT));
+			TextView tvInicial=new TextView(getActivity());
+			tvInicial.setPadding(10,10, 10, 10);
+			TextView tvPrecio=new TextView(getActivity());
+			tvPrecio.setPadding(10,10, 10, 10);
+			
+			tvNombreServ.setText(nombreServ);
+			tvUnidadMed.setText(unidadMed);
+			tvMedida.setText(medida);
+			tvDescripcionServ.setText(descripcionServ);
+			tvInicial.setText(""+inicial);
+			tvPrecio.setText(""+precio);
+			
+			tr.addView(tvNombreServ);
+			tr.addView(tvMedida);
+			tr.addView(tvUnidadMed);
+			tr.addView(tvDescripcionServ);
+			tr.addView(tvInicial);
+			tr.addView(tvPrecio);
+			
+			if(unidadMed.equals("ninguno")){
+
+				mensual = mensual + precio;
+				total = total + inicial;
+
+			}else{
+				mensual = mensual + (Double.parseDouble(medida)*precio);
+				total = total + (Double.parseDouble(medida)*inicial);
+			}
+			
+			tlServicios.addView(tr);
+			
+			cServicios.moveToNext();
+		}
+
+		TextView tvTotal = (TextView) tlTotal.findViewById(R.id.textViewTotal);
+		TextView tvMensual = (TextView) tlTotal.findViewById(R.id.textViewMensual);
+		total = total + mensual;
+		
+		tvTotal.setText(""+total);
+		tvMensual.setText(""+mensual);
+	}
 }

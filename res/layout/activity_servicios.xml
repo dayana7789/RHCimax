@@ -59,9 +59,10 @@
 		    
 		    <TableLayout
 		        android:id="@+id/tableLayoutListaServicios"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:stretchColumns="0" />
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content" 
+		        android:shrinkColumns="0"
+		        android:stretchColumns="1"/>
 		    
 		  <!--  <ListView
 			    android:id="@+id/listViewServicios"
