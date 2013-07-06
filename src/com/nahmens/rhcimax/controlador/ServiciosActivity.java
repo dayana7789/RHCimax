@@ -1,6 +1,9 @@
 package com.nahmens.rhcimax.controlador;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import android.content.Context;
@@ -27,6 +30,7 @@ import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Servicio;
+import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.CotizacionSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.Cotizacion_ServicioSqliteDao;
@@ -35,6 +39,7 @@ import com.nahmens.rhcimax.database.sqliteDAO.Empleado_CotizacionSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.ServicioSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.Tripleta;
 
@@ -267,14 +272,18 @@ public class ServiciosActivity extends Fragment {
 							Historico historico = new Historico("cotizacion", idCot , 0, 0);
 							HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
 							historicoDao.insertarHistorico(getActivity(), historico);
-
+							
+							//creamos una tarea
+							crearTarea(idEmpresa, idUsuario);
+							
 							mToast = new Mensaje(inflater, getActivity(), "ok_creacion_cotizacion");
 							try {
 								mToast.controlMensajesToast();
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
-
+							
+							
 							//Redirigimos la pantalla a FragmentClientes
 							cambiarFragmento();
 
@@ -285,6 +294,43 @@ public class ServiciosActivity extends Fragment {
 							ListaServiciosCursorAdapter.setServiciosSeleccionados(null);
 						}
 					}
+				}
+
+
+				/**
+				 * Funcion que crea una nueva tarea a partir de la cotizacion enviada.
+				 * @param idEmpresa Id de la empresa a la cual se le envia la cotizacion
+				 * @param idUsuario Id del usuario que envia la cotizacion
+				 */
+				private void crearTarea(String idEmpresa, int idUsuario) {
+					Calendar hoy = Calendar.getInstance();
+					hoy.add(Calendar.DATE, 2);
+					
+					String myFormat = "dd/MM/yyyy";
+					SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+					
+					HashMap<Integer, Boolean> correosSeleccionados = ListaCorreosCursorAdapter.getCorreosSeleccionados();
+					boolean bool = false;
+					int idEmpleado = 0;
+					EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+					Empleado empleado = null;
+					String descripcion = "Cotización enviada a: ";
+
+					for (Map.Entry<Integer, Boolean> entry : correosSeleccionados.entrySet()) {
+						bool = entry.getValue();
+
+						//si este correo fue seleccionado..
+						if(bool){
+							idEmpleado = entry.getKey();
+							empleado =  empleadoDao.buscarEmpleado(getActivity(), ""+idEmpleado);
+							descripcion += empleado.getNombre()+" " + empleado.getApellido() + ", "; 
+						}
+					}
+					//creamos una tarea 
+					Tarea tarea = new Tarea("Llamar y verificar envío de cotización", sdf.format(hoy.getTime()), "8:00 AM", descripcion, idUsuario, idUsuario, Integer.parseInt(idEmpresa), idEmpleado, null);
+					TareaSqliteDao tareaDao = new TareaSqliteDao();
+					tareaDao.insertarTarea(getActivity(), tarea);
+					
 				}
 
 

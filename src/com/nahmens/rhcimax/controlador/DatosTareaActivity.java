@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -67,7 +68,6 @@ public class DatosTareaActivity extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 
 		final View view = inflater.inflate(R.layout.activity_datos_tarea, container, false);
 
@@ -80,6 +80,12 @@ public class DatosTareaActivity extends Fragment {
 		//inicializamos la referencia a los campos del formulario
 		setReferenciaCampos(view);
 
+		//Creacion de dialog y listener del campo fecha
+		inicializarFecha();
+
+		//Creacion de dialog y listener del campo hora
+		inicializarHora();
+
 		mArgumentos = this.getArguments();
 
 		//Si me pasaron argumentos, relleno la vista con la informacion. 
@@ -91,6 +97,7 @@ public class DatosTareaActivity extends Fragment {
 			Tarea tarea  = tareaDao.buscarTarea(getActivity(),idTarea);
 
 			if(tarea !=null){
+
 				llenarCamposTarea(tarea);
 
 			}else{
@@ -107,11 +114,7 @@ public class DatosTareaActivity extends Fragment {
 		setAutocompleteEmpresa(view);
 		setAutocompleteEmpleado(view);
 
-		//Creacion de dialog y listener del campo fecha
-		inicializarFecha();
 
-		//Creacion de dialog y listener del campo hora
-		inicializarHora();
 
 		// Registro del evento OnClick del buttonVerEmpresa
 		ImageButton bVerEmpresa = (ImageButton)view.findViewById(R.id.imageButtonVerEmpresa);
@@ -308,6 +311,8 @@ public class DatosTareaActivity extends Fragment {
 			etHiddenIdEmpleado.setText("0");
 		}
 
+		Log.e("fecha: ", " " + tarea.getFecha());
+		Log.e("hora: ", " " + tarea.getHora());
 		bFecha.setText(tarea.getFecha());
 		bHora.setText(tarea.getHora());
 		etDescripcion.setText(tarea.getDescripcion());
@@ -353,7 +358,6 @@ public class DatosTareaActivity extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				new TimePickerDialog(getActivity(), time,  myCalendar
 						.get(Calendar.HOUR),  myCalendar
 						.get(Calendar.MINUTE),false).show();
@@ -409,7 +413,7 @@ public class DatosTareaActivity extends Fragment {
 	 * @param inicializar Indica si queremos obtener la fecha actual
 	 */
 	private void setFecha(boolean inicializar) {
-		String myFormat = "dd/MM/yyyy"; //In which you need put here
+		String myFormat = "dd/MM/yyyy"; 
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
 		if(inicializar){
@@ -542,7 +546,7 @@ public class DatosTareaActivity extends Fragment {
 					mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_ingreso_tarea");
 					flagGuardado = false;
 				}
-				
+
 				idTarea = ""+idFilaInsertada;
 			}
 
@@ -556,13 +560,13 @@ public class DatosTareaActivity extends Fragment {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		if(finalizada){
 			//creamos un historico de la tarea
 			Historico historico = new Historico("tarea", 0 , Integer.parseInt(idTarea), 0);
 			HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
 			historicoDao.insertarHistorico(getActivity(), historico);
-			
+
 			//y lo enviamos a la pagina de historicos
 			HistoricosActivity fragment = new HistoricosActivity();
 
