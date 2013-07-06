@@ -1,13 +1,9 @@
 package com.nahmens.rhcimax.controlador;
 
 import java.util.HashMap;
-import java.util.List;
 
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningTaskInfo;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -379,7 +375,9 @@ public class AplicacionActivity extends FragmentActivity {
 		//Si hacemos click en el back button desde el fragmento de clientes, historicos, tareas, settings o logout, se nos muestra alert.
 		if (fragmentoTag.equals(tagFragmentClientes) || fragmentoTag.equals(tagFragmentHistoricos) ||  fragmentoTag.equals(tagFragmentTareas) || fragmentoTag.equals(tagFragmentSettings) || fragmentoTag.equals(tagFragmentLogout)){
 
+			//if(this.getSupportFragmentManager().getBackStackEntryCount()==0){
 			mostrarAvisoCierreApp();
+			//}
 
 
 			//Si presionan back button desde fragmento Datos Cliente

@@ -106,6 +106,8 @@
     <string name="unidad">Unidad</string>
     <string name="cantidad">Cantidad</string>
     <string name="servicio">Servicio</string>
+    <string name="no_resultados">No se consiguieron resultados.</string>
+    
     
     
 	<!-- \u0020 = espacios en blanco -->

@@ -18,11 +18,13 @@
 		android:background="@drawable/boton_personalizado" >
 		        
 		<ImageView
+		    android:id="@+id/imageViewButtonTareas"
 			style="@style/BotonPersonalizadoImagen"
 		    android:background="@android:drawable/ic_menu_agenda"
 		    android:contentDescription="@string/tareas"/>
 
 		<TextView
+		    android:id="@+id/textViewButtonTareas"
 		    android:text="@string/tareas"
 		    style="@style/BotonPersonalizadoTexto" />
 
@@ -43,11 +45,13 @@
 		android:background="@drawable/boton_personalizado">
 		        
 		<ImageView
+		    android:id="@+id/imageViewButtonHistoricos"
 			style="@style/BotonPersonalizadoImagen"
 		    android:background="@android:drawable/ic_menu_recent_history"
 		    android:contentDescription="@string/historicos" />
 
 		<TextView
+		    android:id="@+id/textViewButtonHistoricos"
 			android:text="@string/historicos"
 		    style="@style/BotonPersonalizadoTexto" />
 

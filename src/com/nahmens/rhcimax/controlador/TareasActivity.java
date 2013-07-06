@@ -2,7 +2,6 @@ package com.nahmens.rhcimax.controlador;
 
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -44,8 +43,32 @@ public class TareasActivity extends ListFragment{
 		
 		//Asociamos los valores al combo box o spinner
 		inicializarSpinner(view);
+		
+		TareaSqliteDao tareaDao = new TareaSqliteDao();
+		Cursor mCursorTareas = null;
 
-		listarTareas(view);
+		Bundle mArgumentos = this.getArguments();
+
+		//Si me pasaron argumentos, filtro la lista. 
+		//De lo contrario, listo todo.
+		if(mArgumentos!= null){
+
+			String idEmpresa = mArgumentos.getString("idEmpresa");
+			String idEmpleado = mArgumentos.getString("idEmpleado");
+			
+
+			if(idEmpresa!=null){
+				mCursorTareas = tareaDao.listarTareasPorEmpresa(getActivity(), idEmpresa);
+
+			}else if(idEmpleado !=null){
+				mCursorTareas = tareaDao.listarTareasPorEmpleado(getActivity(), idEmpleado);
+			}
+
+		}else{
+			mCursorTareas = tareaDao.listarTareas(getActivity());
+		}
+
+		listarTareas(view, mCursorTareas);
 
 		// Registro del evento OnClick del buttonTarea
 		ImageButton bTarea = (ImageButton)view.findViewById(R.id.ImageButtonAgregarTarea);
@@ -68,11 +91,7 @@ public class TareasActivity extends ListFragment{
 	}
 
 
-	private void listarTareas(View view) {
-		//Cargamos la lista de tareas
-		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		Context context = getActivity();
-		Cursor mCursorTareas = tareaDao.listarTareas(getActivity());
+	private void listarTareas(View view, Cursor mCursorTareas) {
 
 		if(mCursorTareas.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
@@ -82,7 +101,7 @@ public class TareasActivity extends ListFragment{
 
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterTareas = new ListaTareasCursorAdapter(context, R.layout.activity_fila_tarea, mCursorTareas, from, to, 0, getFragmentManager());
+			listCursorAdapterTareas = new ListaTareasCursorAdapter(getActivity(), R.layout.activity_fila_tarea, mCursorTareas, from, to, 0, getFragmentManager());
 			lvTareas.setAdapter(listCursorAdapterTareas);
 
 			lvTareas.setOnItemLongClickListener(new OnItemLongClickListener() {

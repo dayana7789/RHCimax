@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +19,9 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.AutocompleteEmpresaCursorAdapter;
@@ -158,23 +159,47 @@ public class DatosClienteActivity extends Fragment {
 
 		// Registro del evento OnClick del LinearLayoutButtonTareas
 		LinearLayout bTareas = (LinearLayout) view.findViewById(R.id.LinearLayoutButtonTareas);
-		bTareas.setOnClickListener(new View.OnClickListener() {
+		TextView tvTareas = (TextView) view.findViewById(R.id.textViewButtonTareas);
+		ImageView ivTareas = (ImageView) view.findViewById(R.id.imageViewButtonTareas);
 
+		View.OnClickListener activityLauncherTareas = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Log.e("tareas", "me presionaron");
-			}
-		});
+				String id = null;
+
+				if(mArgumentos!=null){
+					id = mArgumentos.getString("id");
+				}
+
+				onButtonTareaSelected(id);
+			} 
+		};
+
+		bTareas.setOnClickListener(activityLauncherTareas);
+		tvTareas.setOnClickListener(activityLauncherTareas);
+		ivTareas.setOnClickListener(activityLauncherTareas);
 
 		// Registro del evento OnClick del LinearLayoutButtonHistoricos
 		LinearLayout bHistoricos = (LinearLayout) view.findViewById(R.id.LinearLayoutButtonHistoricos);
-		bHistoricos.setOnClickListener(new View.OnClickListener() {
+		TextView tvHistoricos = (TextView) view.findViewById(R.id.textViewButtonHistoricos);
+		ImageView ivHistoricos = (ImageView) view.findViewById(R.id.imageViewButtonHistoricos);
 
+		View.OnClickListener activityLauncherHistoricos = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Log.e("historicos", "me presionaron");
-			}
-		});
+				String id = null;
+
+				if(mArgumentos!=null){
+					id = mArgumentos.getString("id");
+				}
+
+				onButtonHistoricoSelected(id);
+			} 
+		};
+
+		bHistoricos.setOnClickListener(activityLauncherHistoricos);
+		tvHistoricos.setOnClickListener(activityLauncherHistoricos);
+		ivHistoricos.setOnClickListener(activityLauncherHistoricos);
 
 		// Registro del evento OnClick del buttonSalvar
 		Button bSalvar = (Button)view.findViewById(R.id.buttonSalvar);
@@ -395,5 +420,43 @@ public class DatosClienteActivity extends Fragment {
 			e.printStackTrace();
 		}
 
+	}
+	
+	/**
+	 * Metodo que se llama al seleccionar el boton tareas
+	 * @param idEmpleado
+	 */
+	public void onButtonTareaSelected(String idEmpleado) {
+		Bundle arguments = new Bundle();
+		arguments.putString("idEmpleado", idEmpleado);
+
+		TareasActivity fragment = new TareasActivity();
+
+		//pasamos al fragment el id de la tarea
+		fragment.setArguments(arguments); 
+
+		getFragmentManager().beginTransaction()
+		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentTareas)
+		.addToBackStack(null)
+		.commit();
+	}
+	
+	/**
+	 * Metodo que se llama al seleccionar el boton historicos
+	 * @param idEmpleado
+	 */
+	public void onButtonHistoricoSelected(String idEmpleado) {
+		Bundle arguments = new Bundle();
+		arguments.putString("idEmpleado", idEmpleado);
+
+		HistoricosActivity fragment = new HistoricosActivity();
+
+		//pasamos al fragment el id de la tarea
+		fragment.setArguments(arguments); 
+
+		getFragmentManager().beginTransaction()
+		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentHistoricos)
+		.addToBackStack(null)
+		.commit();
 	}
 }

@@ -119,5 +119,111 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 		return false;
 	}
 
+	@Override
+	public Cursor listarHistoricosPorEmpresa(Context contexto, String idEmpresa) {
+
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		String sqlQuery = null;
+		try{
+
+			conexion.open();
+			
+			sqlQuery  = "SELECT ";
+			sqlQuery  += "historico." + Historico.ID + " as historicoId, historico."+Historico.TIPO_REGISTRO + ", historico." + Historico.FECHA_CREACION + " as historicoFechaCreacion"; 
+			sqlQuery  += ", empresaVisita." + Empresa.NOMBRE + " as nombreEmpresaVisita";
+			sqlQuery  += ", checkin."+Checkin.CHECKIN + ", checkin." + Checkin.CHECKOUT; 
+			sqlQuery  += ", usuarioVisita."+Usuario.LOGIN + " as loginUsuarioVisita";
+			sqlQuery  += ", cotizacion."+Cotizacion.ID+" as cotizacionId, cotizacion."+Cotizacion.FECHA_ENVIO+", cotizacion."+Cotizacion.FECHA_LEIDO + ", cotizacion."+Cotizacion.DESCRIPCION + " as cotizacionDescripcion, cotizacion." + Cotizacion.FECHA_CREACION + " as cotizacionFechaCreacion";
+			sqlQuery  += ", usuario."+Usuario.LOGIN+" as loginUsuario";
+			sqlQuery  += ", empresaCotizacion."+Empresa.ID+", empresaCotizacion."+Empresa.NOMBRE + " as nombreEmpresaCotizacion";
+			sqlQuery  += ", empleadoCotizacion."+Empleado.ID+", empleadoCotizacion."+Empleado.NOMBRE + " as nombreEmpleadoCotizacion" + ", empleadoCotizacion."+Empleado.APELLIDO+" as apellidoEmpleadoCotizacion"+ ", empleadoCotizacion."+Empleado.EMAIL+" as emailEmpleadoCotizacion";
+			sqlQuery  += ", tarea."+Tarea.ID+" as tareaId, tarea."+Tarea.NOMBRE+" as nombreTarea, tarea."+Tarea.FECHA+", tarea."+Tarea.HORA + ", tarea."+Tarea.FECHA_FINALIZACION+ ", tarea."+Tarea.DESCRIPCION + " as tareaDescripcion, tarea."+Tarea.FECHA_CREACION+" as tareaFechaCreacion";
+			sqlQuery  += ", usuarioTarea."+Usuario.LOGIN + " as loginUsuarioTarea";
+			sqlQuery  += ", empresaTarea."+Empresa.ID+", empresaTarea."+Empresa.NOMBRE + " as nombreEmpresaTarea";
+			sqlQuery  += ", empleadoTarea."+Empleado.ID+", empleadoTarea."+Empleado.NOMBRE + " as nombreEmpleadoTarea"+", empleadoTarea."+Empleado.APELLIDO + " as apellidoEmpleadoTarea";			
+			sqlQuery  += " FROM " + DataBaseHelper.TABLA_HISTORICO;
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA + " as empresaVisita ON ( historico." + Historico.ID_EMPRESA + " = empresaVisita."+Empresa.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_CHECKIN + " ON ( empresaVisita." + Empresa.ID + " = checkin."+Checkin.ID_EMPRESA+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_USUARIO + " as usuarioVisita ON ( checkin." + Checkin.ID_USUARIO + " = usuarioVisita."+Usuario.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_COTIZACION + " ON ( historico." + Historico.ID_COTIZACION + " = cotizacion."+Cotizacion.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_USUARIO + " ON ( cotizacion."+Cotizacion.ID_USUARIO + " = usuario."+Usuario.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA + " as empresaCotizacion ON ( cotizacion." + Cotizacion.ID_EMPRESA + " = empresaCotizacion."+Empresa.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPLEADO_COTIZACION + " ON ( cotizacion." + Cotizacion.ID + " = empleado_cotizacion."+Empleado_Cotizacion.ID_COTIZACION+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPLEADO + " as empleadoCotizacion ON ( empleado_cotizacion." + Empleado_Cotizacion.ID_EMPLEADO + " = empleadoCotizacion."+Empleado.ID+" ) ";
+			sqlQuery  += " LEFT JOIN  " + DataBaseHelper.TABLA_TAREA + " ON ( historico." + Historico.ID_TAREA + " = tarea." + Tarea.ID +" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_USUARIO + " as usuarioTarea ON ( tarea." + Tarea.ID_USUARIO_CREADOR + " = usuarioTarea."+Usuario.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPLEADO + " as empleadoTarea ON ( tarea." + Tarea.ID_EMPLEADO + " = empleadoTarea."+Empleado.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA + " as empresaTarea ON ( tarea." + Tarea.ID_EMPRESA + " = empresaTarea."+Empresa.ID+" ) ";
+			sqlQuery  += " WHERE historico." + Historico.ID_EMPRESA + " = " + idEmpresa;
+			sqlQuery  += " ORDER BY historico." + Historico.FECHA_CREACION;
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery , null);
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;	
+	}
+
+
+	@Override
+	public Cursor listarHistoricosPorEmpleado(Context contexto, String idEmpleado) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		String sqlQuery = null;
+		try{
+
+			conexion.open();
+			
+			sqlQuery  = "SELECT ";
+			sqlQuery  += "historico." + Historico.ID + " as historicoId, historico."+Historico.TIPO_REGISTRO + ", historico." + Historico.FECHA_CREACION + " as historicoFechaCreacion"; 
+			sqlQuery  += ", empresaVisita." + Empresa.NOMBRE + " as nombreEmpresaVisita";
+			sqlQuery  += ", checkin."+Checkin.CHECKIN + ", checkin." + Checkin.CHECKOUT; 
+			sqlQuery  += ", usuarioVisita."+Usuario.LOGIN + " as loginUsuarioVisita";
+			sqlQuery  += ", cotizacion."+Cotizacion.ID+" as cotizacionId, cotizacion."+Cotizacion.FECHA_ENVIO+", cotizacion."+Cotizacion.FECHA_LEIDO + ", cotizacion."+Cotizacion.DESCRIPCION + " as cotizacionDescripcion, cotizacion." + Cotizacion.FECHA_CREACION + " as cotizacionFechaCreacion";
+			sqlQuery  += ", usuario."+Usuario.LOGIN+" as loginUsuario";
+			sqlQuery  += ", empresaCotizacion."+Empresa.ID+", empresaCotizacion."+Empresa.NOMBRE + " as nombreEmpresaCotizacion";
+			sqlQuery  += ", empleadoCotizacion."+Empleado.ID+", empleadoCotizacion."+Empleado.NOMBRE + " as nombreEmpleadoCotizacion" + ", empleadoCotizacion."+Empleado.APELLIDO+" as apellidoEmpleadoCotizacion"+ ", empleadoCotizacion."+Empleado.EMAIL+" as emailEmpleadoCotizacion";
+			sqlQuery  += ", tarea."+Tarea.ID+" as tareaId, tarea."+Tarea.NOMBRE+" as nombreTarea, tarea."+Tarea.FECHA+", tarea."+Tarea.HORA + ", tarea."+Tarea.FECHA_FINALIZACION+ ", tarea."+Tarea.DESCRIPCION + " as tareaDescripcion, tarea."+Tarea.FECHA_CREACION+" as tareaFechaCreacion";
+			sqlQuery  += ", usuarioTarea."+Usuario.LOGIN + " as loginUsuarioTarea";
+			sqlQuery  += ", empresaTarea."+Empresa.ID+", empresaTarea."+Empresa.NOMBRE + " as nombreEmpresaTarea";
+			sqlQuery  += ", empleadoTarea."+Empleado.ID+", empleadoTarea."+Empleado.NOMBRE + " as nombreEmpleadoTarea"+", empleadoTarea."+Empleado.APELLIDO + " as apellidoEmpleadoTarea";			
+			sqlQuery  += " FROM " + DataBaseHelper.TABLA_HISTORICO;
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA + " as empresaVisita ON ( historico." + Historico.ID_EMPRESA + " = empresaVisita."+Empresa.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_CHECKIN + " ON ( empresaVisita." + Empresa.ID + " = checkin."+Checkin.ID_EMPRESA+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_USUARIO + " as usuarioVisita ON ( checkin." + Checkin.ID_USUARIO + " = usuarioVisita."+Usuario.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_COTIZACION + " ON ( historico." + Historico.ID_COTIZACION + " = cotizacion."+Cotizacion.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_USUARIO + " ON ( cotizacion."+Cotizacion.ID_USUARIO + " = usuario."+Usuario.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA + " as empresaCotizacion ON ( cotizacion." + Cotizacion.ID_EMPRESA + " = empresaCotizacion."+Empresa.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPLEADO_COTIZACION + " ON ( cotizacion." + Cotizacion.ID + " = empleado_cotizacion."+Empleado_Cotizacion.ID_COTIZACION+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPLEADO + " as empleadoCotizacion ON ( empleado_cotizacion." + Empleado_Cotizacion.ID_EMPLEADO + " = empleadoCotizacion."+Empleado.ID+" ) ";
+			sqlQuery  += " LEFT JOIN  " + DataBaseHelper.TABLA_TAREA + " ON ( historico." + Historico.ID_TAREA + " = tarea." + Tarea.ID +" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_USUARIO + " as usuarioTarea ON ( tarea." + Tarea.ID_USUARIO_CREADOR + " = usuarioTarea."+Usuario.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPLEADO + " as empleadoTarea ON ( tarea." + Tarea.ID_EMPLEADO + " = empleadoTarea."+Empleado.ID+" ) ";
+			sqlQuery  += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA + " as empresaTarea ON ( tarea." + Tarea.ID_EMPRESA + " = empresaTarea."+Empresa.ID+" ) ";
+			sqlQuery  += " WHERE";
+			sqlQuery  += " empleado_cotizacion." + Empleado_Cotizacion.ID_EMPLEADO + " = " + idEmpleado;
+			sqlQuery  += " OR tarea." + Tarea.ID_EMPLEADO + " = " + idEmpleado;
+			sqlQuery  += " ORDER BY historico." + Historico.FECHA_CREACION;
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery , null);
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;	
+	}
+
 
 }

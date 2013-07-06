@@ -18,8 +18,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
+import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaEmpleadosCursorAdapter;
@@ -62,13 +64,13 @@ public class DatosEmpresaActivity extends Fragment {
 		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
 		//tab es el correspondiente.
 		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentClientes);	
-			
+
 		//OJO: evitamos que la pantalla se vuelva a recrear verificando el valor
 		//de savedInstanceState. De esta manera evitamos la doble llamada que se
 		//realiza al metodo onCreateView, cuando cambiamos la orientacion del 
 		//dispositivo.
 		if (savedInstanceState==null){
-			
+
 			//inicializamos la referencia a los campos del formulario
 			setReferenciaCampos(view);
 
@@ -173,8 +175,10 @@ public class DatosEmpresaActivity extends Fragment {
 
 			// Registro del evento OnClick del LinearLayoutButtonTareas
 			LinearLayout bTareas = (LinearLayout) view.findViewById(R.id.LinearLayoutButtonTareas);
-			bTareas.setOnClickListener(new View.OnClickListener() {
+			TextView tvTareas = (TextView) view.findViewById(R.id.textViewButtonTareas);
+			ImageView ivTareas = (ImageView) view.findViewById(R.id.imageViewButtonTareas);
 
+			View.OnClickListener activityLauncherTareas = new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					String id = null;
@@ -182,20 +186,37 @@ public class DatosEmpresaActivity extends Fragment {
 					if(mArgumentos!=null){
 						id = mArgumentos.getString("idEmpresa");
 					}
-					
+
 					onButtonTareaSelected(id);
-				}
-			});
+				} 
+			};
+
+			bTareas.setOnClickListener(activityLauncherTareas);
+			tvTareas.setOnClickListener(activityLauncherTareas);
+			ivTareas.setOnClickListener(activityLauncherTareas);
 
 			// Registro del evento OnClick del LinearLayoutButtonHistoricos
 			LinearLayout bHistoricos = (LinearLayout) view.findViewById(R.id.LinearLayoutButtonHistoricos);
-			bHistoricos.setOnClickListener(new View.OnClickListener() {
+			TextView tvHistoricos = (TextView) view.findViewById(R.id.textViewButtonHistoricos);
+			ImageView ivHistoricos = (ImageView) view.findViewById(R.id.imageViewButtonHistoricos);
 
+			View.OnClickListener activityLauncherHistoricos = new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					String id = null;
 					Log.e("historicos", "me presionaron");
-				}
-			});
+					if(mArgumentos!=null){
+						id = mArgumentos.getString("idEmpresa");
+					}
+
+					onButtonHistoricoSelected(id);
+				} 
+			};
+
+			bHistoricos.setOnClickListener(activityLauncherHistoricos);
+			tvHistoricos.setOnClickListener(activityLauncherHistoricos);
+			ivHistoricos.setOnClickListener(activityLauncherHistoricos);
+
 
 			// Registro del evento OnClick del buttonCheckin
 			Button bCheckin = (Button) view.findViewById(R.id.buttonCheckin);
@@ -203,9 +224,9 @@ public class DatosEmpresaActivity extends Fragment {
 
 				@Override
 				public void onClick(View v) {
-					
 
-					
+
+
 					if(!flagGuardado){
 						Mensaje mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_empresa_no_guardada");
 
@@ -228,39 +249,39 @@ public class DatosEmpresaActivity extends Fragment {
 
 						//asignamo al checkin el id de la empresa para mantener historial de las visitas
 						checkinDao.modificarCheckin(getActivity(), checkin);
-						
+
 						//Buscamos la empresa que le vamos asignar las coordenadas
 						EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 						Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
 						empresa.setLatitud(checkin.getLatitud());
 						empresa.setLongitud(checkin.getLongitud());
-						
+
 						boolean modificado = empresaDao.modificarEmpresa(getActivity(), empresa);
-						
+
 						Mensaje mToast = null;
 						LayoutInflater mInflater = getActivity().getLayoutInflater();
-						
+
 						if(modificado){
 							mToast = new Mensaje(mInflater, getActivity(), "ok_checkin");
-							
+
 							//registramos la visita como historico
 							Historico historico = new Historico("visita", 0 , 0, Integer.parseInt(idEmpresa));
 							HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
 							historicoDao.insertarHistorico(getActivity(), historico);
-							
+
 
 						}else{
 							mToast = new Mensaje(mInflater, getActivity(), "error_checkin");
 						}
-						
+
 						try {
 							mToast.controlMensajesToast();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
-						
+
 					}
-					
+
 				}
 			});
 
@@ -425,7 +446,7 @@ public class DatosEmpresaActivity extends Fragment {
 				Boolean modificado = empresaDao.modificarEmpresa(getActivity(), empresa);
 
 				if(modificado){
-					
+
 					mToast = new Mensaje(mInflater, getActivity(), "ok_modificar_empresa");
 
 				}else{
@@ -463,7 +484,7 @@ public class DatosEmpresaActivity extends Fragment {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Metodo que se llama al seleccionar el boton tareas
 	 * @param idEmpleado
@@ -479,6 +500,25 @@ public class DatosEmpresaActivity extends Fragment {
 
 		getFragmentManager().beginTransaction()
 		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentTareas)
+		.addToBackStack(null)
+		.commit();
+	}
+	
+	/**
+	 * Metodo que se llama al seleccionar el boton historicos
+	 * @param idEmpleado
+	 */
+	public void onButtonHistoricoSelected(String idEmpresa) {
+		Bundle arguments = new Bundle();
+		arguments.putString("idEmpresa", idEmpresa);
+
+		HistoricosActivity fragment = new HistoricosActivity();
+
+		//pasamos al fragment el id de la tarea
+		fragment.setArguments(arguments); 
+
+		getFragmentManager().beginTransaction()
+		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentHistoricos)
 		.addToBackStack(null)
 		.commit();
 	}

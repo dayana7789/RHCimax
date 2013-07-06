@@ -22,6 +22,10 @@ public interface HistoricoDAO {
 	 */
 	Cursor buscarHistoricoFilter(Context contexto, String args);
 	
+	Cursor listarHistoricosPorEmpresa(Context contexto, String idEmpresa);
+
+	Cursor listarHistoricosPorEmpleado(Context contexto, String idEmpleado);
+	
 	boolean sincronizarHistorico(Context contexto, String idEmpleado);
 
 }
