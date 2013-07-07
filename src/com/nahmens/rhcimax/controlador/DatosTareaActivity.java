@@ -449,7 +449,7 @@ public class DatosTareaActivity extends Fragment {
 		boolean finalizada = cbFinalizada.isChecked();
 		String fechaFinalizacion = null;
 
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm a",Locale.getDefault());
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm a",Locale.getDefault());
 		
 		//OJO: el formato de fecha, si queremos poder compararlos en el query, debe estar almacenado
 		//exactamente como yyyy-MM-dd. De lo contrario nunca va hacer bien la comparacion. Nisiquiera

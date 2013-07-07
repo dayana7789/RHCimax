@@ -139,8 +139,8 @@ public class TareaSqliteDao implements TareaDAO{
 		try{
 			conexion.open();
 			
-			sqlQuery = "SELECT "+Tarea.ID+ ", "+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
-					+", "+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+","+Tarea.ID_EMPLEADO
+			sqlQuery = "SELECT "+Tarea.ID+ ", "+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as "+Tarea.FECHA+", "+Tarea.HORA
+					+", "+Tarea.DESCRIPCION+", strftime('%d/%m/%Y',"+Tarea.FECHA_FINALIZACION+") as "+Tarea.FECHA_FINALIZACION+", "+Tarea.ID_EMPLEADO
 					+", "+Tarea.ID_EMPRESA+", "+Tarea.ID_USUARIO_CREADOR+", "+Tarea.ID_USUARIO_MODIFICADOR
 					+ " FROM tarea ";
 
@@ -181,7 +181,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 			
 			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
-					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+					+", tarea."+Tarea.DESCRIPCION+", strftime('%d/%m/%Y',"+Tarea.FECHA_FINALIZACION+")  as "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
 					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
 					+ "FROM tarea "
@@ -230,7 +230,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 
 			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
-					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+					+", tarea."+Tarea.DESCRIPCION+", strftime('%d/%m/%Y',"+Tarea.FECHA_FINALIZACION+") as "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
 					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
 					+ " FROM tarea "
@@ -275,7 +275,7 @@ public class TareaSqliteDao implements TareaDAO{
 			conexion.open();
 
 			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
-					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+					+", tarea."+Tarea.DESCRIPCION+", strftime('%d/%m/%Y',"+Tarea.FECHA_FINALIZACION+")  as "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
 					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
 					+ "FROM tarea "
@@ -308,7 +308,7 @@ public class TareaSqliteDao implements TareaDAO{
 			conexion.open();
 
 			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
-					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+					+", tarea."+Tarea.DESCRIPCION+", strftime('%d/%m/%Y',"+Tarea.FECHA_FINALIZACION+")  as "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
 					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
 					+ "FROM tarea "

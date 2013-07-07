@@ -302,7 +302,7 @@ public class DatosClienteActivity extends Fragment {
 		LayoutInflater mInflater = getActivity().getLayoutInflater();
 
 		Date dateFechaModif = new Date();
-		String myFormat = "dd/MM/yyyy HH:mm:ss"; 
+		String myFormat = "yyyy/MM/dd HH:mm:ss"; 
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
 		String fechaModif = sdf.format(dateFechaModif);
 
