@@ -3,6 +3,7 @@ package com.nahmens.rhcimax.database.sqliteDAO;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -10,6 +11,7 @@ import com.nahmens.rhcimax.database.DAO.TareaDAO;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
+import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 //OJO para usar la funcion strftime el formato de la fecha almacenada debe ser
@@ -157,7 +159,7 @@ public class TareaSqliteDao implements TareaDAO{
 		return tarea;
 	}
 
-	@Override
+/*	@Override
 	public Cursor listarTareas(Context contexto) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
@@ -192,41 +194,66 @@ public class TareaSqliteDao implements TareaDAO{
 
 		return mCursor;
 	}
-
+*/
 	@Override
 	public Cursor buscarTareaFilter(Context contexto, String args) {
 
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
 		String sqlQuery = "";
-		String [] palabras = args.split("");
+		String [] palabras = {};
+
+
 		String condicion = "";
 		
-		if(args.equals("Todos")){
-			condicion = "";
-		}else if(args.equals("Hoy")){
-			condicion = " AND "+Tarea.FECHA+"='"+FormatoFecha.obtenerFecha(0)+"'";
-		}else if(args.equals("Ayer")){
-			condicion = " AND "+Tarea.FECHA+"='"+FormatoFecha.obtenerFecha(-1)+"'";
-		}else if(args.equals("Esta semana")){
-			condicion = " AND "+Tarea.FECHA+" BETWEEN '"+FormatoFecha.obtenerFecha(-7)+"' AND '"+FormatoFecha.obtenerFecha(0)+"'";
+		if(args !=null){
+			if(args.equals("Todos")){
+				condicion = "";
+			}else if(args.equals("Hoy")){
+				condicion = " AND "+Tarea.FECHA+"='"+FormatoFecha.obtenerFecha(0)+"'";
+			}else if(args.equals("Ayer")){
+				condicion = " AND "+Tarea.FECHA+"='"+FormatoFecha.obtenerFecha(-1)+"'";
+			}else if(args.equals("Esta semana")){
+				condicion = " AND "+Tarea.FECHA+" BETWEEN '"+FormatoFecha.obtenerFecha(-7)+"' AND '"+FormatoFecha.obtenerFecha(0)+"'";
+			}else{
+				palabras = args.split(" ");
+			}
 		}
 
 		try{
 			conexion.open();
 
 
-			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
-					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
-					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
-					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
-					+ " FROM tarea "
-					+ " LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
-					+ " LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
-					+ " WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
-					+ condicion
-					+ " ORDER BY " + Tarea.FECHA + " DESC";
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA;
+			sqlQuery +=", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO;
+			sqlQuery +=", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, ";
+			sqlQuery +="empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado";
+			sqlQuery +=", usuario."+Usuario.LOGIN + " as loginUsuario";
+			sqlQuery += " FROM tarea ";
+			sqlQuery += " LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) ";
+			sqlQuery += " LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) ";
+			sqlQuery += " LEFT JOIN usuario ON ( tarea." + Tarea.ID_USUARIO_CREADOR + " = usuario."+Usuario.ID+" ) ";
+			sqlQuery += " WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL ";
+			sqlQuery += condicion;
+			
+			for(int i =0; i< palabras.length; i++){
 
+				sqlQuery += " AND (";
+
+				sqlQuery +=	" tarea.nombre LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR (substr(tarea.fecha, 9, 2) || '/' || substr(tarea.fecha, 6, 2) || '/' || substr(tarea.fecha, 1, 4)) LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR tarea.hora LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR tarea.descripcion LIKE '%" + palabras[i] + "%' ";
+				
+				sqlQuery += " OR empleado.nombre LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR empleado.apellido LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR empresa.nombre LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR loginUsuario LIKE '%" + palabras[i] + "%' ";
+
+				sqlQuery += ") ";
+			}
+			
+			sqlQuery += " ORDER BY " + Tarea.FECHA + " DESC";
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 

@@ -90,6 +90,16 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 			if(columna.equals(Tarea.NOMBRE)){
 				nombreTarea = nombre;
 			}
+			
+			if(columna.equals("loginUsuario")){
+				nombre = "Enviado por: " + nombre;
+
+			}
+			
+			if(columna.equals(Tarea.NOMBRE_EMPRESA)){
+				nombre = "Empresa: " + nombre;
+
+			}
 
 			if(columna.equals(Tarea.NOMBRE_EMPLEADO)){
 				nombreCompleto = nombre;
@@ -97,7 +107,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 
 			if(columna.equals(Tarea.APELLIDO_EMPLEADO)){
 				nombreCompleto = nombreCompleto + " " + nombre;
-				nombre = nombreCompleto;
+				nombre = "Contacto: "+nombreCompleto;
 			}
 
 			if(columna.equals(Tarea.FECHA)){
@@ -208,7 +218,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
 
 			//Actualizamos los valores del cursor de la lista de empleados
-			this.changeCursor(tareaDao.listarTareas(context));
+			this.changeCursor(tareaDao.buscarTareaFilter(context,null));
 
 			//Notificamos que la lista cambio
 			this.notifyDataSetChanged();

@@ -67,7 +67,7 @@ public class TareasActivity extends ListFragment{
 				}
 
 			}else{
-				mCursorTareas = tareaDao.listarTareas(getActivity());
+				mCursorTareas = tareaDao.buscarTareaFilter(getActivity(),null);
 			}
 
 			listarTareas(view, mCursorTareas);
@@ -97,8 +97,8 @@ public class TareasActivity extends ListFragment{
 
 		if(mCursorTareas.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
-			String[] from = new String[] { Tarea.NOMBRE, Tarea.FECHA, Tarea.HORA, Tarea.NOMBRE_EMPLEADO, Tarea.APELLIDO_EMPLEADO, Tarea.NOMBRE_EMPRESA, Tarea.FECHA_FINALIZACION};
-			int[] to = new int[] {R.id.textViewTitulo,  R.id.textViewFil1Col2, R.id.textViewFil1Col2, R.id.textViewFil2Col1, R.id.textViewFil2Col1, R.id.textViewFil1Col1, R.id.textViewFil2Col2 };
+			String[] from = new String[] { Tarea.NOMBRE, "loginUsuario", Tarea.FECHA, Tarea.HORA, Tarea.NOMBRE_EMPLEADO, Tarea.APELLIDO_EMPLEADO, Tarea.NOMBRE_EMPRESA, Tarea.FECHA_FINALIZACION};
+			int[] to = new int[] {R.id.textViewTitulo, R.id.textViewUsuario, R.id.textViewFil1Col2, R.id.textViewFil1Col2, R.id.textViewFil2Col1, R.id.textViewFil2Col1, R.id.textViewFil1Col1, R.id.textViewFil2Col2 };
 			ListView lvTareas = (ListView) view.findViewById (android.R.id.list);
 
 
@@ -296,7 +296,7 @@ public class TareasActivity extends ListFragment{
 			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeOk);
 
 			//Actualizamos los valores del cursor de la lista de tareas
-			listCursorAdapterTareas.changeCursor(tareaDao.listarTareas(getActivity()));
+			listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null));
 
 			//Notificamos que la lista cambio
 			listCursorAdapterTareas.notifyDataSetChanged();

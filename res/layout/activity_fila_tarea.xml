@@ -86,6 +86,11 @@
 				    android:layout_height="wrap_content"/>
 			    
 			</LinearLayout>
+			<TextView
+		        android:textIsSelectable="false"
+				android:id="@+id/textViewUsuario"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"/>
 		    
 		    <TableLayout
 			    android:layout_width="match_parent"
