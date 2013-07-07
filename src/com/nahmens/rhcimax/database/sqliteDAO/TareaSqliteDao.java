@@ -1,9 +1,5 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,6 +10,7 @@ import com.nahmens.rhcimax.database.DAO.TareaDAO;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 //OJO para usar la funcion strftime el formato de la fecha almacenada debe ser
 //yyyy-MM-dd
@@ -208,11 +205,11 @@ public class TareaSqliteDao implements TareaDAO{
 		if(args.equals("Todos")){
 			condicion = "";
 		}else if(args.equals("Hoy")){
-			condicion = " AND "+Tarea.FECHA+"='"+obtenerFecha(0)+"'";
+			condicion = " AND "+Tarea.FECHA+"='"+FormatoFecha.obtenerFecha(0)+"'";
 		}else if(args.equals("Ayer")){
-			condicion = " AND "+Tarea.FECHA+"='"+obtenerFecha(-1)+"'";
+			condicion = " AND "+Tarea.FECHA+"='"+FormatoFecha.obtenerFecha(-1)+"'";
 		}else if(args.equals("Esta semana")){
-			condicion = " AND "+Tarea.FECHA+" BETWEEN '"+obtenerFecha(-7)+"' AND '"+obtenerFecha(0)+"'";
+			condicion = " AND "+Tarea.FECHA+" BETWEEN '"+FormatoFecha.obtenerFecha(-7)+"' AND '"+FormatoFecha.obtenerFecha(0)+"'";
 		}
 
 		try{
@@ -244,17 +241,7 @@ public class TareaSqliteDao implements TareaDAO{
 		return mCursor;	
 	}
 	
-	private String obtenerFecha(int cantidad) {
-		//OJO: este es el formato que se necesita para poder
-		//hacer la comparacion
-		String myFormat = "yyyy-MM-dd"; 
-		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-		Calendar myCalendar = Calendar.getInstance();
-
-		myCalendar.add(Calendar.DATE, cantidad);
-
-		return sdf.format(myCalendar.getTime());
-	}
+	
 
 	@Override
 	public Cursor listarTareasPorEmpresa(Context contexto, String idEmpresa) {

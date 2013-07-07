@@ -16,7 +16,7 @@ import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
 import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Tarea;
-import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements Filterable{
@@ -262,8 +262,8 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 
 		Cursor filterResultsData = null;
 
-		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		filterResultsData = tareaDao.buscarTareaFilter(context, constraint.toString());
+		HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
+		filterResultsData = historicoDao.buscarHistoricoFilter(context, constraint.toString());
 
 
 		return filterResultsData;

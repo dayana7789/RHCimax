@@ -5,9 +5,11 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -16,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TableRow.LayoutParams;
 
 import com.nahmens.rhcimax.R;
@@ -93,6 +96,24 @@ public class HistoricosActivity extends ListFragment{
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		// Apply the adapter to the spinner
 		spinner.setAdapter(adapter);
+
+		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long arg3) {
+
+				String valor = (String)parent.getItemAtPosition(position);
+				Log.e("valor", " " +valor);
+
+				if(listCursorAdapterHistoricos!=null){
+					listCursorAdapterHistoricos.getFilter().filter(valor);   
+				}
+			}
+
+			public void onNothingSelected(AdapterView<?> arg0) {
+
+			}
+		});
 
 	}
 
