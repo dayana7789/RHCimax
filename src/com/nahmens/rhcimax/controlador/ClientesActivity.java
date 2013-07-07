@@ -152,7 +152,7 @@ public class ClientesActivity extends ListFragment {
 		TextView tvRojo = (TextView) v.findViewById(R.id.avisoRojo);
 
 		EmpresaSqliteDao empresasDao = new EmpresaSqliteDao();
-		Cursor cursorlistEmp = empresasDao.listarEmpresas(getActivity());
+		Cursor cursorlistEmp = empresasDao.buscarEmpresaFilter(getActivity(),null);
 		ArrayList<Boolean> arr = new ArrayList<Boolean>();
 
 		//Log.e("empresas: ", " id: "+cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.ID)) + " fechSync: ," + cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.FECHA_SINCRONIZACION))+",");
@@ -230,7 +230,7 @@ public class ClientesActivity extends ListFragment {
 		//Cargamos la lista de empresas
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 		Context contexto = getActivity();
-		Cursor mCursorEmpresas = empresaDao.listarEmpresas(getActivity());
+		Cursor mCursorEmpresas = empresaDao.buscarEmpresaFilter(getActivity(),null);
 
 		if(mCursorEmpresas.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
@@ -449,7 +449,7 @@ public class ClientesActivity extends ListFragment {
 			if(tipoCliente.equals("empresa")){
 				//Actualizamos los valores del cursor de la lista de empresas
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				listCursorAdapterEmpresas.changeCursor(empresaDao.listarEmpresas(getActivity()));
+				listCursorAdapterEmpresas.changeCursor(empresaDao.buscarEmpresaFilter(getActivity(),null));
 				//Notificamos que la lista cambio
 				listCursorAdapterEmpresas.notifyDataSetChanged();
 

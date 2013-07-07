@@ -188,7 +188,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 	}
 
-	@Override
+	/*@Override
 	public Cursor listarEmpresas(Context contexto) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
@@ -207,7 +207,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		}
 
 		return mCursor;		
-	}
+	}*/
 
 	@Override
 	public Cursor listarNombresEmpresas(Context contexto, String args) {
@@ -266,8 +266,13 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 	@Override
 	public Cursor buscarEmpresaFilter(Context contexto, String args) {
-
 		ConexionBD conexion = new ConexionBD(contexto);
+		String [] palabras = {};
+
+		if(args!=null){
+			palabras = args.split(" ");
+		}
+		
 		Cursor mCursor = null;
 		String sqlQuery = "";
 		try{
@@ -275,8 +280,24 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 			sqlQuery  = " SELECT * ";
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
-			sqlQuery += " WHERE " + Empresa.NOMBRE + " LIKE '%" + args + "%' ";
-			sqlQuery += " AND status='activo' ";
+			sqlQuery += " WHERE status='activo' ";
+			
+			
+			for(int i =0; i< palabras.length; i++){
+
+				sqlQuery += " AND (";
+
+				sqlQuery +=	" empresa.nombre LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR empresa.telefono LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR empresa.web LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR empresa.rif LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR empresa.dirFiscal LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR empresa.dirComercial LIKE '%" + palabras[i] + "%' ";
+			
+				sqlQuery += ") ";
+			}
+			
+			
 			sqlQuery += " ORDER BY " + Empresa.NOMBRE;
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);

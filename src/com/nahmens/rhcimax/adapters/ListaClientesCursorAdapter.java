@@ -315,7 +315,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 			if(tipoCliente.equals("empresa")){
 				//Actualizamos los valores del cursor de la lista de empresas
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				this.changeCursor(empresaDao.listarEmpresas(context));
+				this.changeCursor(empresaDao.buscarEmpresaFilter(context,null));
 
 				//Cuando actualizamos a una empresa, actualizamos tambien a sus empleados
 				//Actualizamos los valores del cursor de la lista de empleados
@@ -333,7 +333,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 				//Actualizamos los valores del cursor de la lista de empresas
 				if(ClientesActivity.listCursorAdapterEmpresas!=null){
 					EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-					ClientesActivity.listCursorAdapterEmpresas.changeCursor(empresaDao.listarEmpresas(context));
+					ClientesActivity.listCursorAdapterEmpresas.changeCursor(empresaDao.buscarEmpresaFilter(context,null));
 					//	this.clienteAdapter.getCursor()
 				}else{
 					Log.e("no entre","no entre");
@@ -578,7 +578,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 			if(tipoCliente.equals("empresa")){
 				//Actualizamos los valores del cursor de la lista de empresas
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				this.changeCursor(empresaDao.listarEmpresas(context));
+				this.changeCursor(empresaDao.buscarEmpresaFilter(context,null));
 
 				//Cuando eliminamos a una empresa, eliminamos tambien a sus empleados
 				//Actualizamos los valores del cursor de la lista de empleados

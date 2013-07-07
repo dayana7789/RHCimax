@@ -232,6 +232,8 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		Cursor mCursor = null;
 		String sqlQuery = "";
 
+
+
 		try{
 			conexion.open();
 
@@ -270,6 +272,8 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 
 			sqlQuery += " ORDER BY empleado.nombre";
+
+			Log.e("query",""+ sqlQuery);
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 
