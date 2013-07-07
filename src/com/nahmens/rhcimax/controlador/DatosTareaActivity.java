@@ -311,8 +311,7 @@ public class DatosTareaActivity extends Fragment {
 			etHiddenIdEmpleado.setText("0");
 		}
 
-		Log.e("fecha: ", " " + tarea.getFecha());
-		Log.e("hora: ", " " + tarea.getHora());
+
 		bFecha.setText(tarea.getFecha());
 		bHora.setText(tarea.getHora());
 		etDescripcion.setText(tarea.getDescripcion());
@@ -451,6 +450,13 @@ public class DatosTareaActivity extends Fragment {
 		String fechaFinalizacion = null;
 
 		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm a",Locale.getDefault());
+		
+		//OJO: el formato de fecha, si queremos poder compararlos en el query, debe estar almacenado
+		//exactamente como yyyy-MM-dd. De lo contrario nunca va hacer bien la comparacion. Nisiquiera
+		//cambiando / por -.
+		//Referencia: Time Strings en http://www.sqlite.org/lang_datefunc.html
+		DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
+		fecha = dateFormat2.format(myCalendar.getTime());
 
 		if(finalizada){
 			fechaFinalizacion = dateFormat.format(new Date());

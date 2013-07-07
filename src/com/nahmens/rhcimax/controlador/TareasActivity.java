@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -121,6 +122,7 @@ public class TareasActivity extends ListFragment{
 
 				@Override
 				public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+					Log.e("filter", " " +  cs);
 					if(listCursorAdapterTareas!=null){
 						listCursorAdapterTareas.getFilter().filter(cs);   
 					}
@@ -133,6 +135,8 @@ public class TareasActivity extends ListFragment{
 				@Override
 				public void afterTextChanged(Editable arg0) {}
 			});
+			
+			
 
 		}
 	}
@@ -208,6 +212,25 @@ public class TareasActivity extends ListFragment{
 
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
+		
+		//add the listener:
+		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+            public void onItemSelected(AdapterView<?> parent, View view,
+                    int position, long arg3) {
+                
+            	String valor = (String)parent.getItemAtPosition(position);
+            	Log.e("valor", " " +valor);
+            	
+            	if(listCursorAdapterTareas!=null){
+					listCursorAdapterTareas.getFilter().filter(valor);   
+				}
+            }
+
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+            }
+        });
 	}
 
 

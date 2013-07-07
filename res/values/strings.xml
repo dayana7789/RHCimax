@@ -111,11 +111,12 @@
     
     
 	<!-- \u0020 = espacios en blanco -->
+	<!-- Si vas a cambiar estos valores, modificalos tambien en TareaSqliteDao en la funcion buscarTareaFilter -->
     <string-array name="historicos_filtro_array">
-        <item>Filtrar ninguno</item>
-        <item>Hoy\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020</item>
-        <item>Ayer\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020</item>
-        <item>Esta semana\u0020\u0020\u0020\u0020</item>
+        <item>Todos</item>
+        <item>Hoy</item>
+        <item>Ayer</item>
+        <item>Esta semana</item>
     </string-array>
 
     

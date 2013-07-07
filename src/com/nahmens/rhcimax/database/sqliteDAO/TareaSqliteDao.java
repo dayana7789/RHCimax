@@ -1,8 +1,13 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -11,6 +16,8 @@ import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 
+//OJO para usar la funcion strftime el formato de la fecha almacenada debe ser
+//yyyy-MM-dd
 public class TareaSqliteDao implements TareaDAO{
 
 	@Override
@@ -126,11 +133,21 @@ public class TareaSqliteDao implements TareaDAO{
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
 		Tarea tarea = null;
+		String sqlQuery = null;
+		
 
 		try{
 			conexion.open();
+			
+			sqlQuery = "SELECT "+Tarea.ID+ ", "+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
+					+", "+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+","+Tarea.ID_EMPLEADO
+					+", "+Tarea.ID_EMPRESA+", "+Tarea.ID_USUARIO_CREADOR+", "+Tarea.ID_USUARIO_MODIFICADOR
+					+ " FROM tarea ";
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA , null , Tarea.ID + " = ? AND status='activo'", new String [] {idTarea}, null, null, null);
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery, null);
+
+			//mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA , null , Tarea.ID + " = ? AND status='activo'", new String [] {idTarea}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
@@ -163,7 +180,7 @@ public class TareaSqliteDao implements TareaDAO{
 			conexion.open();
 
 			
-			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
 					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
 					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
@@ -196,20 +213,32 @@ public class TareaSqliteDao implements TareaDAO{
 		Cursor mCursor = null;
 		String sqlQuery = "";
 		String [] palabras = args.split("");
+		String condicion = "";
+		
+		if(args.equals("Todos")){
+			condicion = "";
+		}else if(args.equals("Hoy")){
+			condicion = " AND "+Tarea.FECHA+"='"+obtenerFecha(0)+"'";
+		}else if(args.equals("Ayer")){
+			condicion = " AND "+Tarea.FECHA+"='"+obtenerFecha(-1)+"'";
+		}else if(args.equals("Esta semana")){
+			condicion = " AND "+Tarea.FECHA+" BETWEEN '"+obtenerFecha(-7)+"' AND '"+obtenerFecha(0)+"'";
+		}
 
 		try{
 			conexion.open();
 
 
-			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
 					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
 					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
-					+ "FROM tarea "
-					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
-					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
-					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
-					+ "ORDER BY " + Tarea.FECHA + " DESC";
+					+ " FROM tarea "
+					+ " LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
+					+ " LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
+					+ " WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
+					+ condicion
+					+ " ORDER BY " + Tarea.FECHA + " DESC";
 
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
@@ -225,6 +254,18 @@ public class TareaSqliteDao implements TareaDAO{
 		return mCursor;	
 	}
 	
+	private String obtenerFecha(int cantidad) {
+		//OJO: este es el formato que se necesita para poder
+		//hacer la comparacion
+		String myFormat = "yyyy-MM-dd"; 
+		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+		Calendar myCalendar = Calendar.getInstance();
+
+		myCalendar.add(Calendar.DATE, cantidad);
+
+		return sdf.format(myCalendar.getTime());
+	}
+
 	@Override
 	public Cursor listarTareasPorEmpresa(Context contexto, String idEmpresa) {
 		ConexionBD conexion = new ConexionBD(contexto);
@@ -233,7 +274,7 @@ public class TareaSqliteDao implements TareaDAO{
 		try{
 			conexion.open();
 
-			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
 					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
 					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
@@ -266,7 +307,7 @@ public class TareaSqliteDao implements TareaDAO{
 		try{
 			conexion.open();
 
-			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
 					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
 					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
