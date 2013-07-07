@@ -5,12 +5,15 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -44,41 +47,62 @@ public class HistoricosActivity extends ListFragment{
 
 		View view = inflater.inflate(R.layout.activity_historicos, container, false);
 
-		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
-		//tab es el correspondiente.
-		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentHistoricos);	
+		if (savedInstanceState==null){
+			//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
+			//tab es el correspondiente.
+			AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentHistoricos);	
 
-		//Asociamos los valores al combo box o spinner
-		inicializarSpinner(view);
+			//Asociamos los valores al combo box o spinner
+			inicializarSpinner(view);
 
-		HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
-		Cursor mCursorHistoricos = null;
+			HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
+			Cursor mCursorHistoricos = null;
 
-		Bundle mArgumentos = this.getArguments();
+			Bundle mArgumentos = this.getArguments();
 
-		//Si me pasaron argumentos, filtro la lista. 
-		//De lo contrario, listo todo.
-		if(mArgumentos!= null){
+			//Si me pasaron argumentos, filtro la lista. 
+			//De lo contrario, listo todo.
+			if(mArgumentos!= null){
 
-			String idEmpresa = mArgumentos.getString("idEmpresa");
-			String idEmpleado = mArgumentos.getString("idEmpleado");
+				String idEmpresa = mArgumentos.getString("idEmpresa");
+				String idEmpleado = mArgumentos.getString("idEmpleado");
 
-			if(idEmpresa!=null){
-				mCursorHistoricos = historicoDao.listarHistoricosPorEmpresa(getActivity(), idEmpresa);
+				if(idEmpresa!=null){
+					mCursorHistoricos = historicoDao.listarHistoricosPorEmpresa(getActivity(), idEmpresa);
 
-			}else if(idEmpleado !=null){
-				mCursorHistoricos = historicoDao.listarHistoricosPorEmpleado(getActivity(), idEmpleado);
+				}else if(idEmpleado !=null){
+					mCursorHistoricos = historicoDao.listarHistoricosPorEmpleado(getActivity(), idEmpleado);
+				}
+
+
+			}else{
+				mCursorHistoricos = historicoDao.buscarHistoricoFilter(getActivity(), null);
 			}
 
 
-		}else{
-			mCursorHistoricos = historicoDao.listarHistoricos(getActivity());
+			listarHistoricos(view, mCursorHistoricos);
+			
+			//Registro del evento addTextChangedListener cuando utilizamos el buscador
+			EditText etBuscar = (EditText) view.findViewById(R.id.editTextBuscar);
+			etBuscar.addTextChangedListener(new TextWatcher() {
+
+				@Override
+				public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+
+					if(listCursorAdapterHistoricos!=null){
+						listCursorAdapterHistoricos.getFilter().filter(cs);   
+					}
+				}
+
+				@Override
+				public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+						int arg3) {}
+
+				@Override
+				public void afterTextChanged(Editable arg0) {}
+			});
+
 		}
-
-
-		listarHistoricos(view, mCursorHistoricos);
-
-
 		return view;
 	}
 

@@ -64,10 +64,10 @@
     </EditText>
 
     
-    <TextView
+   <!-- <TextView
 		android:id="@+id/textViewHistoricosSub"
 	    style="@style/FuenteSubTitulos"
-	    android:text="@string/historicos" />
+	    android:text="@string/historicos" /> -->
     
     <ListView
         android:id="@id/android:list"
