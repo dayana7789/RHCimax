@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,6 +40,7 @@ import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.InstantAutoComplete;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class DatosTareaActivity extends Fragment {
 
@@ -312,7 +312,7 @@ public class DatosTareaActivity extends Fragment {
 		}
 
 
-		bFecha.setText(tarea.getFecha());
+		bFecha.setText(FormatoFecha.darFormatoDateES(tarea.getFecha()));
 		bHora.setText(tarea.getHora());
 		etDescripcion.setText(tarea.getDescripcion());
 		cbFinalizada.setChecked(finalizado);
@@ -412,6 +412,7 @@ public class DatosTareaActivity extends Fragment {
 	 * @param inicializar Indica si queremos obtener la fecha actual
 	 */
 	private void setFecha(boolean inicializar) {
+
 		String myFormat = "dd/MM/yyyy"; 
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
@@ -449,17 +450,15 @@ public class DatosTareaActivity extends Fragment {
 		boolean finalizada = cbFinalizada.isChecked();
 		String fechaFinalizacion = null;
 
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm a",Locale.getDefault());
 		
 		//OJO: el formato de fecha, si queremos poder compararlos en el query, debe estar almacenado
 		//exactamente como yyyy-MM-dd. De lo contrario nunca va hacer bien la comparacion. Nisiquiera
 		//cambiando / por -.
 		//Referencia: Time Strings en http://www.sqlite.org/lang_datefunc.html
-		DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault());
-		fecha = dateFormat2.format(myCalendar.getTime());
+				fecha =FormatoFecha.darFormatoDateUS(fecha);
 
 		if(finalizada){
-			fechaFinalizacion = dateFormat.format(new Date());
+			fechaFinalizacion  = FormatoFecha.darFormatoDateTimeUS(new Date());
 		}
 
 		/** Verificacion de errores **/
@@ -524,7 +523,7 @@ public class DatosTareaActivity extends Fragment {
 			//Estamos modificando un registro..
 			if(idTarea!=null){
 
-				String fechaModificacion = dateFormat.format(new Date());
+				String fechaModificacion =FormatoFecha.darFormatoDateTimeUS(new Date());
 				Tarea tarea = new Tarea(Integer.parseInt(idTarea), nombre, fecha, hora, descripcion, idUsuario, idEmpresa, idEmpleado,fechaFinalizacion, fechaModificacion);
 
 				Boolean modificado = tareaoDao.modificarTarea(getActivity(), tarea);

@@ -17,6 +17,7 @@ import com.nahmens.rhcimax.database.modelo.Cotizacion;
 import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements Filterable{
 
@@ -138,9 +139,16 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 				nombre = "Cotización número: " + nombre;
 
 			}else if(columna.equals(Cotizacion.FECHA_ENVIO)){
+				
+				if(!nombre.equals("--")){
+					nombre = FormatoFecha.darFormatoDateTimeES(nombre);
+				}
 				nombre = "Enviado: " + nombre;
 
 			}else if(columna.equals(Cotizacion.FECHA_LEIDO)){
+				if(!nombre.equals("--")){
+					nombre = FormatoFecha.darFormatoDateTimeES(nombre);
+				}
 				nombre = "Leído: " + nombre;
 
 			}else if(columna.equals("nombreEmpresaCotizacion") || columna.equals("nombreEmpresaTarea")){
@@ -154,6 +162,9 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 				nombre = "Contacto: "+nombreCompleto;
 
 			}else if(columna.equals(Tarea.FECHA)){
+				if(!nombre.equals("--")){
+					nombre = FormatoFecha.darFormatoDateES(nombre);
+				}
 				fechaCompleta = "Pautado: " +nombre;
 
 			}else if(columna.equals(Tarea.HORA)){
@@ -161,6 +172,9 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 				nombre = fechaCompleta;
 
 			}else if(columna.equals(Tarea.FECHA_FINALIZACION)){
+				if(!nombre.equals("--")){
+					nombre = FormatoFecha.darFormatoDateTimeES(nombre);
+				}
 				nombre = "Finalizado: " + nombre;
 
 			}else if(columna.equals("nombreEmpresaVisita")){
@@ -170,9 +184,15 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 				nombre = "Vendedor: " + nombre;
 
 			}else if(columna.equals(Checkin.CHECKIN)){
+				if(!nombre.equals("--")){
+					nombre = FormatoFecha.darFormatoDateTimeES(nombre);
+				}
 				nombre = "Fecha de llegada: " + nombre;
 
 			}else if(columna.equals(Checkin.CHECKOUT)){
+				if(!nombre.equals("--")){
+					nombre = FormatoFecha.darFormatoDateTimeES(nombre);
+				}
 				nombre = "Fecha de retirada: " + nombre;
 			}
 

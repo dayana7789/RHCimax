@@ -1,8 +1,6 @@
 package com.nahmens.rhcimax.controlador;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 import android.content.Context;
@@ -31,6 +29,7 @@ import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class DatosClienteActivity extends Fragment {
 
@@ -301,10 +300,7 @@ public class DatosClienteActivity extends Fragment {
 		int idEmpresa = 0;
 		LayoutInflater mInflater = getActivity().getLayoutInflater();
 
-		Date dateFechaModif = new Date();
-		String myFormat = "yyyy/MM/dd HH:mm:ss"; 
-		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
-		String fechaModif = sdf.format(dateFechaModif);
+		String fechaModif = FormatoFecha.darFormatoDateTimeUS(new Date());
 
 		//este try catch es para evitar errores de tipo de campo
 		try{

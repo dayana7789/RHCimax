@@ -1,11 +1,5 @@
 package com.nahmens.rhcimax.controlador;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -34,6 +28,7 @@ import com.nahmens.rhcimax.database.modelo.Servicio;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.Cotizacion_ServicioSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 
 public class HistoricosActivity extends ListFragment{
@@ -259,7 +254,7 @@ public class HistoricosActivity extends ListFragment{
 			contacto = nombreEmpl+ " " + apellidoEmpl;
 			usuario = cursor.getString(cursor.getColumnIndex("loginUsuarioTarea"));
 			fechaCreacion = cursor.getString(cursor.getColumnIndex("tareaFechaCreacion"));
-			fecha1 = cursor.getString(cursor.getColumnIndex(Tarea.FECHA)) + " " + cursor.getString(cursor.getColumnIndex(Tarea.HORA));
+			fecha1 = FormatoFecha.darFormatoDateES(cursor.getString(cursor.getColumnIndex(Tarea.FECHA))) + " " + cursor.getString(cursor.getColumnIndex(Tarea.HORA));
 			fecha2 = cursor.getString(cursor.getColumnIndex(Tarea.FECHA_FINALIZACION));
 			descripcion = cursor.getString(cursor.getColumnIndex("tareaDescripcion"));
 
@@ -344,30 +339,26 @@ public class HistoricosActivity extends ListFragment{
 
 		if(fechaCreacion!=null){
 
-			String v_date_str=fechaCreacion;
-			Date v_date=null;
-			try {
-				v_date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(v_date_str);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			DateFormat formatter = null;
-
-			formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH);
-
-			tvFechaCreacion.setText(formatter.format(v_date));
+			tvFechaCreacion.setText(FormatoFecha.darFormatoDateTimeES(fechaCreacion));
 		}else{
 			tvFechaCreacion.setText("--");
 		}
 
 		if(fecha1!=null){
-			tvFecha1.setText(fecha1);
+			//este try catch es para capturar la excepcion q se produce
+			//por el formato de fecha de la tarea que tiene la hora
+			//concatenada
+			try{
+				tvFecha1.setText(FormatoFecha.darFormatoDateTimeES(fecha1));
+			}catch (Exception e) {
+				tvFecha1.setText(fecha1);
+			}
 		}else{
 			tvFecha1.setText("--");
 		}
 
 		if(fecha2!=null){
-			tvFecha2.setText(fecha2);
+			tvFecha2.setText(FormatoFecha.darFormatoDateTimeES(fecha2));
 		}else{
 			tvFecha2.setText("--");
 		}

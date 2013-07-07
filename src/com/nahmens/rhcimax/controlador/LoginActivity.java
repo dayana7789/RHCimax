@@ -1,8 +1,6 @@
 package com.nahmens.rhcimax.controlador;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,6 +17,7 @@ import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.CheckinSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.UsuarioSqliteDao;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 import com.nahmens.rhcimax.utils.GPSTracker;
 
 public class LoginActivity extends Activity {
@@ -64,11 +63,8 @@ public class LoginActivity extends Activity {
             double longitud = gps.getLongitude();
             
             Log.e("Login", "Your Location is - \nLat: " + latitud + "\nLong: " +longitud);
-            
-            String myFormat = "dd/MM/yy hh:mm a"; 
-    		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-    		String fecha = sdf.format(new Date());
+    		String fecha = FormatoFecha.darFormatoDateTimeUS(new Date());
 
             Checkin checkin = new Checkin(latitud, longitud, fecha, null, 0, usu.getId());
             CheckinSqliteDao checkinDao = new CheckinSqliteDao();

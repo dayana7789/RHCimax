@@ -1,9 +1,7 @@
 package com.nahmens.rhcimax.controlador;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import android.content.Context;
@@ -41,6 +39,7 @@ import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.ServicioSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 import com.nahmens.rhcimax.utils.Tripleta;
 
 public class ServiciosActivity extends Fragment {
@@ -306,9 +305,6 @@ public class ServiciosActivity extends Fragment {
 					Calendar hoy = Calendar.getInstance();
 					hoy.add(Calendar.DATE, 2);
 					
-					String myFormat = "dd/MM/yyyy";
-					SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-					
 					HashMap<Integer, Boolean> correosSeleccionados = ListaCorreosCursorAdapter.getCorreosSeleccionados();
 					boolean bool = false;
 					int idEmpleado = 0;
@@ -327,7 +323,7 @@ public class ServiciosActivity extends Fragment {
 						}
 					}
 					//creamos una tarea 
-					Tarea tarea = new Tarea("Llamar y verificar envío de cotización", sdf.format(hoy.getTime()), "8:00 AM", descripcion, idUsuario, idUsuario, Integer.parseInt(idEmpresa), idEmpleado, null);
+					Tarea tarea = new Tarea("Llamar y verificar envío de cotización", FormatoFecha.darFormatoDateUS(hoy.getTime()), "8:00 AM", descripcion, idUsuario, idUsuario, Integer.parseInt(idEmpresa), idEmpleado, null);
 					TareaSqliteDao tareaDao = new TareaSqliteDao();
 					tareaDao.insertarTarea(getActivity(), tarea);
 					

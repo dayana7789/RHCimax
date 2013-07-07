@@ -1,8 +1,6 @@
 package com.nahmens.rhcimax.controlador;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,6 +13,7 @@ import android.view.ViewGroup;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.sqliteDAO.CheckinSqliteDao;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class LogoutActivity extends Fragment {
 
@@ -31,10 +30,7 @@ public class LogoutActivity extends Fragment {
 	}
 
 	public static void logout(Context contexto) {
-		String myFormat = "dd/MM/yy hh:mm a"; 
-		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-		String fecha = sdf.format(new Date());
+		String fecha = FormatoFecha.darFormatoDateTimeUS(new Date());
 
 		SharedPreferences prefs = contexto.getSharedPreferences("Usuario",Context.MODE_PRIVATE);
 		String idCheckin = prefs.getString("idCheckin", ""); 

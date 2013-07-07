@@ -7,7 +7,6 @@ import java.util.Locale;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -133,21 +132,12 @@ public class TareaSqliteDao implements TareaDAO{
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
 		Tarea tarea = null;
-		String sqlQuery = null;
 		
 
 		try{
 			conexion.open();
 			
-			sqlQuery = "SELECT "+Tarea.ID+ ", "+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as "+Tarea.FECHA+", "+Tarea.HORA
-					+", "+Tarea.DESCRIPCION+", strftime('%d/%m/%Y',"+Tarea.FECHA_FINALIZACION+") as "+Tarea.FECHA_FINALIZACION+", "+Tarea.ID_EMPLEADO
-					+", "+Tarea.ID_EMPRESA+", "+Tarea.ID_USUARIO_CREADOR+", "+Tarea.ID_USUARIO_MODIFICADOR
-					+ " FROM tarea ";
-
-
-			mCursor = conexion.getDatabase().rawQuery(sqlQuery, null);
-
-			//mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA , null , Tarea.ID + " = ? AND status='activo'", new String [] {idTarea}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA , null , Tarea.ID + " = ? AND status='activo'", new String [] {idTarea}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
@@ -180,8 +170,8 @@ public class TareaSqliteDao implements TareaDAO{
 			conexion.open();
 
 			
-			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
-					+", tarea."+Tarea.DESCRIPCION+", strftime('%d/%m/%Y',"+Tarea.FECHA_FINALIZACION+")  as "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
 					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
 					+ "FROM tarea "
@@ -229,8 +219,8 @@ public class TareaSqliteDao implements TareaDAO{
 			conexion.open();
 
 
-			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
-					+", tarea."+Tarea.DESCRIPCION+", strftime('%d/%m/%Y',"+Tarea.FECHA_FINALIZACION+") as "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
 					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
 					+ " FROM tarea "
@@ -274,8 +264,8 @@ public class TareaSqliteDao implements TareaDAO{
 		try{
 			conexion.open();
 
-			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
-					+", tarea."+Tarea.DESCRIPCION+", strftime('%d/%m/%Y',"+Tarea.FECHA_FINALIZACION+")  as "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
 					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
 					+ "FROM tarea "
@@ -307,8 +297,8 @@ public class TareaSqliteDao implements TareaDAO{
 		try{
 			conexion.open();
 
-			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", strftime('%d/%m/%Y',"+Tarea.FECHA+") as fecha, "+Tarea.HORA
-					+", tarea."+Tarea.DESCRIPCION+", strftime('%d/%m/%Y',"+Tarea.FECHA_FINALIZACION+")  as "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
 					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
 					+ "FROM tarea "

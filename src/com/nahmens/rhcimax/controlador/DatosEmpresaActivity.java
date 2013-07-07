@@ -1,8 +1,6 @@
 package com.nahmens.rhcimax.controlador;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -35,6 +33,7 @@ import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class DatosEmpresaActivity extends Fragment {
 
@@ -394,10 +393,7 @@ public class DatosEmpresaActivity extends Fragment {
 		boolean error = false;
 		LayoutInflater mInflater = getActivity().getLayoutInflater();
 
-		Date dateFechaModif = new Date();
-		String myFormat = "yyyy/MM/dd HH:mm:ss"; 
-		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
-		String fechaModif = sdf.format(dateFechaModif);
+		String fechaModif = FormatoFecha.darFormatoDateTimeUS(new Date());
 
 		String nombre = etNombre.getText().toString();
 		String telefono = etTelefono.getText().toString();

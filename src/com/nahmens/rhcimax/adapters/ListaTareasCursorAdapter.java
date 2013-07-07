@@ -20,6 +20,7 @@ import com.nahmens.rhcimax.controlador.AplicacionActivity;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Filterable{
 
@@ -100,7 +101,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 			}
 
 			if(columna.equals(Tarea.FECHA)){
-				fechaCompleta = "Pautado: " +nombre;
+				fechaCompleta = "Pautado: " +FormatoFecha.darFormatoDateES(nombre);
 			}
 
 			if(columna.equals(Tarea.HORA)){
