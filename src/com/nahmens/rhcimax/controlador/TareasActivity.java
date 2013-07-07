@@ -38,56 +38,57 @@ public class TareasActivity extends ListFragment{
 
 		View view = inflater.inflate(R.layout.activity_tareas, container, false);
 
-		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
-		//tab es el correspondiente.
-		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentTareas);	
-		
-		//Asociamos los valores al combo box o spinner
-		inicializarSpinner(view);
-		
-		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		Cursor mCursorTareas = null;
+		if (savedInstanceState==null){
+			//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
+			//tab es el correspondiente.
+			AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentTareas);	
 
-		Bundle mArgumentos = this.getArguments();
+			//Asociamos los valores al combo box o spinner
+			inicializarSpinner(view);
 
-		//Si me pasaron argumentos, filtro la lista. 
-		//De lo contrario, listo todo.
-		if(mArgumentos!= null){
+			TareaSqliteDao tareaDao = new TareaSqliteDao();
+			Cursor mCursorTareas = null;
 
-			String idEmpresa = mArgumentos.getString("idEmpresa");
-			String idEmpleado = mArgumentos.getString("idEmpleado");
-			
+			Bundle mArgumentos = this.getArguments();
 
-			if(idEmpresa!=null){
-				mCursorTareas = tareaDao.listarTareasPorEmpresa(getActivity(), idEmpresa);
+			//Si me pasaron argumentos, filtro la lista. 
+			//De lo contrario, listo todo.
+			if(mArgumentos!= null){
 
-			}else if(idEmpleado !=null){
-				mCursorTareas = tareaDao.listarTareasPorEmpleado(getActivity(), idEmpleado);
+				String idEmpresa = mArgumentos.getString("idEmpresa");
+				String idEmpleado = mArgumentos.getString("idEmpleado");
+
+
+				if(idEmpresa!=null){
+					mCursorTareas = tareaDao.listarTareasPorEmpresa(getActivity(), idEmpresa);
+
+				}else if(idEmpleado !=null){
+					mCursorTareas = tareaDao.listarTareasPorEmpleado(getActivity(), idEmpleado);
+				}
+
+			}else{
+				mCursorTareas = tareaDao.listarTareas(getActivity());
 			}
 
-		}else{
-			mCursorTareas = tareaDao.listarTareas(getActivity());
+			listarTareas(view, mCursorTareas);
+
+			// Registro del evento OnClick del buttonTarea
+			ImageButton bTarea = (ImageButton)view.findViewById(R.id.ImageButtonAgregarTarea);
+			bTarea.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					DatosTareaActivity fragmentDatosTarea = new DatosTareaActivity();
+					final FragmentTransaction ft = getFragmentManager().beginTransaction();
+					//Cambiamos el layout de clientes por datos_empresa e indicamos el tag del frame.
+					ft.replace(android.R.id.tabcontent,fragmentDatosTarea, AplicacionActivity.tagFragmentDatosTareas); 
+					//preservamos el estado anterior al hacer click en back button
+					ft.addToBackStack(null);
+					ft.commit(); 
+				}
+			});
+
 		}
-
-		listarTareas(view, mCursorTareas);
-
-		// Registro del evento OnClick del buttonTarea
-		ImageButton bTarea = (ImageButton)view.findViewById(R.id.ImageButtonAgregarTarea);
-		bTarea.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				DatosTareaActivity fragmentDatosTarea = new DatosTareaActivity();
-				final FragmentTransaction ft = getFragmentManager().beginTransaction();
-				//Cambiamos el layout de clientes por datos_empresa e indicamos el tag del frame.
-				ft.replace(android.R.id.tabcontent,fragmentDatosTarea, AplicacionActivity.tagFragmentDatosTareas); 
-				//preservamos el estado anterior al hacer click en back button
-				ft.addToBackStack(null);
-				ft.commit(); 
-			}
-		});
-
-
 		return view;
 	}
 
@@ -135,8 +136,8 @@ public class TareasActivity extends ListFragment{
 				@Override
 				public void afterTextChanged(Editable arg0) {}
 			});
-			
-			
+
+
 
 		}
 	}
@@ -179,7 +180,7 @@ public class TareasActivity extends ListFragment{
 	 */
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		
+
 		//OJO: aqui estamos usando  getListView() porq tenemos un solo ListView
 		//pero de tener mas de uno, no debemos usar esto (Ver ClientesActivity.java)
 		Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
@@ -212,25 +213,25 @@ public class TareasActivity extends ListFragment{
 
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinner.setAdapter(adapter);
-		
+
 		//add the listener:
 		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
-            public void onItemSelected(AdapterView<?> parent, View view,
-                    int position, long arg3) {
-                
-            	String valor = (String)parent.getItemAtPosition(position);
-            	Log.e("valor", " " +valor);
-            	
-            	if(listCursorAdapterTareas!=null){
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long arg3) {
+
+				String valor = (String)parent.getItemAtPosition(position);
+				Log.e("valor", " " +valor);
+
+				if(listCursorAdapterTareas!=null){
 					listCursorAdapterTareas.getFilter().filter(valor);   
 				}
-            }
+			}
 
-            public void onNothingSelected(AdapterView<?> arg0) {
+			public void onNothingSelected(AdapterView<?> arg0) {
 
-            }
-        });
+			}
+		});
 	}
 
 

@@ -233,7 +233,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	 * Nota3: El ListView que se va a filtrar debe poseer el atributo android:textFilterEnabled="true"
 	 */
 	public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
-
+Log.e("emtreeeeee","entrteee");
 		if (getFilterQueryProvider() != null){ 
 			return getFilterQueryProvider().runQuery(constraint); 
 		}
