@@ -115,7 +115,6 @@ public class ClientesActivity extends ListFragment {
 
 			@Override
 			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-				// When user changed the Text
 
 				if(listCursorAdapterEmpleados!=null){
 					listCursorAdapterEmpleados.getFilter().filter(cs);   
@@ -128,15 +127,10 @@ public class ClientesActivity extends ListFragment {
 
 			@Override
 			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-					int arg3) {
-				// TODO Auto-generated method stub
-
-			}
+					int arg3) {}
 
 			@Override
-			public void afterTextChanged(Editable arg0) {
-				// TODO Auto-generated method stub                          
-			}
+			public void afterTextChanged(Editable arg0) {}
 		});
 
 
@@ -291,7 +285,7 @@ public class ClientesActivity extends ListFragment {
 		//Cargamos la lista de empleados
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 		Context context = getActivity();
-		Cursor mCursorEmpleados = empleadoDao.listarEmpleados(getActivity());
+		Cursor mCursorEmpleados = empleadoDao.buscarEmpleadoFilter(getActivity(),null);
 
 		if(mCursorEmpleados.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
@@ -463,7 +457,7 @@ public class ClientesActivity extends ListFragment {
 				//Actualizamos los valores del cursor de la lista de empleados
 				if(listCursorAdapterEmpleados!=null){
 					EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-					listCursorAdapterEmpleados.changeCursor(empleadoDao.listarEmpleados(getActivity()));
+					listCursorAdapterEmpleados.changeCursor(empleadoDao.buscarEmpleadoFilter(getActivity(),null));
 					//Notificamos que la lista cambio
 					listCursorAdapterEmpleados.notifyDataSetChanged();
 				}
@@ -471,7 +465,7 @@ public class ClientesActivity extends ListFragment {
 			}else if(tipoCliente.equals("empleado")){
 				//Actualizamos los valores del cursor de la lista de empleados
 				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-				listCursorAdapterEmpleados.changeCursor(empleadoDao.listarEmpleados(getActivity()));
+				listCursorAdapterEmpleados.changeCursor(empleadoDao.buscarEmpleadoFilter(getActivity(),null));
 				//Notificamos que la lista cambio
 				listCursorAdapterEmpleados.notifyDataSetChanged();
 			}

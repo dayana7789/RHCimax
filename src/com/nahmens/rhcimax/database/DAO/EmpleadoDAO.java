@@ -19,7 +19,7 @@ public interface EmpleadoDAO {
 	 * @return
 	 */
 	Cursor buscarEmpleadoCursor(Context contexto, String idEmpleado);
-	Cursor listarEmpleados(Context contexto);
+//	Cursor listarEmpleados(Context contexto);
 	
 	/**
 	 * Funcion que lista a todos los empleados asociados a una empresa.

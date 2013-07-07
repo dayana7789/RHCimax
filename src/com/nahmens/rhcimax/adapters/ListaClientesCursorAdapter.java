@@ -321,13 +321,13 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 				//Actualizamos los valores del cursor de la lista de empleados
 				if(ClientesActivity.listCursorAdapterEmpleados!=null){
 					EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-					ClientesActivity.listCursorAdapterEmpleados.changeCursor(empleadoDao.listarEmpleados(context));
+					ClientesActivity.listCursorAdapterEmpleados.changeCursor(empleadoDao.buscarEmpleadoFilter(context,null));
 				}
 
 			}else if(tipoCliente.equals("empleado")){
 				//Actualizamos los valores del cursor de la lista de empleados
 				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-				this.changeCursor(empleadoDao.listarEmpleados(context));
+				this.changeCursor(empleadoDao.buscarEmpleadoFilter(context,null));
 
 				//Cuando actualizamos a una empleado, actualizamos tambien el status d la empresa
 				//Actualizamos los valores del cursor de la lista de empresas
@@ -584,13 +584,13 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 				//Actualizamos los valores del cursor de la lista de empleados
 				if(ClientesActivity.listCursorAdapterEmpleados!=null){
 					EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-					ClientesActivity.listCursorAdapterEmpleados.changeCursor(empleadoDao.listarEmpleados(context));
+					ClientesActivity.listCursorAdapterEmpleados.changeCursor(empleadoDao.buscarEmpleadoFilter(context,null));
 				}
 
 			}else if(tipoCliente.equals("empleado")){
 				//Actualizamos los valores del cursor de la lista de empleados
 				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-				this.changeCursor(empleadoDao.listarEmpleados(context));
+				this.changeCursor(empleadoDao.buscarEmpleadoFilter(context,null));
 			}
 
 			//Notificamos que la lista cambio
