@@ -47,7 +47,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 
 
 
-	String orderBy  = " ORDER BY historico." + Historico.FECHA_CREACION;
+	String orderBy  = " ORDER BY historico." + Historico.FECHA_CREACION + " DESC";
 
 	@Override
 	public long insertarHistorico(Context contexto, Historico historico) {

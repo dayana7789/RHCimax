@@ -3,7 +3,6 @@ package com.nahmens.rhcimax.database.sqliteDAO;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -253,7 +252,7 @@ public class TareaSqliteDao implements TareaDAO{
 				sqlQuery += ") ";
 			}
 			
-			sqlQuery += " ORDER BY " + Tarea.FECHA + " DESC";
+			sqlQuery += " ORDER BY " + Tarea.FECHA + " ASC";
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 
@@ -287,7 +286,7 @@ public class TareaSqliteDao implements TareaDAO{
 					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
 					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
 					+ "AND tarea." + Tarea.ID_EMPRESA + " = " + idEmpresa 
-					+ " ORDER BY " + Tarea.FECHA + " DESC";
+					+ " ORDER BY " + Tarea.FECHA + " ASC";
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery, null);
 
@@ -320,7 +319,7 @@ public class TareaSqliteDao implements TareaDAO{
 					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
 					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
 					+ "AND tarea." + Tarea.ID_EMPLEADO + " = " + idEmpleado
-					+ " ORDER BY " + Tarea.FECHA + " DESC";
+					+ " ORDER BY " + Tarea.FECHA + " ASC";
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery, null);
 
