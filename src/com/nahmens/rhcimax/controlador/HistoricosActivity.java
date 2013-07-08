@@ -127,7 +127,6 @@ public class HistoricosActivity extends ListFragment{
 					int position, long arg3) {
 
 				String valor = (String)parent.getItemAtPosition(position);
-				Log.e("valor", " " +valor);
 
 				if(listCursorAdapterHistoricos!=null){
 					listCursorAdapterHistoricos.getFilter().filter(valor);   

@@ -181,7 +181,7 @@ public class DatosEmpresaActivity extends Fragment {
 				@Override
 				public void onClick(View v) {
 					String id = null;
-					Log.e("tareas", "me presionaron");
+
 					if(mArgumentos!=null){
 						id = mArgumentos.getString("idEmpresa");
 					}
@@ -203,7 +203,7 @@ public class DatosEmpresaActivity extends Fragment {
 				@Override
 				public void onClick(View v) {
 					String id = null;
-					Log.e("historicos", "me presionaron");
+
 					if(mArgumentos!=null){
 						id = mArgumentos.getString("idEmpresa");
 					}

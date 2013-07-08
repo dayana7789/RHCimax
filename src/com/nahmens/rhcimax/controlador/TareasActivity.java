@@ -123,7 +123,7 @@ public class TareasActivity extends ListFragment{
 
 				@Override
 				public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-					Log.e("filter", " " +  cs);
+
 					if(listCursorAdapterTareas!=null){
 						listCursorAdapterTareas.getFilter().filter(cs);   
 					}
@@ -221,7 +221,6 @@ public class TareasActivity extends ListFragment{
 					int position, long arg3) {
 
 				String valor = (String)parent.getItemAtPosition(position);
-				Log.e("valor", " " +valor);
 
 				if(listCursorAdapterTareas!=null){
 					listCursorAdapterTareas.getFilter().filter(valor);   

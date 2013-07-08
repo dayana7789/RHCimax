@@ -526,7 +526,6 @@ public class AplicacionActivity extends FragmentActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		unregisterReceiver(myReceiver);
-		Log.e("me llamaron","lamaron");
 	}
 
 	/**

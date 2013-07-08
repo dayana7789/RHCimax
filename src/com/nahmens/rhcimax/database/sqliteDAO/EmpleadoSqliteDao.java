@@ -270,10 +270,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 				sqlQuery += ") ";
 			}
 
-
 			sqlQuery += " ORDER BY empleado.nombre";
-
-			Log.e("query",""+ sqlQuery);
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 
