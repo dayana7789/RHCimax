@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import android.util.Log;
+
 public class FormatoFecha {
 	
 	/**
@@ -91,7 +93,7 @@ public class FormatoFecha {
 	 */
 	public static String darFormatoDateUS(Date date){
 		String myFormat = "yyyy-MM-dd"; 
-		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
 		String fecha = sdf.format(date);
 		
 		return fecha;
@@ -108,12 +110,47 @@ public class FormatoFecha {
 		//OJO: este es el formato que se necesita para poder
 		//hacer la comparacion
 		String myFormat = "yyyy-MM-dd"; 
-		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
 		Calendar myCalendar = Calendar.getInstance();
 
 		myCalendar.add(Calendar.DATE, cantidad);
 
 		return sdf.format(myCalendar.getTime());
+	}
+	
+	/**
+	 * Funcion que compara dos fechas
+	 * @param fecha1
+	 * @param fecha2
+	 * @return -1 si ha ocurrido algun error
+	 *          0 si Fecha1 es igual a fecha2
+	 *          1 si Fecha1 es menor a fecha2
+	 *          2 si Fecha1 es mayor a fecha2
+	 */
+	public static int compararDates(String fecha1, String fecha2){
+
+	    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+	    int resultado = -1;
+
+	    try{
+		    Date date1 = format.parse(fecha1);
+		    Date date2 = format.parse(fecha2);
+		    
+		    if (date1.compareTo(date2) == 0) {
+		    	resultado = 0;
+		    }else if (date1.compareTo(date2) < 0){
+		    	resultado = 1;
+		    }else if (date1.compareTo(date2) > 0){
+		    	resultado = 2;
+		    }else{
+		    	resultado = -1;
+		    }
+		    
+	    }catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	    return resultado;
 	}
 
 }

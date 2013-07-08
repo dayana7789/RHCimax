@@ -1,5 +1,7 @@
 package com.nahmens.rhcimax.adapters;
 
+import java.util.Date;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,10 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filterable;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.controlador.AplicacionActivity;
+import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
@@ -71,7 +75,6 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 		//Nombre del textView en nuestro Layout donde queremos
 		//que aparezca el resultado.
 		TextView nombre_text = null;
-
 
 		String nombreCompleto = ""; //almacena nombre completo del empleado
 		String fechaCompleta = ""; //almacena fecha y hora
@@ -129,6 +132,8 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 				nombre_text.setText(nombre);
 			}
 		}
+		
+		actualizarColorFondo(v, cursor);
 
 		//Si la pantalla esta horizontal, mostramos los botones. 
 		//De lo contrario, no mostramos los botones
@@ -195,6 +200,27 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 		}
 	}
 
+
+
+	private void actualizarColorFondo(View v, Cursor cursor) {
+		LinearLayout llFila = (LinearLayout) v.findViewById(R.id.linearLayoutTarea);
+		String fechaTarea = cursor.getString(cursor.getColumnIndex(Tarea.FECHA));
+		
+		String fechaActual = FormatoFecha.darFormatoDateUS(new Date());
+		
+		int resultado = FormatoFecha.compararDates(fechaTarea, fechaActual);
+		
+		if(resultado==1){
+			llFila.setBackgroundResource(R.drawable.fondo_gradiente_rojo);
+			
+		}else if(resultado==0 || resultado==2){
+			llFila.setBackgroundResource(R.drawable.fondo_gradiente_verde);
+			
+		}else{
+			Log.e("Error","Ha ocurrido un error al cambiar de color el fondo de la fila de tarea");
+		}
+		
+	}
 
 
 	/** 
