@@ -300,8 +300,6 @@ public class DatosClienteActivity extends Fragment {
 		int idEmpresa = 0;
 		LayoutInflater mInflater = getActivity().getLayoutInflater();
 
-		String fechaModif = FormatoFecha.darFormatoDateTimeUS(new Date());
-
 		//este try catch es para evitar errores de tipo de campo
 		try{
 			idEmpresa = Integer.parseInt(etIdEmpresa.getText().toString());
@@ -318,6 +316,7 @@ public class DatosClienteActivity extends Fragment {
 		String pin = etPin.getText().toString();
 		String descripcion = etDescripcion.getText().toString();
 		String nombreEmpresa = acNombreEmpresa.getText().toString();
+		String fechaModif = FormatoFecha.darFormatoDateTimeUS(new Date());
 
 		/** Verificacion de errores **/
 		if(nombre.equals("") || nombre==null){

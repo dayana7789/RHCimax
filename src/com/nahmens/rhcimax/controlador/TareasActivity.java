@@ -1,15 +1,17 @@
 package com.nahmens.rhcimax.controlador;
 
 
+import java.util.ArrayList;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,16 +23,28 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaTareasCursorAdapter;
+import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class TareasActivity extends ListFragment{
 
 	ListaTareasCursorAdapter listCursorAdapterTareas;
+
+	//Creamos un DataSetObserver para saber cuando el listView de tarea
+	//ha sido modificado y lo registramos al adaptor con la funcion 
+	//registerDataSetObserver().
+	private DataSetObserver observer = new DataSetObserver() {
+		public void onChanged(){
+			cambiarColorCuadroNotificacion(null);
+		}
+	};
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,6 +85,8 @@ public class TareasActivity extends ListFragment{
 			}
 
 			listarTareas(view, mCursorTareas);
+			
+			cambiarColorCuadroNotificacion(view);
 
 			// Registro del evento OnClick del buttonTarea
 			ImageButton bTarea = (ImageButton)view.findViewById(R.id.ImageButtonAgregarTarea);
@@ -105,6 +121,9 @@ public class TareasActivity extends ListFragment{
 			//Creamos un array adapter para desplegar cada una de las filas
 			listCursorAdapterTareas = new ListaTareasCursorAdapter(getActivity(), R.layout.activity_fila_tarea, mCursorTareas, from, to, 0, getFragmentManager());
 			lvTareas.setAdapter(listCursorAdapterTareas);
+			
+			//registramos el DataSetObserver al adaptador
+			listCursorAdapterTareas.registerDataSetObserver(observer);
 
 			lvTareas.setOnItemLongClickListener(new OnItemLongClickListener() {
 
@@ -150,7 +169,6 @@ public class TareasActivity extends ListFragment{
 		Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
 		final int idTarea = cursor.getInt(cursor.getColumnIndex(Tarea.ID));
 		final String nombreTarea = cursor.getString(cursor.getColumnIndex(Tarea.NOMBRE));
-		Log.v("long clicked","pos"+" "+idTarea);
 
 		String[] arr = {"Actualizar","Eliminar"};
 
@@ -160,7 +178,7 @@ public class TareasActivity extends ListFragment{
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 				case 0:
-
+					sincronizarTarea(idTarea);
 					break;
 
 				case 1:
@@ -309,5 +327,98 @@ public class TareasActivity extends ListFragment{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Funcion encargada de modificar los colores de los cuadros de notificacion principal.
+	 * @param v
+	 */
+	private void cambiarColorCuadroNotificacion(View v) {
+
+		if(v==null){
+			v = getView();
+		}
+
+		String strFechaSincronizacion = null;
+		String strFechaModificacion = null;
+
+		TextView tvVerde = (TextView) v.findViewById(R.id.avisoVerde);
+		TextView tvRojo = (TextView) v.findViewById(R.id.avisoRojo);
+
+		TareaSqliteDao tareaDao = new TareaSqliteDao();
+		Cursor cursorlistTareas = tareaDao.buscarTareaFilter(getActivity(),null);
+
+		ArrayList<Boolean> arr = new ArrayList<Boolean>();
+
+		//iteramos sobre las tareas
+		if (cursorlistTareas != null) {
+			cursorlistTareas.moveToFirst();
+		}
+
+		while(!cursorlistTareas.isAfterLast()){
+			strFechaSincronizacion = cursorlistTareas.getString(cursorlistTareas.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
+			strFechaModificacion = cursorlistTareas.getString(cursorlistTareas.getColumnIndex(Empleado.FECHA_MODIFICACION));
+
+			if(strFechaSincronizacion == null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+				arr.add(false);
+			}else{
+				arr.add(true);
+			}
+
+			cursorlistTareas.moveToNext();
+		}
+
+
+		//pintamos..
+		if(arr.contains(true) && arr.contains(false)){
+			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
+			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
+
+		}else if(arr.contains(true)){
+			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
+			tvVerde.setBackgroundResource(R.drawable.borde_verde);
+
+		}else if(arr.contains(false)){
+			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
+			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
+		}
+	}
+	
+	/**
+	 * Funcion que sincroniza una tarea.
+	 * @param id Id de la tarea
+	 */
+	private void sincronizarTarea(int id) {
+		final LayoutInflater inflater = LayoutInflater.from(getActivity());
+		Boolean sincronizado =  false;
+		Mensaje mToast = null;
+		String mensajeError = null;
+		String mensajeOk = null;
+
+		TareaSqliteDao tareaDao = new TareaSqliteDao();
+		sincronizado = tareaDao.sincronizarTarea(getActivity(), ""+id);
+
+		mensajeOk = "ok_sincronizado_tarea";
+		mensajeError = "error_sincronizado_tarea";
+
+		if(sincronizado){
+			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeOk);
+
+			//Actualizamos los valores del cursor de la lista de tareas
+			listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null));
+
+			//Notificamos que la lista cambio
+			listCursorAdapterTareas.notifyDataSetChanged();
+
+		}else{
+			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeError);
+		}
+
+		try {
+			mToast.controlMensajesToast();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 }

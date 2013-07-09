@@ -1,8 +1,11 @@
 package com.nahmens.rhcimax.controlador;
 
+import java.util.ArrayList;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
@@ -29,17 +32,28 @@ import com.nahmens.rhcimax.adapters.ListaHistoricosCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
 import com.nahmens.rhcimax.database.modelo.Cotizacion_Servicio;
+import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Servicio;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.Cotizacion_ServicioSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 
 public class HistoricosActivity extends ListFragment{
 
 	ListaHistoricosCursorAdapter listCursorAdapterHistoricos;
+	
+	//Creamos un DataSetObserver para saber cuando el listView de tarea
+		//ha sido modificado y lo registramos al adaptor con la funcion 
+		//registerDataSetObserver().
+		private DataSetObserver observer = new DataSetObserver() {
+			public void onChanged(){
+				cambiarColorCuadroNotificacion(null);
+			}
+		};
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,6 +95,8 @@ public class HistoricosActivity extends ListFragment{
 
 
 			listarHistoricos(view, mCursorHistoricos);
+			
+			cambiarColorCuadroNotificacion(view);
 			
 			//Registro del evento addTextChangedListener cuando utilizamos el buscador
 			EditText etBuscar = (EditText) view.findViewById(R.id.editTextBuscar);
@@ -159,6 +175,9 @@ public class HistoricosActivity extends ListFragment{
 			//Creamos un array adapter para desplegar cada una de las filas
 			listCursorAdapterHistoricos = new ListaHistoricosCursorAdapter(getActivity(), R.layout.activity_fila_historico, mCursorHistoricos, fromCotizacion, toCotizacion, 0, fromTarea, toTarea, fromVisita, toVisita);
 			lvHistoricos.setAdapter(listCursorAdapterHistoricos);
+			
+			//registramos el DataSetObserver al adaptador
+			listCursorAdapterHistoricos.registerDataSetObserver(observer);
 
 
 		}
@@ -504,4 +523,60 @@ public class HistoricosActivity extends ListFragment{
 		tvTotal.setText(""+total);
 		tvMensual.setText(""+mensual);
 	}
+	
+	/**
+	 * Funcion encargada de modificar los colores de los cuadros de notificacion principal.
+	 * @param v
+	 */
+	private void cambiarColorCuadroNotificacion(View v) {
+
+		if(v==null){
+			v = getView();
+		}
+
+		String strFechaSincronizacion = null;
+		String strFechaModificacion = null;
+
+		TextView tvVerde = (TextView) v.findViewById(R.id.avisoVerde);
+		TextView tvRojo = (TextView) v.findViewById(R.id.avisoRojo);
+
+		TareaSqliteDao tareaDao = new TareaSqliteDao();
+		Cursor cursorlistTareas = tareaDao.buscarTareaFilter(getActivity(),"fechaFinalizacion_not_null");
+
+		ArrayList<Boolean> arr = new ArrayList<Boolean>();
+
+		//iteramos sobre las tareas
+		if (cursorlistTareas != null) {
+			cursorlistTareas.moveToFirst();
+		}
+
+		while(!cursorlistTareas.isAfterLast()){
+			strFechaSincronizacion = cursorlistTareas.getString(cursorlistTareas.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
+			strFechaModificacion = cursorlistTareas.getString(cursorlistTareas.getColumnIndex(Empleado.FECHA_MODIFICACION));
+
+			if(strFechaSincronizacion == null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+				arr.add(false);
+			}else{
+				arr.add(true);
+			}
+
+			cursorlistTareas.moveToNext();
+		}
+
+
+		//pintamos..
+		if(arr.contains(true) && arr.contains(false)){
+			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
+			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
+
+		}else if(arr.contains(true)){
+			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
+			tvVerde.setBackgroundResource(R.drawable.borde_verde);
+
+		}else if(arr.contains(false)){
+			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
+			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
+		}
+	}
+	
 }

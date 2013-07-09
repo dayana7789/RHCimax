@@ -46,13 +46,13 @@
 				  	android:visibility="gone">
 				        
 					<TextView
-			            android:id="@+id/avisoVerdeFilaHist"
+			            android:id="@+id/avisoVerdeFila"
 			            android:textIsSelectable="false"
 			            style="@style/CuadroNotificacion"
 	                    android:background="@drawable/borde_blanco"/>
 					        
 			        <TextView
-		                android:id="@+id/avisoRojoFilaHist"
+		                android:id="@+id/avisoRojoFila"
 		                android:textIsSelectable="false"
 		                style="@style/CuadroNotificacion"
 	                    android:background="@drawable/borde_blanco"/>
@@ -140,26 +140,14 @@
 			    </TableRow>
 			</TableLayout>
 		</LinearLayout>
-	
-	<!-- 	<LinearLayout 
-			android:gravity="right"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content">
 
-			<ImageButton
-				android:id="@+id/imageButtonSync"
-			    android:layout_width="wrap_content"
-			    android:layout_height="match_parent"
-			    android:src="@android:drawable/stat_notify_sync"
-			    tools:ignore="ContentDescription" />
+		<ImageButton
+			android:id="@+id/imageButtonSync"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:src="@android:drawable/stat_notify_sync"
+		    android:contentDescription="@string/sincronizar" />
 			
-			 <ImageButton
-			    android:id="@+id/imageButtonVer"
-			    android:layout_width="wrap_content"
-			    android:layout_height="match_parent"
-			    android:src="@android:drawable/ic_menu_view"
-			    tools:ignore="ContentDescription" />
-					    
-		</LinearLayout> -->
+			
 	</TableRow>
 </TableLayout>

@@ -1,9 +1,6 @@
 package com.nahmens.rhcimax.adapters;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -29,6 +26,7 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 /**
  * Adaptador personalizado para iterar sobre los resultados de la BD,
@@ -63,7 +61,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		View v = inflater.inflate(layout, parent, false);
 
@@ -72,7 +69,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 	@Override
 	public void bindView(View v, Context context, Cursor cursor) { 
-
 
 		//Columna de la BD que queremos recuperar
 		String columna = null;
@@ -120,11 +116,9 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 			}
 		}
 
-		if(tipoCliente.equals("empleado")){
-			actualizarCuadrosNotificacionEmpleado(v, cursor);
-		}else{
-			actualizarCuadrosNotificacionEmpresa(v, cursor);
-		}
+
+		actualizarCuadrosNotificacionCliente(v, cursor);
+
 
 		setIconoCliente(v);
 
@@ -213,95 +207,16 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 		if(tipoCliente.equals("empresa")){
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+			sincronizado = empresaDao.sincronizarEmpresa(context, id);
 
-			EmpleadoSqliteDao empleadosDao = new EmpleadoSqliteDao();
-
-			Cursor cursorlistEmpl = empleadosDao.listarEmpleadosPorEmpresa(context, ""+id);
-			ArrayList<Boolean> arr = new ArrayList<Boolean>();
-
-			if (cursorlistEmpl != null) {
-				cursorlistEmpl.moveToFirst();
-			}
-
-			while(!cursorlistEmpl.isAfterLast()){
-
-				if(cursorlistEmpl.getString(cursorlistEmpl.getColumnIndex(Empleado.FECHA_SINCRONIZACION)) == null){
-					arr.add(false);
-				}else{
-					arr.add(true);
-				}
-
-				cursorlistEmpl.moveToNext();
-			}
-
-			if(arr.contains(true) && arr.contains(false)){
-				sincronizado = empresaDao.sincronizarEmpresa(context, ""+id, true);
-
-			}else if(arr.contains(true)){
-				sincronizado = empresaDao.sincronizarEmpresa(context, ""+id, false);
-
-
-			}else if(arr.contains(false)){
-				sincronizado = empresaDao.sincronizarEmpresa(context, ""+id, null);
-			}
-
-			empresaDao.setModificado(context, id, false);
-
-			//sincronizamos los empleados asociados a la empresa
-			//EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-			//empleadoDao.sincronizarEmpleados(this.context, id);
-
+			
 			mensajeOk = "ok_sincronizado_empresa";
 			mensajeError = "error_sincronizado_empresa";
 
 		}else if(tipoCliente.equals("empleado")){
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-			sincronizado = empleadoDao.sincronizarEmpleado(this.context, id);
-			Empleado emp = empleadoDao.buscarEmpleado(context, id);
-
-
-
-
-			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-			EmpleadoSqliteDao empleadosDao = new EmpleadoSqliteDao();
-
-			Cursor cursorlistEmpl = empleadosDao.listarEmpleadosPorEmpresa(context, ""+emp.getIdEmpresa());
-			ArrayList<Boolean> arr = new ArrayList<Boolean>();
-
-			if (cursorlistEmpl != null) {
-				cursorlistEmpl.moveToFirst();
-			}
-
-			while(!cursorlistEmpl.isAfterLast()){
-
-				if(cursorlistEmpl.getString(cursorlistEmpl.getColumnIndex(Empleado.FECHA_SINCRONIZACION)) == null){
-					arr.add(false);
-				}else{
-					arr.add(true);
-				}
-
-				cursorlistEmpl.moveToNext();
-			}
-
-			if(arr.contains(true) && arr.contains(false)){
-				Log.e("####", "amarillo");
-				empresaDao.sincronizarEmpresa(context, ""+id, true);
-
-			}else if(arr.contains(true)){
-
-				Log.e("####", "verde");
-				empresaDao.sincronizarEmpresa(context, ""+id, false);
-
-
-			}else if(arr.contains(false)){
-				Log.e("####", "rojo");
-				empresaDao.sincronizarEmpresa(context, ""+id, null);
-			}
-
-
-
-
-
+			sincronizado = empleadoDao.sincronizarEmpleado(context, id);
+			
 			mensajeOk = "ok_sincronizado_empleado";
 			mensajeError = "error_sincronizado_empleado";
 
@@ -317,30 +232,13 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				this.changeCursor(empresaDao.buscarEmpresaFilter(context,null));
 
-				//Cuando actualizamos a una empresa, actualizamos tambien a sus empleados
-				//Actualizamos los valores del cursor de la lista de empleados
-				if(ClientesActivity.listCursorAdapterEmpleados!=null){
-					EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-					ClientesActivity.listCursorAdapterEmpleados.changeCursor(empleadoDao.buscarEmpleadoFilter(context,null));
-				}
-
+				
 			}else if(tipoCliente.equals("empleado")){
 				//Actualizamos los valores del cursor de la lista de empleados
 				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 				this.changeCursor(empleadoDao.buscarEmpleadoFilter(context,null));
 
-				//Cuando actualizamos a una empleado, actualizamos tambien el status d la empresa
-				//Actualizamos los valores del cursor de la lista de empresas
-				if(ClientesActivity.listCursorAdapterEmpresas!=null){
-					EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-					ClientesActivity.listCursorAdapterEmpresas.changeCursor(empresaDao.buscarEmpresaFilter(context,null));
-					//	this.clienteAdapter.getCursor()
-				}else{
-					Log.e("no entre","no entre");
-				}
 			}
-
-			Log.e("primero?","primero?");
 
 			//Notificamos que la lista cambio
 			this.notifyDataSetChanged();
@@ -354,7 +252,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 
 	}
 
@@ -384,166 +281,23 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 	 * @param v
 	 * @param cursor
 	 */
-	private void actualizarCuadrosNotificacionEmpleado(View v, Cursor cursor) {
+	private void actualizarCuadrosNotificacionCliente(View v, Cursor cursor) {
 		String strFechaSincronizacion = cursor.getString(cursor.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
+		String strFechaModificacion = cursor.getString(cursor.getColumnIndex(Empleado.FECHA_MODIFICACION));
 
 		TextView tvAvisoRojoFila = (TextView) v.findViewById(R.id.avisoRojoFila);
 		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
-
-		Date fechaSincronizacion = null;
-		SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-
-		try {
-
-			if(strFechaSincronizacion != null){
-				fechaSincronizacion = formatoDelTexto.parse(strFechaSincronizacion);
-			}
-
-			if(fechaSincronizacion==null){
-				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
-				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
-			}else{
-				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
-				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_verde);
-			}
-
-		} catch (ParseException ex) {
-			ex.printStackTrace();
-		}
-
-
-
-		//solo para imprimir
-		/*String strFechaCreacion = cursor.getString(cursor.getColumnIndex(Empleado.FECHA_CREACION));
-		Date now = new Date();
-
-
-		Log.d("Lista clientes", "tipoCliente: "+ tipoCliente+ ", Nombre: " +  cursor.getString(cursor.getColumnIndex("nombre")) 
-				+ ", idUsuario: " + cursor.getInt(cursor.getColumnIndex("idUsuarioCreador")) 
-				+ ", fechaCreacion: " + strFechaCreacion
-				+ ", fechaSincronizacion: " + strFechaSincronizacion
-				+ ", now: " + formatoDelTexto.format(now));*/
-
-	}
-
-	/**
-	 * Actualiza los colores de los cuadros de notificación según la sincronización de la empresa.
-	 * @param v
-	 * @param cursor
-	 */
-	private void actualizarCuadrosNotificacionEmpresa(View v, Cursor cursor) {
-
-		String strFechaSincronizacion = cursor.getString(cursor.getColumnIndex(Empresa.FECHA_SINCRONIZACION));
-		int modificado =  cursor.getInt(cursor.getColumnIndex(Empresa.MODIFICADO));
-
-		TextView tvAvisoRojoFila = (TextView) v.findViewById(R.id.avisoRojoFila);
-		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
-
-		int idEmpresa =  cursor.getInt(cursor.getColumnIndex(Empresa.ID));
-		EmpleadoSqliteDao empleadosDao = new EmpleadoSqliteDao();
-		Cursor cursorlistEmpl = empleadosDao.listarEmpleadosPorEmpresa(context, ""+idEmpresa);
-		ArrayList<Boolean> arr = new ArrayList<Boolean>();
-
-		if (cursorlistEmpl != null) {
-			cursorlistEmpl.moveToFirst();
-		}
-
-		while(!cursorlistEmpl.isAfterLast()){
-
-			if(cursorlistEmpl.getString(cursorlistEmpl.getColumnIndex(Empleado.FECHA_SINCRONIZACION)) == null){
-				arr.add(false);
-			}else{
-				arr.add(true);
-			}
-
-			cursorlistEmpl.moveToNext();
-		}
-
-		if(arr.contains(true) && arr.contains(false)){
-			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
+		
+		if(strFechaSincronizacion==null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
 			tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
-
-			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-			empresaDao.sincronizarEmpresa(context, ""+idEmpresa, true);
-
-		}else if(arr.contains(true)){
-
-			if(modificado == 1){
-				//Si la empresa SI fue modificada y mis empleados SI estan sincronizados..
-				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
-				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
-
-				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				empresaDao.sincronizarEmpresa(context, ""+idEmpresa, true);
-			}else{
-
-				//Si la empresa NO fue modificada y mis empleados SI estan sincronizados..
-				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
-				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_verde);
-
-				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				empresaDao.sincronizarEmpresa(context, ""+idEmpresa, false);
-			}
-
-		}else if(arr.contains(false)){
-
-			if(modificado == 0){
-				//Si la empresa NO fue modificada y mis empleados NO estan sincronizados..
-				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
-				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
-
-				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				empresaDao.sincronizarEmpresa(context, ""+idEmpresa, true);
-			}else{
-
-				//Si la empresa SI fue modificada y mis empleados NO estan sincronizados..
-				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
-				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
-
-				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				empresaDao.sincronizarEmpresa(context, ""+idEmpresa, null);
-			}
-
 		}else{
-			//caso empresa sin empleados
-			if(strFechaSincronizacion==null){
-				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
-				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
-			}else{
-				tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
-				tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_verde);
-			}
+			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
+			tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_verde);
 		}
-
-
-
-		//solo para imprimir
-		Date now = new Date();
-		SimpleDateFormat formatoDelTexto = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Date fechaSincronizacion = null;
-		String strFechaCreacion = cursor.getString(cursor.getColumnIndex(Empresa.FECHA_CREACION));
-		try {
-
-
-			if(strFechaSincronizacion==null || strFechaSincronizacion.equals("")){
-
-			}else{
-				if(strFechaSincronizacion != null){
-					fechaSincronizacion = formatoDelTexto.parse(strFechaSincronizacion);
-				}
-			}
-
-		} catch (ParseException ex) {
-			ex.printStackTrace();
-		}
-
-		Log.d("Lista clientes", "tipoCliente: "+ tipoCliente+ ", Nombre: " +  cursor.getString(cursor.getColumnIndex("nombre")) 
-				+ ", idUsuario: " + cursor.getInt(cursor.getColumnIndex("idUsuarioCreador")) 
-				+ ", fechaCreacion: " + strFechaCreacion
-				+ ", fechaSincronizacion: " + strFechaSincronizacion
-				+ ", now: " + formatoDelTexto.format(now));
 
 	}
+
 
 	/** Funcion que elimina de la BD y del list view empleados o empresas.
 	 * 

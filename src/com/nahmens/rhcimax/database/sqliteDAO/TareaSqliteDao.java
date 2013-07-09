@@ -1,5 +1,7 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
+import java.util.Date;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -204,6 +206,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 
 		String condicion = "";
+		String condicion2 = " AND "+ Tarea.FECHA_FINALIZACION + " IS NULL ";
 		
 		if(args !=null){
 			if(args.equals("Todos")){
@@ -214,6 +217,8 @@ public class TareaSqliteDao implements TareaDAO{
 				condicion = " AND "+Tarea.FECHA+"='"+FormatoFecha.obtenerFecha(-1)+"'";
 			}else if(args.equals("Esta semana")){
 				condicion = " AND "+Tarea.FECHA+" BETWEEN '"+FormatoFecha.obtenerFecha(-7)+"' AND '"+FormatoFecha.obtenerFecha(0)+"'";
+			}else if(args.equals("fechaFinalizacion_not_null")){
+				condicion2 = " AND "+ Tarea.FECHA_FINALIZACION + " IS NOT NULL ";
 			}else{
 				palabras = args.split(" ");
 			}
@@ -225,15 +230,17 @@ public class TareaSqliteDao implements TareaDAO{
 
 			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA;
 			sqlQuery +=", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO;
-			sqlQuery +=", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, ";
-			sqlQuery +="empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado";
+			sqlQuery +=", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa";
+			sqlQuery +=", tarea."+Tarea.FECHA_MODIFICACION+", tarea."+Tarea.FECHA_SINCRONIZACION;
+			sqlQuery +=", empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado";
 			sqlQuery +=", usuario."+Usuario.LOGIN + " as loginUsuario";
 			sqlQuery += " FROM tarea ";
 			sqlQuery += " LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) ";
 			sqlQuery += " LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) ";
 			sqlQuery += " LEFT JOIN usuario ON ( tarea." + Tarea.ID_USUARIO_CREADOR + " = usuario."+Usuario.ID+" ) ";
-			sqlQuery += " WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL ";
+			sqlQuery += " WHERE tarea.status='activo' ";
 			sqlQuery += condicion;
+			sqlQuery += condicion2;
 			
 			for(int i =0; i< palabras.length; i++){
 
@@ -279,8 +286,9 @@ public class TareaSqliteDao implements TareaDAO{
 
 			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
 					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
-					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
-					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
+					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa"
+					+", tarea."+Tarea.FECHA_MODIFICACION+", tarea."+Tarea.FECHA_SINCRONIZACION
+					+", empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
 					+ "FROM tarea "
 					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
 					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
@@ -312,8 +320,9 @@ public class TareaSqliteDao implements TareaDAO{
 
 			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
 					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
-					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
-					+"empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
+					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa"
+					+", tarea."+Tarea.FECHA_MODIFICACION+", tarea."+Tarea.FECHA_SINCRONIZACION
+					+", empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
 					+ "FROM tarea "
 					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
 					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
@@ -333,6 +342,30 @@ public class TareaSqliteDao implements TareaDAO{
 		}
 
 		return mCursor;
+	}
+	
+	@Override
+	public boolean sincronizarTarea(Context contexto, String idTarea) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean sincronizado = false;
+
+		try{
+			conexion.open();
+
+			ContentValues contenido = new ContentValues();
+			contenido.put(Tarea.FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, contenido, "_id=?", new String []{idTarea});
+
+			if(value!=0){
+				sincronizado = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return sincronizado;
 	}
 
 }

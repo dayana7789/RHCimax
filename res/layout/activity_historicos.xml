@@ -30,7 +30,7 @@
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:id="@+id/avisoVerdeHist"
+                    android:id="@+id/avisoVerde"
                     style="@style/CuadroNotificacion"
                     android:textIsSelectable="false"
                     android:background="@drawable/borde_blanco"/>
@@ -38,7 +38,7 @@
 
 
                 <TextView
-                    android:id="@+id/avisoRojoHist"
+                    android:id="@+id/avisoRojo"
                     style="@style/CuadroNotificacion"
                     android:textIsSelectable="false"
                     android:background="@drawable/borde_blanco"/>
@@ -73,7 +73,6 @@
         android:id="@id/android:list"
         android:textFilterEnabled="true"
         android:layout_width="match_parent"
-        android:fadeScrollbars="false"
         android:layout_height="0dp"
         android:layout_weight="1" >
     </ListView>

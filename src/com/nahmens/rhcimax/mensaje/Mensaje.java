@@ -169,6 +169,16 @@ public class Mensaje {
 			mensaje =  "Contacto actualizado satisfactoriamente.";
 			layoutWhere = R.layout.toast_layout_mensaje_ok;
 
+		}else if(this.tipoMensaje == "error_sincronizado_tarea"){
+
+			mensaje =  "Error: la tarea no pudo ser actualizada.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
+		}else if(this.tipoMensaje == "ok_sincronizado_tarea"){
+
+			mensaje =  "Tarea actualizada satisfactoriamente.";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
 		}else if(this.tipoMensaje == "error_creacion_cotizacion"){
 
 			mensaje =  "Error: la cotización no pudo crearse.";

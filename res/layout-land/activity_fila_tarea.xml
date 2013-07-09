@@ -41,13 +41,13 @@
 			  	android:layout_height="wrap_content">
 			        
 				<TextView
-		            android:id="@+id/avisoVerdeFilaHist"
+		            android:id="@+id/avisoVerdeFila"
 		            android:textIsSelectable="false"
 		            style="@style/CuadroNotificacion"
 	                android:background="@drawable/borde_blanco"/>
 				        
 		        <TextView
-		            android:id="@+id/avisoRojoFilaHist"
+		            android:id="@+id/avisoRojoFila"
 		            android:textIsSelectable="false"
 		            style="@style/CuadroNotificacion"
 	                android:background="@drawable/borde_blanco"/>

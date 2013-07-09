@@ -8,7 +8,6 @@ import java.util.Locale;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -16,6 +15,7 @@ import com.nahmens.rhcimax.database.DAO.EmpleadoDAO;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class EmpleadoSqliteDao implements EmpleadoDAO{
 
@@ -87,6 +87,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			values.put(Empleado.LINKEDIN,empleado.getLinkedin());
 			values.put(Empleado.DESCRIPCION,empleado.getDescripcion());
 			values.put(Empleado.EMPRESA_ID,idEmpresa);
+			values.put(Empleado.FECHA_MODIFICACION,empleado.getFechaModificacion());
 			values.put(Empleado.ID_USUARIO_MODIFICADOR,empleado.getIdUsuarioModificador());
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, values, "_id=?", new String []{Integer.toString(empleado.getId())});
@@ -247,6 +248,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			sqlQuery += ", empleado.pin as "+Empleado.PIN;
 			sqlQuery += ", empleado.linkedin as "+Empleado.LINKEDIN;
 			sqlQuery += ", empleado." + Empleado.FECHA_SINCRONIZACION;
+			sqlQuery += ", empleado." + Empleado.FECHA_MODIFICACION;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
 			sqlQuery += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " ON (empleado.idEmpresa=empresa._id)";
@@ -289,13 +291,12 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 	public boolean sincronizarEmpleado(Context contexto, String idEmpleado) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean sincronizado = false;
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
 
 		try{
 			conexion.open();
 
 			ContentValues contenido = new ContentValues();
-			contenido.put(Empleado.FECHA_SINCRONIZACION, dateFormat.format(new Date()));
+			contenido.put(Empleado.FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, contenido, "_id=?", new String []{idEmpleado});
 

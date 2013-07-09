@@ -7,8 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import android.util.Log;
-
 public class FormatoFecha {
 	
 	/**
@@ -22,7 +20,7 @@ public class FormatoFecha {
 		try {
 			v_date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH).parse(fecha);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		DateFormat formatter = null;
 
@@ -151,6 +149,62 @@ public class FormatoFecha {
 		}
 
 	    return resultado;
+	}
+	
+	/**
+	 * Funcion que compara dos fechas y tiempo
+	 * @param fecha1
+	 * @param fecha2
+	 * @return -1 si ha ocurrido algun error
+	 *          0 si Fecha1 es igual a fecha2
+	 *          1 si Fecha1 es menor a fecha2
+	 *          2 si Fecha1 es mayor a fecha2
+	 */
+	public static int compararDateTimes(String fecha1, String fecha2){
+
+	    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+	    int resultado = -1;
+
+	    try{
+		    Date date1 = format.parse(fecha1);
+		    Date date2 = format.parse(fecha2);
+		    
+		    if (date1.compareTo(date2) == 0) {
+		    	resultado = 0;
+		    }else if (date1.compareTo(date2) < 0){
+		    	resultado = 1;
+		    }else if (date1.compareTo(date2) > 0){
+		    	resultado = 2;
+		    }else{
+		    	resultado = -1;
+		    }
+		    
+	    }catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	    return resultado;
+	}
+	
+	/**
+	 * Funcion que dado un string en formato de fecha,
+	 * lo transforma en un Date
+	 *
+	 * @param fecha
+	 * @return
+	 */
+	public static Date stringToDateTime(String fecha) {
+		String myFormat = "yyyy-MM-dd HH:mm:ss"; 
+		SimpleDateFormat format = new SimpleDateFormat(myFormat, Locale.ENGLISH);
+		Date date = null;
+		
+		try {
+			date = format.parse(fecha);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return date;
 	}
 
 }

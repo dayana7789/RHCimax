@@ -29,6 +29,7 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -47,7 +48,7 @@ public class ClientesActivity extends ListFragment {
 	//y lo registramos al adaptor con la funcion registerDataSetObserver().
 	private DataSetObserver observer = new DataSetObserver() {
 		public void onChanged(){
-			//cambiarColorCuadroNotificacion(null);
+			cambiarColorCuadroNotificacion(null);
 		}
 	};
 
@@ -57,82 +58,78 @@ public class ClientesActivity extends ListFragment {
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.activity_clientes, container, false);
-		
-		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
-		//tab es el correspondiente.
-		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentClientes);		
-		
-		//primero listamos a los empleados donde vamos a inicializar el valor de listCursorAdapterEmpleados
-		listarEmpleados(view);
 
-		//por ultimo listamos a las empresas, la cual utiliza la referencia de listCursorAdapterEmpleados dentro
-		//del adaptador. OJO con esto.
-		listarEmpresas(view);
+		if (savedInstanceState==null){
+			//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
+			//tab es el correspondiente.
+			AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentClientes);		
 
-		//Bundle mArgumentos = this.getArguments();
+			//primero listamos a los empleados donde vamos a inicializar el valor de listCursorAdapterEmpleados
+			listarEmpleados(view);
 
-		//Reviso si me pasaron argumentos: notificacion de cambio de color en cuadro de notificacion
-		//if(mArgumentos!= null){
-		//String color = mArgumentos.getString(AplicacionActivity.tagCuadroColor);
-		//cambiarColorCuadroNotificacion(view);
-		//}
+			//por ultimo listamos a las empresas, la cual utiliza la referencia de listCursorAdapterEmpleados dentro
+			//del adaptador. OJO con esto.
+			listarEmpresas(view);
+			
+			cambiarColorCuadroNotificacion(view);
 
-		// Registro del evento OnClick del buttonEmpresa
-		Button bEmp = (Button)view.findViewById(R.id.buttonEmpresa);
-		bEmp.setOnClickListener(new View.OnClickListener() {
+			// Registro del evento OnClick del buttonEmpresa
+			Button bEmp = (Button)view.findViewById(R.id.buttonEmpresa);
+			bEmp.setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				DatosEmpresaActivity fragmentDatosEmpresa = new DatosEmpresaActivity();
-				final FragmentTransaction ft = getFragmentManager().beginTransaction();
-				//Cambiamos el layout de clientes por datos_empresa e indicamos el tag del frame.
-				ft.replace(android.R.id.tabcontent,fragmentDatosEmpresa, AplicacionActivity.tagFragmentDatosEmpresa); 
-				//preservamos el estado anterior al hacer click en back button
-				ft.addToBackStack(null);
-				ft.commit(); 
-			}
-		});
+				@Override
+				public void onClick(View v) {
+					DatosEmpresaActivity fragmentDatosEmpresa = new DatosEmpresaActivity();
+					final FragmentTransaction ft = getFragmentManager().beginTransaction();
+					//Cambiamos el layout de clientes por datos_empresa e indicamos el tag del frame.
+					ft.replace(android.R.id.tabcontent,fragmentDatosEmpresa, AplicacionActivity.tagFragmentDatosEmpresa); 
+					//preservamos el estado anterior al hacer click en back button
+					ft.addToBackStack(null);
+					ft.commit(); 
+				}
+			});
 
-		// Registro del evento OnClick del buttonCliente
-		Button bClient = (Button)view.findViewById(R.id.buttonCliente);
-		bClient.setOnClickListener(new View.OnClickListener() {
+			// Registro del evento OnClick del buttonCliente
+			Button bClient = (Button)view.findViewById(R.id.buttonCliente);
+			bClient.setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				DatosClienteActivity fragmentDatosClientes = new DatosClienteActivity();
-				final FragmentTransaction ft = getFragmentManager().beginTransaction();
-				//Cambiamos el layout de clientes por datos_cliente e indicamos el tag del frame.
-				ft.replace(android.R.id.tabcontent,fragmentDatosClientes, AplicacionActivity.tagFragmentDatosCliente); 
-				//preservamos el estado anterior al hacer click en back button
-				ft.addToBackStack(null);
-				ft.commit(); 
-			}
-		});
+				@Override
+				public void onClick(View v) {
+					DatosClienteActivity fragmentDatosClientes = new DatosClienteActivity();
+					final FragmentTransaction ft = getFragmentManager().beginTransaction();
+					//Cambiamos el layout de clientes por datos_cliente e indicamos el tag del frame.
+					ft.replace(android.R.id.tabcontent,fragmentDatosClientes, AplicacionActivity.tagFragmentDatosCliente); 
+					//preservamos el estado anterior al hacer click en back button
+					ft.addToBackStack(null);
+					ft.commit(); 
+				}
+			});
 
-		//Registro del evento addTextChangedListener cuando utilizamos el buscador
-		EditText etBuscar = (EditText) view.findViewById(R.id.editTextBuscar);
-		etBuscar.addTextChangedListener(new TextWatcher() {
+			//Registro del evento addTextChangedListener cuando utilizamos el buscador
+			EditText etBuscar = (EditText) view.findViewById(R.id.editTextBuscar);
+			etBuscar.addTextChangedListener(new TextWatcher() {
 
-			@Override
-			public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+				@Override
+				public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
 
-				if(listCursorAdapterEmpleados!=null){
-					listCursorAdapterEmpleados.getFilter().filter(cs);   
+					if(listCursorAdapterEmpleados!=null){
+						listCursorAdapterEmpleados.getFilter().filter(cs);   
+					}
+
+					if(listCursorAdapterEmpresas!=null){
+						listCursorAdapterEmpresas.getFilter().filter(cs); 
+					}
 				}
 
-				if(listCursorAdapterEmpresas!=null){
-					listCursorAdapterEmpresas.getFilter().filter(cs); 
-				}
-			}
+				@Override
+				public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+						int arg3) {}
 
-			@Override
-			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-					int arg3) {}
+				@Override
+				public void afterTextChanged(Editable arg0) {}
+			});
 
-			@Override
-			public void afterTextChanged(Editable arg0) {}
-		});
-
+		}
 
 		return view;
 	}
@@ -140,41 +137,68 @@ public class ClientesActivity extends ListFragment {
 
 	/**
 	 * Funcion encargada de modificar los colores de los cuadros de notificacion principal.
-	 * @param color Color a ser modificado
+	 * @param v
 	 */
 	private void cambiarColorCuadroNotificacion(View v) {
 
 		if(v==null){
 			v = getView();
 		}
+		
+		String strFechaSincronizacion = null;
+		String strFechaModificacion = null;
 
 		TextView tvVerde = (TextView) v.findViewById(R.id.avisoVerde);
 		TextView tvRojo = (TextView) v.findViewById(R.id.avisoRojo);
 
 		EmpresaSqliteDao empresasDao = new EmpresaSqliteDao();
-		Cursor cursorlistEmp = empresasDao.buscarEmpresaFilter(getActivity(),null);
+		Cursor cursorlistEmpresas = empresasDao.buscarEmpresaFilter(getActivity(),null);
+		
+		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+		Cursor cursorlistEmpleados = empleadoDao.buscarEmpleadoFilter(getActivity(),null);
+		
 		ArrayList<Boolean> arr = new ArrayList<Boolean>();
 
-		//Log.e("empresas: ", " id: "+cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.ID)) + " fechSync: ," + cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.FECHA_SINCRONIZACION))+",");
-		if (cursorlistEmp != null) {
-			cursorlistEmp.moveToFirst();
+		//iteramos sobre las empresas
+		if (cursorlistEmpresas != null) {
+			cursorlistEmpresas.moveToFirst();
 		}
 
-		while(!cursorlistEmp.isAfterLast()){
+		while(!cursorlistEmpresas.isAfterLast()){
+			strFechaSincronizacion = cursorlistEmpresas.getString(cursorlistEmpresas.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
+			strFechaModificacion = cursorlistEmpresas.getString(cursorlistEmpresas.getColumnIndex(Empleado.FECHA_MODIFICACION));
 
-			if(cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.FECHA_SINCRONIZACION)) == null){
+			if(strFechaSincronizacion == null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
 				arr.add(false);
-			}else if(cursorlistEmp.getString(cursorlistEmp.getColumnIndex(Empresa.FECHA_SINCRONIZACION)).equals("")){
-				arr.add(null);
 			}else{
 				arr.add(true);
 			}
 
-			cursorlistEmp.moveToNext();
+			cursorlistEmpresas.moveToNext();
+		}
+		
+		
+		//iteramos sobre los empleados
+		if (cursorlistEmpleados != null) {
+			cursorlistEmpleados.moveToFirst();
 		}
 
+		while(!cursorlistEmpleados.isAfterLast()){
+			strFechaSincronizacion = cursorlistEmpleados.getString(cursorlistEmpleados.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
+			strFechaModificacion = cursorlistEmpleados.getString(cursorlistEmpleados.getColumnIndex(Empleado.FECHA_MODIFICACION));
+
+			if(strFechaSincronizacion == null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+				arr.add(false);
+			}else{
+				arr.add(true);
+			}
+
+			cursorlistEmpleados.moveToNext();
+		}
+
+		//pintamos..
 		if(arr.contains(true) && arr.contains(false)){
-			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
+			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
 			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
 
 		}else if(arr.contains(true)){
@@ -184,41 +208,9 @@ public class ClientesActivity extends ListFragment {
 		}else if(arr.contains(false)){
 			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
 			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
-		}else if(arr.contains(null)){
-			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
-			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
-		}/*else{
-			//caso empresa sin empleados
-			if(strFechaSincronizacion==null){
-				tvAmarillo.setBackgroundResource(R.drawable.borde_blanco);
-				tvRojo.setBackgroundResource(R.drawable.borde_rojo);
-				tvVerde.setBackgroundResource(R.drawable.borde_blanco);
-			}else{
-				tvAmarillo.setBackgroundResource(R.drawable.borde_blanco);
-				tvRojo.setBackgroundResource(R.drawable.borde_blanco);
-				tvVerde.setBackgroundResource(R.drawable.borde_verde);
-			}
+		}
 
-		}*/
-
-		/*if(color.equals(AplicacionActivity.tagRojo)){
-			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
-			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
-			tvAmarillo.setBackgroundResource(R.drawable.borde_blanco);
-
-		}else if(color.equals(AplicacionActivity.tagVerde)){
-			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
-			tvVerde.setBackgroundResource(R.drawable.borde_verde);
-			tvAmarillo.setBackgroundResource(R.drawable.borde_blanco);
-
-		}else if(color.equals(AplicacionActivity.tagAmarillo)){
-			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
-			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
-			tvAmarillo.setBackgroundResource(R.drawable.borde_amarillo);
-
-		}else{
-			Log.e("ClientesActivity: linea 138","Color invalido: " + color);
-		}*/
+		
 	}
 
 	/**
@@ -354,6 +346,7 @@ public class ClientesActivity extends ListFragment {
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 				case 0:
+					sincronizarCliente(""+id,  mArgumentos.getString("tipoCliente"));
 					break;
 
 				case 1:
@@ -473,6 +466,68 @@ public class ClientesActivity extends ListFragment {
 
 		}else{
 			mToast = new Mensaje(inflater, getActivity(), mensajeError);
+		}
+
+		try {
+			mToast.controlMensajesToast();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	private void sincronizarCliente(String id, String tipoCliente) {
+		final LayoutInflater inflater = LayoutInflater.from(getActivity());
+		Boolean sincronizado =  false;
+		Mensaje mToast = null;
+		String mensajeError = null;
+		String mensajeOk = null;
+
+		if(tipoCliente.equals("empresa")){
+			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+			sincronizado = empresaDao.sincronizarEmpresa(getActivity(), id);
+
+			
+			mensajeOk = "ok_sincronizado_empresa";
+			mensajeError = "error_sincronizado_empresa";
+
+		}else if(tipoCliente.equals("empleado")){
+			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+			sincronizado = empleadoDao.sincronizarEmpleado(getActivity(), id);
+			
+			mensajeOk = "ok_sincronizado_empleado";
+			mensajeError = "error_sincronizado_empleado";
+
+		}else{
+			Log.e("ListaClientesCursorAdapter","tipoCliente no soportado en funcion sincronizarCliente: " + tipoCliente);
+		}
+
+		if(sincronizado){
+			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeOk);
+
+			if(tipoCliente.equals("empresa")){
+				//Actualizamos los valores del cursor de la lista de empresas
+				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+				listCursorAdapterEmpresas.changeCursor(empresaDao.buscarEmpresaFilter(getActivity(),null));
+				
+				//Notificamos que la lista cambio
+				listCursorAdapterEmpresas.notifyDataSetChanged();
+
+				
+			}else if(tipoCliente.equals("empleado")){
+				//Actualizamos los valores del cursor de la lista de empleados
+				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+				listCursorAdapterEmpleados.changeCursor(empleadoDao.buscarEmpleadoFilter(getActivity(),null));
+				
+				//Notificamos que la lista cambio
+				listCursorAdapterEmpleados.notifyDataSetChanged();
+
+			}
+
+			
+
+		}else{
+			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeError);
 		}
 
 		try {

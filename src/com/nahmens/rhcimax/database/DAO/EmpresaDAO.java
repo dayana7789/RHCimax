@@ -52,21 +52,9 @@ public interface EmpresaDAO {
 	 * Funcion que sincroniza a una empresa.
 	 * @param contexto
 	 * @param idEmpresa Empresa a ser sincronizada
-	 * @param setVacio True: Indica si queremos almacenar la fecha de sincronizacion como "". (Caso: tengo empleados sincronizados y otros no)
-	 *                 False: Indica si queremos almacenar la fecha de sincronizacion como fecha actual. (Caso: tengo todos los empleados sincronizados)
-	 *                 Null: Indica si queremos almacenar la fecha de sincronizacion como null. (Caso: no tengo ningun empleado sincronizado )
 	 * @return si la sincronizacion fue llevada exitosamente.
 	 */
-	boolean sincronizarEmpresa(Context contexto, String idEmpresa, Boolean setVacio);
-	
-	/**
-	 * Funcion que cambia el valor de modificado de una empresa.
-	 * Utilizado mas que todo cuando se sincroniza una empresa en la nube.
-	 * @param contexto
-	 * @param idEmpresa
-	 * @return si el query fue llevado exitosamente.
-	 */
-	boolean setModificado(Context contexto, String idEmpresa, boolean valor);
+	boolean sincronizarEmpresa(Context contexto, String idEmpresa);
 	
 
 }

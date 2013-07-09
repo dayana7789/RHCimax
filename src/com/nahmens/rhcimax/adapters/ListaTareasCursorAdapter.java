@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.controlador.AplicacionActivity;
-import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
@@ -93,12 +92,12 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 			if(columna.equals(Tarea.NOMBRE)){
 				nombreTarea = nombre;
 			}
-			
+
 			if(columna.equals("loginUsuario")){
 				nombre = "Enviado por: " + nombre;
 
 			}
-			
+
 			if(columna.equals(Tarea.NOMBRE_EMPRESA)){
 				nombre = "Empresa: " + nombre;
 
@@ -132,7 +131,9 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 				nombre_text.setText(nombre);
 			}
 		}
-		
+
+		actualizarCuadrosNotificacionTarea(v, cursor);
+
 		actualizarColorFondo(v, cursor);
 
 		//Si la pantalla esta horizontal, mostramos los botones. 
@@ -155,6 +156,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 				@Override
 				public void onClick(View v){
 					int id = mArgumentos.getInt("id");
+					sincronizarTarea(id);
 				}
 
 			});
@@ -201,25 +203,81 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	}
 
 
+	/**
+	 * Funcion que sincroniza una tarea.
+	 * @param id Id de la tarea
+	 */
+	private void sincronizarTarea(int id) {
+		final LayoutInflater inflater = LayoutInflater.from(context);
+		Boolean sincronizado =  false;
+		Mensaje mToast = null;
+		String mensajeError = null;
+		String mensajeOk = null;
+
+		TareaSqliteDao tareaDao = new TareaSqliteDao();
+		sincronizado = tareaDao.sincronizarTarea(context, ""+id);
+
+		mensajeOk = "ok_sincronizado_tarea";
+		mensajeError = "error_sincronizado_tarea";
+
+		if(sincronizado){
+			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
+
+			//Actualizamos los valores del cursor de la lista de tareas
+			this.changeCursor(tareaDao.buscarTareaFilter(context,null));
+
+			//Notificamos que la lista cambio
+			this.notifyDataSetChanged();
+
+		}else{
+			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeError);
+		}
+
+		try {
+			mToast.controlMensajesToast();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+
+	private void actualizarCuadrosNotificacionTarea(View v, Cursor cursor) {
+		String strFechaSincronizacion = cursor.getString(cursor.getColumnIndex(Tarea.FECHA_SINCRONIZACION));
+		String strFechaModificacion = cursor.getString(cursor.getColumnIndex(Tarea.FECHA_MODIFICACION));
+
+		TextView tvAvisoRojoFila = (TextView) v.findViewById(R.id.avisoRojoFila);
+		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
+
+		if(strFechaSincronizacion==null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
+			tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
+		}else{
+			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_blanco);
+			tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_verde);
+		}
+
+	}
+
 
 	private void actualizarColorFondo(View v, Cursor cursor) {
 		LinearLayout llFila = (LinearLayout) v.findViewById(R.id.linearLayoutTarea);
 		String fechaTarea = cursor.getString(cursor.getColumnIndex(Tarea.FECHA));
-		
+
 		String fechaActual = FormatoFecha.darFormatoDateUS(new Date());
-		
+
 		int resultado = FormatoFecha.compararDates(fechaTarea, fechaActual);
-		
+
 		if(resultado==1){
 			llFila.setBackgroundResource(R.drawable.fondo_gradiente_rojo);
-			
+
 		}else if(resultado==0 || resultado==2){
 			llFila.setBackgroundResource(R.drawable.fondo_gradiente_verde);
-			
+
 		}else{
 			Log.e("Error","Ha ocurrido un error al cambiar de color el fondo de la fila de tarea");
 		}
-		
+
 	}
 
 
