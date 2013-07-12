@@ -5,6 +5,7 @@ import java.util.Date;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -128,13 +129,14 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 		if(args !=null){
 			//utilizamos substr para obtener solo la fecha 'yyyy-mm-dd'
 			if(args.equals("Todos")){
-				condicion = "1";
+				condicion = "(substr(historicoFechaCreacion, 1, 4) || '-' || substr(historicoFechaCreacion, 6, 2) || '-' || substr(historicoFechaCreacion, 9, 2)) BETWEEN '"+FormatoFecha.darFormatoDateUS(FormatoFecha.getFechaPrimerDiaDelMes())+"' AND '"+FormatoFecha.obtenerFecha(0)+"'";
+
 			}else if(args.equals("Hoy")){
 				condicion = "(substr(historicoFechaCreacion, 1, 4) || '-' || substr(historicoFechaCreacion, 6, 2) || '-' || substr(historicoFechaCreacion, 9, 2))='"+FormatoFecha.obtenerFecha(0)+"'";
 			}else if(args.equals("Ayer")){
 				condicion = "(substr(historicoFechaCreacion, 1, 4) || '-' || substr(historicoFechaCreacion, 6, 2) || '-' || substr(historicoFechaCreacion, 9, 2))='"+FormatoFecha.obtenerFecha(-1)+"'";
 			}else if(args.equals("Esta semana")){
-				condicion = "(substr(historicoFechaCreacion, 1, 4) || '-' || substr(historicoFechaCreacion, 6, 2) || '-' || substr(historicoFechaCreacion, 9, 2)) BETWEEN '"+FormatoFecha.obtenerFecha(-7)+"' AND '"+FormatoFecha.obtenerFecha(0)+"'";
+				condicion = "(substr(historicoFechaCreacion, 1, 4) || '-' || substr(historicoFechaCreacion, 6, 2) || '-' || substr(historicoFechaCreacion, 9, 2)) BETWEEN '"+FormatoFecha.darFormatoDateUS(FormatoFecha.getFechaPrimerDiaDeLaSemana())+"' AND '"+FormatoFecha.obtenerFecha(0)+"'";
 			}else{
 				palabras = args.split(" ");
 			}
@@ -183,7 +185,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 			
 			
 			sqlQuery  += orderBy;
-
+Log.e("sqlQuery",sqlQuery);
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 
 			if (mCursor != null) {

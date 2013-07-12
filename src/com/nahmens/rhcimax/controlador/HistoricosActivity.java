@@ -10,10 +10,12 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
@@ -22,9 +24,8 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TableRow.LayoutParams;
+import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaHistoricosCursorAdapter;
@@ -84,11 +85,13 @@ public class HistoricosActivity extends ListFragment{
 			//tab es el correspondiente.
 			AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentHistoricos);	
 
+			final Bundle mArgumentos = this.getArguments();
+			
 			//Asociamos los valores al combo box o spinner
 			inicializarSpinner(view);
 
 			HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
-			Cursor mCursorHistoricos = historicoDao.buscarHistoricoFilter(getActivity(), null);
+			Cursor mCursorHistoricos = historicoDao.buscarHistoricoFilter(getActivity(), "Todos");
 
 			listarHistoricos(view, mCursorHistoricos);
 
@@ -98,6 +101,8 @@ public class HistoricosActivity extends ListFragment{
 
 				@Override
 				public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+					
+					Log.e("onTextChanged","onTextChanged");
 					//Este if es para que este metodo no se llame automaticamente
 					//al iniciar la actividad
 					if(mOnTextChangedBool){
@@ -117,7 +122,7 @@ public class HistoricosActivity extends ListFragment{
 				public void afterTextChanged(Editable arg0) {}
 			});
 
-			Bundle mArgumentos = this.getArguments();
+			
 
 			//Si me pasaron argumentos, filtro la lista. 
 			//De lo contrario, listo todo.
@@ -129,9 +134,15 @@ public class HistoricosActivity extends ListFragment{
 				if(nombreEmpresa!=null){
 					//OJO: es importante crear el listener antes de hacer el setText
 					//de lo contrario no se llama al metodo onTextChanged automaticamnt
+					
+					//esta linea es para que se llame onTextChanged dos veces. 
+					//recordar q el filtro empieza cuando al menos dos letras son ingresadas
+					//en el edit text del buscador.
+					etBuscar.setText(""); 
 					etBuscar.setText(nombreEmpresa);
 
 				}else if(nombreEmpleado !=null){
+					etBuscar.setText("");
 					etBuscar.setText(nombreEmpleado);
 
 				}

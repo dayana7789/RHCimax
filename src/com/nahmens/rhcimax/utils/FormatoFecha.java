@@ -5,7 +5,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
+
+import android.util.Log;
 
 public class FormatoFecha {
 	
@@ -205,6 +208,74 @@ public class FormatoFecha {
 		}
 
 		return date;
+	}
+	
+	public static Date getFechaPrimerDiaDelMes() {
+		Calendar cal = Calendar.getInstance();
+		cal.set(cal.get(Calendar.YEAR), 
+				cal.get(Calendar.MONTH),
+				cal.getActualMinimum(Calendar.DAY_OF_MONTH),
+				cal.getMinimum(Calendar.HOUR_OF_DAY),
+				cal.getMinimum(Calendar.MINUTE),
+				cal.getMinimum(Calendar.SECOND));
+		return cal.getTime();
+	}
+
+	public static Date getFechaUltimoDiaDelMes() {
+		Calendar cal = Calendar.getInstance();
+		cal.set(cal.get(Calendar.YEAR),
+				cal.get(Calendar.MONTH),
+				cal.getActualMaximum(Calendar.DAY_OF_MONTH),
+				cal.getMaximum(Calendar.HOUR_OF_DAY),
+				cal.getMaximum(Calendar.MINUTE),
+				cal.getMaximum(Calendar.SECOND));
+		return cal.getTime();
+	}	
+	
+	public static Date getFechaPrimerDiaDeLaSemana() {
+		Calendar cal = Calendar.getInstance();
+		// Set the calendar to monday of the current week
+		cal.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+		cal.set(Calendar.HOUR_OF_DAY, 0);            
+		cal.set(Calendar.MINUTE, 0);                 
+		cal.set(Calendar.SECOND, 0);          
+		cal.set(Calendar.MILLISECOND, 0);   
+
+		return cal.getTime();
+	}
+
+	public static Date getFechaUltimoDiaDeLaSemana() {
+		Date primerDiaSemana = getFechaPrimerDiaDeLaSemana();
+
+		Calendar c = Calendar.getInstance();
+		c.setTime(primerDiaSemana);
+		c.add(Calendar.DATE, 6);  
+		
+		return c.getTime();
+	}	
+	
+	
+	public static long getDiferenciaDias(Date fechaInicio, Date fechaFin){
+		Calendar c = Calendar.getInstance();
+
+	    Calendar cale = Calendar.getInstance();
+	    cale.setTime(fechaInicio);
+	  //  int year = cale.get(Calendar.YEAR);
+	  //  int month = cale.get(Calendar.MONTH)+1;
+	  //  int day = cale.get(Calendar.DAY_OF_MONTH);
+	    
+	    Calendar cale2 = Calendar.getInstance();
+	    cale2.setTime(fechaFin);
+	   // int yearS = cale2.get(Calendar.YEAR);
+	   // int monthS = cale2.get(Calendar.MONTH)+1;
+	   // int dayS = cale2.get(Calendar.DAY_OF_MONTH);
+		 
+		c.setTimeInMillis(fechaFin.getTime() - fechaInicio.getTime());
+
+	//	Log.e("diferencia dias", " "  +c.get(Calendar.DAY_OF_YEAR));
+		
+		return c.get(Calendar.DAY_OF_YEAR);
+		
 	}
 
 }

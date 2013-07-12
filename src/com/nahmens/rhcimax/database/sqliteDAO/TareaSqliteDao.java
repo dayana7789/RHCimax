@@ -1,6 +1,8 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -227,7 +229,10 @@ public class TareaSqliteDao implements TareaDAO{
 			}else if(args.equals("Ayer")){
 				condicion = " AND "+Tarea.FECHA+"='"+FormatoFecha.obtenerFecha(-1)+"'";
 			}else if(args.equals("Esta semana")){
-				condicion = " AND "+Tarea.FECHA+" BETWEEN '"+FormatoFecha.obtenerFecha(-7)+"' AND '"+FormatoFecha.obtenerFecha(0)+"'";
+				
+				//condicion = " AND "+Tarea.FECHA+" BETWEEN '"+FormatoFecha.obtenerFecha(-7)+"' AND '"+FormatoFecha.obtenerFecha(0)+"'";
+				condicion = " AND "+Tarea.FECHA+" BETWEEN '"+FormatoFecha.obtenerFecha(0)+"' AND '"+FormatoFecha.darFormatoDateUS(FormatoFecha.getFechaUltimoDiaDeLaSemana())+"'";
+
 			}else{
 				palabras = args.split(" ");
 			}

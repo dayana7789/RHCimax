@@ -132,9 +132,15 @@ public class TareasActivity extends ListFragment{
 				if(nombreEmpresa!=null){
 					//OJO: es importante crear el listener antes de hacer el setText
 					//de lo contrario no se llama al metodo onTextChanged automaticamnt
+					
+					//esta linea es para que se llame onTextChanged dos veces. 
+					//recordar q el filtro empieza cuando al menos dos letras son ingresadas
+					//en el edit text del buscador.
+					etBuscar.setText(""); 
 					etBuscar.setText(nombreEmpresa);
 
 				}else if(nombreEmpleado !=null){
+					etBuscar.setText(""); 
 					etBuscar.setText(nombreEmpleado);
 
 				}
