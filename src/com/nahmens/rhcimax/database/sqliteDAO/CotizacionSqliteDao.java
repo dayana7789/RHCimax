@@ -1,5 +1,7 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
+import java.util.Date;
+
 import android.content.ContentValues;
 import android.content.Context;
 
@@ -7,6 +9,8 @@ import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.CotizacionDAO;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
+import com.nahmens.rhcimax.database.modelo.Tarea;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class CotizacionSqliteDao implements CotizacionDAO{
 
@@ -58,4 +62,29 @@ public class CotizacionSqliteDao implements CotizacionDAO{
 
 		return eliminado;
 	}
+	
+	@Override
+	public boolean sincronizarCotizacion(Context contexto, String idCotizacion) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean sincronizado = false;
+
+		try{
+			conexion.open();
+
+			ContentValues contenido = new ContentValues();
+			contenido.put(Cotizacion.FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_COTIZACION, contenido, "_id=?", new String []{idCotizacion});
+
+			if(value!=0){
+				sincronizado = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return sincronizado;
+	}
+
 }

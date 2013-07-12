@@ -3,10 +3,10 @@
     style="@style/ContenedorPrincipal"
     tools:context=".ClientesActivity" >
 
-   <!--  <TextView
+   <TextView
         android:id="@+id/textViewTareas"
         style="@style/FuenteTitulos"
-        android:text="@string/tareas" /> -->
+        android:text="@string/tareas" />
 
     <!-- ____________________ Seccion: boton actualizar, colores sync y boton agregar ____________________ -->
     <TableLayout

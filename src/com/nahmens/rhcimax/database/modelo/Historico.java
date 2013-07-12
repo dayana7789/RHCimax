@@ -8,6 +8,7 @@ public class Historico {
 	public final static String ID_TAREA = "idTarea";
 	public final static String ID_EMPRESA = "idEmpresa";
 	public final static String FECHA_CREACION = "fechaCreacion";
+	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 
 	int id;
 	String tipoRegistro;
@@ -15,6 +16,7 @@ public class Historico {
 	int idTarea;
 	int idEmpresa;
 	String fechaCreacion;
+	String fechaSincronizacion;
 	
 
 	public Historico(String tipoRegistro, int idCotizacion, int idTarea, int idEmpresa) {
@@ -71,5 +73,15 @@ public class Historico {
 	public void setIdEmpresa(int idEmpresa) {
 		this.idEmpresa = idEmpresa;
 	}
+
+	public String getFechaSincronizacion() {
+		return fechaSincronizacion;
+	}
+
+	public void setFechaSincronizacion(String fechaSincronizacion) {
+		this.fechaSincronizacion = fechaSincronizacion;
+	}
+	
+	
 
 }

@@ -5,6 +5,7 @@ import java.util.Date;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -15,10 +16,21 @@ import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
-//OJO para usar la funcion strftime el formato de la fecha almacenada debe ser
-//yyyy-MM-dd
 public class TareaSqliteDao implements TareaDAO{
-
+	
+	String consulta = "DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
+		              +", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+		              +", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa"
+		              +", tarea."+Tarea.FECHA_MODIFICACION+", tarea."+Tarea.FECHA_SINCRONIZACION
+		              +", empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado"
+		              +", usuario."+Usuario.LOGIN + " as loginUsuario "
+		              + " FROM tarea "
+		              + " LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
+		              + " LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
+		              + " LEFT JOIN usuario ON ( tarea." + Tarea.ID_USUARIO_CREADOR + " = usuario."+Usuario.ID+" ) ";
+	
+	String orderBy  = " ORDER BY " + Tarea.FECHA + " ASC";
+	
 	@Override
 	public long insertarTarea(Context contexto, Tarea tarea) {
 		ConexionBD conexion = new ConexionBD(contexto);
@@ -206,7 +218,6 @@ public class TareaSqliteDao implements TareaDAO{
 
 
 		String condicion = "";
-		String condicion2 = " AND "+ Tarea.FECHA_FINALIZACION + " IS NULL ";
 		
 		if(args !=null){
 			if(args.equals("Todos")){
@@ -217,8 +228,6 @@ public class TareaSqliteDao implements TareaDAO{
 				condicion = " AND "+Tarea.FECHA+"='"+FormatoFecha.obtenerFecha(-1)+"'";
 			}else if(args.equals("Esta semana")){
 				condicion = " AND "+Tarea.FECHA+" BETWEEN '"+FormatoFecha.obtenerFecha(-7)+"' AND '"+FormatoFecha.obtenerFecha(0)+"'";
-			}else if(args.equals("fechaFinalizacion_not_null")){
-				condicion2 = " AND "+ Tarea.FECHA_FINALIZACION + " IS NOT NULL ";
 			}else{
 				palabras = args.split(" ");
 			}
@@ -228,19 +237,11 @@ public class TareaSqliteDao implements TareaDAO{
 			conexion.open();
 
 
-			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA;
-			sqlQuery +=", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO;
-			sqlQuery +=", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa";
-			sqlQuery +=", tarea."+Tarea.FECHA_MODIFICACION+", tarea."+Tarea.FECHA_SINCRONIZACION;
-			sqlQuery +=", empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado";
-			sqlQuery +=", usuario."+Usuario.LOGIN + " as loginUsuario";
-			sqlQuery += " FROM tarea ";
-			sqlQuery += " LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) ";
-			sqlQuery += " LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) ";
-			sqlQuery += " LEFT JOIN usuario ON ( tarea." + Tarea.ID_USUARIO_CREADOR + " = usuario."+Usuario.ID+" ) ";
-			sqlQuery += " WHERE tarea.status='activo' ";
+			sqlQuery = "SELECT ";
+			sqlQuery += consulta;
+			sqlQuery += " WHERE tarea.status='activo' AND "+ Tarea.FECHA_FINALIZACION + " IS NULL ";
 			sqlQuery += condicion;
-			sqlQuery += condicion2;
+
 			
 			for(int i =0; i< palabras.length; i++){
 
@@ -259,8 +260,8 @@ public class TareaSqliteDao implements TareaDAO{
 				sqlQuery += ") ";
 			}
 			
-			sqlQuery += " ORDER BY " + Tarea.FECHA + " ASC";
-
+			sqlQuery += orderBy;
+Log.e("buscarTareaFilter", ""+sqlQuery );
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 
 			if (mCursor != null) {
@@ -284,17 +285,11 @@ public class TareaSqliteDao implements TareaDAO{
 		try{
 			conexion.open();
 
-			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
-					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
-					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa"
-					+", tarea."+Tarea.FECHA_MODIFICACION+", tarea."+Tarea.FECHA_SINCRONIZACION
-					+", empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
-					+ "FROM tarea "
-					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
-					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
-					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
-					+ "AND tarea." + Tarea.ID_EMPRESA + " = " + idEmpresa 
-					+ " ORDER BY " + Tarea.FECHA + " ASC";
+			sqlQuery = "SELECT "
+				        + consulta
+						+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
+						+ "AND tarea." + Tarea.ID_EMPRESA + " = " + idEmpresa 
+						+ orderBy;
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery, null);
 
@@ -318,18 +313,12 @@ public class TareaSqliteDao implements TareaDAO{
 		try{
 			conexion.open();
 
-			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
-					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
-					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa"
-					+", tarea."+Tarea.FECHA_MODIFICACION+", tarea."+Tarea.FECHA_SINCRONIZACION
-					+", empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado "
-					+ "FROM tarea "
-					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
-					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
+			sqlQuery = "SELECT "
+			        + consulta
 					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
 					+ "AND tarea." + Tarea.ID_EMPLEADO + " = " + idEmpleado
-					+ " ORDER BY " + Tarea.FECHA + " ASC";
-
+					+ orderBy;
+Log.e("listarTareasPorEmpleado", " " + sqlQuery);
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery, null);
 
 

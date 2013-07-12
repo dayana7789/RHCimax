@@ -3,10 +3,10 @@
     style="@style/ContenedorPrincipal"
     tools:context=".ClientesActivity" >
 
-  <!--   <TextView
+  <TextView
         android:id="@+id/textViewHistoricos"
         style="@style/FuenteTitulos"
-        android:text="@string/historicos" /> -->
+        android:text="@string/historicos" />
 
     <TableLayout
         android:layout_width="match_parent"

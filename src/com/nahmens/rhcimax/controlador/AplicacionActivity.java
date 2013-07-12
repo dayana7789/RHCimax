@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -149,11 +150,13 @@ public class AplicacionActivity extends FragmentActivity {
 		if(fragmentoActual.getTag().equals(tagFragmentServicios)){
 			if(ListaServiciosCursorAdapter.getServiciosSeleccionados()!=null){
 				bundle.putSerializable("serviciosSelected", ListaServiciosCursorAdapter.getServiciosSeleccionados());
+				
 			}
 
 			if(ListaCorreosCursorAdapter.getCorreosSeleccionados()!=null){
 				bundle.putSerializable("correosSelected", ListaCorreosCursorAdapter.getCorreosSeleccionados());
 			}
+
 		}
 	}
 
@@ -329,7 +332,7 @@ public class AplicacionActivity extends FragmentActivity {
 		ft.replace(android.R.id.tabcontent, fragment, tag);
 
 		if(backStack){
-			ft.addToBackStack(null);
+			ft.addToBackStack(tag);
 		}
 
 		ft.commit();
@@ -424,8 +427,7 @@ public class AplicacionActivity extends FragmentActivity {
 				super.onBackPressed();
 			}
 
-
-			//Si presionan back button desde fragmento Datos Empresa
+		//Si presionan back button desde fragmento Datos Empresa
 		}else if(fragmentoTag.equals(tagFragmentDatosEmpresa)){
 
 			/*

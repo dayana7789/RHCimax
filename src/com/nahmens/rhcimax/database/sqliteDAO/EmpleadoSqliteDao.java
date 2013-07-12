@@ -201,7 +201,9 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
 
-				empleado = new Empleado( mCursor.getString(mCursor.getColumnIndex(Empleado.NOMBRE)), 
+				empleado = new Empleado( 
+						mCursor.getInt(mCursor.getColumnIndex(Empleado.ID)), 
+						mCursor.getString(mCursor.getColumnIndex(Empleado.NOMBRE)), 
 						mCursor.getString(mCursor.getColumnIndex(Empleado.APELLIDO)), 
 						mCursor.getString(mCursor.getColumnIndex(Empleado.POSICION)), 
 						mCursor.getString(mCursor.getColumnIndex(Empleado.EMAIL)), 

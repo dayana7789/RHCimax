@@ -4,13 +4,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
+import android.widget.TableLayout.LayoutParams;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.TableLayout.LayoutParams;
-import android.support.v4.app.FragmentManager;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.controlador.AplicacionActivity;
@@ -53,6 +53,7 @@ public class ListaEmpleadosCursorAdapter{
 	 * @param cursor Contiene los datos de los empleados.
 	 */
 	public void mbindView(Context context, Cursor cursor) { 
+		
 		//Columna de la BD que queremos recuperar
 		String columna = null;
 
@@ -111,7 +112,7 @@ public class ListaEmpleadosCursorAdapter{
 
 					fragmentManager.beginTransaction()
 					.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
-					.addToBackStack(null)
+					.addToBackStack(AplicacionActivity.tagFragmentDatosCliente)
 					.commit();
 
 				}});

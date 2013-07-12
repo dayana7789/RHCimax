@@ -1,6 +1,6 @@
 package com.nahmens.rhcimax.controlador;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,28 +31,47 @@ import com.nahmens.rhcimax.adapters.ListaHistoricosCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
 import com.nahmens.rhcimax.database.modelo.Cotizacion_Servicio;
-import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Servicio;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.Cotizacion_ServicioSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
-import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 
 public class HistoricosActivity extends ListFragment{
 
 	ListaHistoricosCursorAdapter listCursorAdapterHistoricos;
-	
+	HashMap<Integer,Boolean> arrSincronizados = new HashMap<Integer, Boolean>(); //Contiene idHistorico y si esta sincronizado o no
+
+	//variable que se utiliza para evitar llamar al listener
+	//del spinner cuando el usuario no ha seleccionado 
+	//explicitamente el spinner
+	private boolean mSpinnerBool;
+
+	//Se utiliza para evitar llamar al metodo onChanged del
+	//DataSetObserver dos veces. Su valor se inicializa en el 
+	//metodo onResume.
+	private boolean mObserverBool;
+
+	//Se utiliza para evitar llamar al metodo OnTextChanged del
+	//dos veces. Su valor se inicializa en el 
+	//metodo onResume.
+	private boolean mOnTextChangedBool;
+
 	//Creamos un DataSetObserver para saber cuando el listView de tarea
-		//ha sido modificado y lo registramos al adaptor con la funcion 
-		//registerDataSetObserver().
-		private DataSetObserver observer = new DataSetObserver() {
-			public void onChanged(){
-				cambiarColorCuadroNotificacion(null);
+	//ha sido modificado y lo registramos al adaptor con la funcion 
+	//registerDataSetObserver().
+	private DataSetObserver observer = new DataSetObserver() {
+		public void onChanged(){
+			if(mObserverBool){
+				cambiarColorCuadroNotificacion(getView());
+
+			}else{
+				mObserverBool = true;
 			}
-		};
+		}
+	};
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -70,43 +88,24 @@ public class HistoricosActivity extends ListFragment{
 			inicializarSpinner(view);
 
 			HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
-			Cursor mCursorHistoricos = null;
-
-			Bundle mArgumentos = this.getArguments();
-
-			//Si me pasaron argumentos, filtro la lista. 
-			//De lo contrario, listo todo.
-			if(mArgumentos!= null){
-
-				String idEmpresa = mArgumentos.getString("idEmpresa");
-				String idEmpleado = mArgumentos.getString("idEmpleado");
-
-				if(idEmpresa!=null){
-					mCursorHistoricos = historicoDao.listarHistoricosPorEmpresa(getActivity(), idEmpresa);
-
-				}else if(idEmpleado !=null){
-					mCursorHistoricos = historicoDao.listarHistoricosPorEmpleado(getActivity(), idEmpleado);
-				}
-
-
-			}else{
-				mCursorHistoricos = historicoDao.buscarHistoricoFilter(getActivity(), null);
-			}
-
+			Cursor mCursorHistoricos = historicoDao.buscarHistoricoFilter(getActivity(), null);
 
 			listarHistoricos(view, mCursorHistoricos);
-			
-			cambiarColorCuadroNotificacion(view);
-			
+
 			//Registro del evento addTextChangedListener cuando utilizamos el buscador
 			EditText etBuscar = (EditText) view.findViewById(R.id.editTextBuscar);
 			etBuscar.addTextChangedListener(new TextWatcher() {
 
 				@Override
 				public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-
-					if(listCursorAdapterHistoricos!=null){
-						listCursorAdapterHistoricos.getFilter().filter(cs);   
+					//Este if es para que este metodo no se llame automaticamente
+					//al iniciar la actividad
+					if(mOnTextChangedBool){
+						if(listCursorAdapterHistoricos!=null){
+							listCursorAdapterHistoricos.getFilter().filter(cs);   
+						}
+					}else{
+						mOnTextChangedBool=true;
 					}
 				}
 
@@ -118,9 +117,67 @@ public class HistoricosActivity extends ListFragment{
 				public void afterTextChanged(Editable arg0) {}
 			});
 
+			Bundle mArgumentos = this.getArguments();
+
+			//Si me pasaron argumentos, filtro la lista. 
+			//De lo contrario, listo todo.
+			if(mArgumentos!= null){
+
+				String nombreEmpresa = mArgumentos.getString("nombreEmpresa");
+				String nombreEmpleado = mArgumentos.getString("nombreEmpleado");
+
+				if(nombreEmpresa!=null){
+					//OJO: es importante crear el listener antes de hacer el setText
+					//de lo contrario no se llama al metodo onTextChanged automaticamnt
+					etBuscar.setText(nombreEmpresa);
+
+				}else if(nombreEmpleado !=null){
+					etBuscar.setText(nombreEmpleado);
+
+				}
+
+			}
+
+			setArrSincronizados(mCursorHistoricos);
+			cambiarColorCuadroNotificacion(view);
+
+
 		}
 		return view;
 	}
+
+
+	/**
+	 * Funcion que inicializa el arreglo de sincronizados
+	 * a ser utilizado para determinar el color de los
+	 * cuadro de notificacion principal 
+	 * @param mCursorHistoricos
+	 */
+	private void setArrSincronizados(Cursor mCursorHistoricos) {
+
+		String strFechaSincronizacion = null;
+
+		int id = 0;
+
+		if (mCursorHistoricos != null) {
+			mCursorHistoricos.moveToFirst();
+		}
+
+		while(!mCursorHistoricos.isAfterLast()){
+			id =  mCursorHistoricos.getInt(mCursorHistoricos.getColumnIndex("historicoId"));
+			strFechaSincronizacion = mCursorHistoricos.getString(mCursorHistoricos.getColumnIndex("historicoFechaSincronizacion"));
+
+			if(strFechaSincronizacion == null){
+				arrSincronizados.put(id,false);
+			}else{
+				arrSincronizados.put(id, true);
+			}
+
+			mCursorHistoricos.moveToNext();
+		}
+
+	}
+
 
 	/**
 	 * Funcion que inicializa los valores del spinner o combo box
@@ -142,11 +199,17 @@ public class HistoricosActivity extends ListFragment{
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long arg3) {
 
-				String valor = (String)parent.getItemAtPosition(position);
+				if(mSpinnerBool){
+					String valor = (String)parent.getItemAtPosition(position);
 
-				if(listCursorAdapterHistoricos!=null){
-					listCursorAdapterHistoricos.getFilter().filter(valor);   
+					if(listCursorAdapterHistoricos!=null){
+
+						listCursorAdapterHistoricos.getFilter().filter(valor);   
+					}
+				}else{
+					mSpinnerBool=true;
 				}
+
 			}
 
 			public void onNothingSelected(AdapterView<?> arg0) {
@@ -154,6 +217,17 @@ public class HistoricosActivity extends ListFragment{
 			}
 		});
 
+	}
+
+	//Se utiliza este metodo para que cuando le de 
+	//al back button estas variables se inicialicen
+	//y puedan funcionar correctamente.
+	@Override
+	public void onResume() {
+		super.onResume();
+		mSpinnerBool=false;
+		mObserverBool=false;
+		mOnTextChangedBool = false;
 	}
 
 	private void listarHistoricos(View view, Cursor mCursorHistoricos) {
@@ -173,9 +247,9 @@ public class HistoricosActivity extends ListFragment{
 
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterHistoricos = new ListaHistoricosCursorAdapter(getActivity(), R.layout.activity_fila_historico, mCursorHistoricos, fromCotizacion, toCotizacion, 0, fromTarea, toTarea, fromVisita, toVisita);
+			listCursorAdapterHistoricos = new ListaHistoricosCursorAdapter(getActivity(), R.layout.activity_fila_historico, mCursorHistoricos, fromCotizacion, toCotizacion, 0, fromTarea, toTarea, fromVisita, toVisita, arrSincronizados);
 			lvHistoricos.setAdapter(listCursorAdapterHistoricos);
-			
+
 			//registramos el DataSetObserver al adaptador
 			listCursorAdapterHistoricos.registerDataSetObserver(observer);
 
@@ -523,60 +597,30 @@ public class HistoricosActivity extends ListFragment{
 		tvTotal.setText(""+total);
 		tvMensual.setText(""+mensual);
 	}
-	
+
 	/**
 	 * Funcion encargada de modificar los colores de los cuadros de notificacion principal.
 	 * @param v
 	 */
 	private void cambiarColorCuadroNotificacion(View v) {
 
-		if(v==null){
-			v = getView();
-		}
-
-		String strFechaSincronizacion = null;
-		String strFechaModificacion = null;
-
 		TextView tvVerde = (TextView) v.findViewById(R.id.avisoVerde);
 		TextView tvRojo = (TextView) v.findViewById(R.id.avisoRojo);
 
-		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		Cursor cursorlistTareas = tareaDao.buscarTareaFilter(getActivity(),"fechaFinalizacion_not_null");
-
-		ArrayList<Boolean> arr = new ArrayList<Boolean>();
-
-		//iteramos sobre las tareas
-		if (cursorlistTareas != null) {
-			cursorlistTareas.moveToFirst();
-		}
-
-		while(!cursorlistTareas.isAfterLast()){
-			strFechaSincronizacion = cursorlistTareas.getString(cursorlistTareas.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
-			strFechaModificacion = cursorlistTareas.getString(cursorlistTareas.getColumnIndex(Empleado.FECHA_MODIFICACION));
-
-			if(strFechaSincronizacion == null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
-				arr.add(false);
-			}else{
-				arr.add(true);
-			}
-
-			cursorlistTareas.moveToNext();
-		}
-
 
 		//pintamos..
-		if(arr.contains(true) && arr.contains(false)){
+		if(arrSincronizados.containsValue(true) && arrSincronizados.containsValue(false)){
 			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
 			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
 
-		}else if(arr.contains(true)){
+		}else if(arrSincronizados.containsValue(true)){
 			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
 			tvVerde.setBackgroundResource(R.drawable.borde_verde);
 
-		}else if(arr.contains(false)){
+		}else if(arrSincronizados.containsValue(false)){
 			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
 			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
 		}
 	}
-	
+
 }

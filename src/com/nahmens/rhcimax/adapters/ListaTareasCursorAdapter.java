@@ -1,6 +1,7 @@
 package com.nahmens.rhcimax.adapters;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -32,13 +33,16 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	private String[] from;
 	private int[] to;
 	private FragmentManager fragmentManager;
+	private HashMap<Integer,Boolean> arrSincronizados;
 
 	/**
 	 * @param tipoCliente Puede ser empleado o empresa. Se utiliza para saber sobre
 	 * 					  que tipo de lista estoy iterando.
+	 * @param arrSincronizados contiene <idTarea, si esta sincronizado o no> Se utiliza para pintar
+	 *                         los cuadros de notificacion principal.
 	 */
 	public ListaTareasCursorAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to, int flags, FragmentManager fragmentManager) {
+			String[] from, int[] to, int flags, FragmentManager fragmentManager, HashMap<Integer,Boolean> arrSincronizados) {
 
 		super(context, layout, c, from, to, flags);
 
@@ -47,6 +51,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 		this.from = from;
 		this.to = to;
 		this.fragmentManager=fragmentManager;
+		this.arrSincronizados = arrSincronizados;
 	}
 
 
@@ -222,6 +227,8 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 
 		if(sincronizado){
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
+			
+			arrSincronizados.put(id,true);
 
 			//Actualizamos los valores del cursor de la lista de tareas
 			this.changeCursor(tareaDao.buscarTareaFilter(context,null));
@@ -230,6 +237,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 			this.notifyDataSetChanged();
 
 		}else{
+			arrSincronizados.put(id,false);
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeError);
 		}
 

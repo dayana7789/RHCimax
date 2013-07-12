@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -140,7 +141,7 @@ public class ListaCorreosCursorAdapter{
 				idEmpleadoNuevo = cursor.getInt(cursor.getColumnIndex(Empleado.ID));
 
 				mView = (View) mTableRow.findViewById(to[i]);
-
+//Log.e("correos",""+getCorreosSeleccionados().toString());
 				if(mView instanceof CheckBox){
 					cb = (CheckBox) mView;
 					cb.setText(nombre);

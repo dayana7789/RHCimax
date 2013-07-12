@@ -179,6 +179,26 @@ public class Mensaje {
 			mensaje =  "Tarea actualizada satisfactoriamente.";
 			layoutWhere = R.layout.toast_layout_mensaje_ok;
 
+		}else if(this.tipoMensaje == "error_sincronizado_visita"){
+
+			mensaje =  "Error: la visita no pudo ser actualizada.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
+		}else if(this.tipoMensaje == "ok_sincronizado_visita"){
+
+			mensaje =  "Visita actualizada satisfactoriamente.";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
+		}else if(this.tipoMensaje == "error_sincronizado_cotizacion"){
+
+			mensaje =  "Error: la cotización no pudo ser actualizada.";
+			layoutWhere = R.layout.toast_layout_mensaje_error;
+
+		}else if(this.tipoMensaje == "ok_sincronizado_cotizacion"){
+
+			mensaje =  "Cotización actualizada satisfactoriamente.";
+			layoutWhere = R.layout.toast_layout_mensaje_ok;
+
 		}else if(this.tipoMensaje == "error_creacion_cotizacion"){
 
 			mensaje =  "Error: la cotización no pudo crearse.";

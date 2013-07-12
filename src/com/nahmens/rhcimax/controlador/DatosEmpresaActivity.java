@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,10 +84,11 @@ public class DatosEmpresaActivity extends Fragment {
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
 
-
 				if(empresa !=null){
 					llenarCamposEmpresa(view, empresa);
 					listarEmpleados(view, idEmpresa);
+					
+					mArgumentos.putString("nombreEmpresa", empresa.getNombre());
 
 				}else{
 					//Esto nunca deberia llamarse
@@ -131,7 +131,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 						getFragmentManager().beginTransaction()
 						.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
-						.addToBackStack(null)
+						.addToBackStack(AplicacionActivity.tagFragmentDatosCliente)
 						.commit();
 
 					}else{
@@ -180,13 +180,13 @@ public class DatosEmpresaActivity extends Fragment {
 			View.OnClickListener activityLauncherTareas = new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					String id = null;
+					String nombreEmpresa = null;
 
 					if(mArgumentos!=null){
-						id = mArgumentos.getString("idEmpresa");
+						nombreEmpresa = mArgumentos.getString("nombreEmpresa");
 					}
-
-					onButtonTareaSelected(id);
+					
+					onButtonTareaSelected(nombreEmpresa);
 				} 
 			};
 
@@ -202,13 +202,13 @@ public class DatosEmpresaActivity extends Fragment {
 			View.OnClickListener activityLauncherHistoricos = new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					String id = null;
+					String nombreEmpresa = null;
 
 					if(mArgumentos!=null){
-						id = mArgumentos.getString("idEmpresa");
+						nombreEmpresa = mArgumentos.getString("nombreEmpresa");
 					}
 
-					onButtonHistoricoSelected(id);
+					onButtonHistoricoSelected(nombreEmpresa);
 				} 
 			};
 
@@ -323,7 +323,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 						getFragmentManager().beginTransaction()
 						.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentServicios)
-						.addToBackStack(null)
+						.addToBackStack(AplicacionActivity.tagFragmentServicios)
 						.commit();
 					}
 				}
@@ -432,11 +432,6 @@ public class DatosEmpresaActivity extends Fragment {
 
 			if(id!=null){
 				//Estamos modificando un registro
-
-				//cada vez que hagamos una modificacion, colocamos el valor de fechaSincronizacion en null 
-				//para saber que este empleado esta desactualizado en la nube
-				String fechaSincronizacion = null;
-
 				Empresa empresa = new Empresa(Integer.parseInt(id), nombre, telefono, rif, web, dirFiscal, dirComercial, fechaModif, idUsuario);
 
 				Boolean modificado = empresaDao.modificarEmpresa(getActivity(), empresa);
@@ -450,11 +445,6 @@ public class DatosEmpresaActivity extends Fragment {
 				}
 			}else{
 				//Estamos creando un nuevo registro
-
-				//cada vez que hagamos una modificacion, colocamos el valor de fechaSincronizacion en null 
-				//para saber que este empleado esta desactualizado en la nube
-				String fechaSincronizacion = null;
-
 				Empresa empresa = new Empresa(nombre, telefono, rif, web, dirFiscal, dirComercial, idUsuario, idUsuario);
 
 				long idFilaInsertada = empresaDao.insertarEmpresa(getActivity(), empresa);
@@ -485,18 +475,20 @@ public class DatosEmpresaActivity extends Fragment {
 	 * Metodo que se llama al seleccionar el boton tareas
 	 * @param idEmpleado
 	 */
-	public void onButtonTareaSelected(String idEmpresa) {
-		Bundle arguments = new Bundle();
-		arguments.putString("idEmpresa", idEmpresa);
+	public void onButtonTareaSelected(String nombreEmpresa) {
 
 		TareasActivity fragment = new TareasActivity();
-
-		//pasamos al fragment el id de la tarea
-		fragment.setArguments(arguments); 
+		
+		if(nombreEmpresa!=null){
+			Bundle arguments = new Bundle();
+			arguments.putString("nombreEmpresa", nombreEmpresa);
+			//pasamos al fragment el nombre de la empresa para hacer la busqueda
+			fragment.setArguments(arguments); 
+		}
 
 		getFragmentManager().beginTransaction()
 		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentTareas)
-		.addToBackStack(null)
+		.addToBackStack(AplicacionActivity.tagFragmentTareas)
 		.commit();
 	}
 	
@@ -504,18 +496,20 @@ public class DatosEmpresaActivity extends Fragment {
 	 * Metodo que se llama al seleccionar el boton historicos
 	 * @param idEmpleado
 	 */
-	public void onButtonHistoricoSelected(String idEmpresa) {
-		Bundle arguments = new Bundle();
-		arguments.putString("idEmpresa", idEmpresa);
+	public void onButtonHistoricoSelected(String nombreEmpresa) {
 
 		HistoricosActivity fragment = new HistoricosActivity();
-
-		//pasamos al fragment el id de la tarea
-		fragment.setArguments(arguments); 
+		
+		if(nombreEmpresa!=null){
+			Bundle arguments = new Bundle();
+			arguments.putString("nombreEmpresa", nombreEmpresa);
+			//pasamos al fragment el nombre de la empresa para hacer la busqueda
+			fragment.setArguments(arguments); 
+		}
 
 		getFragmentManager().beginTransaction()
 		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentHistoricos)
-		.addToBackStack(null)
+		.addToBackStack( AplicacionActivity.tagFragmentHistoricos)
 		.commit();
 	}
 

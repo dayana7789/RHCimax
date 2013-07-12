@@ -82,6 +82,31 @@ public class Empleado {
 		this.idUsuarioCreador = idUsuarioCreador;
 		this.idUsuarioModificador = idUsuarioModificador;
 	}
+	
+	
+	//Se utiliza cuando estoy agregando
+		public Empleado(int id, String nombre, String apellido, String posicion,
+				String email, String telfOficina, String celular, String pin,
+				String linkedin, String descripcion, int idEmpresa,
+				int idUsuarioCreador, int idUsuarioModificador) {
+
+			this.id = id;
+			this.nombre = nombre;
+			this.apellido = apellido;
+			this.posicion = posicion;
+			this.email = email;
+			this.telfOficina = telfOficina;
+			this.celular = celular;
+			this.pin = pin;
+			this.linkedin = linkedin;
+			this.descripcion = descripcion;
+			this.idEmpresa = idEmpresa;
+//			this.fechaCreacion = fechaCreacion;
+//			this.fechaModificacion = fechaModificacion;
+//			this.fechaSincronizacion = fechaSincronizacion;
+			this.idUsuarioCreador = idUsuarioCreador;
+			this.idUsuarioModificador = idUsuarioModificador;
+		}
 
 
 	public int getId() {

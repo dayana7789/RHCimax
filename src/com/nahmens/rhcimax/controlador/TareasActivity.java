@@ -1,7 +1,7 @@
 package com.nahmens.rhcimax.controlador;
 
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,13 +37,40 @@ import com.nahmens.rhcimax.utils.FormatoFecha;
 public class TareasActivity extends ListFragment{
 
 	ListaTareasCursorAdapter listCursorAdapterTareas;
+	HashMap<Integer,Boolean> arrSincronizados = new HashMap<Integer, Boolean>(); //Contiene idTarea y si esta sincronizado o no
+	
+	//Las siguientes variables son utilizadas para evitar llamadas a
+	//la BD innecesarias porq los listeners se disparan aunque el 
+	//usuario no lo haya solicitado.
+	
+	//variable que se utiliza para evitar llamar al listener
+	//del spinner cuando el usuario no ha seleccionado 
+	//explicitamente el spinner. Su valor se inicializa en el 
+	//metodo onResume.
+	private boolean mSpinnerBool;
+	
+	//Se utiliza para evitar llamar al metodo onChanged del
+	//DataSetObserver dos veces. Su valor se inicializa en el 
+	//metodo onResume.
+	private boolean mObserverBool;
+	
+	//Se utiliza para evitar llamar al metodo OnTextChanged del
+    //dos veces. Su valor se inicializa en el 
+	//metodo onResume.
+	private boolean mOnTextChangedBool;
 
 	//Creamos un DataSetObserver para saber cuando el listView de tarea
 	//ha sido modificado y lo registramos al adaptor con la funcion 
 	//registerDataSetObserver().
 	private DataSetObserver observer = new DataSetObserver() {
 		public void onChanged(){
-			cambiarColorCuadroNotificacion(null);
+			
+			if(mObserverBool){
+				cambiarColorCuadroNotificacion(getView());
+
+			}else{
+				mObserverBool = true;
+			}
 		}
 	};
 
@@ -61,7 +89,36 @@ public class TareasActivity extends ListFragment{
 			inicializarSpinner(view);
 
 			TareaSqliteDao tareaDao = new TareaSqliteDao();
-			Cursor mCursorTareas = null;
+			Cursor mCursorTareas = tareaDao.buscarTareaFilter(getActivity(),null);
+			
+			listarTareas(view, mCursorTareas);
+
+			//Registro del evento addTextChangedListener cuando utilizamos el buscador
+			EditText etBuscar = (EditText) view.findViewById(R.id.editTextBuscar);
+			etBuscar.addTextChangedListener(new TextWatcher() {
+
+				@Override
+				public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+					//Este if es para que este metodo no se llame automaticamente
+					//al iniciar la actividad
+					if(mOnTextChangedBool){
+						if(listCursorAdapterTareas!=null){
+							listCursorAdapterTareas.getFilter().filter(cs);   
+						}
+					}else{
+						mOnTextChangedBool=true;
+					}
+
+				}
+
+				@Override
+				public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+						int arg3) {}
+
+				@Override
+				public void afterTextChanged(Editable arg0) {}
+			});
+
 
 			Bundle mArgumentos = this.getArguments();
 
@@ -69,23 +126,22 @@ public class TareasActivity extends ListFragment{
 			//De lo contrario, listo todo.
 			if(mArgumentos!= null){
 
-				String idEmpresa = mArgumentos.getString("idEmpresa");
-				String idEmpleado = mArgumentos.getString("idEmpleado");
+				String nombreEmpresa = mArgumentos.getString("nombreEmpresa");
+				String nombreEmpleado = mArgumentos.getString("nombreEmpleado");
 
+				if(nombreEmpresa!=null){
+					//OJO: es importante crear el listener antes de hacer el setText
+					//de lo contrario no se llama al metodo onTextChanged automaticamnt
+					etBuscar.setText(nombreEmpresa);
 
-				if(idEmpresa!=null){
-					mCursorTareas = tareaDao.listarTareasPorEmpresa(getActivity(), idEmpresa);
+				}else if(nombreEmpleado !=null){
+					etBuscar.setText(nombreEmpleado);
 
-				}else if(idEmpleado !=null){
-					mCursorTareas = tareaDao.listarTareasPorEmpleado(getActivity(), idEmpleado);
 				}
 
-			}else{
-				mCursorTareas = tareaDao.buscarTareaFilter(getActivity(),null);
 			}
 
-			listarTareas(view, mCursorTareas);
-			
+			setArrSincronizados(mCursorTareas);
 			cambiarColorCuadroNotificacion(view);
 
 			// Registro del evento OnClick del buttonTarea
@@ -99,7 +155,7 @@ public class TareasActivity extends ListFragment{
 					//Cambiamos el layout de clientes por datos_empresa e indicamos el tag del frame.
 					ft.replace(android.R.id.tabcontent,fragmentDatosTarea, AplicacionActivity.tagFragmentDatosTareas); 
 					//preservamos el estado anterior al hacer click en back button
-					ft.addToBackStack(null);
+					ft.addToBackStack(AplicacionActivity.tagFragmentDatosTareas);
 					ft.commit(); 
 				}
 			});
@@ -109,8 +165,41 @@ public class TareasActivity extends ListFragment{
 	}
 
 
-	private void listarTareas(View view, Cursor mCursorTareas) {
+	/**
+	 * Funcion que inicializa el arreglo de sincronizados
+	 * a ser utilizado para determinar el color de los
+	 * cuadro de notificacion principal 
+	 * @param mCursorTareas
+	 */
+	private void setArrSincronizados(Cursor mCursorTareas) {
+	
+		String strFechaSincronizacion = null;
+		String strFechaModificacion = null;
+		int id = 0;
 
+		if (mCursorTareas != null) {
+			mCursorTareas.moveToFirst();
+		}
+
+		while(!mCursorTareas.isAfterLast()){
+			id =  mCursorTareas.getInt(mCursorTareas.getColumnIndex(Tarea.ID));
+			strFechaSincronizacion = mCursorTareas.getString(mCursorTareas.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
+			strFechaModificacion = mCursorTareas.getString(mCursorTareas.getColumnIndex(Empleado.FECHA_MODIFICACION));
+
+			if(strFechaSincronizacion == null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+				arrSincronizados.put(id,false);
+			}else{
+				arrSincronizados.put(id, true);
+			}
+
+			mCursorTareas.moveToNext();
+		}
+		
+	}
+
+
+	private void listarTareas(View view, Cursor mCursorTareas) {
+		
 		if(mCursorTareas.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
 			String[] from = new String[] { Tarea.NOMBRE, "loginUsuario", Tarea.FECHA, Tarea.HORA, Tarea.NOMBRE_EMPLEADO, Tarea.APELLIDO_EMPLEADO, Tarea.NOMBRE_EMPRESA, Tarea.FECHA_FINALIZACION};
@@ -119,9 +208,9 @@ public class TareasActivity extends ListFragment{
 
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterTareas = new ListaTareasCursorAdapter(getActivity(), R.layout.activity_fila_tarea, mCursorTareas, from, to, 0, getFragmentManager());
+			listCursorAdapterTareas = new ListaTareasCursorAdapter(getActivity(), R.layout.activity_fila_tarea, mCursorTareas, from, to, 0, getFragmentManager(), arrSincronizados);
 			lvTareas.setAdapter(listCursorAdapterTareas);
-			
+
 			//registramos el DataSetObserver al adaptador
 			listCursorAdapterTareas.registerDataSetObserver(observer);
 
@@ -134,29 +223,6 @@ public class TareasActivity extends ListFragment{
 					return true;
 				}
 			}); 
-
-
-			//Registro del evento addTextChangedListener cuando utilizamos el buscador
-			EditText etBuscar = (EditText) view.findViewById(R.id.editTextBuscar);
-			etBuscar.addTextChangedListener(new TextWatcher() {
-
-				@Override
-				public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-
-					if(listCursorAdapterTareas!=null){
-						listCursorAdapterTareas.getFilter().filter(cs);   
-					}
-				}
-
-				@Override
-				public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-						int arg3) {}
-
-				@Override
-				public void afterTextChanged(Editable arg0) {}
-			});
-
-
 
 		}
 	}
@@ -215,10 +281,11 @@ public class TareasActivity extends ListFragment{
 
 		getFragmentManager().beginTransaction()
 		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosTareas)
-		.addToBackStack(null)
+		.addToBackStack(AplicacionActivity.tagFragmentDatosTareas)
 		.commit();
 
 	}
+
 
 	/**
 	 * Funcion que inicializa los valores del spinner o combo box
@@ -238,10 +305,15 @@ public class TareasActivity extends ListFragment{
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long arg3) {
 
-				String valor = (String)parent.getItemAtPosition(position);
+				if(mSpinnerBool){
+					String valor = (String)parent.getItemAtPosition(position);
 
-				if(listCursorAdapterTareas!=null){
-					listCursorAdapterTareas.getFilter().filter(valor);   
+					if(listCursorAdapterTareas!=null){
+						Log.e("spinner","spinner");
+						listCursorAdapterTareas.getFilter().filter(valor);   
+					}
+				}else{
+					mSpinnerBool=true;
 				}
 			}
 
@@ -252,6 +324,16 @@ public class TareasActivity extends ListFragment{
 	}
 
 
+	//Se utiliza este metodo para que cuando le de 
+	//al back button estas variables se inicialicen
+	//y puedan funcionar correctamente.
+	@Override
+	public void onResume() {
+		super.onResume();
+		mSpinnerBool=false;
+		mObserverBool=false;
+		mOnTextChangedBool = false;
+	}
 	/**
 	 * Funcion que muestra mensaje de alerta ante el intento de eliminacion
 	 * @param v
@@ -335,55 +417,25 @@ public class TareasActivity extends ListFragment{
 	 */
 	private void cambiarColorCuadroNotificacion(View v) {
 
-		if(v==null){
-			v = getView();
-		}
-
-		String strFechaSincronizacion = null;
-		String strFechaModificacion = null;
-
 		TextView tvVerde = (TextView) v.findViewById(R.id.avisoVerde);
 		TextView tvRojo = (TextView) v.findViewById(R.id.avisoRojo);
 
-		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		Cursor cursorlistTareas = tareaDao.buscarTareaFilter(getActivity(),null);
-
-		ArrayList<Boolean> arr = new ArrayList<Boolean>();
-
-		//iteramos sobre las tareas
-		if (cursorlistTareas != null) {
-			cursorlistTareas.moveToFirst();
-		}
-
-		while(!cursorlistTareas.isAfterLast()){
-			strFechaSincronizacion = cursorlistTareas.getString(cursorlistTareas.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
-			strFechaModificacion = cursorlistTareas.getString(cursorlistTareas.getColumnIndex(Empleado.FECHA_MODIFICACION));
-
-			if(strFechaSincronizacion == null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
-				arr.add(false);
-			}else{
-				arr.add(true);
-			}
-
-			cursorlistTareas.moveToNext();
-		}
-
 
 		//pintamos..
-		if(arr.contains(true) && arr.contains(false)){
+		if(arrSincronizados.containsValue(true) && arrSincronizados.containsValue(false)){
 			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
 			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
 
-		}else if(arr.contains(true)){
+		}else if(arrSincronizados.containsValue(true)){
 			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
 			tvVerde.setBackgroundResource(R.drawable.borde_verde);
 
-		}else if(arr.contains(false)){
+		}else if(arrSincronizados.containsValue(false)){
 			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
 			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
 		}
 	}
-	
+
 	/**
 	 * Funcion que sincroniza una tarea.
 	 * @param id Id de la tarea

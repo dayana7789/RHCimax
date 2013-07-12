@@ -84,7 +84,7 @@ public class ClientesActivity extends ListFragment {
 					//Cambiamos el layout de clientes por datos_empresa e indicamos el tag del frame.
 					ft.replace(android.R.id.tabcontent,fragmentDatosEmpresa, AplicacionActivity.tagFragmentDatosEmpresa); 
 					//preservamos el estado anterior al hacer click en back button
-					ft.addToBackStack(null);
+					ft.addToBackStack(AplicacionActivity.tagFragmentDatosEmpresa);
 					ft.commit(); 
 				}
 			});
@@ -100,7 +100,7 @@ public class ClientesActivity extends ListFragment {
 					//Cambiamos el layout de clientes por datos_cliente e indicamos el tag del frame.
 					ft.replace(android.R.id.tabcontent,fragmentDatosClientes, AplicacionActivity.tagFragmentDatosCliente); 
 					//preservamos el estado anterior al hacer click en back button
-					ft.addToBackStack(null);
+					ft.addToBackStack(AplicacionActivity.tagFragmentDatosCliente);
 					ft.commit(); 
 				}
 			});
@@ -572,7 +572,7 @@ public class ClientesActivity extends ListFragment {
 
 		getFragmentManager().beginTransaction()
 		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosCliente)
-		.addToBackStack(null)
+		.addToBackStack(AplicacionActivity.tagFragmentDatosCliente)
 		.commit();
 	}
 
@@ -592,7 +592,7 @@ public class ClientesActivity extends ListFragment {
 
 		getFragmentManager().beginTransaction()
 		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosEmpresa)
-		.addToBackStack(null)
+		.addToBackStack(AplicacionActivity.tagFragmentDatosEmpresa)
 		.commit();
 	}
 }

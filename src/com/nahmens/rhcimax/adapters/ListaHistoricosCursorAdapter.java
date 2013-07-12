@@ -1,5 +1,7 @@
 package com.nahmens.rhcimax.adapters;
 
+import java.util.HashMap;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -19,6 +21,8 @@ import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
 import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Tarea;
+import com.nahmens.rhcimax.database.sqliteDAO.CotizacionSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
@@ -34,15 +38,18 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 	private int[] toTarea;
 	private String[] fromVisita;
 	private int[] toVisita;
+	private HashMap<Integer,Boolean> arrSincronizados;
 
 
 	/**
 	 * @param tipoCliente Puede ser empleado o empresa. Se utiliza para saber sobre
 	 * 					  que tipo de lista estoy iterando.
+	 * @param arrSincronizados contiene <idHistorico, si esta sincronizado o no> Se utiliza para pintar
+	 *                         los cuadros de notificacion principal.
 	 */
 	public ListaHistoricosCursorAdapter(Context context, int layout, Cursor c,
 			String[] fromCotizacion, int[] toCotizacion, int flags, String[] fromTarea, int[] toTarea,
-			String[] fromVisita, int[] toVisita) {
+			String[] fromVisita, int[] toVisita, HashMap<Integer,Boolean> arrSincronizados) {
 
 		super(context, layout, c, fromCotizacion, toCotizacion, flags);
 
@@ -54,6 +61,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 		this.toTarea = toTarea;
 		this.fromVisita = fromVisita;
 		this.toVisita = toVisita;
+		this.arrSincronizados = arrSincronizados;
 
 	}
 
@@ -90,7 +98,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 		String tipoRegistro = cursor.getString(cursor.getColumnIndex(Historico.TIPO_REGISTRO));
 
 		TextView campoLetra = (TextView) v.findViewById(R.id.textViewLetra);
-		LinearLayout lnCuadrosNotif = (LinearLayout) v.findViewById(R.id.cuadrosNotificacion);
+		//LinearLayout lnCuadrosNotif = (LinearLayout) v.findViewById(R.id.cuadrosNotificacion);
 		ImageView ivIcono= (ImageView) v.findViewById(R.id.imageViewIcono);
 
 
@@ -102,14 +110,14 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 				if(i<fromCotizacion.length){
 					columna = fromCotizacion[i];
 					campoLetra.setText("C");
-					lnCuadrosNotif.setVisibility(View.GONE);
+					//	lnCuadrosNotif.setVisibility(View.GONE);
 				}
 
 			}else if(tipoRegistro.equals("tarea")){
 				ivIcono.setBackgroundResource(android.R.drawable.ic_menu_agenda);
 				columna = fromTarea[i];
 				campoLetra.setText("T");
-				lnCuadrosNotif.setVisibility(View.VISIBLE);
+				//lnCuadrosNotif.setVisibility(View.VISIBLE);
 
 
 			}else if(tipoRegistro.equals("visita")){
@@ -118,7 +126,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 				if(i<fromVisita.length){
 					columna = fromVisita[i];
 					campoLetra.setText("V");
-					lnCuadrosNotif.setVisibility(View.GONE);
+					//lnCuadrosNotif.setVisibility(View.GONE);
 
 				}
 			}
@@ -221,65 +229,87 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 			}
 		}
 
-
+		actualizarCuadrosNotificacion(v, cursor, tipoRegistro);
 
 		//Si la pantalla esta horizontal, mostramos los botones. 
 		//De lo contrario, no mostramos los botones
 		//int display_mode = context.getResources().getConfiguration().orientation;
 
 		//if (display_mode != 1) {
-
-		ImageButton buttonSincronizar = (ImageButton)  v.findViewById(R.id.imageButtonSync);
-		
-		if(tipoRegistro.equals("tarea")){
-			buttonSincronizar.setVisibility(View.VISIBLE);
 			
-			actualizarCuadrosNotificacionTarea(v, cursor);
-			int id = cursor.getInt(cursor.getColumnIndex("tareaId"));
+			int id = 0;
+			int idHistorico = cursor.getInt(cursor.getColumnIndex("historicoId"));
+			
+			if(tipoRegistro.equals("tarea")){
+				id= cursor.getInt(cursor.getColumnIndex("tareaId"));
+
+			}else if(tipoRegistro.equals("cotizacion")){
+				id= cursor.getInt(cursor.getColumnIndex("cotizacionId"));
+
+			}
 
 			//almacenamos en un bundle, el id de la tarea y nombre de la tarea.
 			final Bundle mArgumentos = new Bundle();
 			mArgumentos.putInt("id", id);
+			mArgumentos.putInt("idHistorico", idHistorico);
+			mArgumentos.putString("tipoRegistro", tipoRegistro);
 
-			
+			ImageButton buttonSincronizar = (ImageButton)  v.findViewById(R.id.imageButtonSync);
 			buttonSincronizar.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v){
 					int id = mArgumentos.getInt("id");
-					sincronizarTarea(id);
+					int idHistorico = mArgumentos.getInt("idHistorico");
+					String tipoRegistro = mArgumentos.getString("tipoRegistro");
+					sincronizarHistorico(idHistorico, id, tipoRegistro);
 				}
 
 			});
-			//}
+		//}
 
-		}else{
-			buttonSincronizar.setVisibility(View.GONE);
-		}
 	}
 
 	/**
 	 * Funcion que sincroniza una tarea.
-	 * @param id Id de la tarea
+	 * @param id Id de la tarea, empresa o cotizacion
+	 * @tipoRegistro Posibles valores: visita, cotizacion o tarea
 	 */
-	private void sincronizarTarea(int id) {
+	private void sincronizarHistorico(int idHistorico, int id, String tipoRegistro) {
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		Boolean sincronizado =  false;
 		Mensaje mToast = null;
 		String mensajeError = null;
 		String mensajeOk = null;
 
-		TareaSqliteDao tareaDao = new TareaSqliteDao();
 		HistoricoSqliteDao historicoDao =  new HistoricoSqliteDao();
+		sincronizado = historicoDao.sincronizarHistorico(context, ""+ idHistorico);
 		
-		sincronizado = tareaDao.sincronizarTarea(context, ""+id);
+		if(tipoRegistro.equals("tarea")){
+			TareaSqliteDao tareaDao =  new TareaSqliteDao();
+			sincronizado = sincronizado && tareaDao.sincronizarTarea(context, ""+id);
 
-		mensajeOk = "ok_sincronizado_tarea";
-		mensajeError = "error_sincronizado_tarea";
+			mensajeOk = "ok_sincronizado_tarea";
+			mensajeError = "error_sincronizado_tarea";
+
+		}else if(tipoRegistro.equals("cotizacion")){
+			CotizacionSqliteDao cotizacionDao =  new CotizacionSqliteDao();
+			sincronizado = sincronizado && cotizacionDao.sincronizarCotizacion(context, ""+id);
+
+			mensajeOk = "ok_sincronizado_cotizacion";
+			mensajeError = "error_sincronizado_cotizacion";
+
+		}else{
+			mensajeOk = "ok_sincronizado_visita";
+			mensajeError = "error_sincronizado_visita";
+		}
+
 
 		if(sincronizado){
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
 
+			arrSincronizados.put(idHistorico,true);
+			
 			//Actualizamos los valores del cursor de la lista de tareas
 			this.changeCursor(historicoDao.buscarHistoricoFilter(context,null));
 
@@ -287,6 +317,8 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 			this.notifyDataSetChanged();
 
 		}else{
+			
+			arrSincronizados.put(idHistorico,false);
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeError);
 		}
 
@@ -298,14 +330,14 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 
 	}
 
-	private void actualizarCuadrosNotificacionTarea(View v, Cursor cursor) {
-		String strFechaSincronizacion = cursor.getString(cursor.getColumnIndex("tareaFechaSincronizacion"));
-		String strFechaModificacion = cursor.getString(cursor.getColumnIndex("tareaFechaModificacion"));
+	private void actualizarCuadrosNotificacion(View v, Cursor cursor, String tipoRegistro) {
+		String strFechaSincronizacion =  cursor.getString(cursor.getColumnIndex("historicoFechaSincronizacion"));
+			
 
 		TextView tvAvisoRojoFila = (TextView) v.findViewById(R.id.avisoRojoFila);
 		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
 
-		if(strFechaSincronizacion==null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+		if(strFechaSincronizacion==null){
 			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
 			tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 		}else{

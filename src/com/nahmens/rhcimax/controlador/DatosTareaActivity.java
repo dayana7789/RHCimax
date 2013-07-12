@@ -238,7 +238,7 @@ public class DatosTareaActivity extends Fragment {
 			fragment.setArguments(mArgumentos); 
 			FragmentManager manager = getFragmentManager();
 			FragmentTransaction ft = manager.beginTransaction();
-			ft.addToBackStack(null);
+			ft.addToBackStack(AplicacionActivity.tagFragmentDatosCliente);
 			ft.replace(android.R.id.tabcontent, fragment, AplicacionActivity.tagFragmentDatosCliente);
 			ft.commit();
 		}
@@ -269,7 +269,7 @@ public class DatosTareaActivity extends Fragment {
 			fragment.setArguments(mArgumentos); 
 			FragmentManager manager = getFragmentManager();
 			FragmentTransaction ft = manager.beginTransaction();
-			ft.addToBackStack(null);
+			ft.addToBackStack(AplicacionActivity.tagFragmentDatosEmpresa);
 			ft.replace(android.R.id.tabcontent, fragment, AplicacionActivity.tagFragmentDatosEmpresa);
 			ft.commit();
 		}
@@ -577,7 +577,7 @@ public class DatosTareaActivity extends Fragment {
 
 			getFragmentManager().beginTransaction()
 			.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentHistoricos)
-			.addToBackStack(null)
+			.addToBackStack(AplicacionActivity.tagFragmentHistoricos)
 			.commit();
 		}
 	}

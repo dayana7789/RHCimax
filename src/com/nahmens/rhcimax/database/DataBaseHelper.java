@@ -176,6 +176,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "idTarea INTEGER, "
 															+ "idEmpresa INTEGER, "
 															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
+															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 															+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id), "
 															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id) ON DELETE CASCADE, " 
 															+ "FOREIGN KEY(idTarea) REFERENCES " + TABLA_TAREA + "(_id));";

@@ -1,5 +1,7 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
+import java.util.Date;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -19,7 +21,7 @@ import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class HistoricoSqliteDao implements HistoricoDAO {
 
-	String  consulta  = "historico." + Historico.ID + " as historicoId, historico."+Historico.TIPO_REGISTRO + ", historico." + Historico.FECHA_CREACION + " as historicoFechaCreacion"
+	String  consulta  = "historico." + Historico.ID + " as historicoId, historico."+Historico.TIPO_REGISTRO + ", historico." + Historico.FECHA_CREACION + " as historicoFechaCreacion, historico." + Historico.FECHA_SINCRONIZACION + " as historicoFechaSincronizacion"
 			+ ", empresaVisita." + Empresa.NOMBRE + " as nombreEmpresaVisita"
 			+ ", checkin."+Checkin.CHECKIN + ", checkin." + Checkin.CHECKOUT
 			+ ", usuarioVisita."+Usuario.LOGIN + " as loginUsuarioVisita"
@@ -195,11 +197,6 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 		return mCursor;	
 	}
 
-	@Override
-	public boolean sincronizarHistorico(Context contexto, String idEmpleado) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	@Override
 	public Cursor listarHistoricosPorEmpresa(Context contexto, String idEmpresa) {
@@ -258,6 +255,31 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 
 		return mCursor;	
 	}
+	
+	@Override
+	public boolean sincronizarHistorico(Context contexto, String idHistorico) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean sincronizado = false;
+
+		try{
+			conexion.open();
+
+			ContentValues contenido = new ContentValues();
+			contenido.put(Historico.FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_HISTORICO, contenido, "_id=?", new String []{idHistorico});
+
+			if(value!=0){
+				sincronizado = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return sincronizado;
+	}
+
 
 
 }

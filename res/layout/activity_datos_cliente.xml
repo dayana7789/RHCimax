@@ -62,6 +62,18 @@
 						android:inputType="number" >
 					</EditText>
 					
+					<!-- Campo que almacena id del empleado. 
+		                 Este campo esta oculto. Se necesita cuando creo
+		                 un empleado nuevo y le doy al boton cotizar, luego
+		                 presiono back button. En este punto el formulario 
+		                 se considera como si fuera nuevo y si le doy al boton 
+		                 de salvar, en vez de modificarse la info, se crea un registro nuevo. -->
+					<EditText
+						android:id="@+id/textEditHiddenIdEmpleado"
+						android:visibility="gone"
+						android:inputType="number" />
+
+					
 					<ImageButton
 						android:id="@+id/imageButtonVerEmpresa"
 						android:layout_width="wrap_content"

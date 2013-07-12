@@ -44,6 +44,7 @@ public class DatosClienteActivity extends Fragment {
 	EditText etLinkedin;
 	EditText etDescripcion;
 	EditText etIdEmpresa;
+	EditText etIdEmpleadoHidden;
 	AutoCompleteTextView acNombreEmpresa;
 
 	/* Flag que permite saber si el empleado ya fue 
@@ -86,6 +87,7 @@ public class DatosClienteActivity extends Fragment {
 
 
 				if(empleado !=null){
+					mArgumentos.putString("nombreEmpleado", empleado.getNombre() + " " + empleado.getApellido());
 
 					//Si el empleado tiene una empresa asociada, la buscamos
 					if(empleado.getIdEmpresa() != 0){
@@ -148,7 +150,7 @@ public class DatosClienteActivity extends Fragment {
 
 					FragmentManager manager = getFragmentManager();
 					FragmentTransaction ft = manager.beginTransaction();
-					ft.addToBackStack(null);
+					ft.addToBackStack(AplicacionActivity.tagFragmentDatosEmpresa);
 					ft.replace(android.R.id.tabcontent, fragment, AplicacionActivity.tagFragmentDatosEmpresa);
 					ft.commit();
 				}
@@ -164,13 +166,13 @@ public class DatosClienteActivity extends Fragment {
 		View.OnClickListener activityLauncherTareas = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String id = null;
+				String nombreEmpleado = null;
 
 				if(mArgumentos!=null){
-					id = mArgumentos.getString("id");
+					nombreEmpleado =mArgumentos.getString("nombreEmpleado");
 				}
-
-				onButtonTareaSelected(id);
+				
+				onButtonTareaSelected(nombreEmpleado);
 			} 
 		};
 
@@ -186,13 +188,13 @@ public class DatosClienteActivity extends Fragment {
 		View.OnClickListener activityLauncherHistoricos = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String id = null;
+				String nombreEmpleado = null;
 
 				if(mArgumentos!=null){
-					id = mArgumentos.getString("id");
+					nombreEmpleado = mArgumentos.getString("nombreEmpleado");
 				}
 
-				onButtonHistoricoSelected(id);
+				onButtonHistoricoSelected(nombreEmpleado);
 			} 
 		};
 
@@ -229,7 +231,7 @@ public class DatosClienteActivity extends Fragment {
 
 				getFragmentManager().beginTransaction()
 				.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentServicios)
-				.addToBackStack(null)
+				.addToBackStack(AplicacionActivity.tagFragmentServicios)
 				.commit();
 			}
 		});
@@ -253,7 +255,36 @@ public class DatosClienteActivity extends Fragment {
 		etDescripcion = (EditText) v.findViewById(R.id.textEditDescripEmpleado);
 		etIdEmpresa = (EditText) v.findViewById(R.id.textEditHiddenIdEmpresa);
 		acNombreEmpresa = (AutoCompleteTextView) v.findViewById(R.id.autocompleteEmpresa);
+		etIdEmpleadoHidden = (EditText) v.findViewById(R.id.textEditHiddenIdEmpleado);
 	}
+	
+	
+	/**
+	 * Se sobreescribe esta funcion para recuperar el valor oculto
+	 * del etIdEmpleadoHidden cuando se presiona back button desde
+	 * servicios. Esto es para que cuando esto ocurra (se presione
+	 * el back button) se considere el formulario del empleado
+	 * como modo editable y no como nuevo. Porque si en este punto
+	 * presiono el boton salvar, un nuevo registro se crea, en vez 
+	 * de modificarse.
+	 */
+	@Override
+	public void onResume() {
+		super.onResume();
+		String idEmpleado = etIdEmpleadoHidden.getText().toString();
+		
+		if(idEmpleado.equals("")==false){
+			
+			//le asignamos al bundle el id para que cuando se 
+			//llame los listeners de salvar o cotizar se pase
+			//la info. necesaria.
+			
+			//mArgumentos=new Bundle();
+			mArgumentos.putString("id", ""+idEmpleado);
+
+		}
+		
+	};
 
 	/*
 	 * Funcion que prepara el campo de empresa para que sea autocomplete.
@@ -289,6 +320,7 @@ public class DatosClienteActivity extends Fragment {
 		etDescripcion.setText(empleado.getDescripcion());
 		etIdEmpresa.setText(""+empleado.getIdEmpresa());
 		acNombreEmpresa.setText(nombreEmpresa);
+		etIdEmpleadoHidden.setText(""+empleado.getId());
 	}
 
 	/*
@@ -395,7 +427,10 @@ public class DatosClienteActivity extends Fragment {
 					mToast = new Mensaje(mInflater, getActivity(), "ok_ingreso_empleado");
 					mArgumentos = new Bundle();
 					mArgumentos.putString("id", ""+idFilaInsertada);
-
+					
+					//al crearse el registro guardamos en el campo oculto, el id del nuevo empleado
+					//de manera que lo podamos recuperar en el metodo onResume.
+					etIdEmpleadoHidden.setText(idFilaInsertada+"");
 					flagGuardado = true;
 
 				}else{
@@ -421,37 +456,40 @@ public class DatosClienteActivity extends Fragment {
 	 * Metodo que se llama al seleccionar el boton tareas
 	 * @param idEmpleado
 	 */
-	public void onButtonTareaSelected(String idEmpleado) {
-		Bundle arguments = new Bundle();
-		arguments.putString("idEmpleado", idEmpleado);
-
+	public void onButtonTareaSelected(String nombreEmpleado) {
 		TareasActivity fragment = new TareasActivity();
-
-		//pasamos al fragment el id de la tarea
-		fragment.setArguments(arguments); 
+		
+		if(nombreEmpleado!=null){
+			Bundle arguments = new Bundle();
+			arguments.putString("nombreEmpleado", nombreEmpleado);
+			//pasamos al fragment el nombre de la empresa para hacer la busqueda
+			fragment.setArguments(arguments); 
+		}
 
 		getFragmentManager().beginTransaction()
 		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentTareas)
-		.addToBackStack(null)
+		.addToBackStack(AplicacionActivity.tagFragmentTareas)
 		.commit();
+
 	}
 	
 	/**
 	 * Metodo que se llama al seleccionar el boton historicos
 	 * @param idEmpleado
 	 */
-	public void onButtonHistoricoSelected(String idEmpleado) {
-		Bundle arguments = new Bundle();
-		arguments.putString("idEmpleado", idEmpleado);
-
+	public void onButtonHistoricoSelected(String nombreEmpleado) {
 		HistoricosActivity fragment = new HistoricosActivity();
 
-		//pasamos al fragment el id de la tarea
-		fragment.setArguments(arguments); 
+		if(nombreEmpleado!=null){
+			Bundle arguments = new Bundle();
+			arguments.putString("nombreEmpleado", ""+nombreEmpleado);
+			//pasamos al fragment el nombre de la empresa para hacer la busqueda
+			fragment.setArguments(arguments); 
+		}
 
 		getFragmentManager().beginTransaction()
 		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentHistoricos)
-		.addToBackStack(null)
+		.addToBackStack(AplicacionActivity.tagFragmentHistoricos)
 		.commit();
 	}
 }
