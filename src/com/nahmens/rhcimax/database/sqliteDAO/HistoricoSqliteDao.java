@@ -36,7 +36,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 			+ ", empleadoTarea."+Empleado.ID+", empleadoTarea."+Empleado.NOMBRE + " as nombreEmpleadoTarea"+", empleadoTarea."+Empleado.APELLIDO + " as apellidoEmpleadoTarea"			
 			+ " FROM " + DataBaseHelper.TABLA_HISTORICO
 			+ " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA + " as empresaVisita ON ( historico." + Historico.ID_EMPRESA + " = empresaVisita."+Empresa.ID+" ) "
-			+ " LEFT JOIN " + DataBaseHelper.TABLA_CHECKIN + " ON ( empresaVisita." + Empresa.ID + " = checkin."+Checkin.ID_EMPRESA+" ) "
+			+ " LEFT JOIN " + DataBaseHelper.TABLA_CHECKIN + " ON ( historico." + Historico.ID_CHECKIN + " = checkin."+Checkin.ID+" ) "
 			+ " LEFT JOIN " + DataBaseHelper.TABLA_USUARIO + " as usuarioVisita ON ( checkin." + Checkin.ID_USUARIO + " = usuarioVisita."+Usuario.ID+" ) "
 			+ " LEFT JOIN " + DataBaseHelper.TABLA_COTIZACION + " ON ( historico." + Historico.ID_COTIZACION + " = cotizacion."+Cotizacion.ID+" ) "
 			+ " LEFT JOIN " + DataBaseHelper.TABLA_USUARIO + " ON ( cotizacion."+Cotizacion.ID_USUARIO + " = usuario."+Usuario.ID+" ) "
@@ -59,6 +59,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 		String idCot = null;
 		String idTar = null;
 		String idEmp = null;
+		String idCheck = null;
 
 		if(historico.getIdCotizacion()!=0){
 			idCot = ""+historico.getIdCotizacion();
@@ -71,6 +72,10 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 		if(historico.getIdEmpresa()!=0){
 			idEmp = ""+historico.getIdEmpresa();
 		}
+		
+		if(historico.getIdCheckin()!=0){
+			idCheck = ""+historico.getIdCheckin();
+		}
 
 		try{
 			conexion.open();
@@ -81,6 +86,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 			values.put(Historico.ID_COTIZACION,idCot);
 			values.put(Historico.ID_TAREA, idTar);
 			values.put(Historico.ID_EMPRESA, idEmp);
+			values.put(Historico.ID_CHECKIN, idCheck);
 
 			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_HISTORICO, null,values);
 

@@ -66,7 +66,7 @@ public class LoginActivity extends Activity {
 
     		String fecha = FormatoFecha.darFormatoDateTimeUS(new Date());
 
-            Checkin checkin = new Checkin(latitud, longitud, fecha, null, 0, usu.getId());
+            Checkin checkin = new Checkin(latitud, longitud, fecha, null, usu.getId());
             CheckinSqliteDao checkinDao = new CheckinSqliteDao();
             long idCheckin = checkinDao.insertarCheckin(getApplicationContext(), checkin);
 			

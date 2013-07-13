@@ -244,10 +244,6 @@ public class DatosEmpresaActivity extends Fragment {
 
 						CheckinSqliteDao checkinDao = new CheckinSqliteDao();
 						Checkin checkin = checkinDao.buscarCheckin(getActivity(), idCheckin);
-						checkin.setIdEmpresa(Integer.parseInt(idEmpresa));
-
-						//asignamo al checkin el id de la empresa para mantener historial de las visitas
-						checkinDao.modificarCheckin(getActivity(), checkin);
 
 						//Buscamos la empresa que le vamos asignar las coordenadas
 						EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
@@ -264,7 +260,7 @@ public class DatosEmpresaActivity extends Fragment {
 							mToast = new Mensaje(mInflater, getActivity(), "ok_checkin");
 
 							//registramos la visita como historico
-							Historico historico = new Historico("visita", 0 , 0, Integer.parseInt(idEmpresa));
+							Historico historico = new Historico("visita", 0 , 0, Integer.parseInt(idEmpresa), Integer.parseInt(idCheckin));
 							HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
 							historicoDao.insertarHistorico(getActivity(), historico);
 

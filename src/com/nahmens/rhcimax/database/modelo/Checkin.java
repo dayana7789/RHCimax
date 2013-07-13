@@ -7,7 +7,6 @@ public class Checkin {
 	public final static String LONGITUD = "longitud";
 	public final static String CHECKIN = "checkin";
 	public final static String CHECKOUT = "checkout";
-	public final static String ID_EMPRESA = "idEmpresa";
 	public final static String ID_USUARIO = "idUsuario";
 	
 	
@@ -16,31 +15,28 @@ public class Checkin {
 	Double longitud;
 	String checkin;
 	String checkout;
-	int idEmpresa;
 	int idUsuario;
 	
 	//estoy modificando
 	public Checkin(int id, Double latitud, Double longitud, String checkin,
-			String checkout, int idEmpresa, int idUsuario) {
+			String checkout, int idUsuario) {
 		
 		this.id = id;
 		this.latitud = latitud;
 		this.longitud = longitud;
 		this.checkin = checkin;
 		this.checkout = checkout;
-		this.idEmpresa = idEmpresa;
 		this.idUsuario = idUsuario;
 	}
 
 	//estoy agregando
 	public Checkin(Double latitud, Double longitud, String checkin,
-			String checkout, int idEmpresa, int idUsuario) {
+			String checkout, int idUsuario) {
 
 		this.latitud = latitud;
 		this.longitud = longitud;
 		this.checkin = checkin;
 		this.checkout = checkout;
-		this.idEmpresa = idEmpresa;
 		this.idUsuario = idUsuario;
 	}
 	
@@ -81,14 +77,6 @@ public class Checkin {
 
 	public void setIdUsuario(int idUsuario) {
 		this.idUsuario = idUsuario;
-	}
-
-	public int getIdEmpresa() {
-		return idEmpresa;
-	}
-
-	public void setIdEmpresa(int idEmpresa) {
-		this.idEmpresa = idEmpresa;
 	}
 
 }

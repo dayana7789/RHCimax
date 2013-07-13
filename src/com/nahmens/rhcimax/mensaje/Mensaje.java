@@ -265,7 +265,7 @@ public class Mensaje {
 		text.setText(mensaje);
 
 		Toast toast = new Toast(contexto);
-		toast.setDuration(Toast.LENGTH_LONG);
+		toast.setDuration(Toast.LENGTH_SHORT);
 		toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
 		toast.setView(layout);
 		toast.show();

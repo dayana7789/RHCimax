@@ -15,11 +15,6 @@ public class CheckinSqliteDao implements CheckinDAO{
 	public long insertarCheckin(Context contexto, Checkin checkin) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		long idFila = 0;
-		
-		String idEmp = null;
-		if(checkin.getIdEmpresa()!=0){
-			idEmp = ""+checkin.getIdEmpresa();
-		}
 
 		try{
 			conexion.open();
@@ -30,7 +25,6 @@ public class CheckinSqliteDao implements CheckinDAO{
 			values.put(Checkin.LONGITUD, checkin.getLongitud());
 			values.put(Checkin.CHECKIN, checkin.getCheckin());
 			values.put(Checkin.CHECKOUT, checkin.getCheckout());
-			values.put(Checkin.ID_EMPRESA, idEmp);
 			values.put(Checkin.ID_USUARIO, checkin.getIdUsuario());
 
 			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_CHECKIN, null,values);
@@ -61,7 +55,6 @@ public class CheckinSqliteDao implements CheckinDAO{
 						mCursor.getDouble(mCursor.getColumnIndex(Checkin.LONGITUD)), 
 						mCursor.getString(mCursor.getColumnIndex(Checkin.CHECKIN)), 
 						mCursor.getString(mCursor.getColumnIndex(Checkin.CHECKOUT)),
-						mCursor.getInt(mCursor.getColumnIndex(Checkin.ID_EMPRESA)),
 						mCursor.getInt(mCursor.getColumnIndex(Checkin.ID_USUARIO)));
 			}
 
@@ -76,10 +69,6 @@ public class CheckinSqliteDao implements CheckinDAO{
 	public boolean modificarCheckin(Context contexto, Checkin checkin) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean modificado = false;
-		String idEmp = null;
-		if(checkin.getIdEmpresa()!=0){
-			idEmp = ""+checkin.getIdEmpresa();
-		}
 		
 		try{
 			conexion.open();
@@ -90,7 +79,6 @@ public class CheckinSqliteDao implements CheckinDAO{
 			values.put(Checkin.LONGITUD, checkin.getLongitud());
 			values.put(Checkin.CHECKIN, checkin.getCheckin());
 			values.put(Checkin.CHECKOUT, checkin.getCheckout());
-			values.put(Checkin.ID_EMPRESA, idEmp);
 			values.put(Checkin.ID_USUARIO, checkin.getIdUsuario());
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_CHECKIN, values, "_id=?", new String []{Integer.toString(checkin.getId())});
