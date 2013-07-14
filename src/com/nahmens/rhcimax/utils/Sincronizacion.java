@@ -12,13 +12,28 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
-public class Sincronizacion extends AsyncTask<String, Float, Integer> {
+import com.nahmens.rhcimax.controlador.LoginActivity;
 
+public class Sincronizacion extends AsyncTask<String, Float, String> {
 
-	public void getValores(){
+	Context contexto;
+	
+	final CharSequence TEXT_ERROR = "Ha ocurrido un error con la sincronización: ";
+	final CharSequence TEXT_OK = "Sincronización finalizada";
+	final int DURATION = Toast.LENGTH_LONG;
+
+	public Sincronizacion(Context contexto) {
+		super();
+		this.contexto = contexto;
+	}
+
+	public void getValores() throws Exception{
+
 		try {
 
 			URL url = new URL("http://190.203.108.202:8080/vasaweb-1.0/getTest");
@@ -55,26 +70,28 @@ public class Sincronizacion extends AsyncTask<String, Float, Integer> {
 
 			}
 
-
-
 			conn.disconnect();
 
 		} catch (MalformedURLException e) {
-
+			Toast toast = Toast.makeText(contexto, TEXT_ERROR + e.toString(), DURATION);
+			toast.show();
 			e.printStackTrace();
 
 		} catch (IOException e) {
-
+			Toast toast = Toast.makeText(contexto, TEXT_ERROR + e.toString(), DURATION);
+			toast.show();
 			e.printStackTrace();
 
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+			Toast toast = Toast.makeText(contexto, TEXT_ERROR + e.toString(), DURATION);
+			toast.show();
 			e.printStackTrace();
 		}
 
 	}
 
-	public void postValores(){
+	public void postValores () throws Exception{
+
 		try {
 
 			URL url = new URL("http://190.203.108.202:8080/vasaweb-1.0/createTest");
@@ -100,6 +117,7 @@ public class Sincronizacion extends AsyncTask<String, Float, Integer> {
 					(conn.getInputStream())));
 
 			String output;
+
 			System.out.println("Output from Server .... \n");
 			while ((output = br.readLine()) != null) {
 				Log.e("sync post",output);
@@ -108,30 +126,52 @@ public class Sincronizacion extends AsyncTask<String, Float, Integer> {
 			conn.disconnect();
 
 		} catch (MalformedURLException e) {
-
+			Toast toast = Toast.makeText(contexto, TEXT_ERROR + e.toString(), DURATION);
+			toast.show();
 			e.printStackTrace();
 
 		} catch (IOException e) {
-
+			Toast toast = Toast.makeText(contexto, TEXT_ERROR + e.toString(), DURATION);
+			toast.show();
 			e.printStackTrace();
 
 		}
 
 	}
 
-	
-	/*protected void onProgressUpdate(Integer... progress) {
-        setProgressPercent(progress[0]);
-    }
+	protected void onPreExecute() {
+		LoginActivity.dialog.show(); //Mostramos el diálogo antes de comenzar
+	}
 
-    protected void onPostExecute(Long result) {
-        showDialog("Downloaded " + result + " bytes");
-    }
-*/
-	
-	protected Integer doInBackground(String... params) {
-		this.getValores();
-		return null;
+
+
+	protected void onPostExecute(String result) {
+		LoginActivity.dialog.dismiss(); //lo ocultamos al terminar
+		
+		if(result.equals("OK")){
+
+			Toast toast = Toast.makeText(contexto, TEXT_OK, DURATION);
+			toast.show();
+		}else{
+
+			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result, DURATION);
+			toast.show();
+		}
+
+	}
+
+
+	protected String doInBackground(String... params) {
+
+		try {
+			this.postValores();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.toString();
+		}
+		
+		return "OK";
 	}
 
 }

@@ -1,6 +1,8 @@
 package com.nahmens.rhcimax.controlador;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +16,7 @@ import com.nahmens.rhcimax.utils.SesionUsuario;
 import com.nahmens.rhcimax.utils.Sincronizacion;
 
 public class LoginActivity extends Activity {
+	 public static ProgressDialog dialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,6 @@ public class LoginActivity extends Activity {
 		if(usu!=null){
 
 			SesionUsuario.iniciarSesion(getApplicationContext(), usu);
-			new Sincronizacion().execute("");
 
 			final Intent inte = new Intent(this, AplicacionActivity.class);
 			startActivity(inte);
@@ -53,5 +55,16 @@ public class LoginActivity extends Activity {
 		}else{
 			Toast.makeText(getApplicationContext(), "Error: login o password inválido",Toast.LENGTH_LONG).show();
 		}
+	}
+
+	public void onClickSincronizar(View v){
+		dialog = new ProgressDialog(this);
+        dialog.setMessage("Descargando...");
+        dialog.setTitle("Progreso");
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setCancelable(false);
+        
+
+		new Sincronizacion(getApplicationContext()).execute();
 	}
 }
