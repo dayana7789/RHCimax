@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManager.BackStackEntry;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,6 +24,7 @@ import android.widget.TabWidget;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
+import com.nahmens.rhcimax.utils.SesionUsuario;
 import com.nahmens.rhcimax.utils.Tripleta;
 
 /*
@@ -475,7 +475,7 @@ public class AplicacionActivity extends FragmentActivity {
 		.setCancelable(false)
 		.setPositiveButton("Si", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				LogoutActivity.logout(getApplicationContext());
+				SesionUsuario.cerrarSesion(getApplicationContext());
 				finish();
 			}
 		})
@@ -546,7 +546,7 @@ public class AplicacionActivity extends FragmentActivity {
 
 				if(action.equals(Intent.ACTION_SCREEN_OFF)){
 					//registramos el checkout
-					LogoutActivity.logout(getApplicationContext());
+					SesionUsuario.cerrarSesion(getApplicationContext());
 					
 					//matamos la aplicacion
 					finish();

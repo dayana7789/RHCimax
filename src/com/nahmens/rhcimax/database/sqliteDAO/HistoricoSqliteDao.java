@@ -72,7 +72,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 		if(historico.getIdEmpresa()!=0){
 			idEmp = ""+historico.getIdEmpresa();
 		}
-		
+
 		if(historico.getIdCheckin()!=0){
 			idCheck = ""+historico.getIdCheckin();
 		}
@@ -155,7 +155,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 			sqlQuery  += consulta;
 			sqlQuery  += " WHERE ";
 			sqlQuery  += condicion;
-			
+
 			for(int i =0; i< palabras.length; i++){
 
 				sqlQuery += " AND (";
@@ -169,14 +169,14 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 				sqlQuery += " OR apellidoEmpleadoTarea LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR nombreEmpresaTarea LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR loginUsuarioTarea LIKE '%" + palabras[i] + "%' ";
-				
+
 				sqlQuery += " OR historico.tipoRegistro LIKE '%" + palabras[i] + "%' ";
-				
+
 				sqlQuery += " OR nombreEmpresaVisita LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR (substr(checkin.checkin, 9, 2) || '/' || substr(checkin.checkin, 6, 2) || '/' || substr(checkin.checkin, 1, 4)) LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR (substr(checkin.checkout, 9, 2) || '/' || substr(checkin.checkout, 6, 2) || '/' || substr(checkin.checkout, 1, 4)) LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR loginUsuarioVisita LIKE '%" + palabras[i] + "%' ";
-				
+
 				sqlQuery += " OR (substr(cotizacion.fechaEnvio, 9, 2) || '/' || substr(cotizacion.fechaEnvio, 6, 2) || '/' || substr(cotizacion.fechaEnvio, 1, 4)) LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR (substr(cotizacion.fechaLeido, 9, 2) || '/' || substr(cotizacion.fechaLeido, 6, 2) || '/' || substr(cotizacion.fechaLeido, 1, 4)) LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR loginUsuario LIKE '%" + palabras[i] + "%' ";
@@ -185,13 +185,13 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 				sqlQuery += " OR apellidoEmpleadoCotizacion LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR emailEmpleadoCotizacion LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR cotizacionId LIKE '%" + palabras[i] + "%' ";
-				
+
 				sqlQuery += ") ";
 			}
-			
-			
+
+
 			sqlQuery  += orderBy;
-Log.e("sqlQuery",sqlQuery);
+			Log.e("sqlQuery",sqlQuery);
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 
 			if (mCursor != null) {
@@ -263,7 +263,7 @@ Log.e("sqlQuery",sqlQuery);
 
 		return mCursor;	
 	}
-	
+
 	@Override
 	public boolean sincronizarHistorico(Context contexto, String idHistorico) {
 		ConexionBD conexion = new ConexionBD(contexto);
@@ -286,6 +286,57 @@ Log.e("sqlQuery",sqlQuery);
 		}
 
 		return sincronizado;
+	}
+
+	@Override
+	public Historico buscarHistoricoPorCheckinPorEmpresa(Context contexto,
+			String idCheckin, String idEmpresa) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		Historico historico = null;
+
+		try{
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_HISTORICO , null , Historico.ID_EMPRESA + " = ? AND "+ Historico.ID_CHECKIN + " = ?", new String [] {idEmpresa,idCheckin}, null, null, null);
+
+			if (mCursor.getCount() > 0) {
+				mCursor.moveToFirst();
+
+				historico = new Historico(mCursor.getString(mCursor.getColumnIndex(Historico.TIPO_REGISTRO)),
+						mCursor.getInt(mCursor.getColumnIndex(Historico.ID_COTIZACION)), 
+						mCursor.getInt(mCursor.getColumnIndex(Historico.ID_TAREA)), 
+						mCursor.getInt(mCursor.getColumnIndex(Historico.ID_EMPRESA)), 
+						mCursor.getInt(mCursor.getColumnIndex(Historico.ID_CHECKIN)));
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return historico;	
+	}
+
+	@Override
+	public boolean existeCheckinVisita(Context contexto, String idCheckin) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		boolean existeHistorico = false;
+
+		try{
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_HISTORICO , null , Historico.ID_CHECKIN + " = ? AND " + Historico.TIPO_REGISTRO + " = ? ", new String [] {idCheckin,"visita"}, null, null, null);
+
+			if (mCursor.getCount() > 0) {
+				existeHistorico = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return existeHistorico;	
 	}
 
 

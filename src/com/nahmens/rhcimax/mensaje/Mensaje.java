@@ -300,6 +300,11 @@ public class Mensaje {
 			mensaje =  "Está seguro de eliminar esta tarea: "+args +"?.";
 			titulo = "Eliminar Tarea";
 
+		}else if(this.tipoMensaje == "checkin_ya_realizado"){
+			
+			mensaje =  "Ya se registró un checkin para esta empresa en esta sesión. Intente hacer logout para poder registrar un nuevo checkin.";
+			titulo = "Checkin ya realizado";
+
 		}else{
 			throw new Exception("Mensaje invalido. Revisa el atributo tipoMensaje que utiliza el constructor de la clase Mensaje.");
 		}

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.FormatoFecha;
+import com.nahmens.rhcimax.utils.SesionUsuario;
 
 public class DatosEmpresaActivity extends Fragment {
 
@@ -87,7 +89,7 @@ public class DatosEmpresaActivity extends Fragment {
 				if(empresa !=null){
 					llenarCamposEmpresa(view, empresa);
 					listarEmpleados(view, idEmpresa);
-					
+
 					mArgumentos.putString("nombreEmpresa", empresa.getNombre());
 
 				}else{
@@ -185,7 +187,7 @@ public class DatosEmpresaActivity extends Fragment {
 					if(mArgumentos!=null){
 						nombreEmpresa = mArgumentos.getString("nombreEmpresa");
 					}
-					
+
 					onButtonTareaSelected(nombreEmpresa);
 				} 
 			};
@@ -224,8 +226,6 @@ public class DatosEmpresaActivity extends Fragment {
 				@Override
 				public void onClick(View v) {
 
-
-
 					if(!flagGuardado){
 						Mensaje mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "error_empresa_no_guardada");
 
@@ -237,13 +237,33 @@ public class DatosEmpresaActivity extends Fragment {
 
 					}else{
 
+						Mensaje mToast = null;
+						LayoutInflater mInflater = getActivity().getLayoutInflater();
+
 						String idEmpresa = mArgumentos.getString("idEmpresa");
 						//Buscamos el id del checkin en la sesion del usuario para asignarle las coordenadas a la empresa
 						SharedPreferences prefs = getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
-						String idCheckin = prefs.getString("idCheckin", ""); 
+						int idCheckin = prefs.getInt("idCheckin", 0); 
 
 						CheckinSqliteDao checkinDao = new CheckinSqliteDao();
-						Checkin checkin = checkinDao.buscarCheckin(getActivity(), idCheckin);
+						Checkin checkin = checkinDao.buscarCheckin(getActivity(), ""+idCheckin);
+
+						HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
+						Historico historico = historicoDao.buscarHistoricoPorCheckinPorEmpresa(getActivity(), ""+idCheckin, idEmpresa);
+
+
+						//verificamos si ya se registro un checkin en esta sesion
+						if(historicoDao.existeCheckinVisita(getActivity(), ""+idCheckin)){
+
+							//registramos el check out
+							SesionUsuario.cerrarSesion(getActivity());
+
+							//y creamos una sesion nueva
+							Usuario usu = new Usuario(prefs.getInt(Usuario.ID, 0), prefs.getString(Usuario.CORREO, ""), "", "", prefs.getInt(Usuario.ID_ROL, 0));
+							Log.e("sesion nueva","nueva maldita seas");
+							SesionUsuario.iniciarSesion(getActivity(), usu);
+
+						}
 
 						//Buscamos la empresa que le vamos asignar las coordenadas
 						EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
@@ -253,30 +273,44 @@ public class DatosEmpresaActivity extends Fragment {
 
 						boolean modificado = empresaDao.modificarEmpresa(getActivity(), empresa);
 
-						Mensaje mToast = null;
-						LayoutInflater mInflater = getActivity().getLayoutInflater();
+
 
 						if(modificado){
 							mToast = new Mensaje(mInflater, getActivity(), "ok_checkin");
 
 							//registramos la visita como historico
-							Historico historico = new Historico("visita", 0 , 0, Integer.parseInt(idEmpresa), Integer.parseInt(idCheckin));
-							HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
+							prefs = getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
+							idCheckin = prefs.getInt("idCheckin", 0); 
+							historico = new Historico("visita", 0 , 0, Integer.parseInt(idEmpresa), idCheckin);
+							historicoDao = new HistoricoSqliteDao();
 							historicoDao.insertarHistorico(getActivity(), historico);
+
+							try {
+								mToast.controlMensajesToast();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+
+							//y lo enviamos a la pagina de historicos
+							HistoricosActivity fragment = new HistoricosActivity();
+
+							getFragmentManager().beginTransaction()
+							.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentHistoricos)
+							.addToBackStack(AplicacionActivity.tagFragmentHistoricos)
+							.commit();
 
 
 						}else{
 							mToast = new Mensaje(mInflater, getActivity(), "error_checkin");
-						}
 
-						try {
-							mToast.controlMensajesToast();
-						} catch (Exception e) {
-							e.printStackTrace();
+							try {
+								mToast.controlMensajesToast();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 
 					}
-
 				}
 			});
 
@@ -329,6 +363,8 @@ public class DatosEmpresaActivity extends Fragment {
 		return view;
 	}
 
+
+
 	/**
 	 * Funcion que almacena la referencia de los campos de tal manera que estos
 	 * sean calculados una sola vez.
@@ -359,6 +395,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 
 			//Creamos un array adapter para desplegar cada una de las filas
+			@SuppressWarnings("unused")
 			ListaEmpleadosCursorAdapter notes = new ListaEmpleadosCursorAdapter(tlListEmpleados, context, R.layout.activity_fila_empleado, mCursorEmpleados, from, to, 0, getFragmentManager());
 
 		}
@@ -474,7 +511,7 @@ public class DatosEmpresaActivity extends Fragment {
 	public void onButtonTareaSelected(String nombreEmpresa) {
 
 		TareasActivity fragment = new TareasActivity();
-		
+
 		if(nombreEmpresa!=null){
 			Bundle arguments = new Bundle();
 			arguments.putString("nombreEmpresa", nombreEmpresa);
@@ -487,7 +524,7 @@ public class DatosEmpresaActivity extends Fragment {
 		.addToBackStack(AplicacionActivity.tagFragmentTareas)
 		.commit();
 	}
-	
+
 	/**
 	 * Metodo que se llama al seleccionar el boton historicos
 	 * @param idEmpleado
@@ -495,7 +532,7 @@ public class DatosEmpresaActivity extends Fragment {
 	public void onButtonHistoricoSelected(String nombreEmpresa) {
 
 		HistoricosActivity fragment = new HistoricosActivity();
-		
+
 		if(nombreEmpresa!=null){
 			Bundle arguments = new Bundle();
 			arguments.putString("nombreEmpresa", nombreEmpresa);
@@ -507,6 +544,36 @@ public class DatosEmpresaActivity extends Fragment {
 		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentHistoricos)
 		.addToBackStack( AplicacionActivity.tagFragmentHistoricos)
 		.commit();
+	}
+
+	/**
+	 * Funcion que muestra mensaje de alerta cuando ya se realizo
+	 * checkin para una empresa en una misma sesion
+	 */
+	public void mensajeAlertaCheckin(){
+
+		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+		String[] mensArray = null;
+		Mensaje mensajeDialog = new Mensaje("checkin_ya_realizado");
+		String nombreMensaje = null;
+
+		try {
+			mensArray = mensajeDialog.controlMensajesDialog(nombreMensaje);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		alert.setMessage(mensArray[0]); 
+		alert.setTitle(mensArray[1]); 
+
+		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				dialog.cancel();
+			}
+		});
+
+		AlertDialog alertDialog = alert.create();
+		alertDialog.show();
 	}
 
 }

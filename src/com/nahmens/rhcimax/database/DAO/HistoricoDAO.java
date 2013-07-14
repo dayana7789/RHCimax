@@ -27,5 +27,9 @@ public interface HistoricoDAO {
 	Cursor listarHistoricosPorEmpleado(Context contexto, String idEmpleado);
 	
 	boolean sincronizarHistorico(Context contexto, String idHistorico);
+	
+	Historico buscarHistoricoPorCheckinPorEmpresa(Context contexto, String idCheckin, String idEmpresa);
+
+	boolean existeCheckinVisita(Context contexto, String idCheckin);
 
 }
