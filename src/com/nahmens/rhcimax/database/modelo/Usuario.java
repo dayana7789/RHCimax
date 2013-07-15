@@ -8,20 +8,25 @@ public class Usuario {
 	public final static String CORREO = "correo";
 	public final static String ID_ROL = "idRol";
 	public final static String ROL = "rol";
+	public final static String TOKEN = "token";
 	
 	int id;
 	String login;
 	String password;
 	String correo;
 	int idRol;
+	String token;
 
-	public Usuario(int id, String login, String password, String correo, int idRol) {
+	public Usuario(int id, String login, String password, String correo, int idRol, String token) {
 		this.id = id;
 		this.login = login;
 		this.password = password;
 		this.correo = correo;
 		this.idRol = idRol;
+		this.token = token;
 	}
+	
+	
 
 	
 	public int getId() {
@@ -66,4 +71,15 @@ public class Usuario {
 		this.idRol = idRol;
 	}
 
+
+	public String getToken() {
+		return token;
+	}
+
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	
 }

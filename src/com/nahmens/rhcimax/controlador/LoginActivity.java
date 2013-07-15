@@ -2,7 +2,6 @@ package com.nahmens.rhcimax.controlador;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +12,7 @@ import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.UsuarioSqliteDao;
 import com.nahmens.rhcimax.utils.SesionUsuario;
-import com.nahmens.rhcimax.utils.Sincronizacion;
+import com.nahmens.rhcimax.utils.SincronizacionAsyncTask;
 
 public class LoginActivity extends Activity {
 	 public static ProgressDialog dialog;
@@ -59,12 +58,12 @@ public class LoginActivity extends Activity {
 
 	public void onClickSincronizar(View v){
 		dialog = new ProgressDialog(this);
-        dialog.setMessage("Descargando...");
+        dialog.setMessage("Por favor espere mientras se cargan los datos...");
         dialog.setTitle("Progreso");
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setCancelable(false);
         
 
-		new Sincronizacion(getApplicationContext()).execute();
+		new SincronizacionAsyncTask(getApplicationContext()).execute();
 	}
 }

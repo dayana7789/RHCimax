@@ -259,7 +259,7 @@ public class DatosEmpresaActivity extends Fragment {
 							SesionUsuario.cerrarSesion(getActivity());
 
 							//y creamos una sesion nueva
-							Usuario usu = new Usuario(prefs.getInt(Usuario.ID, 0), prefs.getString(Usuario.CORREO, ""), "", "", prefs.getInt(Usuario.ID_ROL, 0));
+							Usuario usu = new Usuario(prefs.getInt(Usuario.ID, 0), prefs.getString(Usuario.CORREO, ""), "", "", prefs.getInt(Usuario.ID_ROL, 0),"");
 							Log.e("sesion nueva","nueva maldita seas");
 							SesionUsuario.iniciarSesion(getActivity(), usu);
 

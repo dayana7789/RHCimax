@@ -1,14 +1,10 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -189,15 +185,16 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 	}
 
-	/*@Override
-	public Cursor listarEmpresas(Context contexto) {
+	@Override
+	public Cursor listarEmpresasSync(Context contexto) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
 		try{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().rawQuery("SELECT * FROM " + DataBaseHelper.TABLA_EMPRESA  + " WHERE status='activo' ORDER BY nombre", null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA , null , Empresa.FECHA_MODIFICACION + ">" + Empresa.FECHA_SINCRONIZACION,null, null, null, null);
+
 
 			if (mCursor != null) {
 				mCursor.moveToFirst();
@@ -208,7 +205,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		}
 
 		return mCursor;		
-	}*/
+	}
 
 	@Override
 	public Cursor listarNombresEmpresas(Context contexto, String args) {

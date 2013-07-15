@@ -39,6 +39,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
 	private static final String DATABASE_CREATE_USUARIO = "CREATE table " + TABLA_USUARIO + " ("
 														+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+														+ "token TEXT NOT NULL, "
 														+ "login TEXT NOT NULL, "
 														+ "password TEXT NOT NULL, "
 														+ "correo TEXT NOT NULL, "
@@ -260,7 +261,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 /*id:3*/String insertPermiso3 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('Modificar','Se permite el acceso a la acción modificar.')";
 /*id:4*/String insertPermiso4 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('Eliminar','Se permite el acceso a la acción eliminar.')";
 
-		String usuario = "INSERT INTO "+ TABLA_USUARIO + "(idRol,login, password, correo) VALUES(1,'nahmens','1234','NONE')";
+		String usuario = "INSERT INTO "+ TABLA_USUARIO + "(idRol,login, password, correo, token) VALUES(1,'nahmens','1234','NONE','11aa22bb33cc')";
 		
 		/*Rol administrador tiene todos los permisos*/
 		String rolPer =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(1,1)";

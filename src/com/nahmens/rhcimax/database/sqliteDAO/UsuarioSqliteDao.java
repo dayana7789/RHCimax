@@ -16,7 +16,7 @@ import com.nahmens.rhcimax.database.modelo.Usuario;
 public class UsuarioSqliteDao implements UsuarioDAO{
 
 	@Override
-	public Boolean insertarUsuario(Context context, Usuario usuario) {
+	public Boolean insertarUsuario(Context context, Usuario usuario, boolean autoincrement) {
 		Boolean insertado = false;
 		ConexionBD conexion = new ConexionBD(context);
 		try{
@@ -25,9 +25,14 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 
 			ContentValues values = new ContentValues();
 
-			values.put("login",usuario.getLogin());
-			values.put("password",usuario.getPassword());
-			values.put("correo",usuario.getCorreo());
+			if(!autoincrement){
+				values.put(Usuario.ID, usuario.getId());
+			}
+			values.put(Usuario.LOGIN,usuario.getLogin());
+			values.put(Usuario.PASSWORD,usuario.getPassword());
+			values.put(Usuario.CORREO,usuario.getCorreo());
+			values.put(Usuario.ID_ROL,usuario.getIdRol());
+			values.put(Usuario.TOKEN,usuario.getToken());
 
 			long value = conexion.getDatabase().insert(DataBaseHelper.TABLA_USUARIO, null,values);
 
@@ -60,10 +65,40 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 			if(mCursor.getCount()>0){
 				mCursor.moveToFirst();
 				usu = new Usuario(mCursor.getInt(mCursor.getColumnIndex(Usuario.ID)), 
+				         mCursor.getString(mCursor.getColumnIndex(Usuario.LOGIN)),
+				         mCursor.getString(mCursor.getColumnIndex(Usuario.CORREO)),
+				         mCursor.getString(mCursor.getColumnIndex(Usuario.PASSWORD)),
+				         mCursor.getInt(mCursor.getColumnIndex(Usuario.ID_ROL)),
+						 mCursor.getString(mCursor.getColumnIndex(Usuario.TOKEN)));
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return usu;
+
+	}
+	
+	@Override
+	public Usuario buscarUsuario(Context context, String idUsuario) {
+		ConexionBD conexion = new ConexionBD(context);
+		Cursor mCursor = null;
+		Usuario usu = null;
+
+		try{
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_USUARIO, null, Usuario.ID + "= ? ", new String[] {idUsuario}, null, null, null);
+
+			if(mCursor.getCount()>0){
+				mCursor.moveToFirst();
+				usu = new Usuario(mCursor.getInt(mCursor.getColumnIndex(Usuario.ID)), 
 						         mCursor.getString(mCursor.getColumnIndex(Usuario.LOGIN)),
 						         mCursor.getString(mCursor.getColumnIndex(Usuario.CORREO)),
 						         mCursor.getString(mCursor.getColumnIndex(Usuario.PASSWORD)),
-						         mCursor.getInt(mCursor.getColumnIndex(Usuario.ID_ROL)));
+						         mCursor.getInt(mCursor.getColumnIndex(Usuario.ID_ROL)),
+								 mCursor.getString(mCursor.getColumnIndex(Usuario.TOKEN)));
 			}
 
 		}finally{
@@ -113,6 +148,23 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 		}
 
 		return mCursor;		
+
+	}
+	
+	@Override
+	public int eliminarUsuarios(Context context) {
+		ConexionBD conexion = new ConexionBD(context);
+		int numCol = 0;
+		
+		try{
+			conexion.open();
+			numCol = conexion.getDatabase().delete(DataBaseHelper.TABLA_USUARIO, "1", null);
+
+		}finally{
+			conexion.close();
+		}
+
+		return numCol;		
 
 	}
 }

@@ -63,6 +63,12 @@ public class SesionUsuario {
 		checkinDao.modificarCheckin(contexto, checkin);
 
 	}
+	
+	public static int getIdUsuario(Context contexto) {
+
+		SharedPreferences prefs = contexto.getSharedPreferences("Usuario",Context.MODE_PRIVATE);
+		return prefs.getInt(Usuario.ID, 0); 
+	}
 
 }
 

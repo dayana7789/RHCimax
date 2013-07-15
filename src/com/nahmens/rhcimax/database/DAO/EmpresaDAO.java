@@ -23,7 +23,7 @@ public interface EmpresaDAO {
 	 * @param contexto
 	 * @return Cursor Lista de todas las empresas almacenadas en la BD
 	 */
-//	Cursor listarEmpresas(Context contexto);
+	Cursor listarEmpresasSync(Context contexto);
 	
 	/**
 	 * Funcion utilizada para autocomplete.
