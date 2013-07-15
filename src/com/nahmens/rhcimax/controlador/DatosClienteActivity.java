@@ -3,8 +3,6 @@ package com.nahmens.rhcimax.controlador;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,11 +23,11 @@ import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.AutocompleteEmpresaCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
-import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.FormatoFecha;
+import com.nahmens.rhcimax.utils.SesionUsuario;
 
 public class DatosClienteActivity extends Fragment {
 
@@ -399,9 +397,7 @@ public class DatosClienteActivity extends Fragment {
 
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 
-			SharedPreferences prefs = this.getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
-			int idUsuario = prefs.getInt(Usuario.ID, 0);
-
+			int idUsuario = SesionUsuario.getIdUsuario(getActivity());
 
 			if(id!=null){
 				//Estamos modificando un registro

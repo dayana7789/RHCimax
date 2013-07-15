@@ -1,6 +1,10 @@
 package com.nahmens.rhcimax.database.modelo;
 
 public class Rol_Permiso {
+	
+	public final static String ID_ROL = "idRol";
+	public final static String ID_PERMISO = "idPermiso";
+	
 	int idRol;
 	int idPermiso;
 	

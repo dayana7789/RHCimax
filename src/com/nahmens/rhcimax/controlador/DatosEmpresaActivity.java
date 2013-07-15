@@ -5,7 +5,6 @@ import java.util.Date;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -242,8 +241,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 						String idEmpresa = mArgumentos.getString("idEmpresa");
 						//Buscamos el id del checkin en la sesion del usuario para asignarle las coordenadas a la empresa
-						SharedPreferences prefs = getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
-						int idCheckin = prefs.getInt("idCheckin", 0); 
+						int idCheckin = SesionUsuario.getIdCheckin(getActivity());
 
 						CheckinSqliteDao checkinDao = new CheckinSqliteDao();
 						Checkin checkin = checkinDao.buscarCheckin(getActivity(), ""+idCheckin);
@@ -259,7 +257,7 @@ public class DatosEmpresaActivity extends Fragment {
 							SesionUsuario.cerrarSesion(getActivity());
 
 							//y creamos una sesion nueva
-							Usuario usu = new Usuario(prefs.getInt(Usuario.ID, 0), prefs.getString(Usuario.CORREO, ""), "", "", prefs.getInt(Usuario.ID_ROL, 0),"");
+							Usuario usu = new Usuario(SesionUsuario.getIdUsuario(getActivity()), "", "", SesionUsuario.getCorreo(getActivity()), SesionUsuario.getIdRol(getActivity()),"");
 							Log.e("sesion nueva","nueva maldita seas");
 							SesionUsuario.iniciarSesion(getActivity(), usu);
 
@@ -279,8 +277,7 @@ public class DatosEmpresaActivity extends Fragment {
 							mToast = new Mensaje(mInflater, getActivity(), "ok_checkin");
 
 							//registramos la visita como historico
-							prefs = getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
-							idCheckin = prefs.getInt("idCheckin", 0); 
+							idCheckin =  SesionUsuario.getIdCheckin(getActivity());
 							historico = new Historico("visita", 0 , 0, Integer.parseInt(idEmpresa), idCheckin);
 							historicoDao = new HistoricoSqliteDao();
 							historicoDao.insertarHistorico(getActivity(), historico);
@@ -460,8 +457,7 @@ public class DatosEmpresaActivity extends Fragment {
 		if(!error){
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 
-			SharedPreferences prefs = this.getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
-			int idUsuario = prefs.getInt(Usuario.ID, 0);
+			int idUsuario = SesionUsuario.getIdUsuario(getActivity());
 
 			if(id!=null){
 				//Estamos modificando un registro

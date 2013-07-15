@@ -261,8 +261,10 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 /*id:3*/String insertPermiso3 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('Modificar','Se permite el acceso a la acción modificar.')";
 /*id:4*/String insertPermiso4 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('Eliminar','Se permite el acceso a la acción eliminar.')";
 
-		String usuario = "INSERT INTO "+ TABLA_USUARIO + "(idRol,login, password, correo, token) VALUES(1,'nahmens','1234','NONE','11aa22bb33cc')";
-		
+		String usuario = "INSERT INTO "+ TABLA_USUARIO + "(idRol,login, password, correo, token) VALUES(1,'administrador','1234','NONE','11aa22bb33cc')";
+		String usuario2 = "INSERT INTO "+ TABLA_USUARIO + "(idRol,login, password, correo, token) VALUES(2,'usuario avanzado','1234','NONE','11aa22bb33cc')";
+		String usuario3 = "INSERT INTO "+ TABLA_USUARIO + "(idRol,login, password, correo, token) VALUES(3,'usuario','1234','NONE','11aa22bb33cc')";
+
 		/*Rol administrador tiene todos los permisos*/
 		String rolPer =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(1,1)";
 		String rolPer2 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(1,2)";
@@ -286,6 +288,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL(insertPermiso3);
 		database.execSQL(insertPermiso4);
 		database.execSQL(usuario);
+		database.execSQL(usuario2);
+		database.execSQL(usuario3);
 		database.execSQL(rolPer);
 		database.execSQL(rolPer2);
 		database.execSQL(rolPer3);

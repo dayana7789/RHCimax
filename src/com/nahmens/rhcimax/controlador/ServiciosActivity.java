@@ -4,8 +4,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,7 +27,6 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Servicio;
 import com.nahmens.rhcimax.database.modelo.Tarea;
-import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.CotizacionSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.Cotizacion_ServicioSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
@@ -40,6 +37,7 @@ import com.nahmens.rhcimax.database.sqliteDAO.ServicioSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.FormatoFecha;
+import com.nahmens.rhcimax.utils.SesionUsuario;
 import com.nahmens.rhcimax.utils.Tripleta;
 
 public class ServiciosActivity extends Fragment {
@@ -222,8 +220,7 @@ public class ServiciosActivity extends Fragment {
 					Mensaje mToast = null;
 
 					//Obtenemos al usuario
-					SharedPreferences prefs = getActivity().getSharedPreferences("Usuario",Context.MODE_PRIVATE);
-					int idUsuario = prefs.getInt(Usuario.ID, 0);
+					int idUsuario = SesionUsuario.getIdUsuario(getActivity());
 
 					//creamos una cotizacion
 					CotizacionSqliteDao cotizacionDao = new CotizacionSqliteDao();
