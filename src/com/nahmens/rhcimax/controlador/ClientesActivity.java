@@ -26,10 +26,12 @@ import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaClientesCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
+import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.FormatoFecha;
+import com.nahmens.rhcimax.utils.SesionUsuario;
 
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -42,6 +44,8 @@ public class ClientesActivity extends ListFragment {
 	 */
 	public static ListaClientesCursorAdapter listCursorAdapterEmpleados;
 	public static ListaClientesCursorAdapter listCursorAdapterEmpresas;
+
+	private ArrayList<String> permisos;
 
 	//Creamos un DataSetObserver para saber cuando los listView de empleados
 	//y empresas han sido modificados
@@ -58,6 +62,7 @@ public class ClientesActivity extends ListFragment {
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.activity_clientes, container, false);
+		permisos = SesionUsuario.getPermisos(getActivity());
 
 		if (savedInstanceState==null){
 			//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
@@ -70,7 +75,7 @@ public class ClientesActivity extends ListFragment {
 			//por ultimo listamos a las empresas, la cual utiliza la referencia de listCursorAdapterEmpleados dentro
 			//del adaptador. OJO con esto.
 			listarEmpresas(view);
-			
+
 			cambiarColorCuadroNotificacion(view);
 
 			// Registro del evento OnClick del buttonEmpresa
@@ -144,7 +149,7 @@ public class ClientesActivity extends ListFragment {
 		if(v==null){
 			v = getView();
 		}
-		
+
 		String strFechaSincronizacion = null;
 		String strFechaModificacion = null;
 
@@ -153,10 +158,10 @@ public class ClientesActivity extends ListFragment {
 
 		EmpresaSqliteDao empresasDao = new EmpresaSqliteDao();
 		Cursor cursorlistEmpresas = empresasDao.buscarEmpresaFilter(getActivity(),null);
-		
+
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 		Cursor cursorlistEmpleados = empleadoDao.buscarEmpleadoFilter(getActivity(),null);
-		
+
 		ArrayList<Boolean> arr = new ArrayList<Boolean>();
 
 		//iteramos sobre las empresas
@@ -176,8 +181,8 @@ public class ClientesActivity extends ListFragment {
 
 			cursorlistEmpresas.moveToNext();
 		}
-		
-		
+
+
 		//iteramos sobre los empleados
 		if (cursorlistEmpleados != null) {
 			cursorlistEmpleados.moveToFirst();
@@ -210,7 +215,7 @@ public class ClientesActivity extends ListFragment {
 			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
 		}
 
-		
+
 	}
 
 	/**
@@ -318,39 +323,74 @@ public class ClientesActivity extends ListFragment {
 	}
 
 	/**
-	 * Funcion que muestra opciones al dejar una fila preionada
+	 * Funcion que muestra opciones al dejar una fila presionada.
+	 * Discrimina por permisologia.
 	 * @param lv ListView que llamo al evento onLongClick
 	 * @param position Numero de positicion que ocupa la fila que se longClikeo
 	 */
-	protected void mostrarListaOpciones(ListView l, int position) {
-
+	private void mostrarListaOpciones(ListView l, int position) {
 		Cursor cursor = (Cursor) l.getItemAtPosition(position);
 		final int id = cursor.getInt(cursor.getColumnIndex("_id"));
 		final String nombre = cursor.getString(cursor.getColumnIndex("nombre"));
 		String tipoCliente = null;
-
+		
 		if (l.getId() == android.R.id.list) {
 			tipoCliente = "empleado";
 		} else if (l.getId() == R.id.listEmpresas) {
 			tipoCliente = "empresa";
 		}
 
-		final Bundle mArgumentos = new Bundle();
-		mArgumentos.putString("tipoCliente", tipoCliente);
+		if(permisos.contains(Permiso.ELIMINAR_TODO)){
+			mostrarOpcionActualizarEliminar(id, tipoCliente, nombre);
+			
+		}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
+			
+			int idUsuarioCreador = cursor.getInt(cursor.getColumnIndex("idUsuario"));
+			int idUsuarioSesion = SesionUsuario.getIdUsuario(getActivity());
+			
+			if(idUsuarioCreador==idUsuarioSesion){
+				mostrarOpcionActualizarEliminar(id, tipoCliente, nombre);
+			}else{
+				mostrarOpcionActualizar(id, tipoCliente, nombre);
+			}
 
-		String[] arr = {"Actualizar","Eliminar"};
-
+		}else{
+			mostrarOpcionActualizar(id, tipoCliente, nombre);
+		}
+	}
+	
+	private void mostrarOpcionActualizar(final int id, final String tipoCliente, final String nombre){
+		String[] arr = {"Actualizar"};
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle(""+nombre)
+		builder.setTitle(nombre)
 		.setItems(arr, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 				case 0:
-					sincronizarCliente(""+id,  mArgumentos.getString("tipoCliente"));
+					sincronizarCliente(id+"", tipoCliente);
+					break;
+				}
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+	
+	private void mostrarOpcionActualizarEliminar(final int id, final String tipoCliente, final String nombre){
+		String[] arr = {"Actualizar", "Eliminar"};
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(nombre)
+		.setItems(arr, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case 0:
+					sincronizarCliente(""+id,  tipoCliente);
 					break;
 
 				case 1:
-					mensajeAlertaEliminar(nombre, id, mArgumentos.getString("tipoCliente"));
+					mensajeAlertaEliminar(nombre, id, tipoCliente);
 					break;
 				}
 			}
@@ -475,7 +515,7 @@ public class ClientesActivity extends ListFragment {
 		}
 
 	}
-	
+
 	private void sincronizarCliente(String id, String tipoCliente) {
 		final LayoutInflater inflater = LayoutInflater.from(getActivity());
 		Boolean sincronizado =  false;
@@ -487,14 +527,14 @@ public class ClientesActivity extends ListFragment {
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 			sincronizado = empresaDao.sincronizarEmpresa(getActivity(), id);
 
-			
+
 			mensajeOk = "ok_sincronizado_empresa";
 			mensajeError = "error_sincronizado_empresa";
 
 		}else if(tipoCliente.equals("empleado")){
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 			sincronizado = empleadoDao.sincronizarEmpleado(getActivity(), id);
-			
+
 			mensajeOk = "ok_sincronizado_empleado";
 			mensajeError = "error_sincronizado_empleado";
 
@@ -509,22 +549,22 @@ public class ClientesActivity extends ListFragment {
 				//Actualizamos los valores del cursor de la lista de empresas
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				listCursorAdapterEmpresas.changeCursor(empresaDao.buscarEmpresaFilter(getActivity(),null));
-				
+
 				//Notificamos que la lista cambio
 				listCursorAdapterEmpresas.notifyDataSetChanged();
 
-				
+
 			}else if(tipoCliente.equals("empleado")){
 				//Actualizamos los valores del cursor de la lista de empleados
 				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 				listCursorAdapterEmpleados.changeCursor(empleadoDao.buscarEmpleadoFilter(getActivity(),null));
-				
+
 				//Notificamos que la lista cambio
 				listCursorAdapterEmpleados.notifyDataSetChanged();
 
 			}
 
-			
+
 
 		}else{
 			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeError);

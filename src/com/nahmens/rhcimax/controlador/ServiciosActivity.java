@@ -280,7 +280,7 @@ public class ServiciosActivity extends Fragment {
 							}
 							
 							
-							//Redirigimos la pantalla a FragmentClientes
+							//Redirigimos la pantalla a FragmentHistoricos
 							cambiarFragmento();
 
 							//seteamos la lista de correos seleccionados a null de la vista servicios
@@ -331,17 +331,10 @@ public class ServiciosActivity extends Fragment {
 				 * Funcion que carga el fragmento FragmentClientes
 				 */
 				private void cambiarFragmento() {
-					ClientesActivity fragment = new ClientesActivity();
-
-					Bundle mArgumentos =  new Bundle();
-					mArgumentos.putString(AplicacionActivity.tagCuadroColor, AplicacionActivity.tagRojo);
-
-					//pasamos al fragment la notificacion de cambio de color
-					//del cuadro de color
-					fragment.setArguments(mArgumentos); 
+					HistoricosActivity fragment = new HistoricosActivity();
 
 					fragmentManager.beginTransaction()
-					.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentClientes)
+					.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentHistoricos)
 					.commit();
 				}
 

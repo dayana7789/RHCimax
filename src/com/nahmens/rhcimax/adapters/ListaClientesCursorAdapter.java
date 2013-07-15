@@ -41,6 +41,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 	private String tipoCliente;
 	private String[] from;
 	private int[] to;
+	private ArrayList<String> permisos;
 
 	/**
 	 * @param tipoCliente Puede ser empleado o empresa. Se utiliza para saber sobre
@@ -56,6 +57,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		this.tipoCliente = tipoCliente;
 		this.from = from;
 		this.to = to;
+		this.permisos = SesionUsuario.getPermisos(context);
 
 	}
 
@@ -89,8 +91,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		
 		int idUsuarioCreador = cursor.getInt(cursor.getColumnIndex("idUsuario"));
 		int idUsuarioSesion = SesionUsuario.getIdUsuario(context);
-		ArrayList<String> permisos = SesionUsuario.getPermisos(context);
-		
+	
 		TextView tvCreador = (TextView)  v.findViewById(R.id.textViewCreador);
 		
 		//si tengo permisos, veo los creadores de todos los clientes
@@ -211,6 +212,22 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 					alertDialog.show();
 
 				}});
+			
+			//si tengo permisos, muestro o no el boton de eliminar
+			if(permisos.contains(Permiso.ELIMINAR_TODO)){
+				buttonBorrar.setVisibility(View.VISIBLE);
+				
+			}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
+				
+				if(idUsuarioCreador==idUsuarioSesion){
+					buttonBorrar.setVisibility(View.VISIBLE);
+				}else{
+					buttonBorrar.setVisibility(View.GONE);
+				}
+
+			}else{
+				buttonBorrar.setVisibility(View.GONE);
+			}
 		}    
 
 
