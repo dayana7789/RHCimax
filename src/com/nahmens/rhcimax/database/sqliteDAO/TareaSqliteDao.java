@@ -23,6 +23,7 @@ public class TareaSqliteDao implements TareaDAO{
 		              +", tarea."+Tarea.FECHA_MODIFICACION+", tarea."+Tarea.FECHA_SINCRONIZACION
 		              +", empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado"
 		              +", usuario."+Usuario.LOGIN + " as loginUsuario "
+		              +", usuario." + Usuario.ID + " as idUsuario"
 		              + " FROM tarea "
 		              + " LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
 		              + " LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "

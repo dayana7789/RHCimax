@@ -115,7 +115,7 @@ public class SesionUsuario {
 				permisos.add(permiso);
 			}
 		}
-		Log.e("permisos",""+permisos.toString());
+
 		return permisos;
 	}
 

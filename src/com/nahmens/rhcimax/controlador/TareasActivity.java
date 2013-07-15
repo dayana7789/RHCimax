@@ -1,6 +1,7 @@
 package com.nahmens.rhcimax.controlador;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.AlertDialog;
@@ -29,15 +30,18 @@ import android.widget.TextView;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaTareasCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Empleado;
+import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.FormatoFecha;
+import com.nahmens.rhcimax.utils.SesionUsuario;
 
 public class TareasActivity extends ListFragment{
 
 	ListaTareasCursorAdapter listCursorAdapterTareas;
 	HashMap<Integer,Boolean> arrSincronizados = new HashMap<Integer, Boolean>(); //Contiene idTarea y si esta sincronizado o no
+	private ArrayList<String> permisos;
 	
 	//Las siguientes variables son utilizadas para evitar llamadas a
 	//la BD innecesarias porq los listeners se disparan aunque el 
@@ -79,6 +83,7 @@ public class TareasActivity extends ListFragment{
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.activity_tareas, container, false);
+		permisos = SesionUsuario.getPermisos(getActivity());
 
 		if (savedInstanceState==null){
 			//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
@@ -242,6 +247,45 @@ public class TareasActivity extends ListFragment{
 		final int idTarea = cursor.getInt(cursor.getColumnIndex(Tarea.ID));
 		final String nombreTarea = cursor.getString(cursor.getColumnIndex(Tarea.NOMBRE));
 
+		if(permisos.contains(Permiso.ELIMINAR_TODO)){
+			mostrarOpcionActualizarEliminar(idTarea, nombreTarea);
+			
+		}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
+			
+			int idUsuarioCreador = cursor.getInt(cursor.getColumnIndex("idUsuario"));
+			int idUsuarioSesion = SesionUsuario.getIdUsuario(getActivity());
+			
+			if(idUsuarioCreador==idUsuarioSesion){
+				mostrarOpcionActualizarEliminar(idTarea, nombreTarea);
+			}else{
+				mostrarOpcionActualizar(idTarea, nombreTarea);
+			}
+
+		}else{
+			mostrarOpcionActualizar(idTarea, nombreTarea);
+		}
+	}
+	
+	
+	private void mostrarOpcionActualizar(final int idTarea, final String nombreTarea){
+		String[] arr = {"Actualizar"};
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+		builder.setTitle(""+nombreTarea)
+		.setItems(arr, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which) {
+				case 0:
+					sincronizarTarea(idTarea);
+					break;
+				}
+			}
+		});
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
+	
+	private void mostrarOpcionActualizarEliminar(final int idTarea, final String nombreTarea){
 		String[] arr = {"Actualizar","Eliminar"};
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -262,6 +306,7 @@ public class TareasActivity extends ListFragment{
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
+
 
 
 	@Override

@@ -1,5 +1,6 @@
 package com.nahmens.rhcimax.adapters;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -21,10 +22,12 @@ import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.controlador.AplicacionActivity;
+import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.FormatoFecha;
+import com.nahmens.rhcimax.utils.SesionUsuario;
 
 public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Filterable{
 
@@ -34,6 +37,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	private int[] to;
 	private FragmentManager fragmentManager;
 	private HashMap<Integer,Boolean> arrSincronizados;
+	private ArrayList<String> permisos;
 
 	/**
 	 * @param tipoCliente Puede ser empleado o empresa. Se utiliza para saber sobre
@@ -52,6 +56,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 		this.to = to;
 		this.fragmentManager=fragmentManager;
 		this.arrSincronizados = arrSincronizados;
+		this.permisos = SesionUsuario.getPermisos(context);
 	}
 
 
@@ -204,6 +209,26 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 					alertDialog.show();
 
 				}});
+			
+			
+			//si tengo permisos, muestro o no el boton de eliminar
+			if(permisos.contains(Permiso.ELIMINAR_TODO)){
+				buttonBorrar.setVisibility(View.VISIBLE);
+				
+			}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
+				
+				int idUsuarioCreador = cursor.getInt(cursor.getColumnIndex("idUsuario"));
+				int idUsuarioSesion = SesionUsuario.getIdUsuario(context);			
+				
+				if(idUsuarioCreador==idUsuarioSesion){
+					buttonBorrar.setVisibility(View.VISIBLE);
+				}else{
+					buttonBorrar.setVisibility(View.GONE);
+				}
+
+			}else{
+				buttonBorrar.setVisibility(View.GONE);
+			}
 		}
 	}
 
