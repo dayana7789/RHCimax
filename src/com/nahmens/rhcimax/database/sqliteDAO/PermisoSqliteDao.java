@@ -6,7 +6,6 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -34,8 +33,6 @@ public class PermisoSqliteDao implements PermisoDAO{
 			
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
-
-			Log.e("query", " " + sqlQuery);
 			
 			if (mCursor != null) {
 				mCursor.moveToFirst();

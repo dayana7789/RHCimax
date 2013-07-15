@@ -256,29 +256,31 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 /*id:2*/String insertRol2 = "INSERT INTO "+ TABLA_ROL + "(nombre, descripcion) VALUES('Usuario Avanzado','Tiene acceso a la lista de todos los clientes de RHCimax y a la accion de modificar.')";
 /*id:3*/String insertRol3 = "INSERT INTO "+ TABLA_ROL + "(nombre, descripcion) VALUES('Usuario','Tiene acceso solo a la lista de clientes de RHCimax ingresador por el y a la accion de modificar.')";
 		
-/*id:1*/String insertPermiso1 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('ListarTodos','Se permite el acceso a la lista de todos los clientes RHCimax.')";
-/*id:2*/String insertPermiso2 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('ListarPropios','Se permite el acceso a la lista de los clientes RHCimax ingresados por el usuario.')";
-/*id:3*/String insertPermiso3 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('Modificar','Se permite el acceso a la acción modificar.')";
-/*id:4*/String insertPermiso4 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('Eliminar','Se permite el acceso a la acción eliminar.')";
+/*id:1*/String insertPermiso1 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('ListarTodo','Se permite el acceso a todas las listas')";
+/*id:2*/String insertPermiso2 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('ListarPropios','Se permite el acceso a la lista de registros que pertenecen a este usuario.')";
+
+/*id:3*/String insertPermiso3 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('ModificarTodo','Se permite el acceso a la acción modificar de todo.')";
+/*id:4*/String insertPermiso4 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('ModificarPropios','Se permite el acceso a la acción modificar de los registros que son propios del usuario.')";
+
+/*id:5*/String insertPermiso5 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('EliminarTodo','Se permite el acceso a la acción eliminar.')";
+/*id:6*/String insertPermiso6 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('EliminarPropios','Se permite el acceso a la acción eliminar de los registros que son propios del usuario.')";
 
 		String usuario = "INSERT INTO "+ TABLA_USUARIO + "(idRol,login, password, correo, token) VALUES(1,'administrador','1234','NONE','11aa22bb33cc')";
 		String usuario2 = "INSERT INTO "+ TABLA_USUARIO + "(idRol,login, password, correo, token) VALUES(2,'usuario avanzado','1234','NONE','11aa22bb33cc')";
 		String usuario3 = "INSERT INTO "+ TABLA_USUARIO + "(idRol,login, password, correo, token) VALUES(3,'usuario','1234','NONE','11aa22bb33cc')";
 
-		/*Rol administrador tiene todos los permisos*/
+		/*Rol administrador tiene todos los permisos generales*/
 		String rolPer =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(1,1)";
-		String rolPer2 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(1,2)";
-		String rolPer3 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(1,3)";
-		String rolPer4 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(1,4)";
+		String rolPer2 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(1,3)";
+		String rolPer3 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(1,5)";
 		
-		/*Rol Usuario Avanzado tiene todos los permisos excepto eliminar*/
-		String rolPer5 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(2,1)";
-		String rolPer6 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(2,2)";
-		String rolPer7 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(2,3)";
+		/*Rol Usuario Avanzado tiene todos los permisos excepto eliminar y listar todo. Puede modificar todo.*/
+		String rolPer4 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(2,2)";
+		String rolPer5 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(2,3)";
 		
-		/*Rol usuario puede ver los clientes ingresados por el y modificarlos*/
-		String rolPer8 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(3,2)";
-		String rolPer9 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(3,3)";
+		/*Rol usuario tiene todos los permisos excepto eliminar y listar todo. Puede modificar solo sus propios registros.*/
+		String rolPer6 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(3,2)";
+		String rolPer7 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(3,4)";
 
 		database.execSQL(insertRol1);
 		database.execSQL(insertRol2);
@@ -287,6 +289,9 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL(insertPermiso2);
 		database.execSQL(insertPermiso3);
 		database.execSQL(insertPermiso4);
+		database.execSQL(insertPermiso5);
+		database.execSQL(insertPermiso6);
+
 		database.execSQL(usuario);
 		database.execSQL(usuario2);
 		database.execSQL(usuario3);
@@ -297,8 +302,6 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL(rolPer5);
 		database.execSQL(rolPer6);
 		database.execSQL(rolPer7);
-		database.execSQL(rolPer8);
-		database.execSQL(rolPer9);
 		
 		String serv1 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Reclutamiento',0,5000,'persona','Reclutamiento:  Es un servicio para reclutar personal.','Activo')";
 		String serv2 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Merchandiser',300,0,'horas', 'Merchandiser: Es un servicio para Merchandiser.','Activo')";

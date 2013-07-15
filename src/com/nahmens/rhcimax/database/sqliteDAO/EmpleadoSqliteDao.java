@@ -15,6 +15,7 @@ import com.nahmens.rhcimax.database.DAO.EmpleadoDAO;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
+import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class EmpleadoSqliteDao implements EmpleadoDAO{
@@ -120,6 +121,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, values, "_id=?", new String []{idEmpleado});
 
 			//Actualizamos el status de las tareas
+			@SuppressWarnings("unused")
 			int value2 = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, values, Tarea.ID_EMPLEADO + "=?", new String []{idEmpleado});
 
 			if(value!=0){
@@ -251,9 +253,13 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			sqlQuery += ", empleado.linkedin as "+Empleado.LINKEDIN;
 			sqlQuery += ", empleado." + Empleado.FECHA_SINCRONIZACION;
 			sqlQuery += ", empleado." + Empleado.FECHA_MODIFICACION;
+			sqlQuery += ", usuario." + Usuario.LOGIN + " as usuarioCreador";
+			sqlQuery += ", usuario." + Usuario.ID + " as idUsuario";
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
 			sqlQuery += " LEFT JOIN " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " ON (empleado.idEmpresa=empresa._id)";
+			sqlQuery += " LEFT JOIN " + DataBaseHelper.TABLA_USUARIO;
+			sqlQuery += " ON (empleado.idUsuarioCreador=usuario._id)";
 			sqlQuery += " WHERE empleado.status = 'activo' ";
 
 
@@ -270,6 +276,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 				sqlQuery += " OR empleado.pin LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR empleado.linkedin LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR empresa.nombre LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR usuario.login LIKE '%" + palabras[i] + "%' ";
 
 				sqlQuery += ") ";
 			}
@@ -422,6 +429,28 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		}
 
 		return mCursor;
+	}
+
+	@Override
+	public boolean esClienteDelUsuario(Context contexto, String idEmpleado, String idUsuario) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		boolean esCliente = false;
+
+		try{
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? AND "+Empleado.ID_USUARIO_CREADOR+" = ? AND status='activo'", new String [] {idEmpleado, idUsuario}, null, null, null);
+
+			if (mCursor.getCount() > 0) {
+				esCliente = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return esCliente;
 	}
 
 }

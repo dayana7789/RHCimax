@@ -20,7 +20,8 @@
 		        android:id="@+id/textViewDatosCliente"
 		        style="@style/FuenteTitulos"
 		        android:text="@string/datosEmpresa" />
-		
+		    
+		    		
 		    <TableLayout
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
@@ -49,6 +50,11 @@
 				</TableRow>
 			</TableLayout>
 
+		    <TextView
+		        android:id="@+id/textViewErrorPermiso"
+		        style="@style/FuenteError"
+		        android:text="@string/error_permiso_empresa" 
+		        android:visibility="gone"/>
 		    
 		     <!--_____________________ Inicio Formulario _____________________-->
 		    <TableLayout

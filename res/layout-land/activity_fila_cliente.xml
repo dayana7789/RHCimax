@@ -26,20 +26,41 @@
 			    android:layout_height="wrap_content"
 			    tools:ignore="ContentDescription" />
 			
-			<TextView
-			    android:id="@+id/textViewNombreIzq"
-			    android:textIsSelectable="false"
+			<LinearLayout 
+			    android:orientation="vertical"
 			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"/>
-			   
-			<!-- Este text view muestra el apellido del empleado en caso de
-			    tratarse de un empleado. Para una empresa, esto queda vacío. -->
-			 <TextView
-			    android:id="@+id/textViewApellidoIzq"
-			    android:textIsSelectable="false"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:layout_marginLeft="5dp"/>
+			    android:layout_height="wrap_content">
+			    
+				<LinearLayout 
+				    android:orientation="horizontal"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content">
+				    
+					<TextView
+					    android:id="@+id/textViewNombreIzq"
+					    android:textIsSelectable="false"
+					    android:layout_width="wrap_content"
+					    android:textStyle="bold"
+					    android:layout_height="wrap_content"/>
+					   
+					<!-- Este text view muestra el apellido del empleado en caso de
+					    tratarse de un empleado. Para una empresa, esto queda vacío. -->
+					 <TextView
+					    android:id="@+id/textViewApellidoIzq"
+					    android:textIsSelectable="false"
+					    android:textStyle="bold"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:layout_marginLeft="5dp"/>
+				 </LinearLayout>
+				 
+				 <TextView
+					android:id="@+id/textViewCreador"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    android:textStyle="italic"
+				    android:textIsSelectable="false" />
+				 </LinearLayout>
 		</LinearLayout>
 			
 		<LinearLayout 

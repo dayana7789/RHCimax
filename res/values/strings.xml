@@ -107,6 +107,9 @@
     <string name="cantidad">Cantidad</string>
     <string name="servicio">Servicio</string>
     <string name="no_resultados">No se consiguieron resultados.</string>
+    <string name="error_permiso_empleado">Usted no tiene permisos para editar la información de este contacto. Sólo los contactos ingresados por usted podrán ser modificados.</string>
+    <string name="error_permiso_empresa">Usted no tiene permisos para editar la información de esta empresa. Sólo las empresas ingresadas por usted podrán ser modificadas.</string>
+    
     
     
     

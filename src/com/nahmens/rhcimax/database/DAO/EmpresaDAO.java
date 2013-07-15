@@ -55,6 +55,16 @@ public interface EmpresaDAO {
 	 * @return si la sincronizacion fue llevada exitosamente.
 	 */
 	boolean sincronizarEmpresa(Context contexto, String idEmpresa);
-	
+
+	/**
+	 * Funcion que indica si dado un idEmpresa es o no cliente del 
+	 * idUsuario. Se entiende que una empresa es cliente del
+	 * usuario, si el usuario creo el registro de esta empresa.
+	 * @param contexto
+	 * @param idEmpresa
+	 * @param idUsuario
+	 * @return si es o no cliente del idUsuario
+	 */
+	boolean esClienteDelUsuario(Context contexto, String idEmpresa, String idUsuario);
 
 }

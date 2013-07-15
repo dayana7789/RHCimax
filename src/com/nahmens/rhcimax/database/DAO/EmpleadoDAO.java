@@ -69,5 +69,16 @@ public interface EmpleadoDAO {
 	 * @return
 	 */
 	boolean sincronizarEmpleados(Context contexto, String idEmpresa); 
+	
+	/**
+	 * Funcion que indica si dado un idEmpleado este es o no cliente del 
+	 * idUsuario. Se entiende que un empleado es cliente del
+	 * usuario, si el usuario creo el registro de este empleado.
+	 * @param contexto
+	 * @param idEmpleado
+	 * @param idUsuario
+	 * @return si es o no cliente del idUsuario
+	 */
+	boolean esClienteDelUsuario(Context contexto, String idEmpleado, String idUsuario);
 
 }

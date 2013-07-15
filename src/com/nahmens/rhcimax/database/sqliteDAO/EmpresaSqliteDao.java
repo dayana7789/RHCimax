@@ -12,6 +12,7 @@ import com.nahmens.rhcimax.database.DAO.EmpresaDAO;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
+import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class EmpresaSqliteDao implements EmpresaDAO{
@@ -276,8 +277,12 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		try{
 			conexion.open();
 
-			sqlQuery  = " SELECT * ";
+			sqlQuery  = " SELECT empresa.*";
+			sqlQuery += ", usuario." + Usuario.LOGIN + " as usuarioCreador";
+			sqlQuery += ", usuario." + Usuario.ID + " as idUsuario";
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
+			sqlQuery += " LEFT JOIN " + DataBaseHelper.TABLA_USUARIO;
+			sqlQuery += " ON (empresa.idUsuarioCreador=usuario._id)";
 			sqlQuery += " WHERE status='activo' ";
 			
 			
@@ -291,6 +296,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 				sqlQuery += " OR empresa.rif LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR empresa.dirFiscal LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR empresa.dirComercial LIKE '%" + palabras[i] + "%' ";
+				sqlQuery += " OR usuario.login LIKE '%" + palabras[i] + "%' ";
 			
 				sqlQuery += ") ";
 			}
@@ -334,6 +340,28 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		}
 
 		return sincronizado;
+	}
+	
+	@Override
+	public boolean esClienteDelUsuario(Context contexto, String idEmpresa, String idUsuario) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		boolean esCliente = false;
+
+		try{
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA , null , Empleado.ID + " = ? AND "+Empresa.ID_USUARIO_CREADOR+" = ? AND status='activo'", new String [] {idEmpresa, idUsuario}, null, null, null);
+
+			if (mCursor.getCount() > 0) {
+				esCliente = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return esCliente;
 	}
 
 }

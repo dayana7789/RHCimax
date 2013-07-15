@@ -22,11 +22,12 @@ import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.controlador.AplicacionActivity;
 import com.nahmens.rhcimax.controlador.ClientesActivity;
 import com.nahmens.rhcimax.database.modelo.Empleado;
-import com.nahmens.rhcimax.database.modelo.Empresa;
+import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.FormatoFecha;
+import com.nahmens.rhcimax.utils.SesionUsuario;
 
 /**
  * Adaptador personalizado para iterar sobre los resultados de la BD,
@@ -85,6 +86,23 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 		String id = null;
 		String nombreE = ""; //almacena nombre completo del empleado o nombre de la empresa
+		
+		int idUsuarioCreador = cursor.getInt(cursor.getColumnIndex("idUsuario"));
+		int idUsuarioSesion = SesionUsuario.getIdUsuario(context);
+		ArrayList<String> permisos = SesionUsuario.getPermisos(context);
+		
+		TextView tvCreador = (TextView)  v.findViewById(R.id.textViewCreador);
+		
+		//si tengo permisos, veo los creadores de todos los clientes
+		if(permisos.contains(Permiso.LISTAR_TODO)){
+			tvCreador.setVisibility(View.VISIBLE);
+		}else{
+			if(idUsuarioCreador==idUsuarioSesion){
+				tvCreador.setVisibility(View.VISIBLE);
+			}else{
+				tvCreador.setVisibility(View.GONE);
+			}
+		}
 
 		//Para cada valor de la BD solicitado, lo mostramos en el text view.
 		for (int i=0; i<from.length; i++){
@@ -98,6 +116,10 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 			if(columna.equals("apellido")){
 				nombreE = nombreE + " " + nombre;
+			}
+			
+			if(columna.equals("usuarioCreador")){
+				nombre = "Creado por: " + nombre;
 			}
 
 			//los valores to[i] iguales a 0 indican que son ID's

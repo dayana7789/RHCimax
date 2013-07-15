@@ -99,7 +99,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 			}
 
 			if(columna.equals("loginUsuario")){
-				nombre = "Enviado por: " + nombre;
+				nombre = "Creado por: " + nombre;
 
 			}
 

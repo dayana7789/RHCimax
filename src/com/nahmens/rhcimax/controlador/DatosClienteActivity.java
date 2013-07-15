@@ -1,5 +1,6 @@
 package com.nahmens.rhcimax.controlador;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,7 @@ import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.AutocompleteEmpresaCursorAdapter;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
+import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
@@ -43,9 +45,11 @@ public class DatosClienteActivity extends Fragment {
 	EditText etDescripcion;
 	EditText etIdEmpresa;
 	EditText etIdEmpleadoHidden;
+	TextView tvErrorPermiso;
+	Button bSalvar;
 	AutoCompleteTextView acNombreEmpresa;
 
-	/* Flag que permite saber si el empleado ya fue 
+	/** Flag que permite saber si el empleado ya fue 
 	 * insertado cuando se presiona el boton salvar dos veces.
 	 * Evita que se duplique el registro.
 	 */
@@ -65,7 +69,7 @@ public class DatosClienteActivity extends Fragment {
 
 		//inicializamos la referencia a los campos del formulario
 		setReferenciaCampos(view);
-
+		
 		setAutocompleteEmpresa(view);
 
 		mArgumentos = this.getArguments();
@@ -107,6 +111,19 @@ public class DatosClienteActivity extends Fragment {
 						e.printStackTrace();
 					}
 				}
+				
+				//verificamos los permisos del usuario para saber si este puede o no
+				//modificar informacion
+				ArrayList<String> permisos = SesionUsuario.getPermisos(getActivity());		
+				
+				if(permisos.contains(Permiso.MODIFICAR_PROPIOS)){
+					Boolean esCliente = empleadoDao.esClienteDelUsuario(getActivity(), idEmpleado, ""+SesionUsuario.getIdUsuario(getActivity()));
+					//verificamos si este es cliente del usuario
+					if(!esCliente){
+						setModoNoEditable();
+					}
+				}
+				
 			}else{
 				//estamos agregando un nuevo empleado, a partir del id de la empresa
 				String idEmpresa = mArgumentos.getString("idEmpresa");
@@ -201,7 +218,6 @@ public class DatosClienteActivity extends Fragment {
 		ivHistoricos.setOnClickListener(activityLauncherHistoricos);
 
 		// Registro del evento OnClick del buttonSalvar
-		Button bSalvar = (Button)view.findViewById(R.id.buttonSalvar);
 		bSalvar.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -254,6 +270,8 @@ public class DatosClienteActivity extends Fragment {
 		etIdEmpresa = (EditText) v.findViewById(R.id.textEditHiddenIdEmpresa);
 		acNombreEmpresa = (AutoCompleteTextView) v.findViewById(R.id.autocompleteEmpresa);
 		etIdEmpleadoHidden = (EditText) v.findViewById(R.id.textEditHiddenIdEmpleado);
+		tvErrorPermiso = (TextView) v.findViewById(R.id.textViewErrorPermiso);
+		bSalvar = (Button)v.findViewById(R.id.buttonSalvar);
 	}
 	
 	
@@ -284,7 +302,7 @@ public class DatosClienteActivity extends Fragment {
 		
 	};
 
-	/*
+	/**
 	 * Funcion que prepara el campo de empresa para que sea autocomplete.
 	 * @param view View de la actividad.
 	 */
@@ -300,7 +318,7 @@ public class DatosClienteActivity extends Fragment {
 	}
 
 
-	/*
+	/**
 	 * Funcion que se encarga de cargar los datos de un empleado en sus respectivos campos.
 	 * 
 	 * @param v View de la actividad.
@@ -320,8 +338,32 @@ public class DatosClienteActivity extends Fragment {
 		acNombreEmpresa.setText(nombreEmpresa);
 		etIdEmpleadoHidden.setText(""+empleado.getId());
 	}
+	
+	/**
+	 * Funcion que se encarga de cargar los datos de un empleado en sus respectivos campos.
+	 * 
+	 * @param v View de la actividad.
+	 * @param emplado Empleado cuya informacion se esta cargando.
+	 */
+	private void setModoNoEditable() {
+		
+		etNombre.setEnabled(false);
+		etApellido.setEnabled(false);
+		etPosicion.setEnabled(false);
+		etEmail.setEnabled(false);
+		etTelfOficina.setEnabled(false);
+		etCelular.setEnabled(false);
+		etPin.setEnabled(false);
+		etLinkedin.setEnabled(false);
+		etDescripcion.setEnabled(false);
+		etIdEmpresa.setEnabled(false);
+		acNombreEmpresa.setEnabled(false);
+		etIdEmpleadoHidden.setEnabled(false);
+		tvErrorPermiso.setVisibility(View.VISIBLE);
+		bSalvar.setEnabled(false);
+	}
 
-	/*
+	/**
 	 * @param id Id del empleado
 	 */
 	public void onClickSalvar(String id){

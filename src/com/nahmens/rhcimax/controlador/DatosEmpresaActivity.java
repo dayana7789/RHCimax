@@ -1,5 +1,6 @@
 package com.nahmens.rhcimax.controlador;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.AlertDialog;
@@ -26,6 +27,7 @@ import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Historico;
+import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.CheckinSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
@@ -45,6 +47,9 @@ public class DatosEmpresaActivity extends Fragment {
 	EditText etDirFiscal;
 	EditText etDirComercial;
 	TableLayout tlListEmpleados;
+	TextView tvErrorPermiso;
+	Button bSalvar;
+	ImageButton bCopiar;
 
 	/* Flag que permite saber si al crear una nueva empresa, esta se guardo
 	 * antes de hacer click en el boton + para agregar un nuevo empleado. 
@@ -100,6 +105,20 @@ public class DatosEmpresaActivity extends Fragment {
 						e.printStackTrace();
 					}
 				}
+				
+				
+				//verificamos los permisos del usuario para saber si este puede o no
+				//modificar informacion
+				ArrayList<String> permisos = SesionUsuario.getPermisos(getActivity());		
+				
+				if(permisos.contains(Permiso.MODIFICAR_PROPIOS)){
+					Boolean esCliente = empresaDao.esClienteDelUsuario(getActivity(), ""+idEmpresa, ""+SesionUsuario.getIdUsuario(getActivity()));
+					//verificamos si este es cliente del usuario
+					if(!esCliente){
+						setModoNoEditable();
+					}
+				}
+				
 			}else{
 				//creacion de empresa nueva
 				flagGuardado = false;
@@ -107,7 +126,6 @@ public class DatosEmpresaActivity extends Fragment {
 
 
 			// Registro del evento OnClick del buttonCopiar
-			ImageButton bCopiar= (ImageButton)view.findViewById(R.id.imageButtonCopiar);
 			bCopiar.setOnClickListener(new View.OnClickListener() {
 
 				@Override
@@ -312,7 +330,6 @@ public class DatosEmpresaActivity extends Fragment {
 			});
 
 			// Registro del evento OnClick del buttonSalvar
-			Button bSalvar = (Button)view.findViewById(R.id.buttonSalvar);
 			bSalvar.setOnClickListener(new View.OnClickListener() {
 
 				@Override
@@ -374,6 +391,27 @@ public class DatosEmpresaActivity extends Fragment {
 		etRif = (EditText) v.findViewById(R.id.textEditRifEmpresa);
 		etDirFiscal = (EditText) v.findViewById(R.id.textEditDirFiscEmpresa);
 		etDirComercial = (EditText) v.findViewById(R.id.textEditDirComerEmpresa);
+		tvErrorPermiso = (TextView) v.findViewById(R.id.textViewErrorPermiso);
+		bSalvar = (Button)v.findViewById(R.id.buttonSalvar);
+		bCopiar= (ImageButton)v.findViewById(R.id.imageButtonCopiar);
+	}
+	
+	/**
+	 * Funcion que se encarga de cargar los datos de un empleado en sus respectivos campos.
+	 * 
+	 * @param v View de la actividad.
+	 * @param emplado Empleado cuya informacion se esta cargando.
+	 */
+	private void setModoNoEditable() {
+		etNombre.setEnabled(false);
+		etTelefono.setEnabled(false);
+		etWeb.setEnabled(false);
+		etRif.setEnabled(false);
+		etDirFiscal.setEnabled(false);
+		etDirComercial.setEnabled(false);
+		tvErrorPermiso.setVisibility(View.VISIBLE);
+		bSalvar.setEnabled(false);
+		bCopiar.setEnabled(false);
 	}
 
 	private void listarEmpleados(View view, String idEmpresa){
