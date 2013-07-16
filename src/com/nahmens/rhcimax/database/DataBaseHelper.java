@@ -179,6 +179,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "idCheckin INTEGER DEFAULT NULL, "
 															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
+															+ "idUsuarioCreador INTEGER NOT NULL, "
+															+ "FOREIGN KEY(idUsuarioCreador) REFERENCES " + TABLA_USUARIO + "(_id), " 
 															+ "FOREIGN KEY(idCheckin) REFERENCES " + TABLA_CHECKIN + "(_id), "
 															+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id), "
 															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id) ON DELETE CASCADE, " 
@@ -277,10 +279,12 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		/*Rol Usuario Avanzado tiene todos los permisos excepto eliminar y listar todo. Puede modificar todo.*/
 		String rolPer4 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(2,2)";
 		String rolPer5 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(2,3)";
+		String rolPer6 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(2,6)";
 		
 		/*Rol usuario tiene todos los permisos excepto eliminar y listar todo. Puede modificar solo sus propios registros.*/
-		String rolPer6 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(3,2)";
-		String rolPer7 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(3,4)";
+		String rolPer7 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(3,2)";
+		String rolPer8 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(3,4)";
+		String rolPer9 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(3,6)";
 
 		database.execSQL(insertRol1);
 		database.execSQL(insertRol2);
@@ -302,6 +306,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL(rolPer5);
 		database.execSQL(rolPer6);
 		database.execSQL(rolPer7);
+		database.execSQL(rolPer8);
+		database.execSQL(rolPer9);
 		
 		String serv1 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Reclutamiento',0,5000,'persona','Reclutamiento:  Es un servicio para reclutar personal.','Activo')";
 		String serv2 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Merchandiser',300,0,'horas', 'Merchandiser: Es un servicio para Merchandiser.','Activo')";

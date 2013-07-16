@@ -20,7 +20,7 @@ public interface HistoricoDAO {
 	 * @return Cursor Lista filtrada
 	 * 
 	 */
-	Cursor buscarHistoricoFilter(Context contexto, String args);
+	Cursor buscarHistoricoFilter(Context contexto, String args, boolean fltrarPorUsuario);
 	
 	Cursor listarHistoricosPorEmpresa(Context contexto, String idEmpresa);
 

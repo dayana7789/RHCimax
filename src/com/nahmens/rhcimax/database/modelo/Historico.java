@@ -9,6 +9,7 @@ public class Historico {
 	public final static String ID_EMPRESA = "idEmpresa";
 	public final static String ID_CHECKIN = "idCheckin";
 	public final static String FECHA_CREACION = "fechaCreacion";
+	public final static String ID_USUARIO_CREADOR = "idUsuarioCreador";
 	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 
 	int id;
@@ -17,23 +18,26 @@ public class Historico {
 	int idTarea;
 	int idEmpresa;
 	int idCheckin;
+	int idUsuarioCreador;
 	String fechaCreacion;
 	String fechaSincronizacion;
 	
 
-	public Historico(String tipoRegistro, int idCotizacion, int idTarea, int idEmpresa, int idCheckin) {
+	public Historico(String tipoRegistro, int idCotizacion, int idTarea, int idEmpresa, int idCheckin, int idUsuarioCreador) {
 		this.tipoRegistro = tipoRegistro;
 		this.idCotizacion = idCotizacion;
 		this.idTarea = idTarea;
 		this.idEmpresa = idEmpresa;
 		this.idCheckin = idCheckin;
+		this.idUsuarioCreador = idUsuarioCreador;
 	}
 	
-	public Historico(String tipoRegistro, int idCotizacion, int idTarea, int idEmpresa) {
+	public Historico(String tipoRegistro, int idCotizacion, int idTarea, int idEmpresa, int idUsuarioCreador) {
 		this.tipoRegistro = tipoRegistro;
 		this.idCotizacion = idCotizacion;
 		this.idTarea = idTarea;
 		this.idEmpresa = idEmpresa;
+		this.idUsuarioCreador = idUsuarioCreador;
 	}
 
 	public int getId() {
@@ -99,5 +103,15 @@ public class Historico {
 	public void setIdCheckin(int idCheckin) {
 		this.idCheckin = idCheckin;
 	}
+
+	public int getIdUsuarioCreador() {
+		return idUsuarioCreador;
+	}
+
+	public void setIdUsuarioCreador(int idUsuarioCreador) {
+		this.idUsuarioCreador = idUsuarioCreador;
+	}
+	
+	
 
 }

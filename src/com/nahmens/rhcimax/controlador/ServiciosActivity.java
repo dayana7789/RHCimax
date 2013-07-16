@@ -265,7 +265,7 @@ public class ServiciosActivity extends Fragment {
 							
 							//creamos un historico de la cotizacion
 							int idCot = (int)idCotizacion;
-							Historico historico = new Historico("cotizacion", idCot , 0, 0);
+							Historico historico = new Historico("cotizacion", idCot , 0, 0, SesionUsuario.getIdUsuario(getActivity()));
 							HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
 							historicoDao.insertarHistorico(getActivity(), historico);
 							

@@ -1,7 +1,9 @@
 package com.nahmens.rhcimax.controlador;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -33,18 +35,22 @@ import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
 import com.nahmens.rhcimax.database.modelo.Cotizacion_Servicio;
 import com.nahmens.rhcimax.database.modelo.Historico;
+import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Servicio;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.Cotizacion_ServicioSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.utils.FormatoFecha;
+import com.nahmens.rhcimax.utils.SesionUsuario;
 
 
 public class HistoricosActivity extends ListFragment{
 
 	ListaHistoricosCursorAdapter listCursorAdapterHistoricos;
+	@SuppressLint("UseSparseArrays")
 	HashMap<Integer,Boolean> arrSincronizados = new HashMap<Integer, Boolean>(); //Contiene idHistorico y si esta sincronizado o no
-
+	private ArrayList<String> permisos;
+	
 	//variable que se utiliza para evitar llamar al listener
 	//del spinner cuando el usuario no ha seleccionado 
 	//explicitamente el spinner
@@ -79,7 +85,8 @@ public class HistoricosActivity extends ListFragment{
 			Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.activity_historicos, container, false);
-
+		permisos = SesionUsuario.getPermisos(getActivity());
+		
 		if (savedInstanceState==null){
 			//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
 			//tab es el correspondiente.
@@ -91,8 +98,17 @@ public class HistoricosActivity extends ListFragment{
 			inicializarSpinner(view);
 
 			HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
-			Cursor mCursorHistoricos = historicoDao.buscarHistoricoFilter(getActivity(), "Todos");
 
+			Cursor mCursorHistoricos = null;
+			
+			if(permisos.contains(Permiso.LISTAR_TODO)){
+				mCursorHistoricos = historicoDao.buscarHistoricoFilter(getActivity(), "Todos", false);
+			}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+				mCursorHistoricos = historicoDao.buscarHistoricoFilter(getActivity(), "Todos", true);
+			}else{
+				mCursorHistoricos = historicoDao.buscarHistoricoFilter(getActivity(), "Todos", false);
+			}
+			
 			listarHistoricos(view, mCursorHistoricos);
 
 			//Registro del evento addTextChangedListener cuando utilizamos el buscador

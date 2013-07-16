@@ -18,7 +18,7 @@ public interface TareaDAO {
 	 * 
 	 * @param args Argumentos pasados al query como los caracteres que se ingresan en el campo
 	 *             de buscador
-	 * @param fltrarPorUsuario Indica si queremos filtrar la lista por usuario o no.
+	 * @param fltrarPorUsuario Indica si queremos filtrar la lista por los items creados por el usuario o no.
 	 * @return Cursor Lista filtrada
 	 * 
 	 */

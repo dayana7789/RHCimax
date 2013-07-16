@@ -296,7 +296,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 							//registramos la visita como historico
 							idCheckin =  SesionUsuario.getIdCheckin(getActivity());
-							historico = new Historico("visita", 0 , 0, Integer.parseInt(idEmpresa), idCheckin);
+							historico = new Historico("visita", 0 , 0, Integer.parseInt(idEmpresa), idCheckin, SesionUsuario.getIdUsuario(getActivity()));
 							historicoDao = new HistoricoSqliteDao();
 							historicoDao.insertarHistorico(getActivity(), historico);
 

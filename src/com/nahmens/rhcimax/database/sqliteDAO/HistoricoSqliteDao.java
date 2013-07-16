@@ -19,10 +19,11 @@ import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.utils.FormatoFecha;
+import com.nahmens.rhcimax.utils.SesionUsuario;
 
 public class HistoricoSqliteDao implements HistoricoDAO {
 
-	String  consulta  = "historico." + Historico.ID + " as historicoId, historico."+Historico.TIPO_REGISTRO + ", historico." + Historico.FECHA_CREACION + " as historicoFechaCreacion, historico." + Historico.FECHA_SINCRONIZACION + " as historicoFechaSincronizacion"
+	String  consulta  = "historico." + Historico.ID + " as historicoId, historico."+Historico.TIPO_REGISTRO + ", historico." + Historico.FECHA_CREACION + " as historicoFechaCreacion, historico." + Historico.FECHA_SINCRONIZACION + " as historicoFechaSincronizacion, historico." + Historico.ID_USUARIO_CREADOR + " as historicoUsuarioCreador "
 			+ ", empresaVisita." + Empresa.NOMBRE + " as nombreEmpresaVisita"
 			+ ", checkin."+Checkin.CHECKIN + ", checkin." + Checkin.CHECKOUT
 			+ ", usuarioVisita."+Usuario.LOGIN + " as loginUsuarioVisita"
@@ -87,6 +88,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 			values.put(Historico.ID_TAREA, idTar);
 			values.put(Historico.ID_EMPRESA, idEmp);
 			values.put(Historico.ID_CHECKIN, idCheck);
+			values.put(Historico.ID_USUARIO_CREADOR, historico.getIdUsuarioCreador());
 
 			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_HISTORICO, null,values);
 
@@ -124,7 +126,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 	}*/
 
 	@Override
-	public Cursor buscarHistoricoFilter(Context contexto, String args) {
+	public Cursor buscarHistoricoFilter(Context contexto, String args, boolean fltrarPorUsuario) {
 
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
@@ -146,6 +148,10 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 			}else{
 				palabras = args.split(" ");
 			}
+		}
+		
+		if(fltrarPorUsuario){
+			condicion += " AND historico."+Historico.ID_USUARIO_CREADOR + " = " + SesionUsuario.getIdUsuario(contexto);
 		}
 
 		try{

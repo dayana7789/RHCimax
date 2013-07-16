@@ -1,5 +1,6 @@
 package com.nahmens.rhcimax.adapters;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.content.Context;
@@ -12,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
@@ -20,13 +20,14 @@ import com.nahmens.rhcimax.controlador.AplicacionActivity;
 import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
 import com.nahmens.rhcimax.database.modelo.Historico;
+import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.CotizacionSqliteDao;
-import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.FormatoFecha;
+import com.nahmens.rhcimax.utils.SesionUsuario;
 
 public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements Filterable{
 
@@ -39,6 +40,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 	private String[] fromVisita;
 	private int[] toVisita;
 	private HashMap<Integer,Boolean> arrSincronizados;
+	private ArrayList<String> permisos;
 
 
 	/**
@@ -62,6 +64,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 		this.fromVisita = fromVisita;
 		this.toVisita = toVisita;
 		this.arrSincronizados = arrSincronizados;
+		this.permisos = SesionUsuario.getPermisos(context);
 
 	}
 
@@ -311,7 +314,14 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 			arrSincronizados.put(idHistorico,true);
 			
 			//Actualizamos los valores del cursor de la lista de tareas
-			this.changeCursor(historicoDao.buscarHistoricoFilter(context,null));
+			if(permisos.contains(Permiso.LISTAR_TODO)){
+				this.changeCursor(historicoDao.buscarHistoricoFilter(context,null, false));
+			}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+				this.changeCursor(historicoDao.buscarHistoricoFilter(context,null, true));
+			}else{
+				this.changeCursor(historicoDao.buscarHistoricoFilter(context,null, false));
+			}
+			
 
 			//Notificamos que la lista cambio
 			this.notifyDataSetChanged();
@@ -366,7 +376,15 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 		Cursor filterResultsData = null;
 
 		HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
-		filterResultsData = historicoDao.buscarHistoricoFilter(context, constraint.toString());
+		
+		if(permisos.contains(Permiso.LISTAR_TODO)){
+			filterResultsData = historicoDao.buscarHistoricoFilter(context, constraint.toString(), false);
+		}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+			filterResultsData = historicoDao.buscarHistoricoFilter(context, constraint.toString(), true);
+		}else{
+			filterResultsData = historicoDao.buscarHistoricoFilter(context, constraint.toString(), false);
+		}
+		
 
 
 		return filterResultsData;
