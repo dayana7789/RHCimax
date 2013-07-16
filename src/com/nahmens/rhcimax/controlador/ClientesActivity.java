@@ -343,7 +343,7 @@ public class ClientesActivity extends ListFragment {
 		if(permisos.contains(Permiso.ELIMINAR_TODO)){
 			mostrarOpcionActualizarEliminar(id, tipoCliente, nombre);
 			
-		}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
+		/*}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
 			
 			int idUsuarioCreador = cursor.getInt(cursor.getColumnIndex("idUsuario"));
 			int idUsuarioSesion = SesionUsuario.getIdUsuario(getActivity());
@@ -352,7 +352,7 @@ public class ClientesActivity extends ListFragment {
 				mostrarOpcionActualizarEliminar(id, tipoCliente, nombre);
 			}else{
 				mostrarOpcionActualizar(id, tipoCliente, nombre);
-			}
+			}*/
 
 		}else{
 			mostrarOpcionActualizar(id, tipoCliente, nombre);

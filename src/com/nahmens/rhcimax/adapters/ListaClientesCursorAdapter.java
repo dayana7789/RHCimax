@@ -217,13 +217,13 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 			if(permisos.contains(Permiso.ELIMINAR_TODO)){
 				buttonBorrar.setVisibility(View.VISIBLE);
 				
-			}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
+			/*}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
 				
 				if(idUsuarioCreador==idUsuarioSesion){
 					buttonBorrar.setVisibility(View.VISIBLE);
 				}else{
 					buttonBorrar.setVisibility(View.GONE);
-				}
+				}*/
 
 			}else{
 				buttonBorrar.setVisibility(View.GONE);
