@@ -14,6 +14,7 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.utils.FormatoFecha;
+import com.nahmens.rhcimax.utils.SesionUsuario;
 
 public class TareaSqliteDao implements TareaDAO{
 	
@@ -209,7 +210,7 @@ public class TareaSqliteDao implements TareaDAO{
 	}
 */
 	@Override
-	public Cursor buscarTareaFilter(Context contexto, String args) {
+	public Cursor buscarTareaFilter(Context contexto, String args, boolean fltrarPorUsuario) {
 
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
@@ -234,6 +235,10 @@ public class TareaSqliteDao implements TareaDAO{
 			}else{
 				palabras = args.split(" ");
 			}
+		}
+		
+		if(fltrarPorUsuario){
+			condicion += " AND tarea."+Tarea.ID_USUARIO_CREADOR + " = " + SesionUsuario.getIdUsuario(contexto);
 		}
 
 		try{

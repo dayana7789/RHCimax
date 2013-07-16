@@ -4,6 +4,7 @@ package com.nahmens.rhcimax.controlador;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -40,6 +41,7 @@ import com.nahmens.rhcimax.utils.SesionUsuario;
 public class TareasActivity extends ListFragment{
 
 	ListaTareasCursorAdapter listCursorAdapterTareas;
+	@SuppressLint("UseSparseArrays")
 	HashMap<Integer,Boolean> arrSincronizados = new HashMap<Integer, Boolean>(); //Contiene idTarea y si esta sincronizado o no
 	private ArrayList<String> permisos;
 	
@@ -62,7 +64,7 @@ public class TareasActivity extends ListFragment{
     //dos veces. Su valor se inicializa en el 
 	//metodo onResume.
 	private boolean mOnTextChangedBool;
-
+	
 	//Creamos un DataSetObserver para saber cuando el listView de tarea
 	//ha sido modificado y lo registramos al adaptor con la funcion 
 	//registerDataSetObserver().
@@ -94,7 +96,16 @@ public class TareasActivity extends ListFragment{
 			inicializarSpinner(view);
 
 			TareaSqliteDao tareaDao = new TareaSqliteDao();
-			Cursor mCursorTareas = tareaDao.buscarTareaFilter(getActivity(),null);
+			
+			Cursor mCursorTareas = null;
+			
+			if(permisos.contains(Permiso.LISTAR_TODO)){
+				mCursorTareas = tareaDao.buscarTareaFilter(getActivity(),null, false);
+			}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+				mCursorTareas = tareaDao.buscarTareaFilter(getActivity(),null, true);
+			}else{
+				mCursorTareas = tareaDao.buscarTareaFilter(getActivity(),null, false);
+			}
 			
 			listarTareas(view, mCursorTareas);
 
@@ -446,7 +457,14 @@ public class TareasActivity extends ListFragment{
 			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeOk);
 
 			//Actualizamos los valores del cursor de la lista de tareas
-			listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null));
+			if(permisos.contains(Permiso.LISTAR_TODO)){
+				listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null,false));
+			}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+				listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null,true));
+			}else{
+				listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null, false));
+			}
+			
 
 			//Notificamos que la lista cambio
 			listCursorAdapterTareas.notifyDataSetChanged();
@@ -508,7 +526,13 @@ public class TareasActivity extends ListFragment{
 			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeOk);
 
 			//Actualizamos los valores del cursor de la lista de tareas
-			listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null));
+			if(permisos.contains(Permiso.LISTAR_TODO)){
+				listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null,false));
+			}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+				listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null,true));
+			}else{
+				listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null, false));
+			}
 
 			//Notificamos que la lista cambio
 			listCursorAdapterTareas.notifyDataSetChanged();

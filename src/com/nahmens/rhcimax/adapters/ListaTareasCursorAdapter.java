@@ -256,7 +256,13 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 			arrSincronizados.put(id,true);
 
 			//Actualizamos los valores del cursor de la lista de tareas
-			this.changeCursor(tareaDao.buscarTareaFilter(context,null));
+			if(permisos.contains(Permiso.LISTAR_TODO)){
+				this.changeCursor(tareaDao.buscarTareaFilter(context,null, false));
+			}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+				this.changeCursor(tareaDao.buscarTareaFilter(context,null, true));
+			}else{
+				this.changeCursor(tareaDao.buscarTareaFilter(context,null, false));
+			}
 
 			//Notificamos que la lista cambio
 			this.notifyDataSetChanged();
@@ -335,7 +341,13 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
 
 			//Actualizamos los valores del cursor de la lista de empleados
-			this.changeCursor(tareaDao.buscarTareaFilter(context,null));
+			if(permisos.contains(Permiso.LISTAR_TODO)){
+				this.changeCursor(tareaDao.buscarTareaFilter(context,null, false));
+			}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+				this.changeCursor(tareaDao.buscarTareaFilter(context,null, true));
+			}else{
+				this.changeCursor(tareaDao.buscarTareaFilter(context,null, false));
+			}
 
 			//Notificamos que la lista cambio
 			this.notifyDataSetChanged();
@@ -369,7 +381,15 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 		Cursor filterResultsData = null;
 
 		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		filterResultsData = tareaDao.buscarTareaFilter(context, constraint.toString());
+		
+		if(permisos.contains(Permiso.LISTAR_TODO)){
+			filterResultsData = tareaDao.buscarTareaFilter(context, constraint.toString(), false);
+		}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+			filterResultsData = tareaDao.buscarTareaFilter(context, constraint.toString(),true);
+		}else{
+			filterResultsData = tareaDao.buscarTareaFilter(context, constraint.toString(), false);
+		}
+		
 
 
 		return filterResultsData;
