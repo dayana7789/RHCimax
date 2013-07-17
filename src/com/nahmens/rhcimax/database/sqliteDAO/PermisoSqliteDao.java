@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -15,6 +16,33 @@ import com.nahmens.rhcimax.database.modelo.Rol_Permiso;
 
 public class PermisoSqliteDao implements PermisoDAO{
 
+	@Override
+	public long insertarPermiso(Context context, Permiso permiso,
+			boolean autoincrement) {
+		
+		long idFila = 0;
+		ConexionBD conexion = new ConexionBD(context);
+		try{
+
+			conexion.open();
+
+			ContentValues values = new ContentValues();
+
+			if(!autoincrement){
+				values.put(Permiso.ID, permiso.getId());
+			}
+
+			values.put(Permiso.NOMBRE, permiso.getNombre());
+			values.put(Permiso.DESCRIPCION, permiso.getDescripcion());
+
+			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_PERMISO, null,values);
+
+		}finally{
+			conexion.close();
+		}
+
+		return idFila;
+	}
 	
 	@Override
 	public JSONArray buscarPermisos(Context contexto, String idRol) {
@@ -56,6 +84,23 @@ public class PermisoSqliteDao implements PermisoDAO{
 		}
 
 		return permisos;		
+	}
+
+
+	@Override
+	public int eliminarPermisos(Context context) {
+		ConexionBD conexion = new ConexionBD(context);
+		int numCol = 0;
+		
+		try{
+			conexion.open();
+			numCol = conexion.getDatabase().delete(DataBaseHelper.TABLA_PERMISO, "1", null);
+
+		}finally{
+			conexion.close();
+		}
+
+		return numCol;	
 	}
 
 }

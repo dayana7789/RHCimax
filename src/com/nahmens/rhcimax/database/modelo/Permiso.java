@@ -18,7 +18,8 @@ public class Permiso {
 	String nombre;
 	String descripcion;
 	
-	public Permiso(String nombre, String descripcion) {
+	public Permiso(int id, String nombre, String descripcion) {
+		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 	}

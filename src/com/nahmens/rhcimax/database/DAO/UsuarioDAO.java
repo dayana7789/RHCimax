@@ -16,9 +16,9 @@ public interface UsuarioDAO {
 	 * @param usuario
 	 * @param autoincrement Indica si queremos insertar un usuario con un determinado id o 
 	 *                      dejar que el sisteme cree el id.
-	 * @return
+	 * @return Id del usuario ingresado o -1 en caso de error.
 	 */
-    Boolean insertarUsuario(Context context, Usuario usuario, boolean autoincrement);
+    long insertarUsuario(Context context, Usuario usuario, boolean autoincrement);
     void modificarUsuario(Context context, Usuario usuario);
     Cursor listarUsuarios(Context context);
     

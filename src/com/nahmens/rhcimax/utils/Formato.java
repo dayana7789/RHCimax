@@ -1,6 +1,12 @@
 package com.nahmens.rhcimax.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Random;
+
 import android.database.Cursor;
+import android.util.Log;
 
 public class Formato {
 	
@@ -48,6 +54,27 @@ public class Formato {
 		mJsonString += "]";
 		
 		return mJsonString;
+	}
+	
+	public String getNumeroAleatorio(){
+		
+		String numAleatorio = null;
+		Random rand = new Random();
+		int min=100; 
+		int max=999;
+		
+		String myFormat = "yyyyMMddHHmmss"; 
+		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
+		String fecha = sdf.format(new Date());
+
+		// nextInt is normally exclusive of the top value,
+		// so add 1 to make it inclusive
+		int randomNum = rand.nextInt(max - min + 1) + min;
+		numAleatorio = fecha + randomNum;
+		
+		Log.e("num ale",""+numAleatorio);
+		return numAleatorio;
+		
 	}
 
 }

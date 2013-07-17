@@ -16,8 +16,8 @@ import com.nahmens.rhcimax.database.modelo.Usuario;
 public class UsuarioSqliteDao implements UsuarioDAO{
 
 	@Override
-	public Boolean insertarUsuario(Context context, Usuario usuario, boolean autoincrement) {
-		Boolean insertado = false;
+	public long insertarUsuario(Context context, Usuario usuario, boolean autoincrement) {
+		long idFila = 0;
 		ConexionBD conexion = new ConexionBD(context);
 		try{
 
@@ -34,17 +34,13 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 			values.put(Usuario.ID_ROL,usuario.getIdRol());
 			values.put(Usuario.TOKEN,usuario.getToken());
 
-			long value = conexion.getDatabase().insert(DataBaseHelper.TABLA_USUARIO, null,values);
-
-			if(value!=-1){
-				insertado = true;
-			}
+			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_USUARIO, null,values);
 
 		}finally{
 			conexion.close();
 		}
 
-		return insertado;
+		return idFila;
 	}
 
 	@Override
