@@ -80,7 +80,7 @@ public class ListaCorreosCursorAdapter{
 				//de esta persona sera checkeado por default
 				if(idEmpleado!=null){
 
-					if(idEmpleado.equals(""+idEmpleadoNuevo)){
+					if(idEmpleado.equals(idEmpleadoNuevo)){
 						getCorreosSeleccionados().put(idEmpleadoNuevo, true);
 
 					}else{
@@ -140,7 +140,7 @@ public class ListaCorreosCursorAdapter{
 				idEmpleadoNuevo = cursor.getString(cursor.getColumnIndex(Empleado.ID));
 
 				mView = (View) mTableRow.findViewById(to[i]);
-//Log.e("correos",""+getCorreosSeleccionados().toString());
+//Log.e("correos",getCorreosSeleccionados().toString());
 				if(mView instanceof CheckBox){
 					cb = (CheckBox) mView;
 					cb.setText(nombre);

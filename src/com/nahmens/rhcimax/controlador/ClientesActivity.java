@@ -438,7 +438,7 @@ public class ClientesActivity extends ListFragment {
 
 		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
-				borrarCliente(id+"", tipoCliente);
+				borrarCliente(id, tipoCliente);
 			}
 		});
 

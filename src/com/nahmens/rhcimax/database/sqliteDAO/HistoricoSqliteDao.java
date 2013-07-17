@@ -5,7 +5,6 @@ import java.util.Date;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -184,7 +183,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 
 
 			sqlQuery  += orderBy;
-			Log.e("sqlQuery",sqlQuery);
+
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 
 			if (mCursor != null) {

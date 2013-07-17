@@ -6,7 +6,6 @@ import java.util.Locale;
 import java.util.Random;
 
 import android.database.Cursor;
-import android.util.Log;
 
 public class Formato {
 	

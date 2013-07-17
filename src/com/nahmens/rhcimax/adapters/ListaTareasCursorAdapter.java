@@ -245,7 +245,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 		String mensajeOk = null;
 
 		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		sincronizado = tareaDao.sincronizarTarea(context, ""+id);
+		sincronizado = tareaDao.sincronizarTarea(context, id);
 
 		mensajeOk = "ok_sincronizado_tarea";
 		mensajeError = "error_sincronizado_tarea";
@@ -333,7 +333,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 		String mensajeOk = null;
 
 		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		eliminado = tareaDao.eliminarTarea(this.context, ""+id);
+		eliminado = tareaDao.eliminarTarea(this.context, id);
 		mensajeOk = "ok_eliminado_tarea";
 		mensajeError = "error_eliminado_empresa";
 

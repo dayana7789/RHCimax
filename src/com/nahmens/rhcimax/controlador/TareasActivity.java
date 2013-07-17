@@ -282,7 +282,7 @@ public class TareasActivity extends ListFragment{
 		String[] arr = {"Actualizar"};
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle(""+nombreTarea)
+		builder.setTitle(nombreTarea)
 		.setItems(arr, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
@@ -300,7 +300,7 @@ public class TareasActivity extends ListFragment{
 		String[] arr = {"Actualizar","Eliminar"};
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		builder.setTitle(""+nombreTarea)
+		builder.setTitle(nombreTarea)
 		.setItems(arr, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
@@ -517,7 +517,7 @@ public class TareasActivity extends ListFragment{
 		String mensajeOk = null;
 
 		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		sincronizado = tareaDao.sincronizarTarea(getActivity(), ""+id);
+		sincronizado = tareaDao.sincronizarTarea(getActivity(), id);
 
 		mensajeOk = "ok_sincronizado_tarea";
 		mensajeError = "error_sincronizado_tarea";

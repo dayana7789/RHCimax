@@ -178,7 +178,7 @@ public class AutocompleteEmpleadoCursorAdapter extends CursorAdapter implements 
 		String idEmpleado = cursor.getString(0);
 
 		// Update the parent class's TextView
-		etIdEmpleado.setText(""+idEmpleado);
+		etIdEmpleado.setText(idEmpleado);
 	}
 	
 	/**

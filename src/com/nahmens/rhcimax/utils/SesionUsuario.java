@@ -41,7 +41,7 @@ public class SesionUsuario {
         String idCheckin = checkinDao.insertarCheckin(context, checkin);
       
         PermisoSqliteDao permisoDao = new PermisoSqliteDao();
-        JSONArray permisos = permisoDao.buscarPermisos(context, ""+usu.getIdRol());
+        JSONArray permisos = permisoDao.buscarPermisos(context, usu.getIdRol());
                 
         //Limpiamos el archivo de preferencias
         context.getSharedPreferences("Usuario", Context.MODE_PRIVATE).edit().clear().commit(); 
@@ -77,7 +77,7 @@ public class SesionUsuario {
 		String idCheckin = prefs.getString("idCheckin", ""); 
 
 		CheckinSqliteDao checkinDao = new CheckinSqliteDao();
-		Checkin checkin = checkinDao.buscarCheckin(contexto, ""+idCheckin);
+		Checkin checkin = checkinDao.buscarCheckin(contexto, idCheckin);
 		checkin.setCheckout(fecha);
 
 		checkinDao.modificarCheckin(contexto, checkin);

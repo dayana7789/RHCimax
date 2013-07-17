@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -118,7 +117,7 @@ public class DatosClienteActivity extends Fragment {
 				ArrayList<String> permisos = SesionUsuario.getPermisos(getActivity());		
 				
 				if(permisos.contains(Permiso.MODIFICAR_PROPIOS)){
-					Boolean esCliente = empleadoDao.esClienteDelUsuario(getActivity(), idEmpleado, ""+SesionUsuario.getIdUsuario(getActivity()));
+					Boolean esCliente = empleadoDao.esClienteDelUsuario(getActivity(), idEmpleado, SesionUsuario.getIdUsuario(getActivity()));
 					//verificamos si este es cliente del usuario
 					if(!esCliente){
 						setModoNoEditable();
@@ -297,7 +296,7 @@ public class DatosClienteActivity extends Fragment {
 			//la info. necesaria.
 			
 			//mArgumentos=new Bundle();
-			mArgumentos.putString("id", ""+idEmpleado);
+			mArgumentos.putString("id", idEmpleado);
 
 		}
 		
@@ -335,9 +334,9 @@ public class DatosClienteActivity extends Fragment {
 		etPin.setText(empleado.getPin());
 		etLinkedin.setText(empleado.getLinkedin());
 		etDescripcion.setText(empleado.getDescripcion());
-		etIdEmpresa.setText(""+empleado.getIdEmpresa());
+		etIdEmpresa.setText(empleado.getIdEmpresa());
 		acNombreEmpresa.setText(nombreEmpresa);
-		etIdEmpleadoHidden.setText(""+empleado.getId());
+		etIdEmpleadoHidden.setText(empleado.getId());
 	}
 	
 	/**
@@ -515,7 +514,7 @@ public class DatosClienteActivity extends Fragment {
 
 		if(nombreEmpleado!=null){
 			Bundle arguments = new Bundle();
-			arguments.putString("nombreEmpleado", ""+nombreEmpleado);
+			arguments.putString("nombreEmpleado", nombreEmpleado);
 			//pasamos al fragment el nombre de la empresa para hacer la busqueda
 			fragment.setArguments(arguments); 
 		}

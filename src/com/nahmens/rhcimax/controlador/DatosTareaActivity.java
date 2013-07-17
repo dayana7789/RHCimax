@@ -280,10 +280,18 @@ public class DatosTareaActivity extends Fragment {
 	 */
 	private void llenarCamposTarea(Tarea tarea) {
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-		Empleado empleado  = empleadoDao.buscarEmpleado(getActivity(),""+tarea.getIdEmpleado());
+		Empleado empleado = null;
+		
+		if(tarea.getIdEmpleado()!=null){
+			empleado  = empleadoDao.buscarEmpleado(getActivity(),tarea.getIdEmpleado());
+		}
 
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-		Empresa empresa = empresaDao.buscarEmpresa(getActivity(), ""+tarea.getIdEmpresa());
+		Empresa empresa = null;
+		
+		if(tarea.getIdEmpresa()!=null){
+			empresa = empresaDao.buscarEmpresa(getActivity(), tarea.getIdEmpresa());
+		}
 
 		boolean finalizado = false;
 
@@ -459,7 +467,7 @@ public class DatosTareaActivity extends Fragment {
 				//Verificamos que el nombre de empresa ingresado se corresponda con alguno de la BD.
 
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				Empresa empresa = empresaDao.buscarEmpresa(getActivity(), ""+idEmpresa);
+				Empresa empresa = empresaDao.buscarEmpresa(getActivity(), idEmpresa);
 
 				if(empresa==null || (!nombreEmpresa.equals(empresa.getNombre()) && 
 						empresa.getNombre() !=null)){
@@ -535,7 +543,7 @@ public class DatosTareaActivity extends Fragment {
 				if(idFilaInsertada.equals("-1")==false){
 					mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "ok_ingreso_tarea");
 					mArgumentos = new Bundle();
-					mArgumentos.putString("idTarea", ""+idFilaInsertada);
+					mArgumentos.putString("idTarea", idFilaInsertada);
 					flagGuardado = true;
 
 				}else{
@@ -543,7 +551,7 @@ public class DatosTareaActivity extends Fragment {
 					flagGuardado = false;
 				}
 
-				idTarea = ""+idFilaInsertada;
+				idTarea = idFilaInsertada;
 			}
 
 

@@ -358,9 +358,9 @@ public class HistoricosActivity extends ListFragment{
 			fecha2Nombre = "Leído ";
 			descripcionNombre = "Descripción ";
 
-			String idCotizacion = cursor.getString(cursor.getColumnIndex(Cotizacion.NUM_COTIZACION));
-
-			titulo = "Número "+ idCotizacion;
+			String numCotizacion  = cursor.getString(cursor.getColumnIndex(Cotizacion.NUM_COTIZACION));
+			String idCotizacion =  cursor.getString(cursor.getColumnIndex("cotizacionId"));
+			titulo = "Número "+ numCotizacion;
 			empresa = cursor.getString(cursor.getColumnIndex("nombreEmpresaCotizacion"));
 			usuario = cursor.getString(cursor.getColumnIndex("loginUsuario"));
 			fechaCreacion = cursor.getString(cursor.getColumnIndex("cotizacionFechaCreacion"));

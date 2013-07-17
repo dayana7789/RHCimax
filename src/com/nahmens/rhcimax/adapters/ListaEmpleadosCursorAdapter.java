@@ -98,7 +98,7 @@ public class ListaEmpleadosCursorAdapter{
 
 			//almacenamos en un bundle, id empleado.
 			final Bundle mArgumentos = new Bundle();
-			mArgumentos.putString("id", ""+idEmpleado);
+			mArgumentos.putString("id", idEmpleado);
 
 			buttonVerEmpleado.setOnClickListener(new View.OnClickListener() {
 

@@ -286,18 +286,18 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 		String mensajeOk = null;
 
 		HistoricoSqliteDao historicoDao =  new HistoricoSqliteDao();
-		sincronizado = historicoDao.sincronizarHistorico(context, ""+ idHistorico);
+		sincronizado = historicoDao.sincronizarHistorico(context, idHistorico);
 		
 		if(tipoRegistro.equals("tarea")){
 			TareaSqliteDao tareaDao =  new TareaSqliteDao();
-			sincronizado = sincronizado && tareaDao.sincronizarTarea(context, ""+id);
+			sincronizado = sincronizado && tareaDao.sincronizarTarea(context, id);
 
 			mensajeOk = "ok_sincronizado_tarea";
 			mensajeError = "error_sincronizado_tarea";
 
 		}else if(tipoRegistro.equals("cotizacion")){
 			CotizacionSqliteDao cotizacionDao =  new CotizacionSqliteDao();
-			sincronizado = sincronizado && cotizacionDao.sincronizarCotizacion(context, ""+id);
+			sincronizado = sincronizado && cotizacionDao.sincronizarCotizacion(context, id);
 
 			mensajeOk = "ok_sincronizado_cotizacion";
 			mensajeError = "error_sincronizado_cotizacion";

@@ -113,7 +113,7 @@ public class DatosEmpresaActivity extends Fragment {
 				ArrayList<String> permisos = SesionUsuario.getPermisos(getActivity());		
 				
 				if(permisos.contains(Permiso.MODIFICAR_PROPIOS)){
-					Boolean esCliente = empresaDao.esClienteDelUsuario(getActivity(), ""+idEmpresa, ""+SesionUsuario.getIdUsuario(getActivity()));
+					Boolean esCliente = empresaDao.esClienteDelUsuario(getActivity(), idEmpresa, SesionUsuario.getIdUsuario(getActivity()));
 					//verificamos si este es cliente del usuario
 					if(!esCliente){
 						setModoNoEditable();
@@ -263,14 +263,14 @@ public class DatosEmpresaActivity extends Fragment {
 						String idCheckin = SesionUsuario.getIdCheckin(getActivity());
 
 						CheckinSqliteDao checkinDao = new CheckinSqliteDao();
-						Checkin checkin = checkinDao.buscarCheckin(getActivity(), ""+idCheckin);
+						Checkin checkin = checkinDao.buscarCheckin(getActivity(), idCheckin);
 
 						HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
-						Historico historico = historicoDao.buscarHistoricoPorCheckinPorEmpresa(getActivity(), ""+idCheckin, idEmpresa);
+						Historico historico = historicoDao.buscarHistoricoPorCheckinPorEmpresa(getActivity(), idCheckin, idEmpresa);
 
 
 						//verificamos si ya se registro un checkin en esta sesion
-						if(historicoDao.existeCheckinVisita(getActivity(), ""+idCheckin)){
+						if(historicoDao.existeCheckinVisita(getActivity(), idCheckin)){
 
 							//registramos el check out
 							SesionUsuario.cerrarSesion(getActivity());
@@ -518,7 +518,7 @@ public class DatosEmpresaActivity extends Fragment {
 				if(idFilaInsertada.equals("-1") == false){
 					mToast = new Mensaje(mInflater, getActivity(), "ok_ingreso_empresa");
 					mArgumentos = new Bundle();
-					mArgumentos.putString("idEmpresa", ""+idFilaInsertada);
+					mArgumentos.putString("idEmpresa", idFilaInsertada);
 					flagGuardado = true;
 
 				}else{

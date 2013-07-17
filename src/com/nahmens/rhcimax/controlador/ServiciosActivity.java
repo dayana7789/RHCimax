@@ -131,9 +131,9 @@ public class ServiciosActivity extends Fragment {
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 			Empleado empleado = empleadoDao.buscarEmpleado(getActivity(), id);
 
-			llenarCamposCliente(""+empleado.getIdEmpresa(), id);
+			llenarCamposCliente(empleado.getIdEmpresa(), id);
 
-			id = ""+empleado.getIdEmpresa();
+			id = empleado.getIdEmpresa();
 
 		}else{
 			Log.e("ServiciosActivity: llenarCampos(..)", "Tipo de cliente no valido: " + tipoCliente);
@@ -160,6 +160,7 @@ public class ServiciosActivity extends Fragment {
 			int[] to = new int[] { R.id.checkBoxServicio};
 
 			//Creamos un array adapter para desplegar cada una de las filas
+			@SuppressWarnings("unused")
 			ListaServiciosCursorAdapter notes = new ListaServiciosCursorAdapter(tlListServicios, getActivity(), R.layout.activity_fila_servicio, mCursorServicios, from, to, 0, buttonFinalizar);
 
 			buttonCalcular.setOnClickListener(new View.OnClickListener() {
@@ -225,9 +226,9 @@ public class ServiciosActivity extends Fragment {
 					//creamos una cotizacion
 					CotizacionSqliteDao cotizacionDao = new CotizacionSqliteDao();
 					
-					
+
 					String idCotizacion = cotizacionDao.insertarCotizacion(getActivity(), idUsuario, idEmpresa, etDescripcion.getText().toString());
-					Log.e("maldita sea", " "  +idCotizacion);
+
 					//creamos un registro en la tabla empleadoCotizacion
 					boolean hayErrorResultEC = crearEmpleadoCotizacion(idCotizacion);
 
@@ -241,7 +242,7 @@ public class ServiciosActivity extends Fragment {
 
 						//Si ocurrio un error, eliminamos la cotizacion que recien agregamos
 						//para evitar que haya inconsistencias en la BD
-						cotizacionDao.eliminarCotizacion(getActivity(), ""+idCotizacion);
+						cotizacionDao.eliminarCotizacion(getActivity(), idCotizacion);
 
 					}else{
 
@@ -258,7 +259,7 @@ public class ServiciosActivity extends Fragment {
 
 							//Si ocurrio un error, eliminamos la cotizacion que recien agregamos
 							//para evitar que haya inconsistencias en la BD
-							cotizacionDao.eliminarCotizacion(getActivity(), ""+idCotizacion);
+							cotizacionDao.eliminarCotizacion(getActivity(), idCotizacion);
 
 							//finalmente.. si no errores de ningun tipo..
 						}else{
@@ -321,6 +322,7 @@ public class ServiciosActivity extends Fragment {
 					}
 					//creamos una tarea 
 					Tarea tarea = new Tarea("Llamar y verificar envío de cotización", FormatoFecha.darFormatoDateUS(hoy.getTime()), "8:00 AM", descripcion, idUsuario, idUsuario, idEmpresa, idEmpleado, null);
+					
 					TareaSqliteDao tareaDao = new TareaSqliteDao();
 					tareaDao.insertarTarea(getActivity(), tarea);
 					
@@ -432,7 +434,10 @@ public class ServiciosActivity extends Fragment {
 	 */
 	private void llenarCamposCliente(String idEmpresa, String idEmpleado) {
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-		Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
+		Empresa empresa = null;
+		if(idEmpresa!=null){
+			empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
+		}
 		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 		Cursor mCursorEmpleados = null;
 		
@@ -451,6 +456,7 @@ public class ServiciosActivity extends Fragment {
 			int[] to = new int[] { R.id.textViewServNombreEmp,R.id.textViewServApellidoEmp, R.id.checkBoxServEmail};
 
 			//Creamos un adaptador personalizado para desplegar cada una de las filas
+			@SuppressWarnings("unused")
 			ListaCorreosCursorAdapter notes = null;
 
 			if(idEmpleado==null){

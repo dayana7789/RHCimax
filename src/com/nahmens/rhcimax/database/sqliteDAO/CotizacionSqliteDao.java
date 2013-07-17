@@ -23,11 +23,6 @@ public class CotizacionSqliteDao implements CotizacionDAO{
 		String idFila = new Formato().getNumeroAleatorio();
 		int numCotizacion = 1;
 		
-		
-		if(idEmpresa.equals("0") || idEmpresa.equals("")){
-			idEmpresa = null;
-		}
-		
 		try{
 			conexion.open();
 

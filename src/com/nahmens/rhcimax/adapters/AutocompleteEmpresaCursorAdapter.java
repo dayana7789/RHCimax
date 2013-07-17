@@ -166,7 +166,7 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 		String idEmpresa = cursor.getString(0);
 
 		// Update the parent class's TextView
-		etIdEmpresa.setText(""+idEmpresa);
+		etIdEmpresa.setText(idEmpresa);
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class AutocompleteEmpresaCursorAdapter extends CursorAdapter implements a
 			String idEmpresa = cursor.getString(0);
 
 			// Update the parent class's TextView
-			etIdEmpresa.setText(""+idEmpresa);
+			etIdEmpresa.setText(idEmpresa);
 		}else{
 			etIdEmpresa.setText("");
 		}
