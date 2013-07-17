@@ -22,7 +22,13 @@ public class PermisoSqliteDao implements PermisoDAO{
 		
 		long value = -1;
 		ConexionBD conexion = new ConexionBD(context);
-		String idFila = new Formato().getNumeroAleatorio();
+		String idFila = null;
+
+		if(permiso.getId() == null){
+			idFila= new Formato().getNumeroAleatorio();
+		}else{
+			idFila = permiso.getId();
+		}
 		
 		try{
 

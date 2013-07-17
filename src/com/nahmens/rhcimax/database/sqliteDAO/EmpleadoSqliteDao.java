@@ -24,7 +24,14 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 	@Override
 	public String insertarEmpleado(Context contexto, Empleado empleado) {
 		ConexionBD conexion = new ConexionBD(contexto);
-		String idFila = new Formato().getNumeroAleatorio();
+		String idFila = null;
+
+		if(empleado.getId() == null){
+			idFila= new Formato().getNumeroAleatorio();
+		}else{
+			idFila = empleado.getId();
+		}
+		
 		long value = -1;
 
 		try{

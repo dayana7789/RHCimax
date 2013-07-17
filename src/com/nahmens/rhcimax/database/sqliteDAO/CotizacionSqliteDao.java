@@ -5,7 +5,6 @@ import java.util.Date;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -16,12 +15,19 @@ import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class CotizacionSqliteDao implements CotizacionDAO{
 
-	public String insertarCotizacion(Context contexto, String idUsuario, String idEmpresa, String descripcion){
+	public String insertarCotizacion(Context contexto, Cotizacion cotizacion){
 
 		ConexionBD conexion = new ConexionBD(contexto);
 		long value = -1;
-		String idFila = new Formato().getNumeroAleatorio();
 		int numCotizacion = 1;
+		
+		String idFila = null;
+
+		if(cotizacion.getId() == null){
+			idFila= new Formato().getNumeroAleatorio();
+		}else{
+			idFila = cotizacion.getId();
+		}
 		
 		try{
 			conexion.open();
@@ -39,15 +45,14 @@ public class CotizacionSqliteDao implements CotizacionDAO{
 				numCotizacion = 1;
 			}
 
-			Log.e("numCotizacion", ""+numCotizacion);
 			
 			ContentValues values = new ContentValues();
 
 			values.put(Cotizacion.ID, idFila);
-			values.put(Cotizacion.ID_USUARIO, idUsuario);
-			values.put(Cotizacion.ID_EMPRESA, idEmpresa);
+			values.put(Cotizacion.ID_USUARIO, cotizacion.getIdUsuario());
+			values.put(Cotizacion.ID_EMPRESA, cotizacion.getIdEmpresa());
 			values.put(Cotizacion.NUM_COTIZACION,numCotizacion);
-			values.put(Cotizacion.DESCRIPCION, descripcion);
+			values.put(Cotizacion.DESCRIPCION, cotizacion.getDescripcion());
 			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_COTIZACION, null,values);
 
 			if(value==-1){

@@ -22,7 +22,13 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 	public String insertarEmpresa(Context contexto, Empresa empresa) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		long value = -1;
-		String idFila = new Formato().getNumeroAleatorio();
+		String idFila = null;
+
+		if(empresa.getId() == null){
+			idFila= new Formato().getNumeroAleatorio();
+		}else{
+			idFila = empresa.getId();
+		}
 
 		try{
 			conexion.open();

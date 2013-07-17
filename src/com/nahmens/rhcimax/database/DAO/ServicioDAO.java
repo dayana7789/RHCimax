@@ -9,4 +9,5 @@ public interface ServicioDAO {
 
 	Cursor listarServicios(Context contexto);
 	Servicio buscarServicio (Context contexto, String idServicio);
+	String insertarServicio(Context context, Servicio servicio) ;
 }

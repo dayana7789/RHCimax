@@ -118,7 +118,7 @@ public class HistoricosActivity extends ListFragment{
 				@Override
 				public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
 					
-					Log.e("onTextChanged","onTextChanged");
+					
 					//Este if es para que este metodo no se llame automaticamente
 					//al iniciar la actividad
 					if(mOnTextChangedBool){

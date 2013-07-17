@@ -19,7 +19,14 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 	@Override
 	public String insertarUsuario(Context context, Usuario usuario) {
 		long value = -1;
-		String idFila = new Formato().getNumeroAleatorio();
+		String idFila = null;
+
+		if(usuario.getId() == null){
+			idFila= new Formato().getNumeroAleatorio();
+		}else{
+			idFila = usuario.getId();
+		}
+		
 		ConexionBD conexion = new ConexionBD(context);
 		try{
 

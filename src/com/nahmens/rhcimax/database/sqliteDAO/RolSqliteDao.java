@@ -15,8 +15,15 @@ public class RolSqliteDao implements RolDAO {
 	@Override
 	public String insertarRol(Context context, Rol rol) {
 		long value = -1;
-		String idFila = new Formato().getNumeroAleatorio();
 		ConexionBD conexion = new ConexionBD(context);
+		String idFila = null;
+		
+		if(rol.getId() == null){
+			idFila= new Formato().getNumeroAleatorio();
+		}else{
+			idFila = rol.getId();
+		}
+		
 		try{
 
 			conexion.open();

@@ -37,7 +37,13 @@ public class TareaSqliteDao implements TareaDAO{
 	public String insertarTarea(Context contexto, Tarea tarea) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		long value = -1;
-		String idFila = new Formato().getNumeroAleatorio();
+		String idFila = null;
+
+		if(tarea.getId() == null){
+			idFila= new Formato().getNumeroAleatorio();
+		}else{
+			idFila = tarea.getId();
+		}
 
 		try{
 			conexion.open();

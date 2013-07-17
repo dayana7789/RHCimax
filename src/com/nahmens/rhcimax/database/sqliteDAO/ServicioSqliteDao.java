@@ -1,5 +1,6 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
@@ -7,9 +8,50 @@ import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.ServicioDAO;
 import com.nahmens.rhcimax.database.modelo.Servicio;
+import com.nahmens.rhcimax.database.modelo.Usuario;
+import com.nahmens.rhcimax.utils.Formato;
 
 public class ServicioSqliteDao implements ServicioDAO{
 
+	@Override
+	public String insertarServicio(Context context, Servicio servicio) {
+		long value = -1;
+		String idFila = null;
+
+		if(servicio.getId() == null){
+			idFila= new Formato().getNumeroAleatorio();
+		}else{
+			idFila = servicio.getId();
+		}
+		
+		ConexionBD conexion = new ConexionBD(context);
+		try{
+
+			conexion.open();
+
+			ContentValues values = new ContentValues();
+
+			values.put(Servicio.ID, idFila);
+			values.put(Servicio.NOMBRE,servicio.getNombre());
+			values.put(Servicio.PRECIO,servicio.getPrecio());
+			values.put(Servicio.DESCRIPCION,servicio.getDescripcion());
+			values.put(Servicio.STATUS,servicio.getStatus());
+			values.put(Servicio.UNIDAD_MEDICION,servicio.getUnidadMedicion());
+			values.put(Servicio.INICIAL,servicio.getInicial());
+
+			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_SERVICIO, null,values);
+			
+			if(value==-1){
+				idFila = ""+value;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return idFila;
+	}
+	
 	public Cursor listarServicios(Context contexto){
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;

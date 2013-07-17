@@ -25,7 +25,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	final CharSequence TEXT_ERROR = "Ha ocurrido un error con la sincronización: ";
 	final CharSequence TEXT_OK = "Sincronización finalizada";
 	final int DURATION = Toast.LENGTH_LONG;
-	
+
 	Context contexto;
 	Sincronizacion sync;
 
@@ -37,8 +37,8 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 	public void getUsuarios() throws Exception{
 
-	//	JSONArray userArray = sync.getValores("http://190.203.108.202:8080/vasaweb-1.0/getTest");
-		
+		//	JSONArray userArray = sync.getValores("http://190.203.108.202:8080/vasaweb-1.0/getTest");
+
 		JSONArray userArray = new JSONArray();
 		JSONObject jsObject =  new JSONObject();
 		jsObject.put("_id", "80");
@@ -47,7 +47,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		jsObject.put("correo", "nahmens@nahmens.com");
 		jsObject.put("idRol", "100");
 		jsObject.put("token", "80");
-		
+
 		userArray.put(jsObject);
 
 		Usuario usuario = null;
@@ -59,42 +59,48 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String idRol = null;
 		String token = null;
 		String idFila = null;
-		
+
 		//eliminamos a todos los usuarios
-		usuarioDao.eliminarUsuarios(contexto);
-		
+		//usuarioDao.eliminarUsuarios(contexto);
+
 		//y los volvemos a insertar
 		for (int i = 0; i < userArray.length(); ++i) {
 			JSONObject userObject = userArray.getJSONObject(i);
-			
+
 			id = userObject.getString(Usuario.ID);
 			login = userObject.getString(Usuario.LOGIN);
 			password = userObject.getString(Usuario.PASSWORD);
 			correo = userObject.getString(Usuario.CORREO);
 			idRol = userObject.getString(Usuario.ID_ROL);
 			token = userObject.getString(Usuario.TOKEN);
-				
+
 			usuario = new Usuario(id, login,password, correo, idRol, token);
-			idFila = usuarioDao.insertarUsuario(contexto, usuario);
-			
+
+			try{
+				idFila = usuarioDao.insertarUsuario(contexto, usuario);
+			}catch(android.database.sqlite.SQLiteConstraintException e){
+				Log.e("entre","capturado");
+			//	e.printStackTrace();
+			}
+
 			if(idFila.equals("-1")){
 				throw new Exception("El usuario con id: "+ id + " no pudo ser insertado.");
 			}
 		}
 
 	}
-	
+
 	public void getRoles() throws Exception{
 
-	//	JSONArray userArray = sync.getValores("http://190.203.108.202:8080/vasaweb-1.0/getTest");
-		
+		//	JSONArray userArray = sync.getValores("http://190.203.108.202:8080/vasaweb-1.0/getTest");
+
 		JSONArray userArray = new JSONArray();
-		
+
 		JSONObject jsObject =  new JSONObject();
 		jsObject.put(Rol.ID, "100");
 		jsObject.put("nombre", "nahmens2");
 		jsObject.put("descripcion", "1234");
-		
+
 		JSONObject jsObject2 =  new JSONObject();
 		jsObject2.put(Rol.ID, "80");
 		jsObject2.put("nombre", "nahmens");
@@ -109,45 +115,52 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String nombre = null;
 		String descripcion = null;
 		String idFila = null;
-		
+
 		//eliminamos a todos los usuarios
-		rolDao.eliminarRoles(contexto);
-		
+		//rolDao.eliminarRoles(contexto);
+
 		//y los volvemos a insertar
 		for (int i = 0; i < userArray.length(); ++i) {
 			JSONObject userObject = userArray.getJSONObject(i);
-			
+
 			id = userObject.getString(Rol.ID);
 			nombre = userObject.getString(Rol.NOMBRE);
 			descripcion = userObject.getString(Rol.DESCRIPCION);
-				
+
 			rol = new Rol(id, nombre, descripcion);
-			idFila = rolDao.insertarRol(contexto, rol);
-			
+
+			try{
+				idFila = rolDao.insertarRol(contexto, rol);
+			}catch(android.database.sqlite.SQLiteConstraintException e){
+				Log.e("entre","capturado");
+			//	e.printStackTrace();
+			}
+
+
 			if(idFila.equals("-1")){
 				throw new Exception("El rol con id: "+ id + " no pudo ser insertado.");
 			}
 		}
 
 	}
-	
+
 	public void getPermisos() throws Exception{
 
-	//	JSONArray userArray = sync.getValores("http://190.203.108.202:8080/vasaweb-1.0/getTest");
-		
+		//	JSONArray userArray = sync.getValores("http://190.203.108.202:8080/vasaweb-1.0/getTest");
+
 		JSONArray userArray = new JSONArray();
-		
+
 		JSONObject jsObject =  new JSONObject();
 		jsObject.put(Permiso.ID, "100");
 		jsObject.put("nombre", Permiso.LISTAR_TODO);
 		jsObject.put("descripcion", "1234");
-		
+
 		JSONObject jsObject2 =  new JSONObject();
 		jsObject2.put(Permiso.ID, "80");
 		jsObject2.put("nombre", Permiso.MODIFICAR_TODO);
 		jsObject2.put("descripcion", "1234");
-		
-	
+
+
 		userArray.put(jsObject);		
 		userArray.put(jsObject2);
 
@@ -157,75 +170,89 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String nombre = null;
 		String descripcion = null;
 		String idFila = null;
-		
+
 		//eliminamos a todos los usuarios
-		permisoDao.eliminarPermisos(contexto);
-		
+		//permisoDao.eliminarPermisos(contexto);
+
 		//y los volvemos a insertar
 		for (int i = 0; i < userArray.length(); ++i) {
 			JSONObject userObject = userArray.getJSONObject(i);
-			
+
 			id = userObject.getString(Permiso.ID);
 			nombre = userObject.getString(Permiso.NOMBRE);
 			descripcion = userObject.getString(Permiso.DESCRIPCION);
-							
+
 			permiso = new Permiso(id, nombre, descripcion);
-			idFila = permisoDao.insertarPermiso(contexto, permiso);
-			
+
+			try{
+				idFila = permisoDao.insertarPermiso(contexto, permiso);
+			}catch(android.database.sqlite.SQLiteConstraintException e){
+				Log.e("entre","capturado");
+			//	e.printStackTrace();
+			}
+
+
 			if(idFila.equals("-1")){
 				throw new Exception("El permiso con id: "+ id + " no pudo ser insertado.");
 			}
 		}
 
 	}
-	
+
 	public void getRol_Permiso() throws Exception{
 
 		//	JSONArray userArray = sync.getValores("http://190.203.108.202:8080/vasaweb-1.0/getTest");
-			
-			JSONArray userArray = new JSONArray();
-			
-			JSONObject jsObject =  new JSONObject();
-			jsObject.put(Rol_Permiso.ID_ROL, "100");
-			jsObject.put(Rol_Permiso.ID_PERMISO, "100");
-			
-			
-			JSONObject jsObject2 =  new JSONObject();
-			jsObject2.put(Rol_Permiso.ID_ROL, "100");
-			jsObject2.put(Rol_Permiso.ID_PERMISO, "80");
-			
-			
-		
-			userArray.put(jsObject);		
-			//userArray.put(jsObject2);
 
-			Rol_Permiso rol_permiso = null;
-			Rol_PermisoSqliteDao rol_PermisoDao = new Rol_PermisoSqliteDao();
-			String idPermiso = null;
-			String idRol = null;
+		JSONArray userArray = new JSONArray();
 
-			String idFila = null;
-			
-			//eliminamos a todos los usuarios
-			rol_PermisoDao.eliminarRoles_Permisos(contexto);
-			
-			//y los volvemos a insertar
-			for (int i = 0; i < userArray.length(); ++i) {
-				JSONObject userObject = userArray.getJSONObject(i);
-				
-				idPermiso = userObject.getString(Rol_Permiso.ID_PERMISO);
-				idRol = userObject.getString(Rol_Permiso.ID_ROL);
-								
-				rol_permiso = new Rol_Permiso(idRol,idPermiso);
+		JSONObject jsObject =  new JSONObject();
+		jsObject.put(Rol_Permiso.ID_ROL, "100");
+		jsObject.put(Rol_Permiso.ID_PERMISO, "100");
+
+
+		JSONObject jsObject2 =  new JSONObject();
+		jsObject2.put(Rol_Permiso.ID_ROL, "100");
+		jsObject2.put(Rol_Permiso.ID_PERMISO, "80");
+
+
+
+		userArray.put(jsObject);		
+		//userArray.put(jsObject2);
+
+		Rol_Permiso rol_permiso = null;
+		Rol_PermisoSqliteDao rol_PermisoDao = new Rol_PermisoSqliteDao();
+		String idPermiso = null;
+		String idRol = null;
+
+		String idFila = null;
+
+		//eliminamos a todos los usuarios
+		//rol_PermisoDao.eliminarRoles_Permisos(contexto);
+
+		//y los volvemos a insertar
+		for (int i = 0; i < userArray.length(); ++i) {
+			JSONObject userObject = userArray.getJSONObject(i);
+
+			idPermiso = userObject.getString(Rol_Permiso.ID_PERMISO);
+			idRol = userObject.getString(Rol_Permiso.ID_ROL);
+
+			rol_permiso = new Rol_Permiso(idRol,idPermiso);
+
+			try{
 				idFila = rol_PermisoDao.insertaRol_Permiso(contexto, rol_permiso);
-				
-				if(idFila.equals("-1")){
-					throw new Exception("El rol_permiso con idPermiso: "+ idPermiso + " e idRoL: " + idRol +" no pudo ser insertado.");
-				}
+			}catch(android.database.sqlite.SQLiteConstraintException e){
+				Log.e("entre","capturado");
+		//		e.printStackTrace();
 			}
 
+
+			if(idFila.equals("-1")){
+				throw new Exception("El rol_permiso con idPermiso: "+ idPermiso + " e idRoL: " + idRol +" no pudo ser insertado.");
+			}
 		}
-	
+
+	}
+
 	public void postAutenticacion() throws Exception{
 
 		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
@@ -235,22 +262,22 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String input ="{\"token\":\""+usuario.getToken()+"\"}";
 		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
 		Log.e("input", input);
-		
+
 		JSONObject resp = sync.postValores("http://190.203.108.202:8080/vasaweb-1.0/createTest", input);
 
-	
+
 	}
 
 	public void postEmpresas() throws Exception{
 
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 		Cursor cEmpresas =  empresaDao.listarEmpresasSync(contexto);
-		
+
 		String input = new Formato().cursorToJsonString(cEmpresas);
 		Log.e("input", input);
-		
+
 		sync.postValores("http://190.203.108.202:8080/vasaweb-1.0/createTest", input);
-	
+
 	}
 
 	//Al iniciar la carga

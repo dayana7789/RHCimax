@@ -15,7 +15,13 @@ public class CheckinSqliteDao implements CheckinDAO{
 	@Override
 	public String insertarCheckin(Context contexto, Checkin checkin) {
 		ConexionBD conexion = new ConexionBD(contexto);
-		String idFila = new Formato().getNumeroAleatorio();
+		String idFila = null;
+
+		if(checkin.getId() == null){
+			idFila= new Formato().getNumeroAleatorio();
+		}else{
+			idFila = checkin.getId();
+		}
 
 		try{
 			conexion.open();
@@ -30,7 +36,7 @@ public class CheckinSqliteDao implements CheckinDAO{
 			values.put(Checkin.ID_USUARIO, checkin.getIdUsuario());
 
 			long value = conexion.getDatabase().insert(DataBaseHelper.TABLA_CHECKIN, null,values);
-			
+
 			if(value==-1){
 				idFila = ""+value;
 			}
@@ -75,12 +81,12 @@ public class CheckinSqliteDao implements CheckinDAO{
 	public boolean modificarCheckin(Context contexto, Checkin checkin) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean modificado = false;
-		
+
 		try{
 			conexion.open();
 
 			ContentValues values = new ContentValues();
-			
+
 			values.put(Checkin.LATITUD, checkin.getLatitud());
 			values.put(Checkin.LONGITUD, checkin.getLongitud());
 			values.put(Checkin.CHECKIN, checkin.getCheckin());
@@ -92,11 +98,11 @@ public class CheckinSqliteDao implements CheckinDAO{
 			if(value!=0){
 				modificado = true;
 			}
-			
+
 		}finally{
 			conexion.close();
 		}
-		
+
 		return modificado;
 	}
 

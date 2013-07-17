@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
+import com.nahmens.rhcimax.database.modelo.Cotizacion;
 import com.nahmens.rhcimax.database.modelo.Cotizacion_Servicio;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
@@ -226,8 +227,8 @@ public class ServiciosActivity extends Fragment {
 					//creamos una cotizacion
 					CotizacionSqliteDao cotizacionDao = new CotizacionSqliteDao();
 					
-
-					String idCotizacion = cotizacionDao.insertarCotizacion(getActivity(), idUsuario, idEmpresa, etDescripcion.getText().toString());
+					Cotizacion cotizacion = new Cotizacion(null, null, 0, 0, idUsuario, idEmpresa, etDescripcion.getText().toString());
+					String idCotizacion = cotizacionDao.insertarCotizacion(getActivity(), cotizacion);
 
 					//creamos un registro en la tabla empleadoCotizacion
 					boolean hayErrorResultEC = crearEmpleadoCotizacion(idCotizacion);

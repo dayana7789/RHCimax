@@ -57,7 +57,13 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 	public String insertarHistorico(Context contexto, Historico historico) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		long value = -1;
-		String idFila = new Formato().getNumeroAleatorio();
+		String idFila = null;
+
+		if(historico.getId() == null){
+			idFila= new Formato().getNumeroAleatorio();
+		}else{
+			idFila = historico.getId();
+		}
 
 		try{
 			conexion.open();
