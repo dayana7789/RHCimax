@@ -14,21 +14,21 @@ public class Permiso {
 	public final static String ELIMINAR_TODO = "EliminarTodo";
 	public final static String ELIMINAR_PROPIOS = "EliminarPropios";
 	
-	int id;
+	String id;
 	String nombre;
 	String descripcion;
 	
-	public Permiso(int id, String nombre, String descripcion) {
+	public Permiso(String id, String nombre, String descripcion) {
 		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	

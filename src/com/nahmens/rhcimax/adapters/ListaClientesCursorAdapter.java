@@ -89,8 +89,8 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		String id = null;
 		String nombreE = ""; //almacena nombre completo del empleado o nombre de la empresa
 		
-		int idUsuarioCreador = cursor.getInt(cursor.getColumnIndex("idUsuario"));
-		int idUsuarioSesion = SesionUsuario.getIdUsuario(context);
+		String idUsuarioCreador = cursor.getString(cursor.getColumnIndex("idUsuario"));
+		String idUsuarioSesion = SesionUsuario.getIdUsuario(context);
 	
 		TextView tvCreador = (TextView)  v.findViewById(R.id.textViewCreador);
 		
@@ -98,7 +98,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		if(permisos.contains(Permiso.LISTAR_TODO)){
 			tvCreador.setVisibility(View.VISIBLE);
 		}else{
-			if(idUsuarioCreador==idUsuarioSesion){
+			if(idUsuarioCreador.equals(idUsuarioSesion)){
 				tvCreador.setVisibility(View.VISIBLE);
 			}else{
 				tvCreador.setVisibility(View.GONE);
@@ -219,7 +219,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 				
 			/*}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
 				
-				if(idUsuarioCreador==idUsuarioSesion){
+				if(idUsuarioCreador.equals(idUsuarioSesion)){
 					buttonBorrar.setVisibility(View.VISIBLE);
 				}else{
 					buttonBorrar.setVisibility(View.GONE);

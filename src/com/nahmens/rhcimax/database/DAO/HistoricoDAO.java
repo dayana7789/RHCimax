@@ -7,7 +7,7 @@ import com.nahmens.rhcimax.database.modelo.Historico;
 
 public interface HistoricoDAO {
 	
-	long insertarHistorico(Context contexto, Historico historico);
+	String insertarHistorico(Context contexto, Historico historico);
 	//Cursor listarHistoricos(Context contexto);
 	
 

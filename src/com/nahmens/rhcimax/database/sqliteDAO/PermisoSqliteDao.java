@@ -13,29 +13,32 @@ import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.PermisoDAO;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Rol_Permiso;
+import com.nahmens.rhcimax.utils.Formato;
 
 public class PermisoSqliteDao implements PermisoDAO{
 
 	@Override
-	public long insertarPermiso(Context context, Permiso permiso,
-			boolean autoincrement) {
+	public String insertarPermiso(Context context, Permiso permiso) {
 		
-		long idFila = 0;
+		long value = -1;
 		ConexionBD conexion = new ConexionBD(context);
+		String idFila = new Formato().getNumeroAleatorio();
+		
 		try{
 
 			conexion.open();
 
 			ContentValues values = new ContentValues();
 
-			if(!autoincrement){
-				values.put(Permiso.ID, permiso.getId());
-			}
-
+			values.put(Permiso.ID, idFila);
 			values.put(Permiso.NOMBRE, permiso.getNombre());
 			values.put(Permiso.DESCRIPCION, permiso.getDescripcion());
 
-			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_PERMISO, null,values);
+			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_PERMISO, null,values);
+			
+			if(value==-1){
+				idFila = ""+value;
+			}
 
 		}finally{
 			conexion.close();

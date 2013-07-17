@@ -42,7 +42,7 @@ public class TareasActivity extends ListFragment{
 
 	ListaTareasCursorAdapter listCursorAdapterTareas;
 	@SuppressLint("UseSparseArrays")
-	HashMap<Integer,Boolean> arrSincronizados = new HashMap<Integer, Boolean>(); //Contiene idTarea y si esta sincronizado o no
+	HashMap<String,Boolean> arrSincronizados = new HashMap<String, Boolean>(); //Contiene idTarea y si esta sincronizado o no
 	private ArrayList<String> permisos;
 	
 	//Las siguientes variables son utilizadas para evitar llamadas a
@@ -197,14 +197,14 @@ public class TareasActivity extends ListFragment{
 	
 		String strFechaSincronizacion = null;
 		String strFechaModificacion = null;
-		int id = 0;
+		String id = null;
 
 		if (mCursorTareas != null) {
 			mCursorTareas.moveToFirst();
 		}
 
 		while(!mCursorTareas.isAfterLast()){
-			id =  mCursorTareas.getInt(mCursorTareas.getColumnIndex(Tarea.ID));
+			id =  mCursorTareas.getString(mCursorTareas.getColumnIndex(Tarea.ID));
 			strFechaSincronizacion = mCursorTareas.getString(mCursorTareas.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
 			strFechaModificacion = mCursorTareas.getString(mCursorTareas.getColumnIndex(Empleado.FECHA_MODIFICACION));
 
@@ -255,7 +255,7 @@ public class TareasActivity extends ListFragment{
 	 */
 	protected void mostrarListaOpciones(int position) {
 		Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
-		final int idTarea = cursor.getInt(cursor.getColumnIndex(Tarea.ID));
+		final String idTarea = cursor.getString(cursor.getColumnIndex(Tarea.ID));
 		final String nombreTarea = cursor.getString(cursor.getColumnIndex(Tarea.NOMBRE));
 
 		if(permisos.contains(Permiso.ELIMINAR_TODO)){
@@ -263,10 +263,10 @@ public class TareasActivity extends ListFragment{
 			
 		}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
 			
-			int idUsuarioCreador = cursor.getInt(cursor.getColumnIndex("idUsuario"));
-			int idUsuarioSesion = SesionUsuario.getIdUsuario(getActivity());
+			String idUsuarioCreador = cursor.getString(cursor.getColumnIndex("idUsuario"));
+			String idUsuarioSesion = SesionUsuario.getIdUsuario(getActivity());
 			
-			if(idUsuarioCreador==idUsuarioSesion){
+			if(idUsuarioCreador.equals(idUsuarioSesion)){
 				mostrarOpcionActualizarEliminar(idTarea, nombreTarea);
 			}else{
 				mostrarOpcionActualizar(idTarea, nombreTarea);
@@ -278,7 +278,7 @@ public class TareasActivity extends ListFragment{
 	}
 	
 	
-	private void mostrarOpcionActualizar(final int idTarea, final String nombreTarea){
+	private void mostrarOpcionActualizar(final String idTarea, final String nombreTarea){
 		String[] arr = {"Actualizar"};
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -296,7 +296,7 @@ public class TareasActivity extends ListFragment{
 		alert.show();
 	}
 	
-	private void mostrarOpcionActualizarEliminar(final int idTarea, final String nombreTarea){
+	private void mostrarOpcionActualizarEliminar(final String idTarea, final String nombreTarea){
 		String[] arr = {"Actualizar","Eliminar"};
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -331,10 +331,10 @@ public class TareasActivity extends ListFragment{
 		//pero de tener mas de uno, no debemos usar esto (Ver ClientesActivity.java)
 		Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
 
-		int idTarea = cursor.getInt(cursor.getColumnIndex(Tarea.ID));
+		String idTarea = cursor.getString(cursor.getColumnIndex(Tarea.ID));
 
 		Bundle arguments = new Bundle();
-		arguments.putString("idTarea", ""+idTarea);
+		arguments.putString("idTarea", idTarea);
 
 		DatosTareaActivity fragment = new DatosTareaActivity();
 
@@ -402,7 +402,7 @@ public class TareasActivity extends ListFragment{
 	 * @param nombre Nombre de la tarea
 	 * @param idTarea Id de la tarea
 	 */
-	public void mensajeAlertaEliminar(String nombre, final int idTarea){
+	public void mensajeAlertaEliminar(String nombre, final String idTarea){
 
 		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 		String[] mensArray = null;
@@ -441,7 +441,7 @@ public class TareasActivity extends ListFragment{
 	 * @param id Id de la tarea
 	 *
 	 */
-	private void borrarTarea(int id) {
+	private void borrarTarea(String id) {
 		final LayoutInflater inflater = LayoutInflater.from(getActivity());
 		Boolean eliminado =  false;
 		Mensaje mToast = null;
@@ -449,7 +449,7 @@ public class TareasActivity extends ListFragment{
 		String mensajeOk = null;
 
 		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		eliminado = tareaDao.eliminarTarea(getActivity(), ""+id);
+		eliminado = tareaDao.eliminarTarea(getActivity(), id);
 		mensajeOk = "ok_eliminado_tarea";
 		mensajeError = "error_eliminado_empresa";
 
@@ -509,7 +509,7 @@ public class TareasActivity extends ListFragment{
 	 * Funcion que sincroniza una tarea.
 	 * @param id Id de la tarea
 	 */
-	private void sincronizarTarea(int id) {
+	private void sincronizarTarea(String id) {
 		final LayoutInflater inflater = LayoutInflater.from(getActivity());
 		Boolean sincronizado =  false;
 		Mensaje mToast = null;

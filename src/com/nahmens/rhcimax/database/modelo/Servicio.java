@@ -9,7 +9,7 @@ public class Servicio {
 	public final static String UNIDAD_MEDICION = "unidadMedicion";
 	public final static String INICIAL = "inicial";
 	
-	int id;
+	String id;
 	String nombre;
 	double precio;
 	String descripcion;
@@ -18,7 +18,7 @@ public class Servicio {
 	double inicial;
 	
 	
-	public Servicio(int id, String nombre, double precio, String descripcion,
+	public Servicio(String id, String nombre, double precio, String descripcion,
 			String status, String unidadMedicion, double inicial) {
 
 		this.id = id;
@@ -31,12 +31,12 @@ public class Servicio {
 	}
 
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

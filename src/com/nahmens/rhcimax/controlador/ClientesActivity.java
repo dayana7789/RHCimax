@@ -330,7 +330,7 @@ public class ClientesActivity extends ListFragment {
 	 */
 	private void mostrarListaOpciones(ListView l, int position) {
 		Cursor cursor = (Cursor) l.getItemAtPosition(position);
-		final int id = cursor.getInt(cursor.getColumnIndex("_id"));
+		final String id = cursor.getString(cursor.getColumnIndex("_id"));
 		final String nombre = cursor.getString(cursor.getColumnIndex("nombre"));
 		String tipoCliente = null;
 		
@@ -345,8 +345,8 @@ public class ClientesActivity extends ListFragment {
 			
 		/*}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
 			
-			int idUsuarioCreador = cursor.getInt(cursor.getColumnIndex("idUsuario"));
-			int idUsuarioSesion = SesionUsuario.getIdUsuario(getActivity());
+			String idUsuarioCreador = cursor.getString(cursor.getColumnIndex("idUsuario"));
+			String idUsuarioSesion = SesionUsuario.getIdUsuario(getActivity());
 			
 			if(idUsuarioCreador==idUsuarioSesion){
 				mostrarOpcionActualizarEliminar(id, tipoCliente, nombre);
@@ -359,7 +359,7 @@ public class ClientesActivity extends ListFragment {
 		}
 	}
 	
-	private void mostrarOpcionActualizar(final int id, final String tipoCliente, final String nombre){
+	private void mostrarOpcionActualizar(final String id, final String tipoCliente, final String nombre){
 		String[] arr = {"Actualizar"};
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -368,7 +368,7 @@ public class ClientesActivity extends ListFragment {
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 				case 0:
-					sincronizarCliente(id+"", tipoCliente);
+					sincronizarCliente(id, tipoCliente);
 					break;
 				}
 			}
@@ -377,7 +377,7 @@ public class ClientesActivity extends ListFragment {
 		alert.show();
 	}
 	
-	private void mostrarOpcionActualizarEliminar(final int id, final String tipoCliente, final String nombre){
+	private void mostrarOpcionActualizarEliminar(final String id, final String tipoCliente, final String nombre){
 		String[] arr = {"Actualizar", "Eliminar"};
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -386,7 +386,7 @@ public class ClientesActivity extends ListFragment {
 			public void onClick(DialogInterface dialog, int which) {
 				switch (which) {
 				case 0:
-					sincronizarCliente(""+id,  tipoCliente);
+					sincronizarCliente(id,  tipoCliente);
 					break;
 
 				case 1:
@@ -405,7 +405,7 @@ public class ClientesActivity extends ListFragment {
 	 * @param nombre Nombre de la tarea
 	 * @param idTarea Id de la tarea
 	 */
-	public void mensajeAlertaEliminar(String nombre, final int id, final String tipoCliente){
+	public void mensajeAlertaEliminar(String nombre, final String id, final String tipoCliente){
 
 		AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
 		String[] mensArray = null;

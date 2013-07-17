@@ -13,6 +13,7 @@ import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
+import com.nahmens.rhcimax.utils.Formato;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 import com.nahmens.rhcimax.utils.SesionUsuario;
 
@@ -33,26 +34,17 @@ public class TareaSqliteDao implements TareaDAO{
 	String orderBy  = " ORDER BY " + Tarea.FECHA + " ASC";
 	
 	@Override
-	public long insertarTarea(Context contexto, Tarea tarea) {
+	public String insertarTarea(Context contexto, Tarea tarea) {
 		ConexionBD conexion = new ConexionBD(contexto);
-		long idFila = 0;
-
-		//Debemos asegurarnos de guardar los registros en null
-		//cuando lo amerite para evitar errores de clave foranea
-		String idEmpresa = null;
-		String idEmpleado = null;
-		if(tarea.getIdEmpresa()!=0){
-			idEmpresa = ""+tarea.getIdEmpresa();
-		}
-		if(tarea.getIdEmpleado()!=0){
-			idEmpleado = ""+tarea.getIdEmpleado();
-		}
+		long value = -1;
+		String idFila = new Formato().getNumeroAleatorio();
 
 		try{
 			conexion.open();
 
 			ContentValues values = new ContentValues();
 
+			values.put(Tarea.ID, idFila);
 			values.put(Tarea.NOMBRE, tarea.getNombre());
 			values.put(Tarea.FECHA, tarea.getFecha());
 			values.put(Tarea.HORA, tarea.getHora());
@@ -60,10 +52,14 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.FECHA_FINALIZACION, tarea.getFechaFinalizacion());
 			values.put(Tarea.ID_USUARIO_CREADOR, tarea.getIdUsuarioCreador());
 			values.put(Tarea.ID_USUARIO_MODIFICADOR, tarea.getIdUsuarioModificador());
-			values.put(Tarea.ID_EMPLEADO,idEmpleado);
-			values.put(Tarea.ID_EMPRESA,idEmpresa);
+			values.put(Tarea.ID_EMPLEADO,tarea.getIdEmpleado());
+			values.put(Tarea.ID_EMPRESA,tarea.getIdEmpresa());
 
-			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_TAREA, null,values);
+			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_TAREA, null,values);
+			
+			if(value==-1){
+				idFila = ""+value;
+			}
 
 		}finally{
 			conexion.close();
@@ -77,17 +73,6 @@ public class TareaSqliteDao implements TareaDAO{
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean modificado = false;
 
-		//Debemos asegurarnos de guardar los registros en null
-		//cuando lo amerite para evitar errores de clave foranea
-		String idEmpresa = null;
-		String idEmpleado = null;
-		if(tarea.getIdEmpresa()!=0){
-			idEmpresa = ""+tarea.getIdEmpresa();
-		}
-		if(tarea.getIdEmpleado()!=0){
-			idEmpleado = ""+tarea.getIdEmpleado();
-		}
-
 		try{
 			conexion.open();
 
@@ -99,10 +84,10 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.FECHA_FINALIZACION, tarea.getFechaFinalizacion());
 			values.put(Tarea.FECHA_MODIFICACION, tarea.getFechaModificacion());
 			values.put(Tarea.ID_USUARIO_MODIFICADOR, tarea.getIdUsuarioModificador());
-			values.put(Tarea.ID_EMPLEADO,idEmpleado);
-			values.put(Tarea.ID_EMPRESA,idEmpresa);
+			values.put(Tarea.ID_EMPLEADO,tarea.getIdEmpleado());
+			values.put(Tarea.ID_EMPRESA,tarea.getIdEmpresa());
 
-			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, values, "_id=?", new String []{Integer.toString(tarea.getId())});
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, values, "_id=?", new String []{tarea.getId()});
 
 			if(value!=0){
 				modificado = true;
@@ -154,16 +139,20 @@ public class TareaSqliteDao implements TareaDAO{
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
-
-				tarea = new Tarea( mCursor.getString(mCursor.getColumnIndex(Tarea.NOMBRE)), 
+				
+				tarea = new Tarea( mCursor.getString(mCursor.getColumnIndex(Tarea.ID)), 
+						mCursor.getString(mCursor.getColumnIndex(Tarea.NOMBRE)), 
 						mCursor.getString(mCursor.getColumnIndex(Tarea.FECHA)), 
 						mCursor.getString(mCursor.getColumnIndex(Tarea.HORA)), 
 						mCursor.getString(mCursor.getColumnIndex(Tarea.DESCRIPCION)), 
-						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_USUARIO_CREADOR)),
-						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_USUARIO_MODIFICADOR)),
-						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_EMPRESA)),
-						mCursor.getInt(mCursor.getColumnIndex(Tarea.ID_EMPLEADO)),
-						mCursor.getString(mCursor.getColumnIndex(Tarea.FECHA_FINALIZACION)));
+						mCursor.getString(mCursor.getColumnIndex(Tarea.FECHA_FINALIZACION)), 
+						mCursor.getString(mCursor.getColumnIndex(Tarea.FECHA_CREACION)), 
+						mCursor.getString(mCursor.getColumnIndex(Tarea.FECHA_MODIFICACION)), 
+						mCursor.getString(mCursor.getColumnIndex(Tarea.FECHA_SINCRONIZACION)), 
+						mCursor.getString(mCursor.getColumnIndex(Tarea.ID_USUARIO_CREADOR)),
+						mCursor.getString(mCursor.getColumnIndex(Tarea.ID_USUARIO_MODIFICADOR)),
+						mCursor.getString(mCursor.getColumnIndex(Tarea.ID_EMPRESA)),
+						mCursor.getString(mCursor.getColumnIndex(Tarea.ID_EMPLEADO)));
 			}
 
 		}finally{

@@ -87,6 +87,7 @@ public class DatosEmpresaActivity extends Fragment {
 				flagGuardado = true;
 
 				String idEmpresa = mArgumentos.getString("idEmpresa");
+				Log.e("aqui datos","idEmpresa: "+ idEmpresa);
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
 
@@ -259,7 +260,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 						String idEmpresa = mArgumentos.getString("idEmpresa");
 						//Buscamos el id del checkin en la sesion del usuario para asignarle las coordenadas a la empresa
-						int idCheckin = SesionUsuario.getIdCheckin(getActivity());
+						String idCheckin = SesionUsuario.getIdCheckin(getActivity());
 
 						CheckinSqliteDao checkinDao = new CheckinSqliteDao();
 						Checkin checkin = checkinDao.buscarCheckin(getActivity(), ""+idCheckin);
@@ -296,7 +297,7 @@ public class DatosEmpresaActivity extends Fragment {
 
 							//registramos la visita como historico
 							idCheckin =  SesionUsuario.getIdCheckin(getActivity());
-							historico = new Historico("visita", 0 , 0, Integer.parseInt(idEmpresa), idCheckin, SesionUsuario.getIdUsuario(getActivity()));
+							historico = new Historico("visita", null , null, idEmpresa, idCheckin, SesionUsuario.getIdUsuario(getActivity()));
 							historicoDao = new HistoricoSqliteDao();
 							historicoDao.insertarHistorico(getActivity(), historico);
 
@@ -495,12 +496,11 @@ public class DatosEmpresaActivity extends Fragment {
 		if(!error){
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 
-			int idUsuario = SesionUsuario.getIdUsuario(getActivity());
+			String idUsuario = SesionUsuario.getIdUsuario(getActivity());
 
 			if(id!=null){
 				//Estamos modificando un registro
-				Empresa empresa = new Empresa(Integer.parseInt(id), nombre, telefono, rif, web, dirFiscal, dirComercial, fechaModif, idUsuario);
-
+				Empresa empresa = new Empresa(id, nombre, telefono, rif, web, dirFiscal, dirComercial, fechaModif, idUsuario);
 				Boolean modificado = empresaDao.modificarEmpresa(getActivity(), empresa);
 
 				if(modificado){
@@ -513,10 +513,9 @@ public class DatosEmpresaActivity extends Fragment {
 			}else{
 				//Estamos creando un nuevo registro
 				Empresa empresa = new Empresa(nombre, telefono, rif, web, dirFiscal, dirComercial, idUsuario, idUsuario);
+				String idFilaInsertada = empresaDao.insertarEmpresa(getActivity(), empresa);
 
-				long idFilaInsertada = empresaDao.insertarEmpresa(getActivity(), empresa);
-
-				if(idFilaInsertada != -1){
+				if(idFilaInsertada.equals("-1") == false){
 					mToast = new Mensaje(mInflater, getActivity(), "ok_ingreso_empresa");
 					mArgumentos = new Bundle();
 					mArgumentos.putString("idEmpresa", ""+idFilaInsertada);

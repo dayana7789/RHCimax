@@ -58,7 +58,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String correo = null;
 		String idRol = null;
 		String token = null;
-		long idFila = -1;
+		String idFila = null;
 		
 		//eliminamos a todos los usuarios
 		usuarioDao.eliminarUsuarios(contexto);
@@ -74,10 +74,10 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			idRol = userObject.getString(Usuario.ID_ROL);
 			token = userObject.getString(Usuario.TOKEN);
 				
-			usuario = new Usuario(Integer.parseInt(id), login,password, correo, Integer.parseInt(idRol), token);
-			idFila = usuarioDao.insertarUsuario(contexto, usuario, false);
+			usuario = new Usuario(id, login,password, correo, idRol, token);
+			idFila = usuarioDao.insertarUsuario(contexto, usuario);
 			
-			if(idFila==-1){
+			if(idFila.equals("-1")){
 				throw new Exception("El usuario con id: "+ id + " no pudo ser insertado.");
 			}
 		}
@@ -108,7 +108,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String id = null;
 		String nombre = null;
 		String descripcion = null;
-		long idFila = -1;
+		String idFila = null;
 		
 		//eliminamos a todos los usuarios
 		rolDao.eliminarRoles(contexto);
@@ -121,10 +121,10 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			nombre = userObject.getString(Rol.NOMBRE);
 			descripcion = userObject.getString(Rol.DESCRIPCION);
 				
-			rol = new Rol(Integer.parseInt(id), nombre, descripcion);
-			idFila = rolDao.insertarRol(contexto, rol, false);
+			rol = new Rol(id, nombre, descripcion);
+			idFila = rolDao.insertarRol(contexto, rol);
 			
-			if(idFila==-1){
+			if(idFila.equals("-1")){
 				throw new Exception("El rol con id: "+ id + " no pudo ser insertado.");
 			}
 		}
@@ -156,7 +156,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String id = null;
 		String nombre = null;
 		String descripcion = null;
-		long idFila = -1;
+		String idFila = null;
 		
 		//eliminamos a todos los usuarios
 		permisoDao.eliminarPermisos(contexto);
@@ -169,10 +169,10 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			nombre = userObject.getString(Permiso.NOMBRE);
 			descripcion = userObject.getString(Permiso.DESCRIPCION);
 							
-			permiso = new Permiso(Integer.parseInt(id), nombre, descripcion);
-			idFila = permisoDao.insertarPermiso(contexto, permiso, false);
+			permiso = new Permiso(id, nombre, descripcion);
+			idFila = permisoDao.insertarPermiso(contexto, permiso);
 			
-			if(idFila==-1){
+			if(idFila.equals("-1")){
 				throw new Exception("El permiso con id: "+ id + " no pudo ser insertado.");
 			}
 		}
@@ -204,7 +204,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			String idPermiso = null;
 			String idRol = null;
 
-			long idFila = -1;
+			String idFila = null;
 			
 			//eliminamos a todos los usuarios
 			rol_PermisoDao.eliminarRoles_Permisos(contexto);
@@ -216,10 +216,10 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 				idPermiso = userObject.getString(Rol_Permiso.ID_PERMISO);
 				idRol = userObject.getString(Rol_Permiso.ID_ROL);
 								
-				rol_permiso = new Rol_Permiso(Integer.parseInt(idRol),Integer.parseInt(idPermiso));
+				rol_permiso = new Rol_Permiso(idRol,idPermiso);
 				idFila = rol_PermisoDao.insertaRol_Permiso(contexto, rol_permiso);
 				
-				if(idFila==-1){
+				if(idFila.equals("-1")){
 					throw new Exception("El rol_permiso con idPermiso: "+ idPermiso + " e idRoL: " + idRol +" no pudo ser insertado.");
 				}
 			}
@@ -229,8 +229,8 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	public void postAutenticacion() throws Exception{
 
 		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
-		int idUsuario = SesionUsuario.getIdUsuario(contexto);
-		Usuario usuario =  usuarioDao.buscarUsuario(contexto, ""+idUsuario);
+		String idUsuario = SesionUsuario.getIdUsuario(contexto);
+		Usuario usuario =  usuarioDao.buscarUsuario(contexto, idUsuario);
 
 		String input ="{\"token\":\""+usuario.getToken()+"\"}";
 		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";

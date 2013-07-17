@@ -13,6 +13,6 @@ public interface Cotizacion_ServicioDAO {
 	 * @param cot_serv
 	 * @return id de la fila insertada o -1 si algun error ocurrio.
 	 */
-	long insertar(Context contexto, Cotizacion_Servicio cot_serv);
+	String insertar(Context contexto, Cotizacion_Servicio cot_serv);
 	Cursor listarCotizacion_Servicio(Context contexto, String idCotizacion);
 }

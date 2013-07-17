@@ -8,13 +8,12 @@ import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.Cotizacion_ServicioDAO;
 import com.nahmens.rhcimax.database.modelo.Cotizacion_Servicio;
-import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Servicio;
 
 public class Cotizacion_ServicioSqliteDao implements Cotizacion_ServicioDAO{
 
 	@Override
-	public long insertar(Context contexto, Cotizacion_Servicio cot_serv){
+	public String insertar(Context contexto, Cotizacion_Servicio cot_serv){
 
 		ConexionBD conexion = new ConexionBD(contexto);
 		long value = -1;
@@ -38,7 +37,7 @@ public class Cotizacion_ServicioSqliteDao implements Cotizacion_ServicioDAO{
 			conexion.close();
 		}
 
-		return value;
+		return value+"";
 	}
 	
 	@Override

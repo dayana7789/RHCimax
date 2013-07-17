@@ -21,7 +21,7 @@ public class ConfiguracionSqliteDao implements ConfiguracionDAO {
 			conexion.open();
 		
 			ContentValues contenido = new ContentValues();
-			contenido.put( configuracion.VALUE, configuracion.getValue());
+			contenido.put( Configuracion.VALUE, configuracion.getValue());
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_CONFIGURACION, contenido,  Configuracion.KEY +"=?", new String []{configuracion.getKey()});
 
@@ -50,7 +50,7 @@ public class ConfiguracionSqliteDao implements ConfiguracionDAO {
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
 
-				configuracion = new Configuracion( mCursor.getInt(mCursor.getColumnIndex(Configuracion.ID)), 
+				configuracion = new Configuracion( mCursor.getString(mCursor.getColumnIndex(Configuracion.ID)), 
 						mCursor.getString(mCursor.getColumnIndex(Configuracion.KEY)), 
 						mCursor.getString(mCursor.getColumnIndex(Configuracion.VALUE)));
 			}

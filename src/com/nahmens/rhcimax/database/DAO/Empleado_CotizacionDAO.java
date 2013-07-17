@@ -11,5 +11,5 @@ public interface Empleado_CotizacionDAO {
 	 * @param idCotizacion  Cotizacion enviada al empleado
 	 * @return id de la fila insertada o -1 si algun error ocurrio.
 	 */
-	long insertar(Context contexto, String idEmpleado, String idCotizacion);
+	String insertar(Context contexto, String idEmpleado, String idCotizacion);
 }

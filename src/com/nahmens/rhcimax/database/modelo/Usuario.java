@@ -10,14 +10,14 @@ public class Usuario {
 	public final static String ROL = "rol";
 	public final static String TOKEN = "token";
 	
-	int id;
+	String id;
 	String login;
 	String password;
 	String correo;
-	int idRol;
+	String idRol;
 	String token;
 
-	public Usuario(int id, String login, String password, String correo, int idRol, String token) {
+	public Usuario(String id, String login, String password, String correo, String idRol, String token) {
 		this.id = id;
 		this.login = login;
 		this.password = password;
@@ -29,11 +29,11 @@ public class Usuario {
 	
 
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -62,12 +62,12 @@ public class Usuario {
 	}
 
 
-	public int getIdRol() {
+	public String getIdRol() {
 		return idRol;
 	}
 
 
-	public void setIdRol(int idRol) {
+	public void setIdRol(String idRol) {
 		this.idRol = idRol;
 	}
 

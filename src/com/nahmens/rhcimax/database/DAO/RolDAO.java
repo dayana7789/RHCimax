@@ -7,7 +7,7 @@ import com.nahmens.rhcimax.database.modelo.Rol;
 public interface RolDAO {
 	
 	Rol buscarRolUsuario(Context contexto, String idUsuario);
-	long insertarRol(Context context, Rol rol, boolean autoincrement);
+	String insertarRol(Context context, Rol rol);
 	/**
      * Funcion que elimina todos los registros de una tabla
      * @param context

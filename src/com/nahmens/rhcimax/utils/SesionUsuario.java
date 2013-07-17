@@ -38,7 +38,7 @@ public class SesionUsuario {
 
         Checkin checkin = new Checkin(latitud, longitud, fecha, null, usu.getId());
         CheckinSqliteDao checkinDao = new CheckinSqliteDao();
-        int idCheckin = (int) checkinDao.insertarCheckin(context, checkin);
+        String idCheckin = checkinDao.insertarCheckin(context, checkin);
       
         PermisoSqliteDao permisoDao = new PermisoSqliteDao();
         JSONArray permisos = permisoDao.buscarPermisos(context, ""+usu.getIdRol());
@@ -51,10 +51,10 @@ public class SesionUsuario {
 		SharedPreferences prefs = context.getSharedPreferences("Usuario",Context.MODE_PRIVATE);
 
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putInt(Usuario.ID, usu.getId());
+		editor.putString(Usuario.ID, usu.getId());
 		editor.putString(Usuario.CORREO, usu.getCorreo());
-		editor.putInt(Usuario.ID_ROL, usu.getIdRol());
-		editor.putInt("idCheckin", idCheckin);
+		editor.putString(Usuario.ID_ROL, usu.getIdRol());
+		editor.putString("idCheckin", idCheckin);
 		
 		for (int i=0; i<permisos.length(); i++){
 
@@ -74,7 +74,7 @@ public class SesionUsuario {
 		String fecha = FormatoFecha.darFormatoDateTimeUS(new Date());
 
 		SharedPreferences prefs = contexto.getSharedPreferences("Usuario",Context.MODE_PRIVATE);
-		int idCheckin = prefs.getInt("idCheckin", 0); 
+		String idCheckin = prefs.getString("idCheckin", ""); 
 
 		CheckinSqliteDao checkinDao = new CheckinSqliteDao();
 		Checkin checkin = checkinDao.buscarCheckin(contexto, ""+idCheckin);
@@ -84,14 +84,14 @@ public class SesionUsuario {
 
 	}
 	
-	public static int getIdUsuario(Context contexto) {
+	public static String getIdUsuario(Context contexto) {
 		SharedPreferences prefs = contexto.getSharedPreferences("Usuario",Context.MODE_PRIVATE);
-		return prefs.getInt(Usuario.ID, 0); 
+		return prefs.getString(Usuario.ID, ""); 
 	}
 	
-	public static int getIdCheckin(Context contexto) {
+	public static String getIdCheckin(Context contexto) {
 		SharedPreferences prefs = contexto.getSharedPreferences("Usuario",Context.MODE_PRIVATE);
-		return prefs.getInt("idCheckin", 0); 
+		return prefs.getString("idCheckin", ""); 
 	}
 	
 	public static String getCorreo(Context contexto) {
@@ -99,9 +99,9 @@ public class SesionUsuario {
 		return prefs.getString(Usuario.CORREO, "");
 	}
 	
-	public static int getIdRol(Context contexto) {
+	public static String getIdRol(Context contexto) {
 		SharedPreferences prefs = contexto.getSharedPreferences("Usuario",Context.MODE_PRIVATE);
-		return prefs.getInt(Usuario.ID_ROL, 0); 
+		return prefs.getString(Usuario.ID_ROL, ""); 
 	}
 	
 	public static ArrayList<String> getPermisos(Context contexto) {

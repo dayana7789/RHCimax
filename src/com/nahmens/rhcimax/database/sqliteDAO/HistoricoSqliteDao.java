@@ -18,6 +18,7 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
+import com.nahmens.rhcimax.utils.Formato;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 import com.nahmens.rhcimax.utils.SesionUsuario;
 
@@ -27,7 +28,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 			+ ", empresaVisita." + Empresa.NOMBRE + " as nombreEmpresaVisita"
 			+ ", checkin."+Checkin.CHECKIN + ", checkin." + Checkin.CHECKOUT
 			+ ", usuarioVisita."+Usuario.LOGIN + " as loginUsuarioVisita"
-			+ ", cotizacion."+Cotizacion.ID+" as cotizacionId, cotizacion."+Cotizacion.FECHA_ENVIO+", cotizacion."+Cotizacion.FECHA_LEIDO + ", cotizacion."+Cotizacion.DESCRIPCION + " as cotizacionDescripcion, cotizacion." + Cotizacion.FECHA_CREACION + " as cotizacionFechaCreacion"
+			+ ", cotizacion."+Cotizacion.ID+" as cotizacionId, cotizacion."+Cotizacion.FECHA_ENVIO+", cotizacion."+Cotizacion.FECHA_LEIDO + ", cotizacion."+Cotizacion.DESCRIPCION + " as cotizacionDescripcion, cotizacion." + Cotizacion.FECHA_CREACION + " as cotizacionFechaCreacion, cotizacion."+Cotizacion.NUM_COTIZACION
 			+ ", usuario."+Usuario.LOGIN+" as loginUsuario"
 			+ ", empresaCotizacion."+Empresa.ID+", empresaCotizacion."+Empresa.NOMBRE + " as nombreEmpresaCotizacion"
 			+ ", empleadoCotizacion."+Empleado.ID+", empleadoCotizacion."+Empleado.NOMBRE + " as nombreEmpleadoCotizacion" + ", empleadoCotizacion."+Empleado.APELLIDO+" as apellidoEmpleadoCotizacion"+ ", empleadoCotizacion."+Empleado.EMAIL+" as emailEmpleadoCotizacion"
@@ -54,43 +55,29 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 	String orderBy  = " ORDER BY historico." + Historico.FECHA_CREACION + " DESC";
 
 	@Override
-	public long insertarHistorico(Context contexto, Historico historico) {
+	public String insertarHistorico(Context contexto, Historico historico) {
 		ConexionBD conexion = new ConexionBD(contexto);
-		long idFila = 0;
-		String idCot = null;
-		String idTar = null;
-		String idEmp = null;
-		String idCheck = null;
-
-		if(historico.getIdCotizacion()!=0){
-			idCot = ""+historico.getIdCotizacion();
-		}
-
-		if(historico.getIdTarea()!=0){
-			idTar = ""+historico.getIdTarea();
-		}
-
-		if(historico.getIdEmpresa()!=0){
-			idEmp = ""+historico.getIdEmpresa();
-		}
-
-		if(historico.getIdCheckin()!=0){
-			idCheck = ""+historico.getIdCheckin();
-		}
+		long value = -1;
+		String idFila = new Formato().getNumeroAleatorio();
 
 		try{
 			conexion.open();
 
 			ContentValues values = new ContentValues();
 
+			values.put(Historico.ID,idFila);
 			values.put(Historico.TIPO_REGISTRO,historico.getTipoRegistro());
-			values.put(Historico.ID_COTIZACION,idCot);
-			values.put(Historico.ID_TAREA, idTar);
-			values.put(Historico.ID_EMPRESA, idEmp);
-			values.put(Historico.ID_CHECKIN, idCheck);
+			values.put(Historico.ID_COTIZACION,historico.getIdCotizacion());
+			values.put(Historico.ID_TAREA, historico.getIdTarea());
+			values.put(Historico.ID_EMPRESA, historico.getIdEmpresa());
+			values.put(Historico.ID_CHECKIN, historico.getIdCheckin());
 			values.put(Historico.ID_USUARIO_CREADOR, historico.getIdUsuarioCreador());
 
-			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_HISTORICO, null,values);
+			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_HISTORICO, null,values);
+			
+			if(value==-1){
+				idFila = value + "";
+			}
 
 		}finally{
 			conexion.close();
@@ -310,10 +297,10 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 				mCursor.moveToFirst();
 
 				historico = new Historico(mCursor.getString(mCursor.getColumnIndex(Historico.TIPO_REGISTRO)),
-						mCursor.getInt(mCursor.getColumnIndex(Historico.ID_COTIZACION)), 
-						mCursor.getInt(mCursor.getColumnIndex(Historico.ID_TAREA)), 
-						mCursor.getInt(mCursor.getColumnIndex(Historico.ID_EMPRESA)), 
-						mCursor.getInt(mCursor.getColumnIndex(Historico.ID_CHECKIN)));
+						mCursor.getString(mCursor.getColumnIndex(Historico.ID_COTIZACION)), 
+						mCursor.getString(mCursor.getColumnIndex(Historico.ID_TAREA)), 
+						mCursor.getString(mCursor.getColumnIndex(Historico.ID_EMPRESA)), 
+						mCursor.getString(mCursor.getColumnIndex(Historico.ID_CHECKIN)));
 			}
 
 		}finally{

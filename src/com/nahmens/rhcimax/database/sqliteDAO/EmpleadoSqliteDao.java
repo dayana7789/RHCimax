@@ -16,28 +16,23 @@ import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
+import com.nahmens.rhcimax.utils.Formato;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 	@Override
-	public long insertarEmpleado(Context contexto, Empleado empleado) {
+	public String insertarEmpleado(Context contexto, Empleado empleado) {
 		ConexionBD conexion = new ConexionBD(contexto);
-
-		long idFila = 0;
-
-		//Debemos asegurarnos de guardar los registros en null
-		//cuando lo amerite para evitar errores de clave foranea
-		String idEmpresa = null;
-		if(empleado.getIdEmpresa()!=0){
-			idEmpresa = ""+empleado.getIdEmpresa();
-		}
+		String idFila = new Formato().getNumeroAleatorio();
+		long value = -1;
 
 		try{
 			conexion.open();
 
 			ContentValues values = new ContentValues();
 
+			values.put(Empleado.ID,idFila);
 			values.put(Empleado.NOMBRE,empleado.getNombre());
 			values.put(Empleado.APELLIDO,empleado.getApellido());
 			values.put(Empleado.POSICION,empleado.getPosicion());
@@ -47,11 +42,15 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			values.put(Empleado.PIN,empleado.getPin());
 			values.put(Empleado.LINKEDIN,empleado.getLinkedin());
 			values.put(Empleado.DESCRIPCION,empleado.getDescripcion());
-			values.put(Empleado.EMPRESA_ID,idEmpresa);
+			values.put(Empleado.EMPRESA_ID,empleado.getIdEmpresa());
 			values.put(Empleado.ID_USUARIO_CREADOR, empleado.getIdUsuarioCreador());
 			values.put(Empleado.ID_USUARIO_MODIFICADOR,empleado.getIdUsuarioModificador());
 
-			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPLEADO, null,values);
+			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPLEADO, null,values);
+			
+			if(value==-1){
+				idFila= ""+value;
+			}
 
 
 		}finally{
@@ -66,13 +65,6 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean modificado = false;
 
-		//Debemos asegurarnos de guardar los registros en null
-		//cuando lo amerite para evitar errores de clave foranea
-		String idEmpresa = null;
-		if(empleado.getIdEmpresa()!=0){
-			idEmpresa= ""+empleado.getIdEmpresa();
-		}
-
 		try{
 			conexion.open();
 
@@ -87,11 +79,11 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			values.put(Empleado.PIN,empleado.getPin());
 			values.put(Empleado.LINKEDIN,empleado.getLinkedin());
 			values.put(Empleado.DESCRIPCION,empleado.getDescripcion());
-			values.put(Empleado.EMPRESA_ID,idEmpresa);
+			values.put(Empleado.EMPRESA_ID,empleado.getIdEmpresa());
 			values.put(Empleado.FECHA_MODIFICACION,empleado.getFechaModificacion());
 			values.put(Empleado.ID_USUARIO_MODIFICADOR,empleado.getIdUsuarioModificador());
 
-			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, values, "_id=?", new String []{Integer.toString(empleado.getId())});
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, values, "_id=?", new String []{empleado.getId()});
 
 			if(value!=0){
 				modificado = true;
@@ -204,7 +196,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 				mCursor.moveToFirst();
 
 				empleado = new Empleado( 
-						mCursor.getInt(mCursor.getColumnIndex(Empleado.ID)), 
+						mCursor.getString(mCursor.getColumnIndex(Empleado.ID)), 
 						mCursor.getString(mCursor.getColumnIndex(Empleado.NOMBRE)), 
 						mCursor.getString(mCursor.getColumnIndex(Empleado.APELLIDO)), 
 						mCursor.getString(mCursor.getColumnIndex(Empleado.POSICION)), 
@@ -214,9 +206,12 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 						mCursor.getString(mCursor.getColumnIndex(Empleado.PIN)), 
 						mCursor.getString(mCursor.getColumnIndex(Empleado.LINKEDIN)), 
 						mCursor.getString(mCursor.getColumnIndex(Empleado.DESCRIPCION)), 
-						mCursor.getInt(mCursor.getColumnIndexOrThrow(Empleado.EMPRESA_ID)), //NOTA: getColumnIndexOrThrow hace que devuelva 0, si este campo es null en la BD
-						mCursor.getInt(mCursor.getColumnIndexOrThrow(Empleado.ID_USUARIO_CREADOR)),
-						mCursor.getInt(mCursor.getColumnIndex(Empleado.ID_USUARIO_MODIFICADOR)));
+						mCursor.getString(mCursor.getColumnIndex(Empleado.EMPRESA_ID)), //NOTA: getColumnIndexOrThrow hace que devuelva 0, si este campo es null en la BD
+						mCursor.getString(mCursor.getColumnIndex(Empleado.FECHA_CREACION)),
+						mCursor.getString(mCursor.getColumnIndex(Empleado.FECHA_MODIFICACION)),
+						mCursor.getString(mCursor.getColumnIndex(Empleado.FECHA_SINCRONIZACION)),
+						mCursor.getString(mCursor.getColumnIndex(Empleado.ID_USUARIO_CREADOR)),
+						mCursor.getString(mCursor.getColumnIndex(Empleado.ID_USUARIO_MODIFICADOR)));
 			}
 
 		}finally{

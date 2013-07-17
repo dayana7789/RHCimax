@@ -19,7 +19,7 @@ public class Tarea {
 	public final static String NOMBRE_EMPLEADO = "nombreEmpleado";
 	public final static String APELLIDO_EMPLEADO = "apellidoEmpleado";
 	
-	int id;
+	String id;
 	String nombre;
 	String fecha;
 	String hora;
@@ -28,15 +28,15 @@ public class Tarea {
 	String fechaCreacion;
 	String fechaModificacion;
 	String fechaSincronizacion;
-	int idUsuarioCreador;
-	int idUsuarioModificador;
-	int idEmpresa;
-	int idEmpleado;
+	String idUsuarioCreador;
+	String idUsuarioModificador;
+	String idEmpresa;
+	String idEmpleado;
 	
 	//Usado al modificar
-	public Tarea(int id, String nombre, String fecha, String hora,
-			String descripcion, int idUsuarioModificador,
-			int idEmpresa, int idEmpleado, String fechaFinalizacion, 
+	public Tarea(String id, String nombre, String fecha, String hora,
+			String descripcion, String idUsuarioModificador,
+			String idEmpresa, String idEmpleado, String fechaFinalizacion, 
 			String fechaModificacion) {
 
 		this.id = id;
@@ -53,8 +53,8 @@ public class Tarea {
 	
 	//usado al ingresar uno nuevo
 	public Tarea(String nombre, String fecha, String hora,
-			String descripcion, int idUsuarioCreador, int idUsuarioModificador,
-			int idEmpresa, int idEmpleado, String fechaFinalizacion) {
+			String descripcion, String idUsuarioCreador, String idUsuarioModificador,
+			String idEmpresa, String idEmpleado, String fechaFinalizacion) {
 
 		this.nombre = nombre;
 		this.fecha = fecha;
@@ -66,12 +66,35 @@ public class Tarea {
 		this.idEmpleado = idEmpleado;
 		this.fechaFinalizacion = fechaFinalizacion;
 	}
+	
+	
+//utilizado para buscar
+	public Tarea(String id, String nombre, String fecha, String hora,
+			String descripcion, String fechaFinalizacion, String fechaCreacion,
+			String fechaModificacion, String fechaSincronizacion,
+			String idUsuarioCreador, String idUsuarioModificador,
+			String idEmpresa, String idEmpleado) {
 
-	public int getId() {
+		this.id = id;
+		this.nombre = nombre;
+		this.fecha = fecha;
+		this.hora = hora;
+		this.descripcion = descripcion;
+		this.fechaFinalizacion = fechaFinalizacion;
+		this.fechaCreacion = fechaCreacion;
+		this.fechaModificacion = fechaModificacion;
+		this.fechaSincronizacion = fechaSincronizacion;
+		this.idUsuarioCreador = idUsuarioCreador;
+		this.idUsuarioModificador = idUsuarioModificador;
+		this.idEmpresa = idEmpresa;
+		this.idEmpleado = idEmpleado;
+	}
+
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -139,35 +162,35 @@ public class Tarea {
 		this.fechaSincronizacion = fechaSincronizacion;
 	}
 
-	public int getIdUsuarioCreador() {
+	public String getIdUsuarioCreador() {
 		return idUsuarioCreador;
 	}
 
-	public void setIdUsuarioCreador(int idUsuarioCreador) {
+	public void setIdUsuarioCreador(String idUsuarioCreador) {
 		this.idUsuarioCreador = idUsuarioCreador;
 	}
 
-	public int getIdUsuarioModificador() {
+	public String getIdUsuarioModificador() {
 		return idUsuarioModificador;
 	}
 
-	public void setIdUsuarioModificador(int idUsuarioModificador) {
+	public void setIdUsuarioModificador(String idUsuarioModificador) {
 		this.idUsuarioModificador = idUsuarioModificador;
 	}
 
-	public int getIdEmpresa() {
+	public String getIdEmpresa() {
 		return idEmpresa;
 	}
 
-	public void setIdEmpresa(int idEmpresa) {
+	public void setIdEmpresa(String idEmpresa) {
 		this.idEmpresa = idEmpresa;
 	}
 
-	public int getIdEmpleado() {
+	public String getIdEmpleado() {
 		return idEmpleado;
 	}
 
-	public void setIdEmpleado(int idEmpleado) {
+	public void setIdEmpleado(String idEmpleado) {
 		this.idEmpleado = idEmpleado;
 	}
 

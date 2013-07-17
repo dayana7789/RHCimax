@@ -6,22 +6,22 @@ public class Rol {
 	public final static String NOMBRE = "nombre";
 	public final static String DESCRIPCION = "descripcion";
 	
-	int id;
+	String id;
 	String nombre;
 	String descripcion;
 	
 	
-	public Rol(int id, String nombre, String descripcion) {
+	public Rol(String id, String nombre, String descripcion) {
 		this.id = id;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 	
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	

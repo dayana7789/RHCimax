@@ -5,27 +5,27 @@ public class Rol_Permiso {
 	public final static String ID_ROL = "idRol";
 	public final static String ID_PERMISO = "idPermiso";
 	
-	int idRol;
-	int idPermiso;
+	String idRol;
+	String idPermiso;
 	
-	public Rol_Permiso(int idRol, int idPermiso) {
+	public Rol_Permiso(String idRol, String idPermiso) {
 		this.idRol = idRol;
 		this.idPermiso = idPermiso;
 	}
 
-	public int getIdRol() {
+	public String getIdRol() {
 		return idRol;
 	}
 
-	public void setIdRol(int idRol) {
+	public void setIdRol(String idRol) {
 		this.idRol = idRol;
 	}
 
-	public int getIdPermiso() {
+	public String getIdPermiso() {
 		return idPermiso;
 	}
 
-	public void setIdPermiso(int idPermiso) {
+	public void setIdPermiso(String idPermiso) {
 		this.idPermiso = idPermiso;
 	}
 	

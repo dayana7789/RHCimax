@@ -8,13 +8,14 @@ import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.RolDAO;
 import com.nahmens.rhcimax.database.modelo.Rol;
+import com.nahmens.rhcimax.utils.Formato;
 
 public class RolSqliteDao implements RolDAO {
 	
 	@Override
-	public long insertarRol(Context context, Rol rol,
-			boolean autoincrement) {
-		long idFila = 0;
+	public String insertarRol(Context context, Rol rol) {
+		long value = -1;
+		String idFila = new Formato().getNumeroAleatorio();
 		ConexionBD conexion = new ConexionBD(context);
 		try{
 
@@ -22,14 +23,15 @@ public class RolSqliteDao implements RolDAO {
 
 			ContentValues values = new ContentValues();
 
-			if(!autoincrement){
-				values.put(Rol.ID, rol.getId());
-			}
-
+			values.put(Rol.ID, idFila);
 			values.put(Rol.NOMBRE, rol.getNombre());
 			values.put(Rol.DESCRIPCION, rol.getDescripcion());
 
-			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_ROL, null,values);
+			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_ROL, null,values);
+			
+			if(value==-1){
+				idFila = ""+value;
+			}
 
 		}finally{
 			conexion.close();
@@ -53,7 +55,7 @@ public class RolSqliteDao implements RolDAO {
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
 
-				rol = new Rol( mCursor.getInt(mCursor.getColumnIndex(Rol.ID)), 
+				rol = new Rol( mCursor.getString(mCursor.getColumnIndex(Rol.ID)), 
 						mCursor.getString(mCursor.getColumnIndex(Rol.NOMBRE)), 
 						mCursor.getString(mCursor.getColumnIndex(Rol.DESCRIPCION)));
 			}

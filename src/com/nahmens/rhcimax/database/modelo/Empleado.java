@@ -19,7 +19,7 @@ public class Empleado {
 	public final static String ID_USUARIO_CREADOR = "idUsuarioCreador";
 	public final static String ID_USUARIO_MODIFICADOR = "idUsuarioModificador";
 	
-	int id;
+	String id;
 	String nombre;
 	String apellido;
 	String posicion;
@@ -29,42 +29,18 @@ public class Empleado {
 	String pin;
 	String linkedin;
 	String descripcion;
-	int idEmpresa;
+	String idEmpresa;
 	String fechaCreacion;
 	String fechaModificacion;
 	String fechaSincronizacion;
-	int idUsuarioCreador;
-	int idUsuarioModificador;
-	
-	//Se utiliza cuando estoy modificando
-	public Empleado(int id, String nombre, String apellido, String posicion,
-			String email, String telfOficina, String celular, String pin,
-			String linkedin, String descripcion, int idEmpresa,
-			String fechaModificacion, int idUsuarioModificador) {
-
-		this.id = id;
-		this.nombre = nombre;
-		this.apellido = apellido;
-		this.posicion = posicion;
-		this.email = email;
-		this.telfOficina = telfOficina;
-		this.celular = celular;
-		this.pin = pin;
-		this.linkedin = linkedin;
-		this.descripcion = descripcion;
-		this.idEmpresa = idEmpresa;
-//		this.fechaCreacion = fechaCreacion;
-		this.fechaModificacion = fechaModificacion;
-//		this.fechaSincronizacion = fechaSincronizacion;
-//		this.idUsuarioCreador = idUsuarioCreador;
-		this.idUsuarioModificador = idUsuarioModificador;
-	}
+	String idUsuarioCreador;
+	String idUsuarioModificador;
 
 	//Se utiliza cuando estoy agregando
 	public Empleado(String nombre, String apellido, String posicion,
 			String email, String telfOficina, String celular, String pin,
-			String linkedin, String descripcion, int idEmpresa,
-			int idUsuarioCreador, int idUsuarioModificador) {
+			String linkedin, String descripcion, String idEmpresa,
+			String idUsuarioCreador, String idUsuarioModificador) {
 
 		this.nombre = nombre;
 		this.apellido = apellido;
@@ -84,11 +60,11 @@ public class Empleado {
 	}
 	
 	
-	//Se utiliza cuando estoy agregando
-		public Empleado(int id, String nombre, String apellido, String posicion,
+	//Se utiliza cuando estoy modificando
+		public Empleado(String id, String nombre, String apellido, String posicion,
 				String email, String telfOficina, String celular, String pin,
-				String linkedin, String descripcion, int idEmpresa,
-				int idUsuarioCreador, int idUsuarioModificador) {
+				String linkedin, String descripcion, String idEmpresa, 
+				String fechaModificacion, String idUsuarioModificador) {
 
 			this.id = id;
 			this.nombre = nombre;
@@ -102,18 +78,45 @@ public class Empleado {
 			this.descripcion = descripcion;
 			this.idEmpresa = idEmpresa;
 //			this.fechaCreacion = fechaCreacion;
-//			this.fechaModificacion = fechaModificacion;
+			this.fechaModificacion = fechaModificacion;
 //			this.fechaSincronizacion = fechaSincronizacion;
-			this.idUsuarioCreador = idUsuarioCreador;
+//			this.idUsuarioCreador = idUsuarioCreador;
 			this.idUsuarioModificador = idUsuarioModificador;
 		}
 
+		
+	//se utiliza para buscar
+	public Empleado(String id, String nombre, String apellido, String posicion,
+			String email, String telfOficina, String celular, String pin,
+			String linkedin, String descripcion, String idEmpresa,
+			String fechaCreacion, String fechaModificacion,
+			String fechaSincronizacion, String idUsuarioCreador,
+			String idUsuarioModificador) {
 
-	public int getId() {
+		this.id = id;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.posicion = posicion;
+		this.email = email;
+		this.telfOficina = telfOficina;
+		this.celular = celular;
+		this.pin = pin;
+		this.linkedin = linkedin;
+		this.descripcion = descripcion;
+		this.idEmpresa = idEmpresa;
+		this.fechaCreacion = fechaCreacion;
+		this.fechaModificacion = fechaModificacion;
+		this.fechaSincronizacion = fechaSincronizacion;
+		this.idUsuarioCreador = idUsuarioCreador;
+		this.idUsuarioModificador = idUsuarioModificador;
+	}
+
+
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -189,11 +192,11 @@ public class Empleado {
 		this.descripcion = descripcion;
 	}
 
-	public int getIdEmpresa() {
+	public String getIdEmpresa() {
 		return idEmpresa;
 	}
 
-	public void setIdEmpresa(int idEmpresa) {
+	public void setIdEmpresa(String idEmpresa) {
 		this.idEmpresa = idEmpresa;
 	}
 
@@ -221,19 +224,19 @@ public class Empleado {
 		this.fechaSincronizacion = fechaSincronizacion;
 	}
 
-	public int getIdUsuarioCreador() {
+	public String getIdUsuarioCreador() {
 		return idUsuarioCreador;
 	}
 
-	public void setIdUsuarioCreador(int idUsuarioCreador) {
+	public void setIdUsuarioCreador(String idUsuarioCreador) {
 		this.idUsuarioCreador = idUsuarioCreador;
 	}
 
-	public int getIdUsuarioModificador() {
+	public String getIdUsuarioModificador() {
 		return idUsuarioModificador;
 	}
 
-	public void setIdUsuarioModificador(int idUsuarioModificador) {
+	public void setIdUsuarioModificador(String idUsuarioModificador) {
 		this.idUsuarioModificador = idUsuarioModificador;
 	}
 	

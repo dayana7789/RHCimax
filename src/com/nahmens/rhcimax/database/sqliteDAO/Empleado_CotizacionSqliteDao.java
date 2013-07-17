@@ -6,13 +6,12 @@ import android.content.Context;
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.Empleado_CotizacionDAO;
-import com.nahmens.rhcimax.database.modelo.Cotizacion_Servicio;
 import com.nahmens.rhcimax.database.modelo.Empleado_Cotizacion;
 
 public class Empleado_CotizacionSqliteDao implements Empleado_CotizacionDAO{
 
 	@Override
-	public long insertar(Context contexto, String idEmpleado,
+	public String insertar(Context contexto, String idEmpleado,
 			String idCotizacion) {
 
 		ConexionBD conexion = new ConexionBD(contexto);
@@ -33,7 +32,7 @@ public class Empleado_CotizacionSqliteDao implements Empleado_CotizacionDAO{
 			conexion.close();
 		}
 
-		return value;
+		return value+"";
 	}
 
 }

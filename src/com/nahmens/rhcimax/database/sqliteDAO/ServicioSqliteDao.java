@@ -6,7 +6,6 @@ import android.database.Cursor;
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.ServicioDAO;
-import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Servicio;
 
 public class ServicioSqliteDao implements ServicioDAO{
@@ -52,7 +51,7 @@ public class ServicioSqliteDao implements ServicioDAO{
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
 
-				servicio = new Servicio( mCursor.getInt(mCursor.getColumnIndex(Servicio.ID)), 
+				servicio = new Servicio( mCursor.getString(mCursor.getColumnIndex(Servicio.ID)), 
 						mCursor.getString(mCursor.getColumnIndex(Servicio.NOMBRE)), 
 						mCursor.getDouble(mCursor.getColumnIndex(Servicio.PRECIO)), 
 						mCursor.getString(mCursor.getColumnIndex(Servicio.DESCRIPCION)), 

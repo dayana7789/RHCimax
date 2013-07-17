@@ -7,7 +7,7 @@ import com.nahmens.rhcimax.database.modelo.Tarea;
 
 public interface TareaDAO {
 	
-	public long insertarTarea(Context contexto, Tarea tarea);
+	public String insertarTarea(Context contexto, Tarea tarea);
 	boolean modificarTarea(Context contexto, Tarea tarea);
 	boolean eliminarTarea(Context contexto, String idTarea);
 	Tarea buscarTarea(Context contexto, String idTarea);

@@ -39,7 +39,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 	private int[] toTarea;
 	private String[] fromVisita;
 	private int[] toVisita;
-	private HashMap<Integer,Boolean> arrSincronizados;
+	private HashMap<String,Boolean> arrSincronizados;
 	private ArrayList<String> permisos;
 
 
@@ -51,7 +51,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 	 */
 	public ListaHistoricosCursorAdapter(Context context, int layout, Cursor c,
 			String[] fromCotizacion, int[] toCotizacion, int flags, String[] fromTarea, int[] toTarea,
-			String[] fromVisita, int[] toVisita, HashMap<Integer,Boolean> arrSincronizados) {
+			String[] fromVisita, int[] toVisita, HashMap<String,Boolean> arrSincronizados) {
 
 		super(context, layout, c, fromCotizacion, toCotizacion, flags);
 
@@ -151,7 +151,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 			}else if(columna.equals("loginUsuarioTarea")){
 				nombre = "Creado por: " + nombre;
 
-			}else if(columna.equals("cotizacionId")){
+			}else if(columna.equals(Cotizacion.NUM_COTIZACION)){
 				nombre = "Cotización número: " + nombre;
 
 			}else if(columna.equals(Cotizacion.FECHA_ENVIO)){
@@ -240,21 +240,21 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 
 		//if (display_mode != 1) {
 			
-			int id = 0;
-			int idHistorico = cursor.getInt(cursor.getColumnIndex("historicoId"));
+		    String id = null;
+		    String idHistorico = cursor.getString(cursor.getColumnIndex("historicoId"));
 			
 			if(tipoRegistro.equals("tarea")){
-				id= cursor.getInt(cursor.getColumnIndex("tareaId"));
+				id= cursor.getString(cursor.getColumnIndex("tareaId"));
 
 			}else if(tipoRegistro.equals("cotizacion")){
-				id= cursor.getInt(cursor.getColumnIndex("cotizacionId"));
+				id= cursor.getString(cursor.getColumnIndex("cotizacionId"));
 
 			}
 
 			//almacenamos en un bundle, el id de la tarea y nombre de la tarea.
 			final Bundle mArgumentos = new Bundle();
-			mArgumentos.putInt("id", id);
-			mArgumentos.putInt("idHistorico", idHistorico);
+			mArgumentos.putString("id", id);
+			mArgumentos.putString("idHistorico", idHistorico);
 			mArgumentos.putString("tipoRegistro", tipoRegistro);
 
 			ImageButton buttonSincronizar = (ImageButton)  v.findViewById(R.id.imageButtonSync);
@@ -262,8 +262,8 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 
 				@Override
 				public void onClick(View v){
-					int id = mArgumentos.getInt("id");
-					int idHistorico = mArgumentos.getInt("idHistorico");
+					String id = mArgumentos.getString("id");
+					String idHistorico = mArgumentos.getString("idHistorico");
 					String tipoRegistro = mArgumentos.getString("tipoRegistro");
 					sincronizarHistorico(idHistorico, id, tipoRegistro);
 				}
@@ -278,7 +278,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 	 * @param id Id de la tarea, empresa o cotizacion
 	 * @tipoRegistro Posibles valores: visita, cotizacion o tarea
 	 */
-	private void sincronizarHistorico(int idHistorico, int id, String tipoRegistro) {
+	private void sincronizarHistorico(String idHistorico, String id, String tipoRegistro) {
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		Boolean sincronizado =  false;
 		Mensaje mToast = null;

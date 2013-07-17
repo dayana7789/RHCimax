@@ -48,7 +48,7 @@ public class HistoricosActivity extends ListFragment{
 
 	ListaHistoricosCursorAdapter listCursorAdapterHistoricos;
 	@SuppressLint("UseSparseArrays")
-	HashMap<Integer,Boolean> arrSincronizados = new HashMap<Integer, Boolean>(); //Contiene idHistorico y si esta sincronizado o no
+	HashMap<String,Boolean> arrSincronizados = new HashMap<String, Boolean>(); //Contiene idHistorico y si esta sincronizado o no
 	private ArrayList<String> permisos;
 	
 	//variable que se utiliza para evitar llamar al listener
@@ -184,14 +184,14 @@ public class HistoricosActivity extends ListFragment{
 
 		String strFechaSincronizacion = null;
 
-		int id = 0;
+		String id = null;
 
 		if (mCursorHistoricos != null) {
 			mCursorHistoricos.moveToFirst();
 		}
 
 		while(!mCursorHistoricos.isAfterLast()){
-			id =  mCursorHistoricos.getInt(mCursorHistoricos.getColumnIndex("historicoId"));
+			id =  mCursorHistoricos.getString(mCursorHistoricos.getColumnIndex("historicoId"));
 			strFechaSincronizacion = mCursorHistoricos.getString(mCursorHistoricos.getColumnIndex("historicoFechaSincronizacion"));
 
 			if(strFechaSincronizacion == null){
@@ -263,7 +263,7 @@ public class HistoricosActivity extends ListFragment{
 
 			final ListView lvHistoricos = (ListView) view.findViewById (android.R.id.list);
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
-			String[] fromCotizacion = new String[] {"cotizacionId", "loginUsuario", "nombreEmpresaCotizacion", "nombreEmpleadoCotizacion", "apellidoEmpleadoCotizacion", Cotizacion.FECHA_ENVIO, Cotizacion.FECHA_LEIDO};
+			String[] fromCotizacion = new String[] {Cotizacion.NUM_COTIZACION, "loginUsuario", "nombreEmpresaCotizacion", "nombreEmpleadoCotizacion", "apellidoEmpleadoCotizacion", Cotizacion.FECHA_ENVIO, Cotizacion.FECHA_LEIDO};
 			int[] toCotizacion = new int[] { R.id.textViewTitulo,  R.id.textViewUsuario,  R.id.textViewFil1Col1, R.id.textViewFil2Col1, R.id.textViewFil2Col1, R.id.textViewFil1Col2, R.id.textViewFil2Col2};
 
 			String[] fromTarea = new String[] { "nombreTarea", "loginUsuarioTarea", Tarea.FECHA, Tarea.HORA, "nombreEmpleadoTarea", "apellidoEmpleadoTarea", "nombreEmpresaTarea", Tarea.FECHA_FINALIZACION};
@@ -358,7 +358,7 @@ public class HistoricosActivity extends ListFragment{
 			fecha2Nombre = "Leído ";
 			descripcionNombre = "Descripción ";
 
-			String idCotizacion = cursor.getString(cursor.getColumnIndex("cotizacionId"));
+			String idCotizacion = cursor.getString(cursor.getColumnIndex(Cotizacion.NUM_COTIZACION));
 
 			titulo = "Número "+ idCotizacion;
 			empresa = cursor.getString(cursor.getColumnIndex("nombreEmpresaCotizacion"));

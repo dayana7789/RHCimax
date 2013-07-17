@@ -71,8 +71,7 @@ public class Formato {
 		// so add 1 to make it inclusive
 		int randomNum = rand.nextInt(max - min + 1) + min;
 		numAleatorio = fecha + randomNum;
-		
-		Log.e("num ale",""+numAleatorio);
+
 		return numAleatorio;
 		
 	}

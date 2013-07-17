@@ -8,14 +8,14 @@ public class Cotizacion_Servicio {
 	public final static String PRECIO = "precio";
 	public final static String INICIAL = "inicial";
 	
-	int idCotizacion;
-	int idServicio;
+	String idCotizacion;
+	String idServicio;
 	double medida;
 	double precio;
 	double inicial;
 	String descripcion;
 	
-	public Cotizacion_Servicio(int idCotizacion, int idServicio, double medida,
+	public Cotizacion_Servicio(String idCotizacion, String idServicio, double medida,
 			double precio, double inicial, String descripcion) {
 
 		this.idCotizacion = idCotizacion;
@@ -26,19 +26,19 @@ public class Cotizacion_Servicio {
 		this.descripcion = descripcion;
 	}
 
-	public int getIdCotizacion() {
+	public String getIdCotizacion() {
 		return idCotizacion;
 	}
 
-	public void setIdCotizacion(int idCotizacion) {
+	public void setIdCotizacion(String idCotizacion) {
 		this.idCotizacion = idCotizacion;
 	}
 
-	public int getIdServicio() {
+	public String getIdServicio() {
 		return idServicio;
 	}
 
-	public void setIdServicio(int idServicio) {
+	public void setIdServicio(String idServicio) {
 		this.idServicio = idServicio;
 	}
 

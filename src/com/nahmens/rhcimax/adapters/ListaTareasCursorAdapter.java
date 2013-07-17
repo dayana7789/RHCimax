@@ -36,7 +36,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	private String[] from;
 	private int[] to;
 	private FragmentManager fragmentManager;
-	private HashMap<Integer,Boolean> arrSincronizados;
+	private HashMap<String,Boolean> arrSincronizados;
 	private ArrayList<String> permisos;
 
 	/**
@@ -46,7 +46,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	 *                         los cuadros de notificacion principal.
 	 */
 	public ListaTareasCursorAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to, int flags, FragmentManager fragmentManager, HashMap<Integer,Boolean> arrSincronizados) {
+			String[] from, int[] to, int flags, FragmentManager fragmentManager, HashMap<String,Boolean> arrSincronizados) {
 
 		super(context, layout, c, from, to, flags);
 
@@ -152,11 +152,11 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 
 		if (display_mode != 1) {
 
-			int id = cursor.getInt(cursor.getColumnIndex(Tarea.ID));
+			String id = cursor.getString(cursor.getColumnIndex(Tarea.ID));
 
 			//almacenamos en un bundle, el id de la tarea y nombre de la tarea.
 			final Bundle mArgumentos = new Bundle();
-			mArgumentos.putInt("id", id);
+			mArgumentos.putString("id", id);
 			mArgumentos.putString("nombre", nombreTarea);
 
 
@@ -165,7 +165,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 
 				@Override
 				public void onClick(View v){
-					int id = mArgumentos.getInt("id");
+					String id = mArgumentos.getString("id");
 					sincronizarTarea(id);
 				}
 
@@ -200,7 +200,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 
 					alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
-							int id = mArgumentos.getInt("id");
+							String id = mArgumentos.getString("id");
 							borrarTarea(id);
 						}
 					});
@@ -217,8 +217,8 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 				
 			}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
 				
-				int idUsuarioCreador = cursor.getInt(cursor.getColumnIndex("idUsuario"));
-				int idUsuarioSesion = SesionUsuario.getIdUsuario(context);			
+				String idUsuarioCreador = cursor.getString(cursor.getColumnIndex("idUsuario"));
+				String idUsuarioSesion = SesionUsuario.getIdUsuario(context);			
 				
 				if(idUsuarioCreador==idUsuarioSesion){
 					buttonBorrar.setVisibility(View.VISIBLE);
@@ -237,7 +237,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	 * Funcion que sincroniza una tarea.
 	 * @param id Id de la tarea
 	 */
-	private void sincronizarTarea(int id) {
+	private void sincronizarTarea(String id) {
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		Boolean sincronizado =  false;
 		Mensaje mToast = null;
@@ -325,7 +325,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	 * @param id Id de la tarea
 	 *
 	 */
-	private void borrarTarea(int id) {
+	private void borrarTarea(String id) {
 		final LayoutInflater inflater = LayoutInflater.from(context);
 		Boolean eliminado =  false;
 		Mensaje mToast = null;

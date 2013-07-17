@@ -10,16 +10,16 @@ public class Checkin {
 	public final static String ID_USUARIO = "idUsuario";
 	
 	
-	int id;
+	String id;
 	Double latitud;
 	Double longitud;
 	String checkin;
 	String checkout;
-	int idUsuario;
+	String idUsuario;
 	
 	//estoy modificando
-	public Checkin(int id, Double latitud, Double longitud, String checkin,
-			String checkout, int idUsuario) {
+	public Checkin(String id, Double latitud, Double longitud, String checkin,
+			String checkout, String idUsuario) {
 		
 		this.id = id;
 		this.latitud = latitud;
@@ -31,7 +31,7 @@ public class Checkin {
 
 	//estoy agregando
 	public Checkin(Double latitud, Double longitud, String checkin,
-			String checkout, int idUsuario) {
+			String checkout, String idUsuario) {
 
 		this.latitud = latitud;
 		this.longitud = longitud;
@@ -40,10 +40,10 @@ public class Checkin {
 		this.idUsuario = idUsuario;
 	}
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public Double getLatitud() {
@@ -71,11 +71,11 @@ public class Checkin {
 		this.checkout = checkout;
 	}
 
-	public int getIdUsuario() {
+	public String getIdUsuario() {
 		return idUsuario;
 	}
 
-	public void setIdUsuario(int idUsuario) {
+	public void setIdUsuario(String idUsuario) {
 		this.idUsuario = idUsuario;
 	}
 

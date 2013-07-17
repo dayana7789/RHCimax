@@ -118,11 +118,11 @@ public class AplicacionActivity extends FragmentActivity {
 			 */		
 			if(value.equals(tagFragmentServicios)){
 				if(ListaServiciosCursorAdapter.getServiciosSeleccionados()!=null){
-					ListaServiciosCursorAdapter.setServiciosSeleccionados((HashMap<Integer, Tripleta>) savedInstanceState.getSerializable("serviciosSelected"));
+					ListaServiciosCursorAdapter.setServiciosSeleccionados((HashMap<String, Tripleta>) savedInstanceState.getSerializable("serviciosSelected"));
 				}
 
 				if(ListaCorreosCursorAdapter.getCorreosSeleccionados()!=null){
-					ListaCorreosCursorAdapter.setCorreosSeleccionados((HashMap<Integer, Boolean>) savedInstanceState.getSerializable("correosSelected"));
+					ListaCorreosCursorAdapter.setCorreosSeleccionados((HashMap<String, Boolean>) savedInstanceState.getSerializable("correosSelected"));
 				}
 			}
 		}

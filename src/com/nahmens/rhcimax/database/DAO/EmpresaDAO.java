@@ -13,7 +13,7 @@ public interface EmpresaDAO {
 	 * @param empresa Datos de la empresa a ingresar.
 	 * @return Id de la empresa ingresada o -1 en caso de error.
 	 */
-	long insertarEmpresa(Context contexto, Empresa empresa);
+	String insertarEmpresa(Context contexto, Empresa empresa);
 	boolean modificarEmpresa(Context contexto, Empresa empresa);
 	boolean eliminarEmpresa(Context contexto, String idEmpresa);
 	

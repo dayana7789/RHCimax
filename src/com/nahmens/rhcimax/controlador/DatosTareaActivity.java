@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,8 +36,8 @@ import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
-import com.nahmens.rhcimax.utils.InstantAutoComplete;
 import com.nahmens.rhcimax.utils.FormatoFecha;
+import com.nahmens.rhcimax.utils.InstantAutoComplete;
 import com.nahmens.rhcimax.utils.SesionUsuario;
 
 public class DatosTareaActivity extends Fragment {
@@ -294,18 +295,18 @@ public class DatosTareaActivity extends Fragment {
 
 		if(empresa!=null){
 			etEmpresa.setText(empresa.getNombre());
-			etHiddenIdEmpresa.setText(tarea.getIdEmpresa()+"");
+			etHiddenIdEmpresa.setText(tarea.getIdEmpresa());
 		}else{
 			etEmpresa.setText("");
-			etHiddenIdEmpresa.setText("0");
+			etHiddenIdEmpresa.setText("");
 		}
 
 		if(empleado!=null){
 			etEmpleado.setText(empleado.getNombre()+" " + empleado.getApellido());
-			etHiddenIdEmpleado.setText(tarea.getIdEmpleado()+"");
+			etHiddenIdEmpleado.setText(tarea.getIdEmpleado());
 		}else{
 			etEmpleado.setText("");
-			etHiddenIdEmpleado.setText("0");
+			etHiddenIdEmpleado.setText("");
 		}
 
 
@@ -425,19 +426,9 @@ public class DatosTareaActivity extends Fragment {
 	public void onClickSalvar(String idTarea){
 		Mensaje mToast = null;
 		boolean error = false;
-		int idEmpresa = 0;
-		int idEmpleado = 0;
 
-		//este try catch es para evitar errores de tipo de campo
-		try{
-			idEmpresa = Integer.parseInt(etHiddenIdEmpresa.getText().toString());
-		}catch (Exception e) {}
-
-		//este try catch es para evitar errores de tipo de campo
-		try{
-			idEmpleado = Integer.parseInt(etHiddenIdEmpleado.getText().toString());
-		}catch (Exception e) {}
-
+		String	idEmpresa = etHiddenIdEmpresa.getText().toString();
+		String	idEmpleado = etHiddenIdEmpleado.getText().toString();
 		String nombre = etNombre.getText().toString();
 		String nombreEmpresa = etEmpresa.getText().toString();
 		String nombreEmpleado = etEmpleado.getText().toString();
@@ -461,7 +452,7 @@ public class DatosTareaActivity extends Fragment {
 		/** Verificacion de errores **/
 		//Si  el nombre de la empresa no es vacio..
 		if(!nombreEmpresa.equals("") && nombreEmpresa!=null){
-			if (idEmpresa==0){
+			if (idEmpresa==null || idEmpresa.equals("")){
 				etEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
 				error = true;
 			}else{
@@ -476,15 +467,19 @@ public class DatosTareaActivity extends Fragment {
 					error = true;
 				}
 			}
+		}else{
+			idEmpresa = null;
 		}
 
 		//Si  el nombre de la empresa no es vacio..
 		if(!nombreEmpleado.equals("") && nombreEmpleado!=null){
 
-			if (idEmpleado==0){
+			if (idEmpleado==null || idEmpleado.equals("")){
 				etEmpleado.setError(Mensaje.ERROR_EMPLEADO_NO_VALIDO);
 				error = true;
 			}
+		}else{
+			idEmpleado = null;
 		}
 
 		if(nombre.equals("") || nombre==null){
@@ -506,21 +501,21 @@ public class DatosTareaActivity extends Fragment {
 			etDescripcion.setError(Mensaje.ERROR_CAMPO_VACIO);
 			error = true;
 		}*/
-
-
+		Log.e("idEMPRESA ", "," +idEmpresa+",");
+		Log.e("idEMpleado ", "," +idEmpleado+",");
 		/** FIN  Verificacion de errores **/
 
 		if(!error){
 
 			TareaSqliteDao tareaoDao = new TareaSqliteDao();
 
-			int idUsuario = SesionUsuario.getIdUsuario(getActivity());
+			String idUsuario = SesionUsuario.getIdUsuario(getActivity());
 
 			//Estamos modificando un registro..
 			if(idTarea!=null){
 
 				String fechaModificacion =FormatoFecha.darFormatoDateTimeUS(new Date());
-				Tarea tarea = new Tarea(Integer.parseInt(idTarea), nombre, fecha, hora, descripcion, idUsuario, idEmpresa, idEmpleado,fechaFinalizacion, fechaModificacion);
+				Tarea tarea = new Tarea(idTarea, nombre, fecha, hora, descripcion, idUsuario, idEmpresa, idEmpleado,fechaFinalizacion, fechaModificacion);
 
 				Boolean modificado = tareaoDao.modificarTarea(getActivity(), tarea);
 
@@ -535,9 +530,9 @@ public class DatosTareaActivity extends Fragment {
 			}else{
 
 				Tarea tarea = new Tarea(nombre, fecha, hora, descripcion, idUsuario, idUsuario, idEmpresa, idEmpleado, fechaFinalizacion);
-				long idFilaInsertada = tareaoDao.insertarTarea(getActivity(), tarea);
+				String idFilaInsertada = tareaoDao.insertarTarea(getActivity(), tarea);
 
-				if(idFilaInsertada != -1){
+				if(idFilaInsertada.equals("-1")==false){
 					mToast = new Mensaje(getActivity().getLayoutInflater(), getActivity(), "ok_ingreso_tarea");
 					mArgumentos = new Bundle();
 					mArgumentos.putString("idTarea", ""+idFilaInsertada);
@@ -564,7 +559,7 @@ public class DatosTareaActivity extends Fragment {
 
 		if(finalizada){
 			//creamos un historico de la tarea
-			Historico historico = new Historico("tarea", 0 , Integer.parseInt(idTarea), 0, SesionUsuario.getIdUsuario(getActivity()));
+			Historico historico = new Historico("tarea", null , idTarea, null, SesionUsuario.getIdUsuario(getActivity()));
 			HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
 			historicoDao.insertarHistorico(getActivity(), historico);
 

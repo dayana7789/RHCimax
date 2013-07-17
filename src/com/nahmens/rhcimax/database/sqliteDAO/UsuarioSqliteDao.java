@@ -8,6 +8,7 @@ import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.UsuarioDAO;
 import com.nahmens.rhcimax.database.modelo.Usuario;
+import com.nahmens.rhcimax.utils.Formato;
 
 /*
  * Clase que contendrá toda la funcionalidad para realizar consultas 
@@ -16,8 +17,9 @@ import com.nahmens.rhcimax.database.modelo.Usuario;
 public class UsuarioSqliteDao implements UsuarioDAO{
 
 	@Override
-	public long insertarUsuario(Context context, Usuario usuario, boolean autoincrement) {
-		long idFila = 0;
+	public String insertarUsuario(Context context, Usuario usuario) {
+		long value = -1;
+		String idFila = new Formato().getNumeroAleatorio();
 		ConexionBD conexion = new ConexionBD(context);
 		try{
 
@@ -25,16 +27,18 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 
 			ContentValues values = new ContentValues();
 
-			if(!autoincrement){
-				values.put(Usuario.ID, usuario.getId());
-			}
+			values.put(Usuario.ID, idFila);
 			values.put(Usuario.LOGIN,usuario.getLogin());
 			values.put(Usuario.PASSWORD,usuario.getPassword());
 			values.put(Usuario.CORREO,usuario.getCorreo());
 			values.put(Usuario.ID_ROL,usuario.getIdRol());
 			values.put(Usuario.TOKEN,usuario.getToken());
 
-			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_USUARIO, null,values);
+			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_USUARIO, null,values);
+			
+			if(value==-1){
+				idFila = ""+value;
+			}
 
 		}finally{
 			conexion.close();
@@ -60,11 +64,11 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 
 			if(mCursor.getCount()>0){
 				mCursor.moveToFirst();
-				usu = new Usuario(mCursor.getInt(mCursor.getColumnIndex(Usuario.ID)), 
+				usu = new Usuario(mCursor.getString(mCursor.getColumnIndex(Usuario.ID)), 
 				         mCursor.getString(mCursor.getColumnIndex(Usuario.LOGIN)),
 				         mCursor.getString(mCursor.getColumnIndex(Usuario.CORREO)),
 				         mCursor.getString(mCursor.getColumnIndex(Usuario.PASSWORD)),
-				         mCursor.getInt(mCursor.getColumnIndex(Usuario.ID_ROL)),
+				         mCursor.getString(mCursor.getColumnIndex(Usuario.ID_ROL)),
 						 mCursor.getString(mCursor.getColumnIndex(Usuario.TOKEN)));
 			}
 
@@ -89,11 +93,11 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 
 			if(mCursor.getCount()>0){
 				mCursor.moveToFirst();
-				usu = new Usuario(mCursor.getInt(mCursor.getColumnIndex(Usuario.ID)), 
+				usu = new Usuario(mCursor.getString(mCursor.getColumnIndex(Usuario.ID)), 
 						         mCursor.getString(mCursor.getColumnIndex(Usuario.LOGIN)),
 						         mCursor.getString(mCursor.getColumnIndex(Usuario.CORREO)),
 						         mCursor.getString(mCursor.getColumnIndex(Usuario.PASSWORD)),
-						         mCursor.getInt(mCursor.getColumnIndex(Usuario.ID_ROL)),
+						         mCursor.getString(mCursor.getColumnIndex(Usuario.ID_ROL)),
 								 mCursor.getString(mCursor.getColumnIndex(Usuario.TOKEN)));
 			}
 

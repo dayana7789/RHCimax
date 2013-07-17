@@ -17,7 +17,7 @@ public class Empresa {
 	public final static String LATITUD = "latitud";
 	public final static String LONGITUD = "longitud";
 	
-	int id;
+	String id;
 	String nombre;
 	String telefono;
 	String rif;
@@ -27,16 +27,16 @@ public class Empresa {
 	Double latitud;
 	Double longitud;
 	String fechaCreacion;
-	int idUsuarioCreador;
+	String idUsuarioCreador;
 	String fechaModificacion;
-	int idUsuarioModificador;
+	String idUsuarioModificador;
 	String fechaSincronizacion;
 	int modificado;
 	
 	//utilizado cuando se esta agregando
 	public Empresa(String nombre, String telefono, String rif, String web,
-			String dirFiscal, String dirComercial, 	int idUsuarioCreador, 
-			int idUsuarioModificador) {
+			String dirFiscal, String dirComercial, 	String idUsuarioCreador, 
+			String idUsuarioModificador) {
 
 		this.nombre = nombre;
 		this.telefono = telefono;
@@ -45,17 +45,17 @@ public class Empresa {
 		this.dirFiscal = dirFiscal;
 		this.dirComercial = dirComercial;
 //		this.fechaCreacion = fechaCreacion;
-		this.idUsuarioCreador = idUsuarioCreador;
 //		this.fechaModificacion = fechaModificacion;
-		this.idUsuarioModificador = idUsuarioModificador;
 //		this.fechaSincronizacion = fechaSincronizacion;
+		this.idUsuarioCreador = idUsuarioCreador;
+		this.idUsuarioModificador = idUsuarioModificador;
 //		this.modificado = modificado;
 	}
 
 	//utilizado cuando se esta modificando
-	public Empresa(int id, String nombre, String telefono, String rif,
+	public Empresa(String id, String nombre, String telefono, String rif,
 			String web, String dirFiscal, String dirComercial,
-			String fechaModificacion, int idUsuarioModificador) {
+			String fechaModificacion, String idUsuarioModificador) {
 
 		this.id = id;
 		this.nombre = nombre;
@@ -65,18 +65,18 @@ public class Empresa {
 		this.dirFiscal = dirFiscal;
 		this.dirComercial = dirComercial;
 //		this.fechaCreacion = fechaCreacion;
-//		this.idUsuarioCreador = idUsuarioCreador;
-		this.fechaModificacion = fechaModificacion;
-		this.idUsuarioModificador = idUsuarioModificador;
 //		this.fechaSincronizacion = fechaSincronizacion;
+		this.fechaModificacion = fechaModificacion;
+//		this.idUsuarioCreador = idUsuarioCreador;
+		this.idUsuarioModificador = idUsuarioModificador;
 //		this.modificado = modificado;
 	}
 	
 	//utilizado cuando se esta modificando coordenadas geoespaciales
-	public Empresa(int id, String nombre, String telefono, String rif,
+	public Empresa(String id, String nombre, String telefono, String rif,
 				String web, String dirFiscal, String dirComercial,
 				Double latitud, Double longitud,
-				String fechaModificacion, int idUsuarioModificador) {
+				String fechaModificacion, String idUsuarioModificador) {
 
 			this.id = id;
 			this.nombre = nombre;
@@ -97,10 +97,10 @@ public class Empresa {
 	
 	
 	//utilizado cuando se busca
-	public Empresa(int id, String nombre, String telefono, String rif,
+	public Empresa(String id, String nombre, String telefono, String rif,
 			String web, String dirFiscal, String dirComercial, Double latitud,
-			Double longitud, String fechaCreacion, int idUsuarioCreador,
-			String fechaModificacion, int idUsuarioModificador,
+			Double longitud, String fechaCreacion, String idUsuarioCreador,
+			String fechaModificacion, String idUsuarioModificador,
 			String fechaSincronizacion, int modificado) {
 
 		this.id = id;
@@ -120,10 +120,10 @@ public class Empresa {
 		this.modificado = modificado;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public String getNombre() {
@@ -185,10 +185,10 @@ public class Empresa {
 	public void setFechaCreacion(String fechaCreacion) {
 		this.fechaCreacion = fechaCreacion;
 	}
-	public int getIdUsuarioCreador() {
+	public String getIdUsuarioCreador() {
 		return idUsuarioCreador;
 	}
-	public void setIdUsuarioCreador(int idUsuarioCreador) {
+	public void setIdUsuarioCreador(String idUsuarioCreador) {
 		this.idUsuarioCreador = idUsuarioCreador;
 	}
 	public String getFechaModificacion() {
@@ -197,10 +197,10 @@ public class Empresa {
 	public void setFechaModificacion(String fechaModificacion) {
 		this.fechaModificacion = fechaModificacion;
 	}
-	public int getIdUsuarioModificador() {
+	public String getIdUsuarioModificador() {
 		return idUsuarioModificador;
 	}
-	public void setIdUsuarioModificador(int idUsuarioModificador) {
+	public void setIdUsuarioModificador(String idUsuarioModificador) {
 		this.idUsuarioModificador = idUsuarioModificador;
 	}
 	public String getFechaSincronizacion() {

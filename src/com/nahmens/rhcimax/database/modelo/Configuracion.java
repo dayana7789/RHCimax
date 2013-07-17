@@ -7,12 +7,12 @@ public class Configuracion {
 	public final static String VALUE = "value";
 	public final static String NOMBRE_SERVIDOR = "nombreServidor";
 	
-	int id;
+	String id;
 	String key;
 	String value;
 
 	
-	public Configuracion(int id, String key, String value) {
+	public Configuracion(String id, String key, String value) {
 		this.id = id;
 		this.key = key;
 		this.value = value;
@@ -23,10 +23,10 @@ public class Configuracion {
 		this.value = value;
 	}
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	public String getKey() {

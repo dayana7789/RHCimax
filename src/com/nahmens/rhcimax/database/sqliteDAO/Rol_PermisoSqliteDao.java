@@ -11,9 +11,9 @@ import com.nahmens.rhcimax.database.modelo.Rol_Permiso;
 public class Rol_PermisoSqliteDao implements Rol_PermisoDAO{
 
 	@Override
-	public long insertaRol_Permiso(Context context, Rol_Permiso rol_permiso) {
+	public String insertaRol_Permiso(Context context, Rol_Permiso rol_permiso) {
 		
-		long idFila = 0;
+		long value = -1;
 		ConexionBD conexion = new ConexionBD(context);
 		try{
 
@@ -24,13 +24,13 @@ public class Rol_PermisoSqliteDao implements Rol_PermisoDAO{
 			values.put(Rol_Permiso.ID_ROL, rol_permiso.getIdRol());
 			values.put(Rol_Permiso.ID_PERMISO, rol_permiso.getIdRol());
 
-			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_ROL_PERMISO, null,values);
+			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_ROL_PERMISO, null,values);
 
 		}finally{
 			conexion.close();
 		}
 
-		return idFila;
+		return value+"";
 	}
 
 	@Override

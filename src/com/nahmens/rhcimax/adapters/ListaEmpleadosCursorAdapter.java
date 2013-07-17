@@ -68,7 +68,7 @@ public class ListaEmpleadosCursorAdapter{
 		View mView = null;
 		TextView tv = null;
 
-		int idEmpleado = 0;
+		String idEmpleado = null;
 
 		View mTableRow = null;
 
@@ -84,7 +84,7 @@ public class ListaEmpleadosCursorAdapter{
 				nombreCol = cursor.getColumnIndex(columna);
 				nombre = cursor.getString(nombreCol);
 
-				idEmpleado = cursor.getInt(cursor.getColumnIndex(Empleado.ID));
+				idEmpleado = cursor.getString(cursor.getColumnIndex(Empleado.ID));
 
 				mView = (View) mTableRow.findViewById(to[i]);
 

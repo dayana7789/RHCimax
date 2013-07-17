@@ -18,7 +18,7 @@ public interface UsuarioDAO {
 	 *                      dejar que el sisteme cree el id.
 	 * @return Id del usuario ingresado o -1 en caso de error.
 	 */
-    long insertarUsuario(Context context, Usuario usuario, boolean autoincrement);
+	String insertarUsuario(Context context, Usuario usuario);
     void modificarUsuario(Context context, Usuario usuario);
     Cursor listarUsuarios(Context context);
     

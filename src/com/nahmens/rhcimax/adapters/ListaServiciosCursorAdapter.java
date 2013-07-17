@@ -41,17 +41,17 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	private int layout;
 	private String[] from;
 	private int[] to;
-	private static HashMap<Integer, Tripleta> status; //Almacena los checkboxes que fueron seleccionados <idServicio, Tripleta(booleano, medida, descripcion, precio, inicial)>
+	private static HashMap<String, Tripleta> status; //Almacena los checkboxes que fueron seleccionados <idServicio, Tripleta(booleano, medida, descripcion, precio, inicial)>
 	private Button bFinalizar; //referencia al boton finalizar
 	private TableLayout tlListServicios;
 	private Context contexto;
 
-	public static HashMap<Integer,Tripleta> getServiciosSeleccionados(){
+	public static HashMap<String,Tripleta> getServiciosSeleccionados(){
 		return status;
 	}
 
 
-	public static void setServiciosSeleccionados( HashMap<Integer,Tripleta> nuevo){
+	public static void setServiciosSeleccionados( HashMap<String,Tripleta> nuevo){
 		status = nuevo;
 	}
 
@@ -81,12 +81,12 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	private void inicializarServiciosSeleccionados(Cursor c) {
 		//se esta llamando a la lista de servicios por primera vez
 		if(getServiciosSeleccionados() == null){
-			setServiciosSeleccionados(new HashMap<Integer, Tripleta>());
+			setServiciosSeleccionados(new HashMap<String, Tripleta>());
 
 			//Inicializamos la tabla status con idServicio y false, pues no se ha 
 			//seleccionado ningun checkbox
 			while (!c.isAfterLast()) {
-				int idServicio = c.getInt(c.getColumnIndex(Servicio.ID));
+				String idServicio = c.getString(c.getColumnIndex(Servicio.ID));
 				getServiciosSeleccionados().put(idServicio, new Tripleta(false, "", "",0,0));
 				c.moveToNext();
 			}
@@ -116,7 +116,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		//Para cada valor de la BD solicitado, lo mostramos en el text view.
 		while(!cursor.isAfterLast()){
 
-			int idServicio = cursor.getInt(cursor.getColumnIndex(Servicio.ID));
+			String idServicio = cursor.getString(cursor.getColumnIndex(Servicio.ID));
 			String nombreServicio = cursor.getString(cursor.getColumnIndex(Servicio.NOMBRE));
 
 			//obtenemos la referencia a la fila descrita en activity_fila_servicio.xml
@@ -171,7 +171,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 			mArgumentos.putString("descripcion", descripcion);
 			mArgumentos.putString("unidadMedicion", unidadMedicion);
 			mArgumentos.putDouble("inicial", inicial);
-			mArgumentos.putInt("idServicio", idServicio);
+			mArgumentos.putString("idServicio", idServicio);
 	
 			final CompoundButton cbutton = cb;
 			
@@ -187,7 +187,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 			//Creamos un listener para actualizar la lista de checkboxes seleccionados
 			cb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getInt("idServicio"));
+					Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getString("idServicio"));
 					
 					
 					if(isChecked){
@@ -202,15 +202,15 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 					String medida = tripleta.getMedida();
 					String descripcion = tripleta.getDescripcion();
 					
-					getServiciosSeleccionados().remove(mArgumentos.getInt("idServicio"));
-					getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Tripleta(isChecked, medida, descripcion,mArgumentos.getDouble("precio"),mArgumentos.getDouble("inicial")));
+					getServiciosSeleccionados().remove(mArgumentos.getString("idServicio"));
+					getServiciosSeleccionados().put(mArgumentos.getString("idServicio"), new Tripleta(isChecked, medida, descripcion,mArgumentos.getDouble("precio"),mArgumentos.getDouble("inicial")));
 
 					boolean flagServicio = false;
 					boolean flagCorreo = false;
 					
 					tripleta = null;
 
-					for (Map.Entry<Integer, Tripleta> entry : getServiciosSeleccionados().entrySet()) {
+					for (Map.Entry<String, Tripleta> entry : getServiciosSeleccionados().entrySet()) {
 						tripleta = entry.getValue();
 						//si tengo algun servicio seleccionado..
 						if( tripleta.getBooleano() == true){
@@ -218,7 +218,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 						}
 					}
 
-					for (Map.Entry<Integer, Boolean> entry : ListaCorreosCursorAdapter.getCorreosSeleccionados().entrySet()) {
+					for (Map.Entry<String, Boolean> entry : ListaCorreosCursorAdapter.getCorreosSeleccionados().entrySet()) {
 						//si tengo algun correo seleccionado..
 						if( entry.getValue() == true){
 							flagCorreo = true;
@@ -257,7 +257,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 
 
 	private void borrarMedida(CompoundButton buttonView, Bundle mArgumentos, View mView) {
-		Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getInt("idServicio"));
+		Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getString("idServicio"));
 		
 		boolean checked = false;
 		String medida = "";
@@ -265,8 +265,8 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 		double precio = mArgumentos.getDouble("precio");
 		double inicial = mArgumentos.getDouble("inicial");
 
-		getServiciosSeleccionados().remove(mArgumentos.getInt("idServicio"));
-		getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Tripleta(checked, medida, descripcion, precio, inicial));
+		getServiciosSeleccionados().remove(mArgumentos.getString("idServicio"));
+		getServiciosSeleccionados().put(mArgumentos.getString("idServicio"), new Tripleta(checked, medida, descripcion, precio, inicial));
 
 		buttonView.setChecked(checked);
 		visibilidadDatosMedida(false,mView,null,null);
@@ -334,7 +334,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	 */
 	private void asignarMedida(final CompoundButton buttonView, final Bundle mArgumentos, final View mView) {
 
-		final Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getInt("idServicio"));
+		final Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getString("idServicio"));
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(contexto);
 		builder.setTitle("Asignar cantidad: " + mArgumentos.getString("nombre"));
@@ -364,8 +364,8 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 				double precio = mArgumentos.getDouble("precio");
 				double inicial = mArgumentos.getDouble("inicial");
 
-				getServiciosSeleccionados().remove(mArgumentos.getInt("idServicio"));
-				getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Tripleta(checked, medida, descripcion, precio, inicial));
+				getServiciosSeleccionados().remove(mArgumentos.getString("idServicio"));
+				getServiciosSeleccionados().put(mArgumentos.getString("idServicio"), new Tripleta(checked, medida, descripcion, precio, inicial));
 				
 				buttonView.setChecked(checked);
 				visibilidadDatosMedida(checked,mView, medida, mArgumentos.getString("unidadMedicion"));
@@ -388,8 +388,8 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 				double precio = mArgumentos.getDouble("precio");
 				double inicial = mArgumentos.getDouble("inicial");
 
-				getServiciosSeleccionados().remove(mArgumentos.getInt("idServicio"));
-				getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Tripleta(checked, medida, descripcion, precio, inicial));
+				getServiciosSeleccionados().remove(mArgumentos.getString("idServicio"));
+				getServiciosSeleccionados().put(mArgumentos.getString("idServicio"), new Tripleta(checked, medida, descripcion, precio, inicial));
 				
 				buttonView.setChecked(checked);
 				visibilidadDatosMedida(checked,mView, medida, mArgumentos.getString("unidadMedicion"));
@@ -408,7 +408,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	 */
 	private void modificarDescripcion(final Bundle mArgumentos) {
 		
-		final Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getInt("idServicio"));
+		final Tripleta tripleta = getServiciosSeleccionados().get(mArgumentos.getString("idServicio"));
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(contexto);
 		builder.setTitle("Descripción servicio: " + mArgumentos.getString("nombre"));
@@ -431,8 +431,8 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 				double precio =  mArgumentos.getDouble("precio");
 				double inicial =  mArgumentos.getDouble("inicial");
 
-				getServiciosSeleccionados().remove(mArgumentos.getInt("idServicio"));
-				getServiciosSeleccionados().put(mArgumentos.getInt("idServicio"), new Tripleta(checked, medida, descripcion, precio, inicial));
+				getServiciosSeleccionados().remove(mArgumentos.getString("idServicio"));
+				getServiciosSeleccionados().put(mArgumentos.getString("idServicio"), new Tripleta(checked, medida, descripcion, precio, inicial));
 
 			}
 		});
@@ -454,7 +454,7 @@ public class ListaServiciosCursorAdapter extends SimpleCursorAdapter{
 	 */
 	private void verDetalle(Bundle mArgumentos) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(contexto);
-		builder.setMessage(mArgumentos.getInt("idServicio") +","+mArgumentos.getString("unidadMedicion") + ", " + mArgumentos.getString("descripcion"))
+		builder.setMessage(mArgumentos.getString("idServicio") +","+mArgumentos.getString("unidadMedicion") + ", " + mArgumentos.getString("descripcion"))
 		.setTitle(mArgumentos.getString("nombre"))
 		.setCancelable(false)
 		.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,9 +93,9 @@ public class DatosClienteActivity extends Fragment {
 					mArgumentos.putString("nombreEmpleado", empleado.getNombre() + " " + empleado.getApellido());
 
 					//Si el empleado tiene una empresa asociada, la buscamos
-					if(empleado.getIdEmpresa() != 0){
+					if(empleado.getIdEmpresa() != null){
 
-						Empresa empresa = empresaDao.buscarEmpresa(getActivity(), String.valueOf(empleado.getIdEmpresa()));
+						Empresa empresa = empresaDao.buscarEmpresa(getActivity(), empleado.getIdEmpresa());
 						llenarCamposEmpleado(view, empleado,empresa.getNombre());
 
 						// si no, mostramos el campo de empresa en blanco
@@ -369,15 +370,9 @@ public class DatosClienteActivity extends Fragment {
 	public void onClickSalvar(String id){
 		Mensaje mToast = null;
 		boolean error = false;
-		int idEmpresa = 0;
 		LayoutInflater mInflater = getActivity().getLayoutInflater();
 
-		//este try catch es para evitar errores de tipo de campo
-		try{
-			idEmpresa = Integer.parseInt(etIdEmpresa.getText().toString());
-		}catch (Exception e) {
-		}
-
+		String idEmpresa = etIdEmpresa.getText().toString();
 		String nombre = etNombre.getText().toString();
 		String apellido = etApellido.getText().toString();
 		String posicion = etPosicion.getText().toString();
@@ -415,13 +410,13 @@ public class DatosClienteActivity extends Fragment {
 
 		//Si  el nombre de la empresa no es vacio..
 		if(!nombreEmpresa.equals("") && nombreEmpresa!=null){
-			if (idEmpresa==0){
+			if (idEmpresa==null || idEmpresa.equals("")){
 				acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
 				error = true;
 			}else{
 				//Verificamos que el nombre de empresa ingresado se corresponda con alguno de la BD.
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				Empresa empresa = empresaDao.buscarEmpresa(getActivity(), String.valueOf(idEmpresa));
+				Empresa empresa = empresaDao.buscarEmpresa(getActivity(), idEmpresa);
 
 				if(!nombreEmpresa.equals(empresa.getNombre()) && empresa.getNombre() !=null){
 					acNombreEmpresa.setError(Mensaje.ERROR_EMPRESA_NO_VALIDA);
@@ -430,7 +425,7 @@ public class DatosClienteActivity extends Fragment {
 			}
 			//Si el nombre de la empresa es vacio, le asignamos idEmpresa=0
 		}else{
-			idEmpresa = 0;
+			idEmpresa = null;
 		}
 
 		/** FIN  Verificacion de errores **/
@@ -439,12 +434,12 @@ public class DatosClienteActivity extends Fragment {
 
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 
-			int idUsuario = SesionUsuario.getIdUsuario(getActivity());
+			String idUsuario = SesionUsuario.getIdUsuario(getActivity());
 
 			if(id!=null){
 				//Estamos modificando un registro
 
-				Empleado empleado = new Empleado(Integer.parseInt(id),nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, fechaModif, idUsuario);
+				Empleado empleado = new Empleado(id,nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, fechaModif, idUsuario);
 
 				Boolean modificado = empleadoDao.modificarEmpleado(getActivity(), empleado);
 
@@ -459,16 +454,16 @@ public class DatosClienteActivity extends Fragment {
 				//Estamos creando un nuevo registro
 
 				Empleado empleado = new Empleado(nombre, apellido, posicion, email, telfOficina, celular, pin, linkedin, descripcion, idEmpresa, idUsuario, idUsuario);
-				long idFilaInsertada = empleadoDao.insertarEmpleado(getActivity(), empleado);
+				String idFilaInsertada = empleadoDao.insertarEmpleado(getActivity(), empleado);
 
-				if(idFilaInsertada != -1){
+				if(!idFilaInsertada.equals("-1")){
 					mToast = new Mensaje(mInflater, getActivity(), "ok_ingreso_empleado");
 					mArgumentos = new Bundle();
-					mArgumentos.putString("id", ""+idFilaInsertada);
+					mArgumentos.putString("id", idFilaInsertada);
 					
 					//al crearse el registro guardamos en el campo oculto, el id del nuevo empleado
 					//de manera que lo podamos recuperar en el metodo onResume.
-					etIdEmpleadoHidden.setText(idFilaInsertada+"");
+					etIdEmpleadoHidden.setText(idFilaInsertada);
 					flagGuardado = true;
 
 				}else{

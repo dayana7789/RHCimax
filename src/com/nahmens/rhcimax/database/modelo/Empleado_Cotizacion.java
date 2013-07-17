@@ -5,28 +5,28 @@ public class Empleado_Cotizacion {
 	public final static String ID_COTIZACION = "idCotizacion";
 	public final static String ID_EMPLEADO = "idEmpleado";
 	
-	int idEmpleado;
-	int idCotizacion;
+	String idEmpleado;
+	String idCotizacion;
 	
-	public Empleado_Cotizacion(int idEmpleado, int idCotizacion) {
+	public Empleado_Cotizacion(String idEmpleado, String idCotizacion) {
 		super();
 		this.idEmpleado = idEmpleado;
 		this.idCotizacion = idCotizacion;
 	}
 
-	public int getIdEmpleado() {
+	public String getIdEmpleado() {
 		return idEmpleado;
 	}
 
-	public void setIdEmpleado(int idEmpleado) {
+	public void setIdEmpleado(String idEmpleado) {
 		this.idEmpleado = idEmpleado;
 	}
 
-	public int getIdCotizacion() {
+	public String getIdCotizacion() {
 		return idCotizacion;
 	}
 
-	public void setIdCotizacion(int idCotizacion) {
+	public void setIdCotizacion(String idCotizacion) {
 		this.idCotizacion = idCotizacion;
 	}
 

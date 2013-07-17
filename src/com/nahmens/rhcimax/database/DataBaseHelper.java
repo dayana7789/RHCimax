@@ -33,12 +33,12 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
 	/*Creacion de tablas*/
 	private static final String DATABASE_CREATE_ROL = "CREATE table " + TABLA_ROL + " ("
-													+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+													+"_id TEXT PRIMARY KEY NOT NULL, "
 													+ "nombre TEXT NOT NULL, "
 													+ "descripcion TEXT NOT NULL);";
 
 	private static final String DATABASE_CREATE_USUARIO = "CREATE table " + TABLA_USUARIO + " ("
-														+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+														+"_id TEXT PRIMARY KEY NOT NULL, "
 														+ "token TEXT NOT NULL, "
 														+ "login TEXT NOT NULL, "
 														+ "password TEXT NOT NULL, "
@@ -47,7 +47,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 														+ "FOREIGN KEY(idRol) REFERENCES " + TABLA_ROL + "(_id) ON DELETE CASCADE);";
 	
 	private static final String DATABASE_CREATE_PERMISO = "CREATE table " + TABLA_PERMISO + " ("
-														+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+														+"_id TEXT PRIMARY KEY NOT NULL, "
 														+ "nombre TEXT NOT NULL, "
 														+ "descripcion TEXT NOT NULL);";
 	
@@ -59,7 +59,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "FOREIGN KEY(idPermiso) REFERENCES " + TABLA_PERMISO + "(_id) ON DELETE CASCADE);";
 	
 	private static final String DATABASE_CREATE_EMPRESA = "CREATE table " + TABLA_EMPRESA + " ("
-															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+															+"_id TEXT PRIMARY KEY NOT NULL, "
 															+ "nombre TEXT NOT NULL, "
 															+ "telefono TEXT NOT NULL, "
 															+ "web TEXT, "
@@ -79,7 +79,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "FOREIGN KEY(idUsuarioModificador) REFERENCES " + TABLA_USUARIO + "(_id) ON DELETE CASCADE);";
 	
 	private static final String DATABASE_CREATE_EMPLEADO = "CREATE table " + TABLA_EMPLEADO + " ("
-															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+															+"_id TEXT PRIMARY KEY NOT NULL, "
 															+ "nombre TEXT NOT NULL, "
 															+ "apellido TEXT NOT NULL, "
 															+ "posicion TEXT NOT NULL, "
@@ -101,7 +101,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "FOREIGN KEY(idUsuarioCreador) REFERENCES " + TABLA_USUARIO + "(_id) ON DELETE CASCADE);";
 	
 	private static final String DATABASE_CREATE_COTIZACION = "CREATE table " + TABLA_COTIZACION + " ("
-															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+															+"_id TEXT PRIMARY KEY NOT NULL, "
+															+ "numCotizacion INTEGER UNIQUE , "
 															+ "fechaEnvio DATETIME DEFAULT NULL, "
 															+ "fechaLeido DATETIME DEFAULT NULL, "
 															+ "enviado INTEGER NOT NULL DEFAULT 0, "
@@ -123,7 +124,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 																	+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id) ON DELETE CASCADE);";
 	
 	private static final String DATABASE_CREATE_SERVICIO = "CREATE table " + TABLA_SERVICIO + " ("
-															+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+															+"_id TEXT PRIMARY KEY NOT NULL, "
 															+ "nombre TEXT NOT NULL, "
 															+ "precio REAL NOT NULL, "
 															+ "descripcion TEXT NOT NULL, "
@@ -144,12 +145,12 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
 	
 	private static final String DATABASE_CREATE_CONFIGURACION = "CREATE table " + TABLA_CONFIGURACION + " ("
-															  + "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+															  + "_id TEXT PRIMARY KEY NOT NULL, "
 															  + "key TEXT NOT NULL, "
 															  + "value TEXT NOT NULL);";
 	
 	private static final String DATABASE_CREATE_TAREA = "CREATE table " + TABLA_TAREA + " ("
-													  + "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+													  + "_id TEXT PRIMARY KEY NOT NULL, "
 													  + "nombre TEXT NOT NULL, "
 													  + "fecha DATE NOT NULL, "
 													  + "hora TIME NOT NULL, "
@@ -171,7 +172,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	
 	
 	private static final String DATABASE_CREATE_HISTORICO = "CREATE table " + TABLA_HISTORICO + " ("
-															+ "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+															+ "_id TEXT PRIMARY KEY NOT NULL, "
 															+ "tipoRegistro TEXT NOT NULL, "
 															+ "idCotizacion INTEGER, "
 															+ "idTarea INTEGER, "
@@ -187,7 +188,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "FOREIGN KEY(idTarea) REFERENCES " + TABLA_TAREA + "(_id) ON DELETE CASCADE);";
 	
 	private static final String DATABASE_CREATE_CHECKIN = "CREATE table " + TABLA_CHECKIN + " ("
-														+"_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+														+"_id TEXT PRIMARY KEY NOT NULL, "
 														+ "checkin DATETIME, "
 														+ "latitud REAL, "
 														+ "longitud REAL, "
@@ -223,7 +224,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	}
 
 	private void insertarConfiguracion(SQLiteDatabase database) {
-		String insertServer = "INSERT INTO "+ TABLA_CONFIGURACION + "("+Configuracion.KEY+", " + Configuracion.VALUE + ") VALUES('"+Configuracion.NOMBRE_SERVIDOR+"','')";
+		String insertServer = "INSERT INTO "+ TABLA_CONFIGURACION + "("+ Configuracion.ID + ", "+Configuracion.KEY+", " + Configuracion.VALUE + ") VALUES('1','"+Configuracion.NOMBRE_SERVIDOR+"','')";
 		database.execSQL(insertServer);
 	}
 
@@ -255,37 +256,37 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	 */
 	private void insertarRegistros(SQLiteDatabase database){
 		
-/*id:1*/String insertRol1 = "INSERT INTO "+ TABLA_ROL + "(nombre, descripcion) VALUES('Administrador','Tiene acceso a la lista de todos los clientes de RHCimax y a las acciones de eliminar y modificar.')";
-/*id:2*/String insertRol2 = "INSERT INTO "+ TABLA_ROL + "(nombre, descripcion) VALUES('Usuario Avanzado','Tiene acceso a la lista de todos los clientes de RHCimax y a la accion de modificar.')";
-/*id:3*/String insertRol3 = "INSERT INTO "+ TABLA_ROL + "(nombre, descripcion) VALUES('Usuario','Tiene acceso solo a la lista de clientes de RHCimax ingresador por el y a la accion de modificar.')";
+/*id:1*/String insertRol1 = "INSERT INTO "+ TABLA_ROL + "(_id,nombre, descripcion) VALUES('1','Administrador','Tiene acceso a la lista de todos los clientes de RHCimax y a las acciones de eliminar y modificar.')";
+/*id:2*/String insertRol2 = "INSERT INTO "+ TABLA_ROL + "(_id,nombre, descripcion) VALUES('2','Usuario Avanzado','Tiene acceso a la lista de todos los clientes de RHCimax y a la accion de modificar.')";
+/*id:3*/String insertRol3 = "INSERT INTO "+ TABLA_ROL + "(_id,nombre, descripcion) VALUES('3','Usuario','Tiene acceso solo a la lista de clientes de RHCimax ingresador por el y a la accion de modificar.')";
 		
-/*id:1*/String insertPermiso1 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('ListarTodo','Se permite el acceso a todas las listas')";
-/*id:2*/String insertPermiso2 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('ListarPropios','Se permite el acceso a la lista de registros que pertenecen a este usuario.')";
+/*id:1*/String insertPermiso1 =  "INSERT INTO "+ TABLA_PERMISO + "(_id,nombre, descripcion) VALUES('1','ListarTodo','Se permite el acceso a todas las listas')";
+/*id:2*/String insertPermiso2 =  "INSERT INTO "+ TABLA_PERMISO + "(_id,nombre, descripcion) VALUES('2','ListarPropios','Se permite el acceso a la lista de registros que pertenecen a este usuario.')";
 
-/*id:3*/String insertPermiso3 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('ModificarTodo','Se permite el acceso a la acción modificar de todo.')";
-/*id:4*/String insertPermiso4 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('ModificarPropios','Se permite el acceso a la acción modificar de los registros que son propios del usuario.')";
+/*id:3*/String insertPermiso3 =  "INSERT INTO "+ TABLA_PERMISO + "(_id,nombre, descripcion) VALUES('3','ModificarTodo','Se permite el acceso a la acción modificar de todo.')";
+/*id:4*/String insertPermiso4 =  "INSERT INTO "+ TABLA_PERMISO + "(_id,nombre, descripcion) VALUES('4','ModificarPropios','Se permite el acceso a la acción modificar de los registros que son propios del usuario.')";
 
-/*id:5*/String insertPermiso5 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('EliminarTodo','Se permite el acceso a la acción eliminar.')";
-/*id:6*/String insertPermiso6 =  "INSERT INTO "+ TABLA_PERMISO + "(nombre, descripcion) VALUES('EliminarPropios','Se permite el acceso a la acción eliminar de los registros que son propios del usuario.')";
+/*id:5*/String insertPermiso5 =  "INSERT INTO "+ TABLA_PERMISO + "(_id,nombre, descripcion) VALUES('5','EliminarTodo','Se permite el acceso a la acción eliminar.')";
+/*id:6*/String insertPermiso6 =  "INSERT INTO "+ TABLA_PERMISO + "(_id,nombre, descripcion) VALUES('6','EliminarPropios','Se permite el acceso a la acción eliminar de los registros que son propios del usuario.')";
 
-		String usuario = "INSERT INTO "+ TABLA_USUARIO + "(idRol,login, password, correo, token) VALUES(1,'administrador','1234','NONE','11aa22bb33cc')";
-		String usuario2 = "INSERT INTO "+ TABLA_USUARIO + "(idRol,login, password, correo, token) VALUES(2,'usuario avanzado','1234','NONE','11aa22bb33cc')";
-		String usuario3 = "INSERT INTO "+ TABLA_USUARIO + "(idRol,login, password, correo, token) VALUES(3,'usuario','1234','NONE','11aa22bb33cc')";
+		String usuario = "INSERT INTO "+ TABLA_USUARIO + "(_id,idRol,login, password, correo, token) VALUES('1','1','administrador','1234','NONE','11aa22bb33cc')";
+		String usuario2 = "INSERT INTO "+ TABLA_USUARIO + "(_id,idRol,login, password, correo, token) VALUES('2','2','usuario avanzado','1234','NONE','11aa22bb33cc')";
+		String usuario3 = "INSERT INTO "+ TABLA_USUARIO + "(_id,idRol,login, password, correo, token) VALUES('3','3','usuario','1234','NONE','11aa22bb33cc')";
 
 		/*Rol administrador tiene todos los permisos generales*/
-		String rolPer =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(1,1)";
-		String rolPer2 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(1,3)";
-		String rolPer3 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(1,5)";
+		String rolPer =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('1','1')";
+		String rolPer2 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('1','3')";
+		String rolPer3 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('1','5')";
 		
 		/*Rol Usuario Avanzado tiene todos los permisos excepto eliminar y listar todo. Puede modificar todo.*/
-		String rolPer4 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(2,2)";
-		String rolPer5 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(2,3)";
-		String rolPer6 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(2,6)";
+		String rolPer4 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('2','2')";
+		String rolPer5 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('2','3')";
+		String rolPer6 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('2','6')";
 		
 		/*Rol usuario tiene todos los permisos excepto eliminar y listar todo. Puede modificar solo sus propios registros.*/
-		String rolPer7 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(3,2)";
-		String rolPer8 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(3,4)";
-		String rolPer9 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES(3,6)";
+		String rolPer7 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('3','2')";
+		String rolPer8 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('3','4')";
+		String rolPer9 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('3','6')";
 
 		database.execSQL(insertRol1);
 		database.execSQL(insertRol2);
@@ -310,16 +311,16 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL(rolPer8);
 		database.execSQL(rolPer9);
 		
-		String serv1 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Reclutamiento',0,5000,'persona','Reclutamiento:  Es un servicio para reclutar personal.','Activo')";
-		String serv2 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Merchandiser',300,0,'horas', 'Merchandiser: Es un servicio para Merchandiser.','Activo')";
-		String serv3 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Laptop Apple',0,20000,'ninguno', 'Laptop Apple: Laptop marque Apple 13.','Activo')";
-		String serv4 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Mantenimiento y limpieza',800,0,'dias', 'Mantenimiento y limpieza: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
-		String serv5 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Canal Makro comercializadora de bienes y servicios',300,0,'semanas', 'Canal Makro comercializadora: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
-		String serv6 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Canales',0,40,'persona', 'Canales: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
-		String serv7 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('Comercio',300,0,'horas', 'Comercio: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
-		String serv8 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('servicios',300,100,'ninguno', 'servicios: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
-		String serv9 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('industria',300,0,'dias', 'industria: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
-		String serv10 =  "INSERT INTO "+ TABLA_SERVICIO + "(nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('nose fuego',300,0,'ninguno', 'nose fuego: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
+		String serv1 =  "INSERT INTO "+ TABLA_SERVICIO + "(_id,nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('1','Reclutamiento',0,5000,'persona','Reclutamiento:  Es un servicio para reclutar personal.','Activo')";
+		String serv2 =  "INSERT INTO "+ TABLA_SERVICIO + "(_id,nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('2','Merchandiser',300,0,'horas', 'Merchandiser: Es un servicio para Merchandiser.','Activo')";
+		String serv3 =  "INSERT INTO "+ TABLA_SERVICIO + "(_id,nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('3','Laptop Apple',0,20000,'ninguno', 'Laptop Apple: Laptop marque Apple 13.','Activo')";
+		String serv4 =  "INSERT INTO "+ TABLA_SERVICIO + "(_id,nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('4','Mantenimiento y limpieza',800,0,'dias', 'Mantenimiento y limpieza: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
+		String serv5 =  "INSERT INTO "+ TABLA_SERVICIO + "(_id,nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('5','Canal Makro comercializadora de bienes y servicios',300,0,'semanas', 'Canal Makro comercializadora: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
+		String serv6 =  "INSERT INTO "+ TABLA_SERVICIO + "(_id,nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('6','Canales',0,40,'persona', 'Canales: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
+		String serv7 =  "INSERT INTO "+ TABLA_SERVICIO + "(_id,nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('7','Comercio',300,0,'horas', 'Comercio: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
+		String serv8 =  "INSERT INTO "+ TABLA_SERVICIO + "(_id,nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('8','servicios',300,100,'ninguno', 'servicios: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
+		String serv9 =  "INSERT INTO "+ TABLA_SERVICIO + "(_id,nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('9','industria',300,0,'dias', 'industria: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
+		String serv10 =  "INSERT INTO "+ TABLA_SERVICIO + "(_id,nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('10','nose fuego',300,0,'ninguno', 'nose fuego: El nivel microestructural o local está asociado con el concepto de cohesión. Se refiere a uno de los fenómenos propios de la coherencia, el de las relaciones particulares y locales que se dan entre elementos lingüísticos, tanto los que remiten unos a otros como los que tienen la función de conectar y organizar.','Activo')";
 		
 		database.execSQL(serv1);
 		database.execSQL(serv2);

@@ -35,15 +35,15 @@ public class ListaCorreosCursorAdapter{
 	private String[] from;
 	private int[] to;
 	private String idEmpleado;
-	private static HashMap<Integer, Boolean> correosSeleccionados; //Almacena los checkboxes que fueron seleccionados <idEmpleado, booleano>
+	private static HashMap<String, Boolean> correosSeleccionados; //Almacena los checkboxes que fueron seleccionados <idEmpleado, booleano>
 	private Button bFinalizar; //referencia al boton finalizar
 	private TableLayout tlListCorreos;
 
-	public static HashMap<Integer,Boolean> getCorreosSeleccionados(){
+	public static HashMap<String,Boolean> getCorreosSeleccionados(){
 		return correosSeleccionados;
 	}
 
-	public static void setCorreosSeleccionados( HashMap<Integer,Boolean> nuevo){
+	public static void setCorreosSeleccionados( HashMap<String,Boolean> nuevo){
 		correosSeleccionados = nuevo;
 	}
 
@@ -71,10 +71,10 @@ public class ListaCorreosCursorAdapter{
 	private void inicializarCorreosSeleccionados(Cursor c) {
 		//se esta llamando a la lista de servicios por primera vez
 		if(getCorreosSeleccionados() == null){
-			setCorreosSeleccionados(new HashMap<Integer, Boolean>());
+			setCorreosSeleccionados(new HashMap<String, Boolean>());
 
 			while (!c.isAfterLast()) {
-				int idEmpleadoNuevo = c.getInt(c.getColumnIndex(Empleado.ID));
+				String idEmpleadoNuevo = c.getString(c.getColumnIndex(Empleado.ID));
 
 				//Si se nos indica el idEmpleado, quiere decir que solo el correo
 				//de esta persona sera checkeado por default
@@ -120,7 +120,7 @@ public class ListaCorreosCursorAdapter{
 		TextView tv = null;
 		CheckBox cb = null;
 
-		int idEmpleadoNuevo = 0;
+		String idEmpleadoNuevo = null;
 		boolean chequeado = false;
 
 		View mTableRow = null;
@@ -137,7 +137,7 @@ public class ListaCorreosCursorAdapter{
 				nombreCol = cursor.getColumnIndex(columna);
 				nombre = cursor.getString(nombreCol);
 
-				idEmpleadoNuevo = cursor.getInt(cursor.getColumnIndex(Empleado.ID));
+				idEmpleadoNuevo = cursor.getString(cursor.getColumnIndex(Empleado.ID));
 
 				mView = (View) mTableRow.findViewById(to[i]);
 //Log.e("correos",""+getCorreosSeleccionados().toString());
@@ -148,7 +148,7 @@ public class ListaCorreosCursorAdapter{
 					cb.setChecked(chequeado);
 
 					final Bundle mArgumentos = new Bundle();
-					mArgumentos.putInt("idEmpleado", idEmpleadoNuevo);
+					mArgumentos.putString("idEmpleado", idEmpleadoNuevo);
 
 					cb.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 						public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -182,14 +182,14 @@ public class ListaCorreosCursorAdapter{
 	 * @param isChecked
 	 */
 	protected void mOnCheckedChanged(Bundle mArgumentos, boolean isChecked) {
-		getCorreosSeleccionados().remove(mArgumentos.getInt("idEmpleado"));
-		getCorreosSeleccionados().put(mArgumentos.getInt("idEmpleado"), isChecked);
+		getCorreosSeleccionados().remove(mArgumentos.getString("idEmpleado"));
+		getCorreosSeleccionados().put(mArgumentos.getString("idEmpleado"), isChecked);
 
 		boolean flagServicio = false;
 		boolean flagCorreo = false;
 		Tripleta par = null;
 
-		for (Map.Entry<Integer, Tripleta> entry : ListaServiciosCursorAdapter.getServiciosSeleccionados().entrySet()) {
+		for (Map.Entry<String, Tripleta> entry : ListaServiciosCursorAdapter.getServiciosSeleccionados().entrySet()) {
 			par = entry.getValue();
 			//si tengo algun servicio seleccionado..
 			if( par.getBooleano() == true){
@@ -197,7 +197,7 @@ public class ListaCorreosCursorAdapter{
 			}
 		}
 
-		for (Map.Entry<Integer, Boolean> entry : getCorreosSeleccionados().entrySet()) {
+		for (Map.Entry<String, Boolean> entry : getCorreosSeleccionados().entrySet()) {
 			//si tengo algun correo seleccionado..
 			if( entry.getValue() == true){
 				flagCorreo = true;

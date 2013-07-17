@@ -12,18 +12,20 @@ public class Cotizacion {
 	public final static String FECHA_CREACION = "fechaCreacion";
 	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	public final static String FECHA_MODIFICACION = "fechaModificacion";
+	public final static String NUM_COTIZACION = "numCotizacion";
 	
-	int id;
+	String id;
 	String fechaEnvio;
 	String fechaLeido;
 	int enviado;
 	int recibido;
-	int idUsuario;
-	int idEmpresa;
+	String idUsuario;
+	String idEmpresa;
 	String descripcion;
+	int numCotizacion;
 	
 	public Cotizacion(String fechaEnvio, String fechaLeido,
-			int enviado, int recibido, int idUsuario, int idEmpresa,
+			int enviado, int recibido, String idUsuario, String idEmpresa,
 			String descripcion) {
 		this.fechaEnvio = fechaEnvio;
 		this.fechaLeido = fechaLeido;
@@ -34,11 +36,11 @@ public class Cotizacion {
 		this.descripcion = descripcion;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -74,19 +76,19 @@ public class Cotizacion {
 		this.recibido = recibido;
 	}
 
-	public int getIdUsuario() {
+	public String getIdUsuario() {
 		return idUsuario;
 	}
 
-	public void setIdUsuario(int idUsuario) {
+	public void setIdUsuario(String idUsuario) {
 		this.idUsuario = idUsuario;
 	}
 
-	public int getIdEmpresa() {
+	public String getIdEmpresa() {
 		return idEmpresa;
 	}
 
-	public void setIdEmpresa(int idEmpresa) {
+	public void setIdEmpresa(String idEmpresa) {
 		this.idEmpresa = idEmpresa;
 	}
 
@@ -97,5 +99,15 @@ public class Cotizacion {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+
+	public int getNumCotizacion() {
+		return numCotizacion;
+	}
+
+	public void setNumCotizacion(int numCotizacion) {
+		this.numCotizacion = numCotizacion;
+	}
+	
+	
 	
 }

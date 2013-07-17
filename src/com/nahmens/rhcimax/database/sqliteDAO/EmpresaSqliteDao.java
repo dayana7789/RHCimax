@@ -13,20 +13,23 @@ import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
+import com.nahmens.rhcimax.utils.Formato;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class EmpresaSqliteDao implements EmpresaDAO{
 
 	@Override
-	public long insertarEmpresa(Context contexto, Empresa empresa) {
+	public String insertarEmpresa(Context contexto, Empresa empresa) {
 		ConexionBD conexion = new ConexionBD(contexto);
-		long idFila = 0;
+		long value = -1;
+		String idFila = new Formato().getNumeroAleatorio();
 
 		try{
 			conexion.open();
 
 			ContentValues values = new ContentValues();
 
+			values.put(Empresa.ID,idFila);
 			values.put(Empresa.NOMBRE,empresa.getNombre());
 			values.put(Empresa.TELEFONO,empresa.getTelefono());
 			values.put(Empresa.WEB, empresa.getWeb());
@@ -36,7 +39,11 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			values.put(Empresa.ID_USUARIO_CREADOR,empresa.getIdUsuarioCreador());
 			values.put(Empresa.ID_USUARIO_MODIFICADOR,empresa.getIdUsuarioModificador());
 
-			idFila = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPRESA, null,values);
+			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPRESA, null,values);
+			
+			if(value==-1){
+				idFila = value+"";
+			}
 
 		}finally{
 			conexion.close();
@@ -52,8 +59,6 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 		try{
 			conexion.open();
-			
-			String fechaSync= null;
 
 			ContentValues values = new ContentValues();
 			
@@ -70,7 +75,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			values.put(Empresa.MODIFICADO, 1);
 
 
-			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPRESA, values, "_id=?", new String []{Integer.toString(empresa.getId())});
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPRESA, values, "_id=?", new String []{empresa.getId()});
 
 			if(value!=0){
 				modificado = true;
@@ -111,8 +116,8 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 				mEmpleados.moveToFirst();
 				boolean elim = false;
 				while(!mEmpleados.isAfterLast()){
-					int idEmpleado = mEmpleados.getInt(mEmpleados.getColumnIndex(Empleado.ID));
-					elim = empleadoDao.eliminarEmpleado(contexto, ""+idEmpleado);
+					String idEmpleado = mEmpleados.getString(mEmpleados.getColumnIndex(Empleado.ID));
+					elim = empleadoDao.eliminarEmpleado(contexto, idEmpleado);
 					eliminado = eliminado || elim;
 
 					mEmpleados.moveToNext();
@@ -127,8 +132,8 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 				mTareas.moveToFirst();
 				boolean elim = false;
 				while(!mTareas.isAfterLast()){
-					int idTarea = mTareas.getInt(mTareas.getColumnIndex(Tarea.ID));
-					elim = tareaDao.eliminarTarea(contexto, ""+idTarea);
+					String idTarea = mTareas.getString(mTareas.getColumnIndex(Tarea.ID));
+					elim = tareaDao.eliminarTarea(contexto, idTarea);
 					eliminado = eliminado || elim;
 					mTareas.moveToNext();
 				}
@@ -161,7 +166,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
 
-				empresa = new Empresa(  mCursor.getInt(mCursor.getColumnIndex(Empresa.ID)),
+				empresa = new Empresa(  mCursor.getString(mCursor.getColumnIndex(Empresa.ID)),
 						mCursor.getString(mCursor.getColumnIndex(Empresa.NOMBRE)), 
 						mCursor.getString(mCursor.getColumnIndex(Empresa.TELEFONO)), 
 						mCursor.getString(mCursor.getColumnIndex(Empresa.RIF)), 
@@ -171,9 +176,9 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 						mCursor.getDouble(mCursor.getColumnIndex(Empresa.LATITUD)),
 						mCursor.getDouble(mCursor.getColumnIndex(Empresa.LONGITUD)),
 						mCursor.getString(mCursor.getColumnIndex(Empresa.FECHA_CREACION)),
-						mCursor.getInt(mCursor.getColumnIndex(Empresa.ID_USUARIO_CREADOR)),
+						mCursor.getString(mCursor.getColumnIndex(Empresa.ID_USUARIO_CREADOR)),
 						mCursor.getString(mCursor.getColumnIndex(Empresa.FECHA_MODIFICACION)),
-						mCursor.getInt(mCursor.getColumnIndex(Empresa.ID_USUARIO_MODIFICADOR)),
+						mCursor.getString(mCursor.getColumnIndex(Empresa.ID_USUARIO_MODIFICADOR)),
 						mCursor.getString(mCursor.getColumnIndex(Empresa.FECHA_SINCRONIZACION)),
 						mCursor.getInt(mCursor.getColumnIndex(Empresa.MODIFICADO)));
 			}
