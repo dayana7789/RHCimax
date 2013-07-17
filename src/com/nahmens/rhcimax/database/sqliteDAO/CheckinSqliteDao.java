@@ -35,7 +35,7 @@ public class CheckinSqliteDao implements CheckinDAO{
 			values.put(Checkin.CHECKOUT, checkin.getCheckout());
 			values.put(Checkin.ID_USUARIO, checkin.getIdUsuario());
 
-			long value = conexion.getDatabase().insert(DataBaseHelper.TABLA_CHECKIN, null,values);
+			long value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_CHECKIN, null,values);
 
 			if(value==-1){
 				idFila = ""+value;

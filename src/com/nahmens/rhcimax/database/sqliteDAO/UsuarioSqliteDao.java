@@ -41,7 +41,7 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 			values.put(Usuario.ID_ROL,usuario.getIdRol());
 			values.put(Usuario.TOKEN,usuario.getToken());
 
-			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_USUARIO, null,values);
+			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_USUARIO, null,values);
 			
 			if(value==-1){
 				idFila = ""+value;

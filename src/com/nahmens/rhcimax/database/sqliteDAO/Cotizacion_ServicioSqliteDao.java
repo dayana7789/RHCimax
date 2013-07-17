@@ -30,7 +30,7 @@ public class Cotizacion_ServicioSqliteDao implements Cotizacion_ServicioDAO{
 			values.put(Cotizacion_Servicio.INICIAL, cot_serv.getInicial());
 			values.put(Cotizacion_Servicio.DESCRIPCION, cot_serv.getDescripcion());
 
-			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_COTIZACION_SERVICIO, null,values);
+			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_COTIZACION_SERVICIO, null,values);
 
 
 		}finally{

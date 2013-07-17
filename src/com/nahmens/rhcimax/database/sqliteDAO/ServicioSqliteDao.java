@@ -39,7 +39,7 @@ public class ServicioSqliteDao implements ServicioDAO{
 			values.put(Servicio.UNIDAD_MEDICION,servicio.getUnidadMedicion());
 			values.put(Servicio.INICIAL,servicio.getInicial());
 
-			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_SERVICIO, null,values);
+			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_SERVICIO, null,values);
 			
 			if(value==-1){
 				idFila = ""+value;

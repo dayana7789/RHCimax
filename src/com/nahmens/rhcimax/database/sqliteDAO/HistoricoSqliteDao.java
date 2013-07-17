@@ -78,7 +78,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 			values.put(Historico.ID_CHECKIN, historico.getIdCheckin());
 			values.put(Historico.ID_USUARIO_CREADOR, historico.getIdUsuarioCreador());
 
-			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_HISTORICO, null,values);
+			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_HISTORICO, null,values);
 			
 			if(value==-1){
 				idFila = value + "";

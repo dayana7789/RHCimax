@@ -53,7 +53,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			values.put(Empleado.ID_USUARIO_CREADOR, empleado.getIdUsuarioCreador());
 			values.put(Empleado.ID_USUARIO_MODIFICADOR,empleado.getIdUsuarioModificador());
 
-			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPLEADO, null,values);
+			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_EMPLEADO, null,values);
 			
 			if(value==-1){
 				idFila= ""+value;

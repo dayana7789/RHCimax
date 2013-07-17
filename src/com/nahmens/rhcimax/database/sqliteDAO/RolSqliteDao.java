@@ -34,7 +34,7 @@ public class RolSqliteDao implements RolDAO {
 			values.put(Rol.NOMBRE, rol.getNombre());
 			values.put(Rol.DESCRIPCION, rol.getDescripcion());
 
-			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_ROL, null,values);
+			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_ROL, null,values);
 			
 			if(value==-1){
 				idFila = ""+value;

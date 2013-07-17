@@ -61,7 +61,7 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.ID_EMPLEADO,tarea.getIdEmpleado());
 			values.put(Tarea.ID_EMPRESA,tarea.getIdEmpresa());
 
-			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_TAREA, null,values);
+			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_TAREA, null,values);
 			
 			if(value==-1){
 				idFila = ""+value;

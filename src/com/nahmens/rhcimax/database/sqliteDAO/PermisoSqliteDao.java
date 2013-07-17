@@ -40,7 +40,7 @@ public class PermisoSqliteDao implements PermisoDAO{
 			values.put(Permiso.NOMBRE, permiso.getNombre());
 			values.put(Permiso.DESCRIPCION, permiso.getDescripcion());
 
-			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_PERMISO, null,values);
+			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_PERMISO, null,values);
 			
 			if(value==-1){
 				idFila = ""+value;

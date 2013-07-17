@@ -45,7 +45,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			values.put(Empresa.ID_USUARIO_CREADOR,empresa.getIdUsuarioCreador());
 			values.put(Empresa.ID_USUARIO_MODIFICADOR,empresa.getIdUsuarioModificador());
 
-			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPRESA, null,values);
+			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_EMPRESA, null,values);
 			
 			if(value==-1){
 				idFila = value+"";

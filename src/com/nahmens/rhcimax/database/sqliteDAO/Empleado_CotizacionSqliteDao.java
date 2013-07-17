@@ -25,7 +25,7 @@ public class Empleado_CotizacionSqliteDao implements Empleado_CotizacionDAO{
 			values.put(Empleado_Cotizacion.ID_COTIZACION, idCotizacion);
 			values.put(Empleado_Cotizacion.ID_EMPLEADO, idEmpleado);
 
-			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_EMPLEADO_COTIZACION, null,values);
+			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_EMPLEADO_COTIZACION, null,values);
 
 
 		}finally{

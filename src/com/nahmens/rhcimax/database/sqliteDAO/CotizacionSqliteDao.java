@@ -53,7 +53,7 @@ public class CotizacionSqliteDao implements CotizacionDAO{
 			values.put(Cotizacion.ID_EMPRESA, cotizacion.getIdEmpresa());
 			values.put(Cotizacion.NUM_COTIZACION,numCotizacion);
 			values.put(Cotizacion.DESCRIPCION, cotizacion.getDescripcion());
-			value = conexion.getDatabase().insert(DataBaseHelper.TABLA_COTIZACION, null,values);
+			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_COTIZACION, null,values);
 
 			if(value==-1){
 				idFila = ""+value;

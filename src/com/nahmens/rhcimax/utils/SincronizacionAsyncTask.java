@@ -5,6 +5,8 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -22,17 +24,23 @@ import com.nahmens.rhcimax.database.sqliteDAO.UsuarioSqliteDao;
 
 public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
-	final CharSequence TEXT_ERROR = "Ha ocurrido un error con la sincronización: ";
-	final CharSequence TEXT_OK = "Sincronización finalizada";
-	final int DURATION = Toast.LENGTH_LONG;
+	private final CharSequence TEXT_ERROR = "Ha ocurrido un error con la sincronización: ";
+	private final CharSequence TEXT_OK = "Sincronización finalizada";
+	private final int DURATION = Toast.LENGTH_LONG;
+	private final String nombreArchLog = new Formato().getNumeroAleatorio();
 
 	Context contexto;
 	Sincronizacion sync;
+	LogFile mLog;
 
+	private String obtenerTag(){
+		return "["+FormatoFecha.obtenerFechaTiempoActual()+"]: ";
+	}
 	public SincronizacionAsyncTask(Context contexto) {
 		super();
 		this.contexto = contexto;
 		this.sync = new Sincronizacion(contexto);
+		this.mLog = new LogFile(contexto, nombreArchLog);
 	}
 
 	public void getUsuarios() throws Exception{
@@ -58,7 +66,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String correo = null;
 		String idRol = null;
 		String token = null;
-		String idFila = null;
+		String idFila = "-1";
 
 		//eliminamos a todos los usuarios
 		//usuarioDao.eliminarUsuarios(contexto);
@@ -79,13 +87,9 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			try{
 				idFila = usuarioDao.insertarUsuario(contexto, usuario);
 			}catch(android.database.sqlite.SQLiteConstraintException e){
-				Log.e("entre","capturado");
-			//	e.printStackTrace();
+				mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "El usuario con id: "+ id + " no pudo ser insertado.");
 			}
 
-			if(idFila.equals("-1")){
-				throw new Exception("El usuario con id: "+ id + " no pudo ser insertado.");
-			}
 		}
 
 	}
@@ -114,7 +118,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String id = null;
 		String nombre = null;
 		String descripcion = null;
-		String idFila = null;
+		String idFila = "-1";
 
 		//eliminamos a todos los usuarios
 		//rolDao.eliminarRoles(contexto);
@@ -132,16 +136,9 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			try{
 				idFila = rolDao.insertarRol(contexto, rol);
 			}catch(android.database.sqlite.SQLiteConstraintException e){
-				Log.e("entre","capturado");
-			//	e.printStackTrace();
-			}
-
-
-			if(idFila.equals("-1")){
-				throw new Exception("El rol con id: "+ id + " no pudo ser insertado.");
+				mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "El rol con id: "+ id + " no pudo ser insertado.");
 			}
 		}
-
 	}
 
 	public void getPermisos() throws Exception{
@@ -169,7 +166,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String id = null;
 		String nombre = null;
 		String descripcion = null;
-		String idFila = null;
+		String idFila = "-1";
 
 		//eliminamos a todos los usuarios
 		//permisoDao.eliminarPermisos(contexto);
@@ -187,16 +184,9 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			try{
 				idFila = permisoDao.insertarPermiso(contexto, permiso);
 			}catch(android.database.sqlite.SQLiteConstraintException e){
-				Log.e("entre","capturado");
-			//	e.printStackTrace();
-			}
-
-
-			if(idFila.equals("-1")){
-				throw new Exception("El permiso con id: "+ id + " no pudo ser insertado.");
+				mLog.appendLog(obtenerTag() + "... " +  e.getMessage() + ": " + "El permiso con id: "+ id + " no pudo ser insertado.");
 			}
 		}
-
 	}
 
 	public void getRol_Permiso() throws Exception{
@@ -224,7 +214,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String idPermiso = null;
 		String idRol = null;
 
-		String idFila = null;
+		String idFila = "-1";
 
 		//eliminamos a todos los usuarios
 		//rol_PermisoDao.eliminarRoles_Permisos(contexto);
@@ -241,16 +231,9 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			try{
 				idFila = rol_PermisoDao.insertaRol_Permiso(contexto, rol_permiso);
 			}catch(android.database.sqlite.SQLiteConstraintException e){
-				Log.e("entre","capturado");
-		//		e.printStackTrace();
-			}
-
-
-			if(idFila.equals("-1")){
-				throw new Exception("El rol_permiso con idPermiso: "+ idPermiso + " e idRoL: " + idRol +" no pudo ser insertado.");
+				mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "El rol_permiso con idPermiso: "+ idPermiso + " e idRoL: " + idRol +" no pudo ser insertado.");
 			}
 		}
-
 	}
 
 	public void postAutenticacion() throws Exception{
@@ -295,7 +278,6 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			Toast toast = Toast.makeText(contexto, TEXT_OK,  DURATION);
 			toast.show();
 		}else{
-
 			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result, DURATION);
 			toast.show();
 		}
@@ -303,20 +285,52 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	}
 
 
+	public boolean hayInternet() {
+		ConnectivityManager connMgr = (ConnectivityManager) 
+				contexto.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+		NetworkInfo networkInfoWifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI); 
+		boolean isWifiConn = networkInfoWifi.isConnected();
+		NetworkInfo networkInfoMobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+		boolean isMobileConn = networkInfoMobile.isConnected();
+
+		mLog.appendLog(obtenerTag() + "Status de red... ");
+		mLog.appendLog(obtenerTag() + "... Wifi conectado: " + isWifiConn);
+		mLog.appendLog(obtenerTag() + "... Red de datos conectado: " + isMobileConn);
+		
+		return (networkInfo != null && networkInfo.isConnected());
+	}
+
+
+
 	protected String doInBackground(String... params) {
 
-		try {
-			this.getRoles();
-			this.getPermisos();
-			this.getRol_Permiso();
-			this.getUsuarios();
+		
+		
+		if(hayInternet()){
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			return e.toString();
+			mLog.appendLog(obtenerTag() + "Inicio de sincronización... ");
+
+			try {
+				this.getRoles();
+				this.getPermisos();
+				this.getRol_Permiso();
+				this.getUsuarios();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				return e.toString();
+			}
+
+			return "OK";
+
+		}else{
+			mLog.appendLog(obtenerTag() + " No se pudo realizar la sincronización porque no se detectan servicios de red en este momento.. ");
 		}
 
-		return "OK";
+		return "ERROR";
+
 	}
 
 }
