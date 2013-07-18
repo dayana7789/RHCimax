@@ -10,4 +10,9 @@ public interface ServicioDAO {
 	Cursor listarServicios(Context contexto);
 	Servicio buscarServicio (Context contexto, String idServicio);
 	String insertarServicio(Context context, Servicio servicio) ;
+	
+	/**
+   	 * Funcion que retorna lista de Servicio que no han sido sincronizados
+   	 */
+   	Cursor listarServicioNoSync(Context contexto);
 }

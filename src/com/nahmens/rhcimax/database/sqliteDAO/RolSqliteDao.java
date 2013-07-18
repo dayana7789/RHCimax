@@ -118,4 +118,27 @@ public class RolSqliteDao implements RolDAO {
 		return modificado;
 	}
 
+
+	@Override
+	public Cursor listarRolNoSync(Context contexto) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		try{
+
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_ROL, null , Rol.FECHA_SINCRONIZACION + "= NULL OR " + Rol.FECHA_MODIFICACION + " > " +Rol.FECHA_SINCRONIZACION ,null, null, null, null);
+
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;		
+	}
+
 }

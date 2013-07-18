@@ -4,6 +4,9 @@ public class Rol_Permiso {
 	
 	public final static String ID_ROL = "idRol";
 	public final static String ID_PERMISO = "idPermiso";
+	public final static String FECHA_CREACION = "fechaCreacion";
+	public final static String FECHA_MODIFICACION = "fechaModificacion";
+	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	
 	String idRol;
 	String idPermiso;

@@ -118,12 +118,22 @@ public class FormatoFecha {
 	}
 	
 	/**
-	 * Funcion que calcula la fecha de hoy y suma o resta segun el 
-	 * valor de cantidad.
-	 * @param cantidad Cantidad a sumar o restar a la fecha
+	 * Funcion que calcula la fecha y tiempo de hoy en formato ES
 	 * @return
 	 */
-	public static String obtenerFechaTiempoActual() {
+	public static String obtenerFechaTiempoActualEN() {
+		String myFormat = "yyyy-MM-dd HH:mm:ss"; 
+		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
+		Calendar myCalendar = Calendar.getInstance();
+
+		return sdf.format(myCalendar.getTime());
+	}
+	
+	/**
+	 * Funcion que calcula la fecha y tiempo de hoy en formato EN
+	 * @return
+	 */
+	public static String obtenerFechaTiempoActualES() {
 		String myFormat = "dd-MM-yyyy HH:mm:ss"; 
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.ENGLISH);
 		Calendar myCalendar = Calendar.getInstance();

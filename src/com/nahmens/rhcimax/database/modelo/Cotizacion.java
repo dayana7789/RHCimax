@@ -10,8 +10,8 @@ public class Cotizacion {
 	public final static String ID_EMPRESA = "idEmpresa";
 	public final static String DESCRIPCION = "descripcion";
 	public final static String FECHA_CREACION = "fechaCreacion";
-	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	public final static String FECHA_MODIFICACION = "fechaModificacion";
+	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	public final static String NUM_COTIZACION = "numCotizacion";
 	
 	String id;

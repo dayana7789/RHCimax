@@ -4,6 +4,9 @@ public class Empleado_Cotizacion {
 	
 	public final static String ID_COTIZACION = "idCotizacion";
 	public final static String ID_EMPLEADO = "idEmpleado";
+	public final static String FECHA_CREACION = "fechaCreacion";
+	public final static String FECHA_MODIFICACION = "fechaModificacion";
+	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	
 	String idEmpleado;
 	String idCotizacion;

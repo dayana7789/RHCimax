@@ -106,4 +106,26 @@ public class CheckinSqliteDao implements CheckinDAO{
 		return modificado;
 	}
 
+	@Override
+	public Cursor listarCheckinNoSync(Context contexto) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		try{
+
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_CHECKIN, null , Checkin.FECHA_SINCRONIZACION + "= NULL OR " + Checkin.FECHA_MODIFICACION + " > " +Checkin.FECHA_SINCRONIZACION ,null, null, null, null);
+
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;		
+	}
+
 }

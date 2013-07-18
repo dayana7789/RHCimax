@@ -1,6 +1,7 @@
 package com.nahmens.rhcimax.database.DAO;
 
 import android.content.Context;
+import android.database.Cursor;
 
 public interface Empleado_CotizacionDAO {
 
@@ -12,4 +13,8 @@ public interface Empleado_CotizacionDAO {
 	 * @return id de la fila insertada o -1 si algun error ocurrio.
 	 */
 	String insertar(Context contexto, String idEmpleado, String idCotizacion);
+	/**
+	 * Funcion que retorna lista de Empleado_Cotizacion que no han sido sincronizados
+	 */
+	Cursor listarEmpleado_CotizacionNoSync(Context contexto);
 }

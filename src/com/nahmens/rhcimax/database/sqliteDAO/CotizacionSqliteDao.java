@@ -111,4 +111,26 @@ public class CotizacionSqliteDao implements CotizacionDAO{
 		return sincronizado;
 	}
 
+	@Override
+	public Cursor listarCotizacionNoSync(Context contexto) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		try{
+
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_COTIZACION , null ,  Cotizacion.FECHA_SINCRONIZACION + "= NULL OR " + Cotizacion.FECHA_MODIFICACION + " > " +Cotizacion.FECHA_SINCRONIZACION ,null, null, null, null);
+
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;		
+	}
+
 }

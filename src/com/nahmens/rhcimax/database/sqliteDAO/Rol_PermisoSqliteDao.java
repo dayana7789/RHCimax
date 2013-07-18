@@ -72,4 +72,26 @@ public class Rol_PermisoSqliteDao implements Rol_PermisoDAO{
 		return existe;
 	}
 
+	@Override
+	public Cursor listarRol_PermisoNoSync(Context contexto) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		try{
+
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_ROL_PERMISO, null , Rol_Permiso.FECHA_SINCRONIZACION + "= NULL OR " + Rol_Permiso.FECHA_MODIFICACION + " > " +Rol_Permiso.FECHA_SINCRONIZACION ,null, null, null, null);
+
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;	
+	}
+
 }

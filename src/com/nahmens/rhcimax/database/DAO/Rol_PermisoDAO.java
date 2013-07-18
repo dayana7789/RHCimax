@@ -1,6 +1,7 @@
 package com.nahmens.rhcimax.database.DAO;
 
 import android.content.Context;
+import android.database.Cursor;
 
 import com.nahmens.rhcimax.database.modelo.Rol_Permiso;
 
@@ -15,4 +16,9 @@ public interface Rol_PermisoDAO {
      * @return numero de registros eliminados
      */
     int eliminarRoles_Permisos(Context context);
+    
+    /**
+   	 * Funcion que retorna lista de Rol_Permiso que no han sido sincronizados
+   	 */
+   	Cursor listarRol_PermisoNoSync(Context contexto);
 }

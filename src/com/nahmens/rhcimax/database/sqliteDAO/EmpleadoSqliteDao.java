@@ -115,6 +115,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			ContentValues values = new ContentValues();
 			values.put("status", "inactivo");
+			values.put(Empleado.FECHA_MODIFICACION, FormatoFecha.obtenerFechaTiempoActualEN());
 
 			//Actualizamos el status del empleado
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, values, "_id=?", new String []{idEmpleado});
@@ -174,7 +175,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.EMPRESA_ID + " = ? AND status='activo'", new String [] {idEmpresa}, null, null, Empleado.NOMBRE);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.EMPRESA_ID + " = ? AND empleado.status='activo'", new String [] {idEmpresa}, null, null, Empleado.NOMBRE);
 
 			if (mCursor != null) {
 				mCursor.moveToFirst();
@@ -197,7 +198,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? AND status='activo'", new String [] {idEmpleado}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? AND empleado.status='activo'", new String [] {idEmpleado}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
@@ -360,7 +361,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			sqlQuery  = " SELECT " + Empleado.ID + ", " + Empleado.NOMBRE + ", " + Empleado.APELLIDO;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
-			sqlQuery += " WHERE status='activo'"; 
+			sqlQuery += " WHERE empleado.status='activo'"; 
 			sqlQuery += " AND (" + Empleado.NOMBRE + " LIKE '%" + args + "%' ";
 			sqlQuery += " OR " + Empleado.APELLIDO + " LIKE '%" + args + "%') ";
 			sqlQuery += " ORDER BY " + Empleado.NOMBRE;
@@ -391,7 +392,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			sqlQuery  = " SELECT " + Empleado.ID + ", " + Empleado.NOMBRE + ", " + Empleado.APELLIDO;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
-			sqlQuery += " WHERE status='activo'" ;
+			sqlQuery += " WHERE empleado.status='activo'" ;
 			sqlQuery += " AND " + Empleado.EMPRESA_ID + " = " + idEmpresa;
 			sqlQuery += " AND (" + Empleado.NOMBRE + " LIKE '%" + args + "%' ";
 			sqlQuery += " OR " + Empleado.APELLIDO + " LIKE '%" + args + "%') ";
@@ -420,7 +421,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? AND status='activo'", new String [] {idEmpleado}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? AND empleado.status='activo'", new String [] {idEmpleado}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
@@ -442,7 +443,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? AND "+Empleado.ID_USUARIO_CREADOR+" = ? AND status='activo'", new String [] {idEmpleado, idUsuario}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null , Empleado.ID + " = ? AND "+Empleado.ID_USUARIO_CREADOR+" = ? AND empleado.status='activo'", new String [] {idEmpleado, idUsuario}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				esCliente = true;
@@ -453,6 +454,28 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		}
 
 		return esCliente;
+	}
+
+	@Override
+	public Cursor listarEmpleadosNoSync(Context contexto) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		try{
+
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null ,  Empleado.FECHA_SINCRONIZACION + "= NULL OR " + Empleado.FECHA_MODIFICACION + " > " +Empleado.FECHA_SINCRONIZACION ,null, null, null, null);
+
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;		
 	}
 
 }

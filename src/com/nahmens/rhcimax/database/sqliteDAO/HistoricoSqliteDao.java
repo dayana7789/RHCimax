@@ -337,6 +337,28 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 		return existeHistorico;	
 	}
 
+	@Override
+	public Cursor listarHistoricosNoSync(Context contexto) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		try{
+
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_HISTORICO, null ,  Historico.FECHA_SINCRONIZACION + "= NULL OR " + Historico.FECHA_MODIFICACION + " > " +Historico.FECHA_SINCRONIZACION ,null, null, null, null);
+
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;		
+	}
+
 
 
 }

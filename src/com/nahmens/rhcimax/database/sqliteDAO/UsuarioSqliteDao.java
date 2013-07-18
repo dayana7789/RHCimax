@@ -199,4 +199,27 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 		return numCol;		
 
 	}
+
+	@Override
+	public Cursor listarUsuarioNoSync(Context contexto) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		try{
+
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_USUARIO, null , Usuario.FECHA_SINCRONIZACION + "= NULL OR " + Usuario.FECHA_MODIFICACION + " > " +Usuario.FECHA_SINCRONIZACION ,null, null, null, null);
+
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;		
+	}
+
 }

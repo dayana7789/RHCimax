@@ -8,6 +8,9 @@ public class Checkin {
 	public final static String CHECKIN = "checkin";
 	public final static String CHECKOUT = "checkout";
 	public final static String ID_USUARIO = "idUsuario";
+	public final static String FECHA_CREACION = "fechaCreacion";
+	public final static String FECHA_MODIFICACION = "fechaModificacion";
+	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	
 	
 	String id;

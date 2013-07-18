@@ -107,6 +107,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 			ContentValues values = new ContentValues();
 			values.put("status", "inactivo");
+			values.put(Empresa.FECHA_MODIFICACION, FormatoFecha.obtenerFechaTiempoActualEN());
 			
 			//Actualizamos el status de la empresa
 			//long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_TAREA, "_id=?", new String[]{idTarea});
@@ -167,7 +168,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA , null , Empresa.ID + " = ? AND status='activo'", new String [] {id}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA , null , Empresa.ID + " = ? AND empresa.status='activo'", new String [] {id}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
@@ -198,14 +199,14 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 	}
 
 	@Override
-	public Cursor listarEmpresasSync(Context contexto) {
+	public Cursor listarEmpresasNoSync(Context contexto) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
 		try{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA , null , Empresa.FECHA_MODIFICACION + ">" + Empresa.FECHA_SINCRONIZACION,null, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA , null , Empresa.FECHA_SINCRONIZACION + "= NULL OR " + Empresa.FECHA_MODIFICACION + " > " +Empresa.FECHA_SINCRONIZACION ,null, null, null, null);
 
 
 			if (mCursor != null) {
@@ -231,7 +232,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			sqlQuery  = " SELECT " + Empresa.ID + ", " + Empresa.NOMBRE;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " WHERE " + Empresa.NOMBRE + " LIKE '%" + args + "%' ";
-			sqlQuery += " AND status='activo' ";
+			sqlQuery += " AND empresa.status='activo' ";
 			sqlQuery += " ORDER BY " + Empresa.NOMBRE;
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
@@ -259,7 +260,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			sqlQuery  = " SELECT " + Empresa.ID + ", " + Empresa.NOMBRE;
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " WHERE " + Empresa.NOMBRE + " = '" + args +"'";
-			sqlQuery += " AND status='activo' ";
+			sqlQuery += " AND empresa.status='activo' ";
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
 			
@@ -294,7 +295,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPRESA;
 			sqlQuery += " LEFT JOIN " + DataBaseHelper.TABLA_USUARIO;
 			sqlQuery += " ON (empresa.idUsuarioCreador=usuario._id)";
-			sqlQuery += " WHERE status='activo' ";
+			sqlQuery += " WHERE empresa.status='activo' ";
 			
 			
 			for(int i =0; i< palabras.length; i++){
@@ -362,7 +363,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA , null , Empleado.ID + " = ? AND "+Empresa.ID_USUARIO_CREADOR+" = ? AND status='activo'", new String [] {idEmpresa, idUsuario}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPRESA , null , Empleado.ID + " = ? AND "+Empresa.ID_USUARIO_CREADOR+" = ? AND empresa.status='activo'", new String [] {idEmpresa, idUsuario}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				esCliente = true;

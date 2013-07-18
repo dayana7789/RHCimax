@@ -8,6 +8,9 @@ public class Servicio {
 	public final static String STATUS = "status";
 	public final static String UNIDAD_MEDICION = "unidadMedicion";
 	public final static String INICIAL = "inicial";
+	public final static String FECHA_CREACION = "fechaCreacion";
+	public final static String FECHA_MODIFICACION = "fechaModificacion";
+	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	
 	String id;
 	String nombre;

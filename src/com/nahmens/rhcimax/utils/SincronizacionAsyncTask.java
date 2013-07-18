@@ -35,7 +35,6 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	Sincronizacion sync;
 	LogFile mLog;
 
-
 	public SincronizacionAsyncTask(Context contexto) {
 		super();
 		this.contexto = contexto;
@@ -45,9 +44,20 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 	public void getUsuarios() throws Exception{
 
-		//	JSONArray userArray = sync.getValores(dirServidor+"getTest");
+		UsuarioSqliteDao usuarioDao2 = new UsuarioSqliteDao();
+		Usuario usuario2 =  usuarioDao2.buscarUsuario(contexto, "administrador", "1234");
 
-		JSONArray userArray = new JSONArray();
+		String input ="{\"token\":\""+usuario2.getToken()+"\"}";
+		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
+		Log.e("input", input);
+
+		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
+		
+		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
+		
+		JSONArray userArray = sync.getValores(dirServidor+"getTest");
+
+	/*	JSONArray userArray = new JSONArray();
 		JSONObject jsObject =  new JSONObject();
 		jsObject.put("_id", "80");
 		jsObject.put("login", "nahmens");
@@ -56,7 +66,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		jsObject.put("idRol", "100");
 		jsObject.put("token", "80");
 
-		userArray.put(jsObject);
+		userArray.put(jsObject);*/
 
 		Usuario usuario = null;
 		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
@@ -85,7 +95,6 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			usuario = new Usuario(id, login,password, correo, idRol, token);
 
 			modificado = usuarioDao.modificarUsuario(contexto, usuario);
-			Log.e("modificado: ", " modificado: " + modificado);
 
 			if(!modificado){
 				mLog.appendLog(obtenerTag() + "... " + "El usuario con id: "+ id + " es nuevo.");
@@ -104,9 +113,20 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 	public void getRoles() throws Exception{
 
-		//	JSONArray userArray = sync.getValores(dirServidor+"getTest");
+		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
+		Usuario usuario =  usuarioDao.buscarUsuario(contexto, "administrador", "1234");
 
-		JSONArray userArray = new JSONArray();
+		String input ="{\"token\":\""+usuario.getToken()+"\"}";
+		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
+		Log.e("input", input);
+
+		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
+		
+		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
+		
+		JSONArray userArray = sync.getValores(dirServidor+"getTest");
+
+	/*	JSONArray userArray = new JSONArray();
 
 		JSONObject jsObject =  new JSONObject();
 		jsObject.put(Rol.ID, "100");
@@ -119,7 +139,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		jsObject2.put("descripcion", "1234");
 
 		userArray.put(jsObject);		
-		userArray.put(jsObject2);
+		userArray.put(jsObject2);*/
 
 		Rol rol = null;
 		RolSqliteDao rolDao = new RolSqliteDao();
@@ -142,7 +162,6 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			rol = new Rol(id, nombre, descripcion);
 
 			modificado = rolDao.modificarRol(contexto, rol);
-			Log.e("modificado: ", " modificado: " + modificado);
 
 			if(!modificado){
 				mLog.appendLog(obtenerTag() + "... " + "El rol con id: "+ id + " es nuevo.");
@@ -159,9 +178,20 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 	public void getPermisos() throws Exception{
 
-		//	JSONArray userArray = sync.getValores(dirServidor+"getTest");
+		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
+		Usuario usuario =  usuarioDao.buscarUsuario(contexto, "administrador", "1234");
 
-		JSONArray userArray = new JSONArray();
+		String input ="{\"token\":\""+usuario.getToken()+"\"}";
+		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
+		Log.e("input", input);
+
+		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
+		
+		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
+		
+		JSONArray userArray = sync.getValores(dirServidor+"getTest");
+
+		/*JSONArray userArray = new JSONArray();
 
 		JSONObject jsObject =  new JSONObject();
 		jsObject.put(Permiso.ID, "100");
@@ -173,9 +203,8 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		jsObject2.put("nombre", Permiso.MODIFICAR_TODO);
 		jsObject2.put("descripcion", "1234");
 
-
 		userArray.put(jsObject);		
-		userArray.put(jsObject2);
+		userArray.put(jsObject2);*/
 
 		Permiso permiso = null;
 		PermisoSqliteDao permisoDao = new PermisoSqliteDao();
@@ -198,7 +227,6 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			permiso = new Permiso(id, nombre, descripcion);
 
 			modificado = permisoDao.modificarPermiso(contexto, permiso);
-			Log.e("modificado: ", " modificado: " + modificado);
 
 			if(!modificado){
 				mLog.appendLog(obtenerTag() + "... " + "El permiso con id: "+ id + " es nuevo.");
@@ -214,10 +242,23 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	}
 
 	public void getRol_Permiso() throws Exception{
+		
+		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
+		Usuario usuario =  usuarioDao.buscarUsuario(contexto, "administrador", "1234");
+
+		String input ="{\"token\":\""+usuario.getToken()+"\"}";
+		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
+		Log.e("input", input);
+
+		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
+		
+		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
+		
+		JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
 		//	JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
-		JSONArray userArray = new JSONArray();
+		/*JSONArray userArray = new JSONArray();
 
 		JSONObject jsObject =  new JSONObject();
 		jsObject.put(Rol_Permiso.ID_ROL, "100");
@@ -228,10 +269,9 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		jsObject2.put(Rol_Permiso.ID_ROL, "100");
 		jsObject2.put(Rol_Permiso.ID_PERMISO, "80");
 
-
-
+		
 		userArray.put(jsObject);		
-		//userArray.put(jsObject2);
+		//userArray.put(jsObject2);*/
 
 		Rol_Permiso rol_permiso = null;
 		Rol_PermisoSqliteDao rol_PermisoDao = new Rol_PermisoSqliteDao();
@@ -253,8 +293,6 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			rol_permiso = new Rol_Permiso(idRol,idPermiso);
 
 			existe = rol_PermisoDao.existeRol_Permiso(contexto, rol_permiso);
-
-			Log.e("existe: ", " existe: " + existe);
 			
 			if(!existe){
 				try{
@@ -268,6 +306,10 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		}
 	}
 
+	/**
+	 * Esta funcion se utiliza despues de haber hecho login en el sistema.
+	 * @throws Exception
+	 */
 	public void postAutenticacion() throws Exception{
 
 		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
@@ -282,11 +324,28 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 
 	}
+	
+	/**
+	 * Esta funcion solo se utiliza para sincronizar usuarios
+	 * desde la pagina del login
+	 * @throws Exception
+	 */
+	public void postAutenticacionMaster() throws Exception{
+
+		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
+		Usuario usuario =  usuarioDao.buscarUsuario(contexto, "administrador", "1234");
+
+		String input ="{\"token\":\""+usuario.getToken()+"\"}";
+		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
+		Log.e("input", input);
+
+		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
+	}
 
 	public void postEmpresas() throws Exception{
 
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-		Cursor cEmpresas =  empresaDao.listarEmpresasSync(contexto);
+		Cursor cEmpresas =  empresaDao.listarEmpresasNoSync(contexto);
 
 		String input = new Formato().cursorToJsonString(cEmpresas);
 		Log.e("input", input);
@@ -294,6 +353,9 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		sync.postValores("createTest", input);
 
 	}
+	
+	
+	/*************************** FUNCIONES ASYNC TASK ***************************/
 
 	/**
 	 * Funcion que se llama antes de iniciar la carga.
@@ -315,9 +377,12 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		if(result.equals("OK")){
 			Toast toast = Toast.makeText(contexto, TEXT_OK,  DURATION);
 			toast.show();
+			mLog.appendLog(obtenerTag() + TEXT_OK);
+
 		}else{
 			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result, DURATION);
 			toast.show();
+			mLog.appendLog(obtenerTag() + TEXT_ERROR + result);
 		}
 
 	}
@@ -336,6 +401,16 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 		if(hayInternet()){
 			mLog.appendLog(obtenerTag() + "Dirección servidor: " +dirServidor);
+			
+			mLog.appendLog(obtenerTag() + "Enviando credenciales... ");
+			try{
+				postAutenticacionMaster();
+			}catch (Exception e) {
+				e.printStackTrace();
+				return e.toString();
+			}
+			
+			mLog.appendLog(obtenerTag() + "... Conexión establecida");
 			mLog.appendLog(obtenerTag() + "Inicio de sincronización... ");
 
 			try {
@@ -358,14 +433,20 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		return "ERROR";
 
 	}
+	
+	/*************************** FUNCIONES COMPLEMENTARIAS ***************************/
 
 	/**
 	 * @return retorna el header para los mensajes de log.
 	 */
 	private String obtenerTag(){
-		return "["+FormatoFecha.obtenerFechaTiempoActual()+"]: ";
+		return "["+FormatoFecha.obtenerFechaTiempoActualES()+"]: ";
 	}
 
+	/**
+	 * Funcion que obtiene de la BD la direccion del servidor
+	 * @return
+	 */
 	private String obtenerServidor(){
 		ConfiguracionSqliteDao configuracionDao = new ConfiguracionSqliteDao();
 		Configuracion config = configuracionDao.buscarPorKey(contexto, Configuracion.NOMBRE_SERVIDOR);

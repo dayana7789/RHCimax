@@ -18,12 +18,9 @@ public interface EmpresaDAO {
 	boolean eliminarEmpresa(Context contexto, String idEmpresa);
 	
 	/**
-	 * Funcion que retorna lista de empresas y toda la informacion asociada a cada una de ellas.
-	 * 
-	 * @param contexto
-	 * @return Cursor Lista de todas las empresas almacenadas en la BD
+	 * Funcion que retorna lista de empresas que no han sido sincronizados
 	 */
-	Cursor listarEmpresasSync(Context contexto);
+	Cursor listarEmpresasNoSync(Context contexto);
 	
 	/**
 	 * Funcion utilizada para autocomplete.

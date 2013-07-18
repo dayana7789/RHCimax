@@ -5,6 +5,9 @@ public class Rol {
 	public final static String ID = "_id";
 	public final static String NOMBRE = "nombre";
 	public final static String DESCRIPCION = "descripcion";
+	public final static String FECHA_CREACION = "fechaCreacion";
+	public final static String FECHA_MODIFICACION = "fechaModificacion";
+	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	
 	String id;
 	String nombre;

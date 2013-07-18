@@ -8,8 +8,9 @@ public class Historico {
 	public final static String ID_TAREA = "idTarea";
 	public final static String ID_EMPRESA = "idEmpresa";
 	public final static String ID_CHECKIN = "idCheckin";
-	public final static String FECHA_CREACION = "fechaCreacion";
 	public final static String ID_USUARIO_CREADOR = "idUsuarioCreador";
+	public final static String FECHA_CREACION = "fechaCreacion";
+	public final static String FECHA_MODIFICACION = "fechaModificacion";
 	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 
 

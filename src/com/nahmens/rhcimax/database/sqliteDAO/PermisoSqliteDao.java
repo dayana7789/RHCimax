@@ -138,4 +138,26 @@ public class PermisoSqliteDao implements PermisoDAO{
 		return modificado;
 	}
 
+	@Override
+	public Cursor listarPermisoNoSync(Context contexto) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		try{
+
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_PERMISO, null , Permiso.FECHA_SINCRONIZACION + "= NULL OR " + Permiso.FECHA_MODIFICACION + " > " +Permiso.FECHA_SINCRONIZACION ,null, null, null, null);
+
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;	
+	}
+
 }

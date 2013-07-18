@@ -7,6 +7,9 @@ public class Cotizacion_Servicio {
 	public final static String DESCRIPCION = "descripcion";
 	public final static String PRECIO = "precio";
 	public final static String INICIAL = "inicial";
+	public final static String FECHA_CREACION = "fechaCreacion";
+	public final static String FECHA_MODIFICACION = "fechaModificacion";
+	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	
 	String idCotizacion;
 	String idServicio;

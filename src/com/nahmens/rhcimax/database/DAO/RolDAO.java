@@ -1,6 +1,7 @@
 package com.nahmens.rhcimax.database.DAO;
 
 import android.content.Context;
+import android.database.Cursor;
 
 import com.nahmens.rhcimax.database.modelo.Rol;
 
@@ -15,5 +16,10 @@ public interface RolDAO {
      * @return numero de registros eliminados
      */
     int eliminarRoles(Context context);
+    
+    /**
+   	 * Funcion que retorna lista de Rol que no han sido sincronizados
+   	 */
+   	Cursor listarRolNoSync(Context contexto);
 
 }

@@ -9,6 +9,9 @@ public class Usuario {
 	public final static String ID_ROL = "idRol";
 	public final static String ROL = "rol";
 	public final static String TOKEN = "token";
+	public final static String FECHA_CREACION = "fechaCreacion";
+	public final static String FECHA_MODIFICACION = "fechaModificacion";
+	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	
 	String id;
 	String login;

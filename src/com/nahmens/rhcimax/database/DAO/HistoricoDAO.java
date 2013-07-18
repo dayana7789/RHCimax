@@ -31,5 +31,10 @@ public interface HistoricoDAO {
 	Historico buscarHistoricoPorCheckinPorEmpresa(Context contexto, String idCheckin, String idEmpresa);
 
 	boolean existeCheckinVisita(Context contexto, String idCheckin);
+	
+	/**
+	 * Funcion que retorna lista de historicos que no han sido sincronizados
+	 */
+	Cursor listarHistoricosNoSync(Context contexto);
 
 }

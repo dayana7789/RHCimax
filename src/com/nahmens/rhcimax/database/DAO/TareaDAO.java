@@ -27,5 +27,10 @@ public interface TareaDAO {
 	Cursor listarTareasPorEmpleado(Context contexto, String idEmpleado);
 	boolean sincronizarTarea(Context contexto, String idTarea);
 	
+	/**
+	 * Funcion que retorna lista de Tareas que no han sido sincronizados
+	 */
+	Cursor listarTareasNoSync(Context contexto);
+	
 
 }

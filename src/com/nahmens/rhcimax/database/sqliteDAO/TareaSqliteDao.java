@@ -116,6 +116,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 			ContentValues values = new ContentValues();
 			values.put("status", "inactivo");
+			values.put(Tarea.FECHA_MODIFICACION, FormatoFecha.obtenerFechaTiempoActualEN());
 			
 			//long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_TAREA, "_id=?", new String[]{idTarea});
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, values, "_id=?", new String []{idTarea});
@@ -141,7 +142,7 @@ public class TareaSqliteDao implements TareaDAO{
 		try{
 			conexion.open();
 			
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA , null , Tarea.ID + " = ? AND status='activo'", new String [] {idTarea}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA , null , Tarea.ID + " = ? AND tarea.status='activo'", new String [] {idTarea}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
@@ -358,6 +359,28 @@ public class TareaSqliteDao implements TareaDAO{
 		}
 
 		return sincronizado;
+	}
+
+	@Override
+	public Cursor listarTareasNoSync(Context contexto) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		try{
+
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA, null , Tarea.FECHA_SINCRONIZACION + "= NULL OR " + Tarea.FECHA_MODIFICACION + " > " +Tarea.FECHA_SINCRONIZACION ,null, null, null, null);
+
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;		
 	}
 
 }
