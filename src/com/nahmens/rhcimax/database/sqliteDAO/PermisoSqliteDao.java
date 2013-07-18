@@ -112,4 +112,30 @@ public class PermisoSqliteDao implements PermisoDAO{
 		return numCol;	
 	}
 
+	@Override
+	public boolean modificarPermiso(Context contexto, Permiso permiso) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean modificado = false;
+
+		try{
+			conexion.open();
+
+			ContentValues values = new ContentValues();
+
+			values.put(Permiso.NOMBRE, permiso.getNombre());
+			values.put(Permiso.DESCRIPCION, permiso.getDescripcion());
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_PERMISO, values, "_id=?", new String []{permiso.getId()});
+
+			if(value!=0){
+				modificado = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return modificado;
+	}
+
 }

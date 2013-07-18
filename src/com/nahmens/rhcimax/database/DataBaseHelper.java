@@ -145,7 +145,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
 	
 	private static final String DATABASE_CREATE_CONFIGURACION = "CREATE table " + TABLA_CONFIGURACION + " ("
-															  + "_id TEXT PRIMARY KEY NOT NULL, "
+															  + "_id INTEGER PRIMARY KEY AUTOINCREMENT, "
 															  + "key TEXT NOT NULL, "
 															  + "value TEXT NOT NULL);";
 	
@@ -223,7 +223,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	}
 
 	private void insertarConfiguracion(SQLiteDatabase database) {
-		String insertServer = "INSERT INTO "+ TABLA_CONFIGURACION + "("+ Configuracion.ID + ", "+Configuracion.KEY+", " + Configuracion.VALUE + ") VALUES('1','"+Configuracion.NOMBRE_SERVIDOR+"','')";
+		String insertServer = "INSERT INTO "+ TABLA_CONFIGURACION + "("+Configuracion.KEY+", " + Configuracion.VALUE + ") VALUES('"+Configuracion.NOMBRE_SERVIDOR+"','')";
 		database.execSQL(insertServer);
 	}
 

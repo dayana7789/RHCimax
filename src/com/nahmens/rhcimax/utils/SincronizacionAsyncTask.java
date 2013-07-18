@@ -12,10 +12,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.nahmens.rhcimax.controlador.LoginActivity;
+import com.nahmens.rhcimax.database.modelo.Configuracion;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Rol;
 import com.nahmens.rhcimax.database.modelo.Rol_Permiso;
 import com.nahmens.rhcimax.database.modelo.Usuario;
+import com.nahmens.rhcimax.database.sqliteDAO.ConfiguracionSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.PermisoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.RolSqliteDao;
@@ -27,25 +29,23 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	private final CharSequence TEXT_ERROR = "Ha ocurrido un error con la sincronización: ";
 	private final CharSequence TEXT_OK = "Sincronización finalizada";
 	private final int DURATION = Toast.LENGTH_LONG;
-	private final String nombreArchLog = new Formato().getNumeroAleatorio();
+	private String dirServidor = "http://190.203.108.202:8080/vasaweb-1.0/";
 
 	Context contexto;
 	Sincronizacion sync;
 	LogFile mLog;
 
-	private String obtenerTag(){
-		return "["+FormatoFecha.obtenerFechaTiempoActual()+"]: ";
-	}
+
 	public SincronizacionAsyncTask(Context contexto) {
 		super();
 		this.contexto = contexto;
 		this.sync = new Sincronizacion(contexto);
-		this.mLog = new LogFile(contexto, nombreArchLog);
+		this.mLog = new LogFile(contexto, new Formato().getNumeroAleatorio());
 	}
 
 	public void getUsuarios() throws Exception{
 
-		//	JSONArray userArray = sync.getValores("http://190.203.108.202:8080/vasaweb-1.0/getTest");
+		//	JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
 		JSONArray userArray = new JSONArray();
 		JSONObject jsObject =  new JSONObject();
@@ -66,7 +66,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String correo = null;
 		String idRol = null;
 		String token = null;
-		String idFila = "-1";
+		boolean modificado = false;
 
 		//eliminamos a todos los usuarios
 		//usuarioDao.eliminarUsuarios(contexto);
@@ -84,10 +84,18 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 			usuario = new Usuario(id, login,password, correo, idRol, token);
 
-			try{
-				idFila = usuarioDao.insertarUsuario(contexto, usuario);
-			}catch(android.database.sqlite.SQLiteConstraintException e){
-				mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "El usuario con id: "+ id + " no pudo ser insertado.");
+			modificado = usuarioDao.modificarUsuario(contexto, usuario);
+			Log.e("modificado: ", " modificado: " + modificado);
+
+			if(!modificado){
+				mLog.appendLog(obtenerTag() + "... " + "El usuario con id: "+ id + " es nuevo.");
+				try{
+					usuarioDao.insertarUsuario(contexto, usuario);
+				}catch(android.database.sqlite.SQLiteConstraintException e){
+					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "El usuario con id: "+ id + " no pudo ser insertado.");
+				}
+			}else{
+				mLog.appendLog(obtenerTag() + "... " + "El usuario con id: "+ id + " fue modificado satisfactoriamente.");
 			}
 
 		}
@@ -96,7 +104,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 	public void getRoles() throws Exception{
 
-		//	JSONArray userArray = sync.getValores("http://190.203.108.202:8080/vasaweb-1.0/getTest");
+		//	JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
 		JSONArray userArray = new JSONArray();
 
@@ -118,7 +126,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String id = null;
 		String nombre = null;
 		String descripcion = null;
-		String idFila = "-1";
+		boolean modificado = false;
 
 		//eliminamos a todos los usuarios
 		//rolDao.eliminarRoles(contexto);
@@ -133,17 +141,25 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 			rol = new Rol(id, nombre, descripcion);
 
-			try{
-				idFila = rolDao.insertarRol(contexto, rol);
-			}catch(android.database.sqlite.SQLiteConstraintException e){
-				mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "El rol con id: "+ id + " no pudo ser insertado.");
+			modificado = rolDao.modificarRol(contexto, rol);
+			Log.e("modificado: ", " modificado: " + modificado);
+
+			if(!modificado){
+				mLog.appendLog(obtenerTag() + "... " + "El rol con id: "+ id + " es nuevo.");
+				try{
+					rolDao.insertarRol(contexto, rol);
+				}catch(android.database.sqlite.SQLiteConstraintException e){
+					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "El rol con id: "+ id + " no pudo ser insertado.");
+				}
+			}else{
+				mLog.appendLog(obtenerTag() + "... " + "El rol con id: "+ id + " fue modificado satisfactoriamente.");
 			}
 		}
 	}
 
 	public void getPermisos() throws Exception{
 
-		//	JSONArray userArray = sync.getValores("http://190.203.108.202:8080/vasaweb-1.0/getTest");
+		//	JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
 		JSONArray userArray = new JSONArray();
 
@@ -166,7 +182,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String id = null;
 		String nombre = null;
 		String descripcion = null;
-		String idFila = "-1";
+		boolean modificado = false;
 
 		//eliminamos a todos los usuarios
 		//permisoDao.eliminarPermisos(contexto);
@@ -181,17 +197,25 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 			permiso = new Permiso(id, nombre, descripcion);
 
-			try{
-				idFila = permisoDao.insertarPermiso(contexto, permiso);
-			}catch(android.database.sqlite.SQLiteConstraintException e){
-				mLog.appendLog(obtenerTag() + "... " +  e.getMessage() + ": " + "El permiso con id: "+ id + " no pudo ser insertado.");
+			modificado = permisoDao.modificarPermiso(contexto, permiso);
+			Log.e("modificado: ", " modificado: " + modificado);
+
+			if(!modificado){
+				mLog.appendLog(obtenerTag() + "... " + "El permiso con id: "+ id + " es nuevo.");
+				try{
+					permisoDao.insertarPermiso(contexto, permiso);
+				}catch(android.database.sqlite.SQLiteConstraintException e){
+					mLog.appendLog(obtenerTag() + "... " +  e.getMessage() + ": " + "El permiso con id: "+ id + " no pudo ser insertado.");
+				}
+			}else{
+				mLog.appendLog(obtenerTag() + "... " + "El permiso con id: "+ id + " fue modificado satisfactoriamente.");
 			}
 		}
 	}
 
 	public void getRol_Permiso() throws Exception{
 
-		//	JSONArray userArray = sync.getValores("http://190.203.108.202:8080/vasaweb-1.0/getTest");
+		//	JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
 		JSONArray userArray = new JSONArray();
 
@@ -214,7 +238,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String idPermiso = null;
 		String idRol = null;
 
-		String idFila = "-1";
+		boolean existe = false;
 
 		//eliminamos a todos los usuarios
 		//rol_PermisoDao.eliminarRoles_Permisos(contexto);
@@ -228,10 +252,18 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 			rol_permiso = new Rol_Permiso(idRol,idPermiso);
 
-			try{
-				idFila = rol_PermisoDao.insertaRol_Permiso(contexto, rol_permiso);
-			}catch(android.database.sqlite.SQLiteConstraintException e){
-				mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "El rol_permiso con idPermiso: "+ idPermiso + " e idRoL: " + idRol +" no pudo ser insertado.");
+			existe = rol_PermisoDao.existeRol_Permiso(contexto, rol_permiso);
+
+			Log.e("existe: ", " existe: " + existe);
+			
+			if(!existe){
+				try{
+					rol_PermisoDao.insertaRol_Permiso(contexto, rol_permiso);
+				}catch(android.database.sqlite.SQLiteConstraintException e){
+					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "El rol_permiso con idPermiso: "+ idPermiso + " e idRoL: " + idRol +" no pudo ser insertado.");
+				}
+			}else{
+				mLog.appendLog(obtenerTag() + "... " + "El rol_permiso con idPermiso: "+ idPermiso + " e idRoL: " + idRol +" ya existe.");
 			}
 		}
 	}
@@ -246,7 +278,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
 		Log.e("input", input);
 
-		JSONObject resp = sync.postValores("http://190.203.108.202:8080/vasaweb-1.0/createTest", input);
+		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
 
 
 	}
@@ -259,18 +291,24 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		String input = new Formato().cursorToJsonString(cEmpresas);
 		Log.e("input", input);
 
-		sync.postValores("http://190.203.108.202:8080/vasaweb-1.0/createTest", input);
+		sync.postValores("createTest", input);
 
 	}
 
-	//Al iniciar la carga
+	/**
+	 * Funcion que se llama antes de iniciar la carga.
+	 * Muestra dialog.
+	 */
 	protected void onPreExecute() {
 		LoginActivity.dialog.show();
 	}
 
 
 
-	//Al terminar la carga
+	/**
+	 * Funcion que se llama al terminar la carga.
+	 * Oculta dialos.
+	 */
 	protected void onPostExecute(String result) {
 		LoginActivity.dialog.dismiss(); 
 
@@ -285,31 +323,19 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	}
 
 
-	public boolean hayInternet() {
-		ConnectivityManager connMgr = (ConnectivityManager) 
-				contexto.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-
-		NetworkInfo networkInfoWifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI); 
-		boolean isWifiConn = networkInfoWifi.isConnected();
-		NetworkInfo networkInfoMobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-		boolean isMobileConn = networkInfoMobile.isConnected();
-
-		mLog.appendLog(obtenerTag() + "Status de red... ");
-		mLog.appendLog(obtenerTag() + "... Wifi conectado: " + isWifiConn);
-		mLog.appendLog(obtenerTag() + "... Red de datos conectado: " + isMobileConn);
-		
-		return (networkInfo != null && networkInfo.isConnected());
-	}
-
-
-
+	/**
+	 * Funcion que corre en background que se encarga de establecer
+	 * la sincronizacion cuando existe conexion a internet.
+	 */
 	protected String doInBackground(String... params) {
 
-		
-		
-		if(hayInternet()){
+		String servidorDB = obtenerServidor();
+		if((servidorDB.equals("")==false) && servidorDB!=null){
+			dirServidor = servidorDB;
+		}
 
+		if(hayInternet()){
+			mLog.appendLog(obtenerTag() + "Dirección servidor: " +dirServidor);
 			mLog.appendLog(obtenerTag() + "Inicio de sincronización... ");
 
 			try {
@@ -332,6 +358,43 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		return "ERROR";
 
 	}
+
+	/**
+	 * @return retorna el header para los mensajes de log.
+	 */
+	private String obtenerTag(){
+		return "["+FormatoFecha.obtenerFechaTiempoActual()+"]: ";
+	}
+
+	private String obtenerServidor(){
+		ConfiguracionSqliteDao configuracionDao = new ConfiguracionSqliteDao();
+		Configuracion config = configuracionDao.buscarPorKey(contexto, Configuracion.NOMBRE_SERVIDOR);
+		return config.getValue();
+	}
+
+	/**
+	 * Funcion que determina si existe alguna conexion a internet para 
+	 * poder hacer la sincronizacion. Escribe el tipo de conexion en 
+	 * el archivo de log.
+	 * @return si existe conexion o no
+	 */
+	private boolean hayInternet() {
+		ConnectivityManager connMgr = (ConnectivityManager) 
+				contexto.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+		NetworkInfo networkInfoWifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI); 
+		boolean isWifiConn = networkInfoWifi.isConnected();
+		NetworkInfo networkInfoMobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+		boolean isMobileConn = networkInfoMobile.isConnected();
+
+		mLog.appendLog(obtenerTag() + "Status de red... ");
+		mLog.appendLog(obtenerTag() + "... Wifi conectado: " + isWifiConn);
+		mLog.appendLog(obtenerTag() + "... Red de datos conectado: " + isMobileConn);
+
+		return (networkInfo != null && networkInfo.isConnected());
+	}
+
 
 }
 

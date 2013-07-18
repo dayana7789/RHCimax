@@ -91,4 +91,31 @@ public class RolSqliteDao implements RolDAO {
 		return numCol;	
 	}
 
+
+	@Override
+	public boolean modificarRol(Context contexto, Rol rol) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean modificado = false;
+
+		try{
+			conexion.open();
+
+			ContentValues values = new ContentValues();
+
+			values.put(Rol.NOMBRE, rol.getNombre());
+			values.put(Rol.DESCRIPCION, rol.getDescripcion());
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_ROL, values, "_id=?", new String []{rol.getId()});
+
+			if(value!=0){
+				modificado = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return modificado;
+	}
+
 }

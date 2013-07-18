@@ -8,6 +8,7 @@ public interface RolDAO {
 	
 	Rol buscarRolUsuario(Context contexto, String idUsuario);
 	String insertarRol(Context context, Rol rol);
+	boolean modificarRol(Context context, Rol rol);
 	/**
      * Funcion que elimina todos los registros de una tabla
      * @param context

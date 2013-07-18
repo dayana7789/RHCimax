@@ -24,7 +24,7 @@ public class SettingsActivity extends Fragment {
 
 		View view = inflater.inflate(R.layout.activity_settings, container, false);
 		this.inflater=inflater;
-		
+
 		//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
 		//tab es el correspondiente.
 		AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentSettings);	
@@ -54,6 +54,7 @@ public class SettingsActivity extends Fragment {
 	}
 
 	private void onClickSalvar() {
+
 		EditText etServer = (EditText) getActivity().findViewById(R.id.editTextServer);
 		String server = etServer.getText().toString();
 		boolean error = false;
@@ -66,6 +67,12 @@ public class SettingsActivity extends Fragment {
 		}
 		
 		if(!error){
+			
+			//si la direccion no tiene un / al final, lo agregamos
+			if(server.substring(server.length() - 1).equals("/") == false){
+				server = server + "/"; 
+			}
+			
 			ConfiguracionSqliteDao configDao = new ConfiguracionSqliteDao();
 			Configuracion configuracion = new Configuracion(Configuracion.NOMBRE_SERVIDOR, server);
 			Boolean modificado = configDao.modificarKeyValue(getActivity(), configuracion);

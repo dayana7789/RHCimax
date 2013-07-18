@@ -55,7 +55,32 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 	}
 
 	@Override
-	public void modificarUsuario(Context context, Usuario usuario) {
+	public boolean modificarUsuario(Context contexto, Usuario usuario) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean modificado = false;
+
+		try{
+			conexion.open();
+
+			ContentValues values = new ContentValues();
+
+			values.put(Usuario.LOGIN,usuario.getLogin());
+			values.put(Usuario.PASSWORD,usuario.getPassword());
+			values.put(Usuario.CORREO,usuario.getCorreo());
+			values.put(Usuario.ID_ROL,usuario.getIdRol());
+			values.put(Usuario.TOKEN,usuario.getToken());
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_USUARIO, values, "_id=?", new String []{usuario.getId()});
+
+			if(value!=0){
+				modificado = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return modificado;
 	}
 
 	@Override

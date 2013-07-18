@@ -2,6 +2,7 @@ package com.nahmens.rhcimax.database.sqliteDAO;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -47,6 +48,28 @@ public class Rol_PermisoSqliteDao implements Rol_PermisoDAO{
 		}
 
 		return numCol;	
+	}
+
+	@Override
+	public boolean existeRol_Permiso(Context contexto, Rol_Permiso rol_permiso) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		boolean existe = false;
+
+		try{
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_ROL_PERMISO , null , Rol_Permiso.ID_PERMISO + " = ? AND " + Rol_Permiso.ID_ROL + " = ?", new String [] {rol_permiso.getIdPermiso(), rol_permiso.getIdRol()}, null, null, null);
+
+			if (mCursor.getCount() > 0) {
+				existe = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return existe;
 	}
 
 }

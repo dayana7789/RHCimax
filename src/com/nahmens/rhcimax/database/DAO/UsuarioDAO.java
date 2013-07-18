@@ -19,7 +19,7 @@ public interface UsuarioDAO {
 	 * @return Id del usuario ingresado o -1 en caso de error.
 	 */
 	String insertarUsuario(Context context, Usuario usuario);
-    void modificarUsuario(Context context, Usuario usuario);
+    boolean modificarUsuario(Context context, Usuario usuario);
     Cursor listarUsuarios(Context context);
     
     /**
