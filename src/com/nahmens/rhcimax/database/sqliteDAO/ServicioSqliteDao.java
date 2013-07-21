@@ -116,7 +116,7 @@ public class ServicioSqliteDao implements ServicioDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_SERVICIO, null , Servicio.FECHA_SINCRONIZACION + "= NULL OR " + Servicio.FECHA_MODIFICACION + " > " +Servicio.FECHA_SINCRONIZACION ,null, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_SERVICIO, null , Servicio.FECHA_SINCRONIZACION + " IS NULL OR " + Servicio.FECHA_MODIFICACION + " > " +Servicio.FECHA_SINCRONIZACION ,null, null, null, null);
 
 
 			if (mCursor != null) {

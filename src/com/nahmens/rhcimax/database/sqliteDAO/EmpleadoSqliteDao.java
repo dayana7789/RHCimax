@@ -464,7 +464,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null ,  Empleado.FECHA_SINCRONIZACION + "= NULL OR " + Empleado.FECHA_MODIFICACION + " > " +Empleado.FECHA_SINCRONIZACION ,null, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null ,  Empleado.FECHA_SINCRONIZACION + " IS NULL OR " + Empleado.FECHA_MODIFICACION + " > " +Empleado.FECHA_SINCRONIZACION ,null, null, null, null);
 
 
 			if (mCursor != null) {

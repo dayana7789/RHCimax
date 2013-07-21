@@ -78,7 +78,7 @@ public class Cotizacion_ServicioSqliteDao implements Cotizacion_ServicioDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_COTIZACION_SERVICIO, null , Cotizacion_Servicio.FECHA_SINCRONIZACION + "= NULL OR " + Cotizacion_Servicio.FECHA_MODIFICACION + " > " +Cotizacion_Servicio.FECHA_SINCRONIZACION ,null, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_COTIZACION_SERVICIO, null , Cotizacion_Servicio.FECHA_SINCRONIZACION + " IS NULL OR " + Cotizacion_Servicio.FECHA_MODIFICACION + " > " +Cotizacion_Servicio.FECHA_SINCRONIZACION ,null, null, null, null);
 
 
 			if (mCursor != null) {

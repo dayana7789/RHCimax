@@ -208,7 +208,7 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_USUARIO, null , Usuario.FECHA_SINCRONIZACION + "= NULL OR " + Usuario.FECHA_MODIFICACION + " > " +Usuario.FECHA_SINCRONIZACION ,null, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_USUARIO, null , Usuario.FECHA_SINCRONIZACION + " IS NULL OR " + Usuario.FECHA_MODIFICACION + " > " +Usuario.FECHA_SINCRONIZACION ,null, null, null, null);
 
 
 			if (mCursor != null) {

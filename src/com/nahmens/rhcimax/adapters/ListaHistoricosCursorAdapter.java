@@ -347,7 +347,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 		TextView tvAvisoRojoFila = (TextView) v.findViewById(R.id.avisoRojoFila);
 		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
 
-		if(strFechaSincronizacion==null){
+		if(strFechaSincronizacion.equals("null")){
 			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
 			tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 		}else{

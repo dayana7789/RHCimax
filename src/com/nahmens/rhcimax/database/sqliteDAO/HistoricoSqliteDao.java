@@ -345,7 +345,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_HISTORICO, null ,  Historico.FECHA_SINCRONIZACION + "= NULL OR " + Historico.FECHA_MODIFICACION + " > " +Historico.FECHA_SINCRONIZACION ,null, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_HISTORICO, null ,  Historico.FECHA_SINCRONIZACION + " IS NULL OR " + Historico.FECHA_MODIFICACION + " > " +Historico.FECHA_SINCRONIZACION ,null, null, null, null);
 
 
 			if (mCursor != null) {

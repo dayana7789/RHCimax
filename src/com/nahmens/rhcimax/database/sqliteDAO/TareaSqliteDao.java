@@ -186,7 +186,7 @@ public class TareaSqliteDao implements TareaDAO{
 					+ "FROM tarea "
 					+ "LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
 					+ "LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
-					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
+					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + "  IS NULL "
 					 + "ORDER BY " + Tarea.FECHA + " DESC";
 
 
@@ -243,7 +243,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 			sqlQuery = "SELECT ";
 			sqlQuery += consulta;
-			sqlQuery += " WHERE tarea.status='activo' AND "+ Tarea.FECHA_FINALIZACION + " IS NULL ";
+			sqlQuery += " WHERE tarea.status='activo' AND "+ Tarea.FECHA_FINALIZACION + "  IS NULL ";
 			sqlQuery += condicion;
 
 			
@@ -291,7 +291,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 			sqlQuery = "SELECT "
 				        + consulta
-						+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
+						+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + "  IS NULL "
 						+ "AND tarea." + Tarea.ID_EMPRESA + " = " + idEmpresa 
 						+ orderBy;
 
@@ -319,7 +319,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 			sqlQuery = "SELECT "
 			        + consulta
-					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + " IS NULL "
+					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + "  IS NULL "
 					+ "AND tarea." + Tarea.ID_EMPLEADO + " = " + idEmpleado
 					+ orderBy;
 
@@ -369,7 +369,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA, null , Tarea.FECHA_SINCRONIZACION + "= NULL OR " + Tarea.FECHA_MODIFICACION + " > " +Tarea.FECHA_SINCRONIZACION ,null, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA, null , Tarea.FECHA_SINCRONIZACION + " IS NULL OR " + Tarea.FECHA_MODIFICACION + " > " +Tarea.FECHA_SINCRONIZACION ,null, null, null, null);
 
 
 			if (mCursor != null) {

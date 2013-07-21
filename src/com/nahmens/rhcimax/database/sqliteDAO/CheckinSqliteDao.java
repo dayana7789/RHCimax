@@ -114,7 +114,7 @@ public class CheckinSqliteDao implements CheckinDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_CHECKIN, null , Checkin.FECHA_SINCRONIZACION + "= NULL OR " + Checkin.FECHA_MODIFICACION + " > " +Checkin.FECHA_SINCRONIZACION ,null, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_CHECKIN, null , Checkin.FECHA_SINCRONIZACION + " IS NULL OR " + Checkin.FECHA_MODIFICACION + " > " +Checkin.FECHA_SINCRONIZACION ,null, null, null, null);
 
 
 			if (mCursor != null) {

@@ -80,7 +80,7 @@ public class Rol_PermisoSqliteDao implements Rol_PermisoDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_ROL_PERMISO, null , Rol_Permiso.FECHA_SINCRONIZACION + "= NULL OR " + Rol_Permiso.FECHA_MODIFICACION + " > " +Rol_Permiso.FECHA_SINCRONIZACION ,null, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_ROL_PERMISO, null , Rol_Permiso.FECHA_SINCRONIZACION + " IS NULL OR " + Rol_Permiso.FECHA_MODIFICACION + " > " +Rol_Permiso.FECHA_SINCRONIZACION ,null, null, null, null);
 
 
 			if (mCursor != null) {

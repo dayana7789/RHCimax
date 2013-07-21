@@ -44,7 +44,7 @@ public class Empleado_CotizacionSqliteDao implements Empleado_CotizacionDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO_COTIZACION, null , Empleado_Cotizacion.FECHA_SINCRONIZACION + "= NULL OR " + Empleado_Cotizacion.FECHA_MODIFICACION + " > " +Empleado_Cotizacion.FECHA_SINCRONIZACION ,null, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO_COTIZACION, null , Empleado_Cotizacion.FECHA_SINCRONIZACION + " IS NULL OR " + Empleado_Cotizacion.FECHA_MODIFICACION + " > " +Empleado_Cotizacion.FECHA_SINCRONIZACION ,null, null, null, null);
 
 
 			if (mCursor != null) {

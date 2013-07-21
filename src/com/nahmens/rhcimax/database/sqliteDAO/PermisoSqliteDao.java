@@ -146,7 +146,7 @@ public class PermisoSqliteDao implements PermisoDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_PERMISO, null , Permiso.FECHA_SINCRONIZACION + "= NULL OR " + Permiso.FECHA_MODIFICACION + " > " +Permiso.FECHA_SINCRONIZACION ,null, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_PERMISO, null , Permiso.FECHA_SINCRONIZACION + " IS NULL OR " + Permiso.FECHA_MODIFICACION + " > " +Permiso.FECHA_SINCRONIZACION ,null, null, null, null);
 
 
 			if (mCursor != null) {

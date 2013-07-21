@@ -327,7 +327,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		TextView tvAvisoRojoFila = (TextView) v.findViewById(R.id.avisoRojoFila);
 		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
 		
-		if(strFechaSincronizacion==null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+		if(strFechaSincronizacion.equals("null") || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
 			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
 			tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 		}else{

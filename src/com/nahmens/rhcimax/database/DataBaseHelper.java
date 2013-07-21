@@ -39,6 +39,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 													+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 													+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 													+ "status TEXT NOT NULL DEFAULT 'activo', "
+													+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
 													+ "descripcion TEXT NOT NULL);";
 
 	private static final String DATABASE_CREATE_USUARIO = "CREATE table " + TABLA_USUARIO + " ("
@@ -52,6 +53,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 														+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 														+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 														+ "status TEXT NOT NULL DEFAULT 'activo', "
+														+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
 														+ "FOREIGN KEY(idRol) REFERENCES " + TABLA_ROL + "(_id) ON DELETE CASCADE);";
 	
 	private static final String DATABASE_CREATE_PERMISO = "CREATE table " + TABLA_PERMISO + " ("
@@ -61,6 +63,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 														+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 														+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 														+ "status TEXT NOT NULL DEFAULT 'activo', "
+														+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
 														+ "descripcion TEXT NOT NULL);";
 	
 	private static final String DATABASE_CREATE_ROL_PERMISO = "CREATE table " + TABLA_ROL_PERMISO + " ("
@@ -70,6 +73,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 															+ "status TEXT NOT NULL DEFAULT 'activo', "
+															+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
 															+ "primary key (idRol, idPermiso), "
 															+ "FOREIGN KEY(idRol) REFERENCES " + TABLA_ROL + "(_id) ON DELETE CASCADE, " 
 															+ "FOREIGN KEY(idPermiso) REFERENCES " + TABLA_PERMISO + "(_id) ON DELETE CASCADE);";
@@ -82,8 +86,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "rif TEXT, "
 															+ "dirFiscal TEXT, "
 															+ "dirComercial TEXT, "
-															+ "latitud REAL DEFAULT NULL, "
-															+ "longitud REAL DEFAULT NULL, "
+															+ "latitud REAL DEFAULT 0, "
+															+ "longitud REAL DEFAULT 0, "
 															+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
@@ -91,6 +95,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "idUsuarioModificador TEXT NOT NULL, "
 															+ "modificado INTEGER DEFAULT 0, "
 															+ "status TEXT NOT NULL DEFAULT 'activo', "
+															+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
 															+ "FOREIGN KEY(idUsuarioCreador) REFERENCES " + TABLA_USUARIO + "(_id) ON DELETE CASCADE, "
 															+ "FOREIGN KEY(idUsuarioModificador) REFERENCES " + TABLA_USUARIO + "(_id) ON DELETE CASCADE);";
 	
@@ -110,6 +115,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 															+ "status TEXT NOT NULL DEFAULT 'activo', "
+															+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
 															+ "idUsuarioCreador TEXT NOT NULL, "
 															+ "idUsuarioModificador TEXT NOT NULL, "
 															+ "FOREIGN KEY(idUsuarioModificador) REFERENCES " + TABLA_USUARIO + "(_id)  ON DELETE CASCADE, "
@@ -130,6 +136,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 															+ "status TEXT NOT NULL DEFAULT 'activo', "
+															+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
 															+ "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id) ON DELETE CASCADE, "
 															+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id) ON DELETE CASCADE);";
 
@@ -141,6 +148,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 																	+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 																	+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 																	+ "status TEXT NOT NULL DEFAULT 'activo', "
+																	+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
 																	+ "primary key (idEmpleado, idCotizacion), "
 																	+ "FOREIGN KEY(idEmpleado) REFERENCES " + TABLA_EMPLEADO + "(_id) ON DELETE CASCADE, " 
 																	+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id) ON DELETE CASCADE);";
@@ -155,6 +163,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 															+ "status TEXT NOT NULL DEFAULT 'activo', "
+															+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
 															+ "inicial REAL NOT NULL);";
 	
 	private static final String DATABASE_CREATE_COTIZACION_SERVICIO = "CREATE table " + TABLA_COTIZACION_SERVICIO + " ("
@@ -168,6 +177,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 																	+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 																	+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 																	+ "status TEXT NOT NULL DEFAULT 'activo', "
+																	+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
 																	+ "primary key (idCotizacion, idServicio), "
 																	+ "FOREIGN KEY(idCotizacion) REFERENCES " + TABLA_COTIZACION + "(_id) ON DELETE CASCADE, " 
 																	+ "FOREIGN KEY(idServicio) REFERENCES " + TABLA_SERVICIO + "(_id) ON DELETE CASCADE);";
@@ -194,6 +204,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 													  + "idUsuarioCreador TEXT NOT NULL, "
 													  + "idUsuarioModificador TEXT NOT NULL, "
 													  + "status TEXT NOT NULL DEFAULT 'activo', "
+													  + "sincronizado INTEGER NOT NULL DEFAULT 0, "
 													  + "FOREIGN KEY(idUsuarioCreador) REFERENCES " + TABLA_USUARIO + "(_id) ON DELETE CASCADE, " 
 													  + "FOREIGN KEY(idUsuarioModificador) REFERENCES " + TABLA_USUARIO + "(_id) ON DELETE CASCADE, " 
 													  + "FOREIGN KEY(idEmpresa) REFERENCES " + TABLA_EMPRESA + "(_id) ON DELETE CASCADE, " 
@@ -211,6 +222,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 															+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 															+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 															+ "status TEXT NOT NULL DEFAULT 'activo', "
+															+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
 															+ "idUsuarioCreador TEXT NOT NULL, "
 															+ "FOREIGN KEY(idUsuarioCreador) REFERENCES " + TABLA_USUARIO + "(_id) ON DELETE CASCADE, " 
 															+ "FOREIGN KEY(idCheckin) REFERENCES " + TABLA_CHECKIN + "(_id) ON DELETE CASCADE, "
@@ -229,6 +241,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 														+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 														+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 														+ "status TEXT NOT NULL DEFAULT 'activo', "
+														+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
 														+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id) ON DELETE CASCADE);";
 	
 	public DataBaseHelper(Context context) {
@@ -253,7 +266,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL(DATABASE_CREATE_CHECKIN);
 		database.execSQL(DATABASE_CREATE_HISTORICO);
 		
-		Log.e("",DATABASE_CREATE_ROL);
+	/*	Log.e("",DATABASE_CREATE_ROL);
 		Log.e("",DATABASE_CREATE_USUARIO);
 		Log.e("",DATABASE_CREATE_PERMISO);
 		Log.e("",DATABASE_CREATE_ROL_PERMISO);
@@ -266,7 +279,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		Log.e("",DATABASE_CREATE_CONFIGURACION);
 		Log.e("",DATABASE_CREATE_TAREA);
 		Log.e("",DATABASE_CREATE_CHECKIN);
-		Log.e("",DATABASE_CREATE_HISTORICO);
+		Log.e("",DATABASE_CREATE_HISTORICO);*/
 
 		this.insertarConfiguracion(database);
 		this.insertarRegistros(database);

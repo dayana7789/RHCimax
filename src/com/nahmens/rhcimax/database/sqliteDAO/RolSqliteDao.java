@@ -127,7 +127,7 @@ public class RolSqliteDao implements RolDAO {
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_ROL, null , Rol.FECHA_SINCRONIZACION + "= NULL OR " + Rol.FECHA_MODIFICACION + " > " +Rol.FECHA_SINCRONIZACION ,null, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_ROL, null , Rol.FECHA_SINCRONIZACION + " IS NULL OR " + Rol.FECHA_MODIFICACION + " > " +Rol.FECHA_SINCRONIZACION ,null, null, null, null);
 
 
 			if (mCursor != null) {

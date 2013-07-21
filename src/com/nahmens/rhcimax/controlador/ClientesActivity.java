@@ -173,7 +173,7 @@ public class ClientesActivity extends ListFragment {
 			strFechaSincronizacion = cursorlistEmpresas.getString(cursorlistEmpresas.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
 			strFechaModificacion = cursorlistEmpresas.getString(cursorlistEmpresas.getColumnIndex(Empleado.FECHA_MODIFICACION));
 
-			if(strFechaSincronizacion == null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+			if(strFechaSincronizacion.equals("null") || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
 				arr.add(false);
 			}else{
 				arr.add(true);
@@ -192,7 +192,7 @@ public class ClientesActivity extends ListFragment {
 			strFechaSincronizacion = cursorlistEmpleados.getString(cursorlistEmpleados.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
 			strFechaModificacion = cursorlistEmpleados.getString(cursorlistEmpleados.getColumnIndex(Empleado.FECHA_MODIFICACION));
 
-			if(strFechaSincronizacion == null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+			if(strFechaSincronizacion.equals("null")  || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
 				arr.add(false);
 			}else{
 				arr.add(true);

@@ -12,13 +12,16 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.nahmens.rhcimax.controlador.LoginActivity;
+import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Configuracion;
+import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Rol;
 import com.nahmens.rhcimax.database.modelo.Rol_Permiso;
 import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.ConfiguracionSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.GenericoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.PermisoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.RolSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.Rol_PermisoSqliteDao;
@@ -342,18 +345,136 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
 	}
 
-	public void postEmpresas() throws Exception{
+	public void getEmpresas() throws Exception{
 
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 		Cursor cEmpresas =  empresaDao.listarEmpresasNoSync(contexto);
 
 		String input = new Formato().cursorToJsonString(cEmpresas);
 		Log.e("input", input);
+		
+		//JSONObject resp = sync.postValores(dirServidor+"createTest", input);
+		
+		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
+		
+		//JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
-		sync.postValores("createTest", input);
+		JSONArray myJsonArray = new JSONArray(input);
+
+		/*JSONArray userArray = new JSONArray();
+
+		JSONObject jsObject =  new JSONObject();
+		jsObject.put(Rol_Permiso.ID_ROL, "100");
+		jsObject.put(Rol_Permiso.ID_PERMISO, "100");
+
+
+		JSONObject jsObject2 =  new JSONObject();
+		jsObject2.put(Rol_Permiso.ID_ROL, "100");
+		jsObject2.put(Rol_Permiso.ID_PERMISO, "80");
+
+		
+		userArray.put(jsObject);		
+		//userArray.put(jsObject2);*/
+
+		Empresa empresa = null;
+		EmpresaSqliteDao myDao = new EmpresaSqliteDao();
+		String id;
+		String nombre;
+		String telefono;
+		String rif;
+		String web;
+		String dirFiscal;
+		String dirComercial;
+		Double latitud;
+		Double longitud;
+		String fechaCreacion;
+		String idUsuarioCreador;
+		String fechaModificacion;
+		String idUsuarioModificador;
+		String fechaSincronizacion;
+		int modificado2;
+
+		boolean modificado = false;
+
+		//eliminamos a todos los usuarios
+		//rol_PermisoDao.eliminarRoles_Permisos(contexto);
+
+		//y los volvemos a insertar
+		for (int i = 0; i < myJsonArray.length(); ++i) {
+			JSONObject myJsonObject = myJsonArray.getJSONObject(i);
+
+			id = myJsonObject.getString(Empresa.ID);
+			nombre = myJsonObject.getString(Empresa.NOMBRE);
+			telefono = myJsonObject.getString(Empresa.TELEFONO);
+			rif = myJsonObject.getString(Empresa.RIF);
+			web = myJsonObject.getString(Empresa.WEB);
+			dirFiscal = myJsonObject.getString(Empresa.DIR_FISCAL);
+			dirComercial = myJsonObject.getString(Empresa.DIR_COMERCIAL);
+			latitud = myJsonObject.getDouble(Empresa.LATITUD);
+			longitud = myJsonObject.getDouble(Empresa.LONGITUD);
+			fechaCreacion = myJsonObject.getString(Empresa.FECHA_CREACION);
+			idUsuarioCreador = myJsonObject.getString(Empresa.ID_USUARIO_CREADOR);
+			fechaModificacion = myJsonObject.getString(Empresa.FECHA_MODIFICACION);
+			idUsuarioModificador = myJsonObject.getString(Empresa.ID_USUARIO_MODIFICADOR);
+			fechaSincronizacion = myJsonObject.getString(Empresa.FECHA_SINCRONIZACION);
+			modificado2 = myJsonObject.getInt(Empresa.MODIFICADO);
+
+			empresa = new Empresa(id, nombre, telefono, rif, web, dirFiscal, dirComercial, latitud, longitud, fechaCreacion, idUsuarioCreador, fechaModificacion, idUsuarioModificador, fechaSincronizacion, modificado2);
+
+			modificado = myDao.modificarEmpresa(contexto, empresa);
+			
+			if(!modificado){
+				try{
+					myDao.insertarEmpresa(contexto, empresa);
+				}catch(android.database.sqlite.SQLiteConstraintException e){
+					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La empresa con id "+ id + " no pudo ser insertado.");
+				}
+			}else{
+				mLog.appendLog(obtenerTag() + "... " + "La empresa con id "+ id +" ya existe.");
+			}
+		}
 
 	}
 	
+	
+	public void getGenerico(String nombreTabla) throws Exception{
+
+		GenericoSqliteDao myDao = new GenericoSqliteDao();
+		Cursor myCursor =  myDao.listarGenericoNoSync(contexto, nombreTabla);
+
+		String input = new Formato().cursorToJsonString(myCursor);
+		Log.e("input", input);
+		
+		//JSONObject resp = sync.postValores(dirServidor+"createTest", input);
+		
+		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
+		
+		//JSONArray userArray = sync.getValores(dirServidor+"getTest");
+
+		JSONArray myJsonArray = new JSONArray(input);
+		boolean modificado = false;
+
+		//eliminamos a todos los usuarios
+		//rol_PermisoDao.eliminarRoles_Permisos(contexto);
+
+		//y los volvemos a insertar
+		for (int i = 0; i < myJsonArray.length(); ++i) {
+			JSONObject myJsonObject = myJsonArray.getJSONObject(i);
+
+			modificado = myDao.modificarGenerico(contexto, myJsonObject, nombreTabla);
+			
+			if(!modificado){
+				try{
+					myDao.insertarGenerico(contexto, myJsonObject, DataBaseHelper.TABLA_EMPRESA);
+				}catch(android.database.sqlite.SQLiteConstraintException e){
+					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La "+nombreTabla+" con id "+ "id" + " no pudo ser insertado.");
+				}
+			}else{
+				mLog.appendLog(obtenerTag() + "... " + "La empresa con id "+ "id" +" ya existe.");
+			}
+		}
+
+	}
 	
 	/*************************** FUNCIONES ASYNC TASK ***************************/
 
@@ -404,7 +525,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			
 			mLog.appendLog(obtenerTag() + "Enviando credenciales... ");
 			try{
-				postAutenticacionMaster();
+				//postAutenticacionMaster();
 			}catch (Exception e) {
 				e.printStackTrace();
 				return e.toString();
@@ -414,10 +535,13 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			mLog.appendLog(obtenerTag() + "Inicio de sincronización... ");
 
 			try {
-				this.getRoles();
+				
+				getGenerico(DataBaseHelper.TABLA_EMPLEADO);
+				//getEmpresas();
+				/*this.getRoles();
 				this.getPermisos();
 				this.getRol_Permiso();
-				this.getUsuarios();
+				this.getUsuarios();*/
 
 			} catch (Exception e) {
 				e.printStackTrace();
