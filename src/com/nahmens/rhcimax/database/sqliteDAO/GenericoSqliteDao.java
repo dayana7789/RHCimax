@@ -89,14 +89,20 @@ public class GenericoSqliteDao implements GenericoDAO{
 
 			while(keys.hasNext()){
 				String key = (String)keys.next();
-				values.put(key,json.getString(key));
+				String valor = json.getString(key);
+				
+				if(valor.equals("null") || valor==null){
+					values.putNull(key);
+				}else{
+					values.put(key,valor);
+				}
 
 				if(key.equals(ID)){
 					id = json.getString(key);
 				}
 			}
 
-			Log.e("DEBUG","id a modificar: " + id);
+			Log.e("DEBUG","id a modificar: " + id );
 			value = conexion.getDatabase().update(nombreTabla, values, "_id=?", new String []{id});
 
 

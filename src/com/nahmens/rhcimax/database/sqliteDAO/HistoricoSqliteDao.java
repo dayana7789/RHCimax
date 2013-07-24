@@ -119,7 +119,6 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 
 	@Override
 	public Cursor buscarHistoricoFilter(Context contexto, String args, boolean fltrarPorUsuario) {
-
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
 		String sqlQuery = "";

@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaHistoricosCursorAdapter;
+import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
 import com.nahmens.rhcimax.database.modelo.Cotizacion_Servicio;
@@ -41,15 +43,16 @@ import com.nahmens.rhcimax.database.sqliteDAO.Cotizacion_ServicioSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 import com.nahmens.rhcimax.utils.SesionUsuario;
+import com.nahmens.rhcimax.utils.SincronizacionAsyncTask;
 
 
 public class HistoricosActivity extends ListFragment{
 
-	ListaHistoricosCursorAdapter listCursorAdapterHistoricos;
+	public static ListaHistoricosCursorAdapter listCursorAdapterHistoricos;
 	@SuppressLint("UseSparseArrays")
 	HashMap<String,Boolean> arrSincronizados = new HashMap<String, Boolean>(); //Contiene idHistorico y si esta sincronizado o no
 	private ArrayList<String> permisos;
-	
+
 	//variable que se utiliza para evitar llamar al listener
 	//del spinner cuando el usuario no ha seleccionado 
 	//explicitamente el spinner
@@ -71,7 +74,9 @@ public class HistoricosActivity extends ListFragment{
 	private DataSetObserver observer = new DataSetObserver() {
 		public void onChanged(){
 			if(mObserverBool){
+				setArrSincronizados(listCursorAdapterHistoricos.getCursor());
 				cambiarColorCuadroNotificacion(getView());
+				mObserverBool = false;
 
 			}else{
 				mObserverBool = true;
@@ -85,21 +90,21 @@ public class HistoricosActivity extends ListFragment{
 
 		View view = inflater.inflate(R.layout.activity_historicos, container, false);
 		permisos = SesionUsuario.getPermisos(getActivity());
-		
+
 		if (savedInstanceState==null){
 			//Nos aseguramos que no importa desde donde nos llamen, el indicador del 
 			//tab es el correspondiente.
 			AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentHistoricos);	
 
 			final Bundle mArgumentos = this.getArguments();
-			
+
 			//Asociamos los valores al combo box o spinner
 			inicializarSpinner(view);
 
 			HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
 
 			Cursor mCursorHistoricos = null;
-			
+
 			if(permisos.contains(Permiso.LISTAR_TODO)){
 				mCursorHistoricos = historicoDao.buscarHistoricoFilter(getActivity(), "Todos", false);
 			}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
@@ -107,8 +112,19 @@ public class HistoricosActivity extends ListFragment{
 			}else{
 				mCursorHistoricos = historicoDao.buscarHistoricoFilter(getActivity(), "Todos", false);
 			}
-			
+
 			listarHistoricos(view, mCursorHistoricos);
+
+			// Registro del evento OnClick del buttonActualizar
+			Button bAct = (Button)view.findViewById(R.id.buttonActualizar);
+			bAct.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					new SincronizacionAsyncTask(getActivity()).execute(DataBaseHelper.TABLA_HISTORICO);
+
+				}
+			});
 
 			//Registro del evento addTextChangedListener cuando utilizamos el buscador
 			EditText etBuscar = (EditText) view.findViewById(R.id.editTextBuscar);
@@ -116,8 +132,8 @@ public class HistoricosActivity extends ListFragment{
 
 				@Override
 				public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-					
-					
+
+
 					//Este if es para que este metodo no se llame automaticamente
 					//al iniciar la actividad
 					if(mOnTextChangedBool){
@@ -137,7 +153,7 @@ public class HistoricosActivity extends ListFragment{
 				public void afterTextChanged(Editable arg0) {}
 			});
 
-			
+
 
 			//Si me pasaron argumentos, filtro la lista. 
 			//De lo contrario, listo todo.
@@ -149,7 +165,7 @@ public class HistoricosActivity extends ListFragment{
 				if(nombreEmpresa!=null){
 					//OJO: es importante crear el listener antes de hacer el setText
 					//de lo contrario no se llama al metodo onTextChanged automaticamnt
-					
+
 					//esta linea es para que se llame onTextChanged dos veces. 
 					//recordar q el filtro empieza cuando al menos dos letras son ingresadas
 					//en el edit text del buscador.

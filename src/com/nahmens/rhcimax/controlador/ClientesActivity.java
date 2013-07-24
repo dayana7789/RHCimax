@@ -62,7 +62,7 @@ public class ClientesActivity extends ListFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 
-		View view = inflater.inflate(R.layout.activity_clientes, container, false);
+		final View view = inflater.inflate(R.layout.activity_clientes, container, false);
 		permisos = SesionUsuario.getPermisos(getActivity());
 
 		if (savedInstanceState==null){
@@ -80,15 +80,16 @@ public class ClientesActivity extends ListFragment {
 			cambiarColorCuadroNotificacion(view);
 
 			// Registro del evento OnClick del buttonActualizar
-						Button bAct = (Button)view.findViewById(R.id.buttonActualizar);
-						bAct.setOnClickListener(new View.OnClickListener() {
+			Button bAct = (Button)view.findViewById(R.id.buttonActualizar);
+			bAct.setOnClickListener(new View.OnClickListener() {
 
-							@Override
-							public void onClick(View v) {
-								new SincronizacionAsyncTask(getActivity()).execute(DataBaseHelper.TABLA_EMPRESA);
-							}
-						});
-						
+				@Override
+				public void onClick(View v) {
+					new SincronizacionAsyncTask(getActivity()).execute(DataBaseHelper.TABLA_EMPLEADO, DataBaseHelper.TABLA_EMPRESA);
+					
+				}
+			});
+
 			// Registro del evento OnClick del buttonEmpresa
 			Button bEmp = (Button)view.findViewById(R.id.buttonEmpresa);
 			bEmp.setOnClickListener(new View.OnClickListener() {
@@ -155,7 +156,7 @@ public class ClientesActivity extends ListFragment {
 	 * Funcion encargada de modificar los colores de los cuadros de notificacion principal.
 	 * @param v
 	 */
-	private void cambiarColorCuadroNotificacion(View v) {
+	public void cambiarColorCuadroNotificacion(View v) {
 
 		if(v==null){
 			v = getView();
@@ -200,7 +201,7 @@ public class ClientesActivity extends ListFragment {
 		while(!cursorlistEmpleados.isAfterLast()){
 
 			strSincronizado = cursorlistEmpleados.getInt(cursorlistEmpleados.getColumnIndex(Empleado.SINCRONIZADO));
-			
+
 			if(strSincronizado==0){
 				arr.add(false);
 			}else{
@@ -342,7 +343,7 @@ public class ClientesActivity extends ListFragment {
 		final String id = cursor.getString(cursor.getColumnIndex("_id"));
 		final String nombre = cursor.getString(cursor.getColumnIndex("nombre"));
 		String tipoCliente = null;
-		
+
 		if (l.getId() == android.R.id.list) {
 			tipoCliente = "empleado";
 		} else if (l.getId() == R.id.listEmpresas) {
@@ -351,12 +352,12 @@ public class ClientesActivity extends ListFragment {
 
 		if(permisos.contains(Permiso.ELIMINAR_TODO)){
 			mostrarOpcionActualizarEliminar(id, tipoCliente, nombre);
-			
-		/*}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
-			
+
+			/*}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
+
 			String idUsuarioCreador = cursor.getString(cursor.getColumnIndex("idUsuario"));
 			String idUsuarioSesion = SesionUsuario.getIdUsuario(getActivity());
-			
+
 			if(idUsuarioCreador==idUsuarioSesion){
 				mostrarOpcionActualizarEliminar(id, tipoCliente, nombre);
 			}else{
@@ -367,10 +368,10 @@ public class ClientesActivity extends ListFragment {
 			mostrarOpcionActualizar(id, tipoCliente, nombre);
 		}
 	}
-	
+
 	private void mostrarOpcionActualizar(final String id, final String tipoCliente, final String nombre){
 		String[] arr = {"Actualizar"};
-		
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(nombre)
 		.setItems(arr, new DialogInterface.OnClickListener() {
@@ -385,10 +386,10 @@ public class ClientesActivity extends ListFragment {
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-	
+
 	private void mostrarOpcionActualizarEliminar(final String id, final String tipoCliente, final String nombre){
 		String[] arr = {"Actualizar", "Eliminar"};
-		
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(nombre)
 		.setItems(arr, new DialogInterface.OnClickListener() {

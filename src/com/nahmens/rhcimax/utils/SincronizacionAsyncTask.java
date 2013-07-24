@@ -1,5 +1,7 @@
 package com.nahmens.rhcimax.utils;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,9 +13,17 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.nahmens.rhcimax.controlador.ClientesActivity;
+import com.nahmens.rhcimax.controlador.HistoricosActivity;
+import com.nahmens.rhcimax.controlador.TareasActivity;
 import com.nahmens.rhcimax.database.modelo.Configuracion;
+import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.sqliteDAO.ConfiguracionSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.GenericoSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 
 public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
@@ -33,398 +43,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		this.mLog = new LogFile(contexto, new Utils().getNumeroAleatorio());
 	}
 
-	/*public void getUsuarios() throws Exception{
 
-		UsuarioSqliteDao usuarioDao2 = new UsuarioSqliteDao();
-		Usuario usuario2 =  usuarioDao2.buscarUsuario(contexto, "administrador", "1234");
-
-		String input ="{\"token\":\""+usuario2.getToken()+"\"}";
-		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
-		Log.e("input", input);
-
-		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
-		
-		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
-		
-	/*	JSONArray userArray = sync.getValores(dirServidor+"getTest");
-
-	/*	JSONArray userArray = new JSONArray();
-		JSONObject jsObject =  new JSONObject();
-		jsObject.put("_id", "80");
-		jsObject.put("login", "nahmens");
-		jsObject.put("password", "1234");
-		jsObject.put("correo", "nahmens@nahmens.com");
-		jsObject.put("idRol", "100");
-		jsObject.put("token", "80");
-
-		userArray.put(jsObject);*/
-
-	/*	Usuario usuario = null;
-		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
-		String id = null;
-		String login = null;
-		String password = null;
-		String correo = null;
-		String idRol = null;
-		String token = null;
-		boolean modificado = false;
-
-		//eliminamos a todos los usuarios
-		//usuarioDao.eliminarUsuarios(contexto);
-
-		//y los volvemos a insertar
-		for (int i = 0; i < userArray.length(); ++i) {
-			JSONObject userObject = userArray.getJSONObject(i);
-
-			id = userObject.getString(Usuario.ID);
-			login = userObject.getString(Usuario.LOGIN);
-			password = userObject.getString(Usuario.PASSWORD);
-			correo = userObject.getString(Usuario.CORREO);
-			idRol = userObject.getString(Usuario.ID_ROL);
-			token = userObject.getString(Usuario.TOKEN);
-
-			usuario = new Usuario(id, login,password, correo, idRol, token);
-
-			modificado = usuarioDao.modificarUsuario(contexto, usuario);
-
-			if(!modificado){
-				mLog.appendLog(obtenerTag() + "... " + "El usuario con id: "+ id + " es nuevo.");
-				try{
-					usuarioDao.insertarUsuario(contexto, usuario);
-				}catch(android.database.sqlite.SQLiteConstraintException e){
-					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "El usuario con id: "+ id + " no pudo ser insertado.");
-				}
-			}else{
-				mLog.appendLog(obtenerTag() + "... " + "El usuario con id: "+ id + " fue modificado satisfactoriamente.");
-			}
-
-		}
-
-	}
-
-	public void getRoles() throws Exception{
-
-		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
-		Usuario usuario =  usuarioDao.buscarUsuario(contexto, "administrador", "1234");
-
-		String input ="{\"token\":\""+usuario.getToken()+"\"}";
-		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
-		Log.e("input", input);
-
-		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
-		
-		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
-		
-	/*	JSONArray userArray = sync.getValores(dirServidor+"getTest");
-
-	/*	JSONArray userArray = new JSONArray();
-
-		JSONObject jsObject =  new JSONObject();
-		jsObject.put(Rol.ID, "100");
-		jsObject.put("nombre", "nahmens2");
-		jsObject.put("descripcion", "1234");
-
-		JSONObject jsObject2 =  new JSONObject();
-		jsObject2.put(Rol.ID, "80");
-		jsObject2.put("nombre", "nahmens");
-		jsObject2.put("descripcion", "1234");
-
-		userArray.put(jsObject);		
-		userArray.put(jsObject2);*/
-
-	/*	Rol rol = null;
-		RolSqliteDao rolDao = new RolSqliteDao();
-		String id = null;
-		String nombre = null;
-		String descripcion = null;
-		boolean modificado = false;
-
-		//eliminamos a todos los usuarios
-		//rolDao.eliminarRoles(contexto);
-
-		//y los volvemos a insertar
-		for (int i = 0; i < userArray.length(); ++i) {
-			JSONObject userObject = userArray.getJSONObject(i);
-
-			id = userObject.getString(Rol.ID);
-			nombre = userObject.getString(Rol.NOMBRE);
-			descripcion = userObject.getString(Rol.DESCRIPCION);
-
-			rol = new Rol(id, nombre, descripcion);
-
-			modificado = rolDao.modificarRol(contexto, rol);
-
-			if(!modificado){
-				mLog.appendLog(obtenerTag() + "... " + "El rol con id: "+ id + " es nuevo.");
-				try{
-					rolDao.insertarRol(contexto, rol);
-				}catch(android.database.sqlite.SQLiteConstraintException e){
-					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "El rol con id: "+ id + " no pudo ser insertado.");
-				}
-			}else{
-				mLog.appendLog(obtenerTag() + "... " + "El rol con id: "+ id + " fue modificado satisfactoriamente.");
-			}
-		}
-	}
-
-	public void getPermisos() throws Exception{
-
-		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
-		Usuario usuario =  usuarioDao.buscarUsuario(contexto, "administrador", "1234");
-
-		String input ="{\"token\":\""+usuario.getToken()+"\"}";
-		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
-		Log.e("input", input);
-
-		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
-		
-		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
-		
-	/*	JSONArray userArray = sync.getValores(dirServidor+"getTest");
-
-		/*JSONArray userArray = new JSONArray();
-
-		JSONObject jsObject =  new JSONObject();
-		jsObject.put(Permiso.ID, "100");
-		jsObject.put("nombre", Permiso.LISTAR_TODO);
-		jsObject.put("descripcion", "1234");
-
-		JSONObject jsObject2 =  new JSONObject();
-		jsObject2.put(Permiso.ID, "80");
-		jsObject2.put("nombre", Permiso.MODIFICAR_TODO);
-		jsObject2.put("descripcion", "1234");
-
-		userArray.put(jsObject);		
-		userArray.put(jsObject2);*/
-
-	/*	Permiso permiso = null;
-		PermisoSqliteDao permisoDao = new PermisoSqliteDao();
-		String id = null;
-		String nombre = null;
-		String descripcion = null;
-		boolean modificado = false;
-
-		//eliminamos a todos los usuarios
-		//permisoDao.eliminarPermisos(contexto);
-
-		//y los volvemos a insertar
-		for (int i = 0; i < userArray.length(); ++i) {
-			JSONObject userObject = userArray.getJSONObject(i);
-
-			id = userObject.getString(Permiso.ID);
-			nombre = userObject.getString(Permiso.NOMBRE);
-			descripcion = userObject.getString(Permiso.DESCRIPCION);
-
-			permiso = new Permiso(id, nombre, descripcion);
-
-			modificado = permisoDao.modificarPermiso(contexto, permiso);
-
-			if(!modificado){
-				mLog.appendLog(obtenerTag() + "... " + "El permiso con id: "+ id + " es nuevo.");
-				try{
-					permisoDao.insertarPermiso(contexto, permiso);
-				}catch(android.database.sqlite.SQLiteConstraintException e){
-					mLog.appendLog(obtenerTag() + "... " +  e.getMessage() + ": " + "El permiso con id: "+ id + " no pudo ser insertado.");
-				}
-			}else{
-				mLog.appendLog(obtenerTag() + "... " + "El permiso con id: "+ id + " fue modificado satisfactoriamente.");
-			}
-		}
-	}
-
-	public void getRol_Permiso() throws Exception{
-		
-		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
-		Usuario usuario =  usuarioDao.buscarUsuario(contexto, "administrador", "1234");
-
-		String input ="{\"token\":\""+usuario.getToken()+"\"}";
-		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
-		Log.e("input", input);
-
-		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
-		
-		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
-		
-	/*	JSONArray userArray = sync.getValores(dirServidor+"getTest");
-
-		//	JSONArray userArray = sync.getValores(dirServidor+"getTest");
-
-		/*JSONArray userArray = new JSONArray();
-
-		JSONObject jsObject =  new JSONObject();
-		jsObject.put(Rol_Permiso.ID_ROL, "100");
-		jsObject.put(Rol_Permiso.ID_PERMISO, "100");
-
-
-		JSONObject jsObject2 =  new JSONObject();
-		jsObject2.put(Rol_Permiso.ID_ROL, "100");
-		jsObject2.put(Rol_Permiso.ID_PERMISO, "80");
-
-		
-		userArray.put(jsObject);		
-		//userArray.put(jsObject2);*/
-
-	/*	Rol_Permiso rol_permiso = null;
-		Rol_PermisoSqliteDao rol_PermisoDao = new Rol_PermisoSqliteDao();
-		String idPermiso = null;
-		String idRol = null;
-
-		boolean existe = false;
-
-		//eliminamos a todos los usuarios
-		//rol_PermisoDao.eliminarRoles_Permisos(contexto);
-
-		//y los volvemos a insertar
-		for (int i = 0; i < userArray.length(); ++i) {
-			JSONObject userObject = userArray.getJSONObject(i);
-
-			idPermiso = userObject.getString(Rol_Permiso.ID_PERMISO);
-			idRol = userObject.getString(Rol_Permiso.ID_ROL);
-
-			rol_permiso = new Rol_Permiso(idRol,idPermiso);
-
-			existe = rol_PermisoDao.existeRol_Permiso(contexto, rol_permiso);
-			
-			if(!existe){
-				try{
-					rol_PermisoDao.insertaRol_Permiso(contexto, rol_permiso);
-				}catch(android.database.sqlite.SQLiteConstraintException e){
-					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "El rol_permiso con idPermiso: "+ idPermiso + " e idRoL: " + idRol +" no pudo ser insertado.");
-				}
-			}else{
-				mLog.appendLog(obtenerTag() + "... " + "El rol_permiso con idPermiso: "+ idPermiso + " e idRoL: " + idRol +" ya existe.");
-			}
-		}
-	}
-
-	/**
-	 * Esta funcion se utiliza despues de haber hecho login en el sistema.
-	 * @throws Exception
-	 */
-/*	public void postAutenticacion() throws Exception{
-
-		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
-		String idUsuario = SesionUsuario.getIdUsuario(contexto);
-		Usuario usuario =  usuarioDao.buscarUsuario(contexto, idUsuario);
-
-		String input ="{\"token\":\""+usuario.getToken()+"\"}";
-		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
-		Log.e("input", input);
-
-		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
-
-
-	}
-	
-	/**
-	 * Esta funcion solo se utiliza para sincronizar usuarios
-	 * desde la pagina del login
-	 * @throws Exception
-	 */
-	/*public void postAutenticacionMaster() throws Exception{
-
-		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
-		Usuario usuario =  usuarioDao.buscarUsuario(contexto, "administrador", "1234");
-
-		String input ="{\"token\":\""+usuario.getToken()+"\"}";
-		//String input ="data={\"assetId\":9876, \"assetName\":\"dayana1\"}";
-		Log.e("input", input);
-
-		JSONObject resp = sync.postValores(dirServidor+"createTest", input);
-	}
-
-	public void getEmpresas() throws Exception{
-
-		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-		Cursor cEmpresas =  empresaDao.listarEmpresasNoSync(contexto);
-
-		String input = new Utils().cursorToJsonString(cEmpresas);
-		Log.e("input", input);
-		
-		//JSONObject resp = sync.postValores(dirServidor+"createTest", input);
-		
-		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
-		
-		//JSONArray userArray = sync.getValores(dirServidor+"getTest");
-
-	/*	JSONArray myJsonArray = new JSONArray(input);
-
-		/*JSONArray userArray = new JSONArray();
-
-		JSONObject jsObject =  new JSONObject();
-		jsObject.put(Rol_Permiso.ID_ROL, "100");
-		jsObject.put(Rol_Permiso.ID_PERMISO, "100");
-
-
-		JSONObject jsObject2 =  new JSONObject();
-		jsObject2.put(Rol_Permiso.ID_ROL, "100");
-		jsObject2.put(Rol_Permiso.ID_PERMISO, "80");
-
-		
-		userArray.put(jsObject);		
-		//userArray.put(jsObject2);*/
-
-	/*	Empresa empresa = null;
-		EmpresaSqliteDao myDao = new EmpresaSqliteDao();
-		String id;
-		String nombre;
-		String telefono;
-		String rif;
-		String web;
-		String dirFiscal;
-		String dirComercial;
-		Double latitud;
-		Double longitud;
-		String fechaCreacion;
-		String idUsuarioCreador;
-		String fechaModificacion;
-		String idUsuarioModificador;
-		String fechaSincronizacion;
-		int modificado2;
-
-		boolean modificado = false;
-
-		//eliminamos a todos los usuarios
-		//rol_PermisoDao.eliminarRoles_Permisos(contexto);
-
-		//y los volvemos a insertar
-		for (int i = 0; i < myJsonArray.length(); ++i) {
-			JSONObject myJsonObject = myJsonArray.getJSONObject(i);
-
-			id = myJsonObject.getString(Empresa.ID);
-			nombre = myJsonObject.getString(Empresa.NOMBRE);
-			telefono = myJsonObject.getString(Empresa.TELEFONO);
-			rif = myJsonObject.getString(Empresa.RIF);
-			web = myJsonObject.getString(Empresa.WEB);
-			dirFiscal = myJsonObject.getString(Empresa.DIR_FISCAL);
-			dirComercial = myJsonObject.getString(Empresa.DIR_COMERCIAL);
-			latitud = myJsonObject.getDouble(Empresa.LATITUD);
-			longitud = myJsonObject.getDouble(Empresa.LONGITUD);
-			fechaCreacion = myJsonObject.getString(Empresa.FECHA_CREACION);
-			idUsuarioCreador = myJsonObject.getString(Empresa.ID_USUARIO_CREADOR);
-			fechaModificacion = myJsonObject.getString(Empresa.FECHA_MODIFICACION);
-			idUsuarioModificador = myJsonObject.getString(Empresa.ID_USUARIO_MODIFICADOR);
-			fechaSincronizacion = myJsonObject.getString(Empresa.FECHA_SINCRONIZACION);
-			modificado2 = myJsonObject.getInt(Empresa.MODIFICADO);
-
-			empresa = new Empresa(id, nombre, telefono, rif, web, dirFiscal, dirComercial, latitud, longitud, fechaCreacion, idUsuarioCreador, fechaModificacion, idUsuarioModificador, fechaSincronizacion, modificado2);
-
-			modificado = myDao.modificarEmpresa(contexto, empresa);
-			
-			if(!modificado){
-				try{
-					myDao.insertarEmpresa(contexto, empresa);
-				}catch(android.database.sqlite.SQLiteConstraintException e){
-					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La empresa con id "+ id + " no pudo ser insertado.");
-				}
-			}else{
-				mLog.appendLog(obtenerTag() + "... " + "La empresa con id "+ id +" ya existe.");
-			}
-		}
-
-	}*/
-	
-	
 	public void getGenerico(String nombreTabla) throws Exception{
 
 		GenericoSqliteDao myDao = new GenericoSqliteDao();
@@ -432,38 +51,45 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 		String input = new Utils().cursorToJsonString(myCursor);
 		Log.e("input", input);
-		
+
 		//JSONObject resp = sync.postValores(dirServidor+"createTest", input);
-		
+
 		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
-		
+
 		//JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
 		JSONArray myJsonArray = new JSONArray(input);
 		boolean modificado = false;
+		boolean error = false;
+		boolean sincronizado = false;
 
-		//eliminamos a todos los usuarios
-		//rol_PermisoDao.eliminarRoles_Permisos(contexto);
-
-		//y los volvemos a insertar
 		for (int i = 0; i < myJsonArray.length(); ++i) {
 			JSONObject myJsonObject = myJsonArray.getJSONObject(i);
 
 			modificado = myDao.modificarGenerico(contexto, myJsonObject, nombreTabla);
-			
+
 			if(!modificado){
 				try{
 					myDao.insertarGenerico(contexto, myJsonObject, nombreTabla);
 				}catch(android.database.sqlite.SQLiteConstraintException e){
-					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La "+nombreTabla+" con id "+ "id" + " no pudo ser insertado.");
+					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La "+nombreTabla+" con id "+ myJsonObject.getString("_id") + " no pudo ser insertado.");
+					error = true;
 				}
 			}else{
-				mLog.appendLog(obtenerTag() + "... " + "La empresa con id "+ "id" +" ya existe.");
+				mLog.appendLog(obtenerTag() + "... " + "La "+nombreTabla+" con id "+  myJsonObject.getString("_id") +" ya existe.");
+			}
+
+			if(!error){
+				sincronizado = myDao.sincronizarGenerico(contexto, myJsonObject, nombreTabla);
+
+				if(!sincronizado){
+					mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+  myJsonObject.getString("_id") +" no pudo ser sincronizado.");
+				}
 			}
 		}
 
 	}
-	
+
 	/*************************** FUNCIONES ASYNC TASK ***************************/
 
 	/**
@@ -478,7 +104,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 	/**
 	 * Funcion que se llama al terminar la carga.
-	 * Oculta dialos.
+	 * Oculta dialog.
 	 */
 	protected void onPostExecute(String result) {
 		//LoginActivity.dialog.dismiss(); 
@@ -488,6 +114,56 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			toast.show();
 			mLog.appendLog(obtenerTag() + TEXT_OK);
 
+			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+			TareaSqliteDao tareaDao = new TareaSqliteDao();
+			HistoricoSqliteDao historicoDao =  new HistoricoSqliteDao();
+			ArrayList<String> permisos= SesionUsuario.getPermisos(contexto);
+
+			try{
+				if(ClientesActivity.listCursorAdapterEmpleados !=null){
+					ClientesActivity.listCursorAdapterEmpleados.changeCursor(empleadoDao.buscarEmpleadoFilter(contexto,null));
+					ClientesActivity.listCursorAdapterEmpleados.notifyDataSetChanged();
+				}
+			}catch(Exception e){
+				//e.printStackTrace();
+			}
+
+			try{
+				if(ClientesActivity.listCursorAdapterEmpresas != null){
+					ClientesActivity.listCursorAdapterEmpresas.changeCursor(empresaDao.buscarEmpresaFilter(contexto,null));
+					ClientesActivity.listCursorAdapterEmpresas.notifyDataSetChanged();
+				}
+			}catch(Exception e){
+				//e.printStackTrace();
+			}
+
+			try{
+				Cursor mCursorTareas = null;
+				if(permisos.contains(Permiso.LISTAR_TODO)){
+					mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, false);
+				}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+					mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, true);
+				}else{
+					mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, false);
+				}
+				
+				if(TareasActivity.listCursorAdapterTareas !=null){
+					TareasActivity.listCursorAdapterTareas.changeCursor(mCursorTareas);
+					TareasActivity.listCursorAdapterTareas.notifyDataSetChanged();
+				}
+			}catch(Exception e){
+				//e.printStackTrace();
+			}
+
+			try{
+				if(HistoricosActivity.listCursorAdapterHistoricos != null){
+					HistoricosActivity.listCursorAdapterHistoricos.changeCursor(historicoDao.buscarHistoricoFilter(contexto,null, false));
+					HistoricosActivity.listCursorAdapterHistoricos.notifyDataSetChanged();
+				}
+			}catch(Exception e){
+				//e.printStackTrace();
+			}
 		}else{
 			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result, DURATION);
 			toast.show();
@@ -510,7 +186,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 		if(hayInternet()){
 			mLog.appendLog(obtenerTag() + "Dirección servidor: " +dirServidor);
-			
+
 			mLog.appendLog(obtenerTag() + "Enviando credenciales... ");
 			try{
 				//postAutenticacionMaster();
@@ -518,16 +194,17 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 				e.printStackTrace();
 				return e.toString();
 			}
-			
+
 			mLog.appendLog(obtenerTag() + "... Conexión establecida");
 			mLog.appendLog(obtenerTag() + "Inicio de sincronización... ");
 
 			try {
-				 int count = nombreTablas.length;
+				int count = nombreTablas.length;
 
-		         for (int i = 0; i < count; i++) {
-		        	 getGenerico(nombreTablas[i]);
-		         }
+				for (int i = 0; i < count; i++) {
+					Log.e("debuug", "nombreTabla: "+nombreTablas[i]);
+					getGenerico(nombreTablas[i]);
+				}
 
 
 			} catch (Exception e) {
@@ -544,7 +221,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		return "ERROR";
 
 	}
-	
+
 	/*************************** FUNCIONES COMPLEMENTARIAS ***************************/
 
 	/**

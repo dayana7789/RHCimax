@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -30,47 +31,51 @@ import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaTareasCursorAdapter;
+import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.SesionUsuario;
+import com.nahmens.rhcimax.utils.SincronizacionAsyncTask;
 
 public class TareasActivity extends ListFragment{
 
-	ListaTareasCursorAdapter listCursorAdapterTareas;
+	public static ListaTareasCursorAdapter listCursorAdapterTareas;
 	@SuppressLint("UseSparseArrays")
 	HashMap<String,Boolean> arrSincronizados = new HashMap<String, Boolean>(); //Contiene idTarea y si esta sincronizado o no
 	private ArrayList<String> permisos;
-	
+
 	//Las siguientes variables son utilizadas para evitar llamadas a
 	//la BD innecesarias porq los listeners se disparan aunque el 
 	//usuario no lo haya solicitado.
-	
+
 	//variable que se utiliza para evitar llamar al listener
 	//del spinner cuando el usuario no ha seleccionado 
 	//explicitamente el spinner. Su valor se inicializa en el 
 	//metodo onResume.
 	private boolean mSpinnerBool;
-	
+
 	//Se utiliza para evitar llamar al metodo onChanged del
 	//DataSetObserver dos veces. Su valor se inicializa en el 
 	//metodo onResume.
 	private boolean mObserverBool;
-	
+
 	//Se utiliza para evitar llamar al metodo OnTextChanged del
-    //dos veces. Su valor se inicializa en el 
+	//dos veces. Su valor se inicializa en el 
 	//metodo onResume.
 	private boolean mOnTextChangedBool;
-	
+
 	//Creamos un DataSetObserver para saber cuando el listView de tarea
 	//ha sido modificado y lo registramos al adaptor con la funcion 
 	//registerDataSetObserver().
 	private DataSetObserver observer = new DataSetObserver() {
 		public void onChanged(){
-			
+
 			if(mObserverBool){
+				setArrSincronizados(listCursorAdapterTareas.getCursor());
 				cambiarColorCuadroNotificacion(getView());
+				mObserverBool = false;
 
 			}else{
 				mObserverBool = true;
@@ -94,9 +99,9 @@ public class TareasActivity extends ListFragment{
 			inicializarSpinner(view);
 
 			TareaSqliteDao tareaDao = new TareaSqliteDao();
-			
+
 			Cursor mCursorTareas = null;
-			
+
 			if(permisos.contains(Permiso.LISTAR_TODO)){
 				mCursorTareas = tareaDao.buscarTareaFilter(getActivity(),null, false);
 			}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
@@ -104,8 +109,9 @@ public class TareasActivity extends ListFragment{
 			}else{
 				mCursorTareas = tareaDao.buscarTareaFilter(getActivity(),null, false);
 			}
-			
+
 			listarTareas(view, mCursorTareas);
+
 
 			//Registro del evento addTextChangedListener cuando utilizamos el buscador
 			EditText etBuscar = (EditText) view.findViewById(R.id.editTextBuscar);
@@ -146,7 +152,7 @@ public class TareasActivity extends ListFragment{
 				if(nombreEmpresa!=null){
 					//OJO: es importante crear el listener antes de hacer el setText
 					//de lo contrario no se llama al metodo onTextChanged automaticamnt
-					
+
 					//esta linea es para que se llame onTextChanged dos veces. 
 					//recordar q el filtro empieza cuando al menos dos letras son ingresadas
 					//en el edit text del buscador.
@@ -163,6 +169,18 @@ public class TareasActivity extends ListFragment{
 
 			setArrSincronizados(mCursorTareas);
 			cambiarColorCuadroNotificacion(view);
+			
+
+			// Registro del evento OnClick del buttonActualizar
+			Button bAct = (Button)view.findViewById(R.id.buttonActualizar);
+			bAct.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					new SincronizacionAsyncTask(getActivity()).execute(DataBaseHelper.TABLA_TAREA);
+
+				}
+			});
 
 			// Registro del evento OnClick del buttonTarea
 			ImageButton bTarea = (ImageButton)view.findViewById(R.id.ImageButtonAgregarTarea);
@@ -191,8 +209,8 @@ public class TareasActivity extends ListFragment{
 	 * cuadro de notificacion principal 
 	 * @param mCursorTareas
 	 */
-	private void setArrSincronizados(Cursor mCursorTareas) {
-	
+	public void setArrSincronizados(Cursor mCursorTareas) {
+
 		int strSincronizado = 0;
 		String id = null;
 
@@ -213,12 +231,12 @@ public class TareasActivity extends ListFragment{
 
 			mCursorTareas.moveToNext();
 		}
-		
+
 	}
 
 
 	private void listarTareas(View view, Cursor mCursorTareas) {
-		
+
 		if(mCursorTareas.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
 			String[] from = new String[] { Tarea.NOMBRE, "loginUsuario", Tarea.FECHA, Tarea.HORA, Tarea.NOMBRE_EMPLEADO, Tarea.APELLIDO_EMPLEADO, Tarea.NOMBRE_EMPRESA, Tarea.FECHA_FINALIZACION};
@@ -257,12 +275,12 @@ public class TareasActivity extends ListFragment{
 
 		if(permisos.contains(Permiso.ELIMINAR_TODO)){
 			mostrarOpcionActualizarEliminar(idTarea, nombreTarea);
-			
+
 		}else if(permisos.contains(Permiso.ELIMINAR_PROPIOS)){
-			
+
 			String idUsuarioCreador = cursor.getString(cursor.getColumnIndex("idUsuario"));
 			String idUsuarioSesion = SesionUsuario.getIdUsuario(getActivity());
-			
+
 			if(idUsuarioCreador.equals(idUsuarioSesion)){
 				mostrarOpcionActualizarEliminar(idTarea, nombreTarea);
 			}else{
@@ -273,8 +291,8 @@ public class TareasActivity extends ListFragment{
 			mostrarOpcionActualizar(idTarea, nombreTarea);
 		}
 	}
-	
-	
+
+
 	private void mostrarOpcionActualizar(final String idTarea, final String nombreTarea){
 		String[] arr = {"Actualizar"};
 
@@ -292,7 +310,7 @@ public class TareasActivity extends ListFragment{
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-	
+
 	private void mostrarOpcionActualizarEliminar(final String idTarea, final String nombreTarea){
 		String[] arr = {"Actualizar","Eliminar"};
 
@@ -461,7 +479,7 @@ public class TareasActivity extends ListFragment{
 			}else{
 				listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null, false));
 			}
-			
+
 
 			//Notificamos que la lista cambio
 			listCursorAdapterTareas.notifyDataSetChanged();
