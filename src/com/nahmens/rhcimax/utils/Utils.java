@@ -7,7 +7,7 @@ import java.util.Random;
 
 import android.database.Cursor;
 
-public class Formato {
+public class Utils {
 	
 	/**
 	 * Funcion que construye un String con formato JSON a partir de

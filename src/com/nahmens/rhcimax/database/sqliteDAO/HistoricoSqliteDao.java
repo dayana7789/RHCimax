@@ -17,13 +17,13 @@ import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
-import com.nahmens.rhcimax.utils.Formato;
+import com.nahmens.rhcimax.utils.Utils;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 import com.nahmens.rhcimax.utils.SesionUsuario;
 
 public class HistoricoSqliteDao implements HistoricoDAO {
 
-	String  consulta  = "historico." + Historico.ID + " as historicoId, historico."+Historico.TIPO_REGISTRO + ", historico." + Historico.FECHA_CREACION + " as historicoFechaCreacion, historico." + Historico.FECHA_SINCRONIZACION + " as historicoFechaSincronizacion, historico." + Historico.ID_USUARIO_CREADOR + " as historicoUsuarioCreador "
+	String  consulta  = "historico." + Historico.ID + " as historicoId, historico."+Historico.TIPO_REGISTRO + ", historico." + Historico.FECHA_CREACION + " as historicoFechaCreacion,  historico." + Historico.ID_USUARIO_CREADOR + " as historicoUsuarioCreador, historico."+ Historico.SINCRONIZADO
 			+ ", empresaVisita." + Empresa.NOMBRE + " as nombreEmpresaVisita"
 			+ ", checkin."+Checkin.CHECKIN + ", checkin." + Checkin.CHECKOUT
 			+ ", usuarioVisita."+Usuario.LOGIN + " as loginUsuarioVisita"
@@ -60,7 +60,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 		String idFila = null;
 
 		if(historico.getId() == null){
-			idFila= new Formato().getNumeroAleatorio();
+			idFila= new Utils().getNumeroAleatorio();
 		}else{
 			idFila = historico.getId();
 		}
@@ -272,6 +272,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 
 			ContentValues contenido = new ContentValues();
 			contenido.put(Historico.FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
+			contenido.put(Historico.SINCRONIZADO, 1);
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_HISTORICO, contenido, "_id=?", new String []{idHistorico});
 
@@ -336,29 +337,4 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 
 		return existeHistorico;	
 	}
-
-	@Override
-	public Cursor listarHistoricosNoSync(Context contexto) {
-		ConexionBD conexion = new ConexionBD(contexto);
-		Cursor mCursor = null;
-		try{
-
-			conexion.open();
-
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_HISTORICO, null ,  Historico.FECHA_SINCRONIZACION + " IS NULL OR " + Historico.FECHA_MODIFICACION + " > " +Historico.FECHA_SINCRONIZACION ,null, null, null, null);
-
-
-			if (mCursor != null) {
-				mCursor.moveToFirst();
-			}
-
-		}finally{
-			conexion.close();
-		}
-
-		return mCursor;		
-	}
-
-
-
 }

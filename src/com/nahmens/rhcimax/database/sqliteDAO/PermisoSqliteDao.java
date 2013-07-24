@@ -13,7 +13,7 @@ import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.PermisoDAO;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Rol_Permiso;
-import com.nahmens.rhcimax.utils.Formato;
+import com.nahmens.rhcimax.utils.Utils;
 
 public class PermisoSqliteDao implements PermisoDAO{
 
@@ -25,7 +25,7 @@ public class PermisoSqliteDao implements PermisoDAO{
 		String idFila = null;
 
 		if(permiso.getId() == null){
-			idFila= new Formato().getNumeroAleatorio();
+			idFila= new Utils().getNumeroAleatorio();
 		}else{
 			idFila = permiso.getId();
 		}
@@ -137,27 +137,4 @@ public class PermisoSqliteDao implements PermisoDAO{
 
 		return modificado;
 	}
-
-	@Override
-	public Cursor listarPermisoNoSync(Context contexto) {
-		ConexionBD conexion = new ConexionBD(contexto);
-		Cursor mCursor = null;
-		try{
-
-			conexion.open();
-
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_PERMISO, null , Permiso.FECHA_SINCRONIZACION + " IS NULL OR " + Permiso.FECHA_MODIFICACION + " > " +Permiso.FECHA_SINCRONIZACION ,null, null, null, null);
-
-
-			if (mCursor != null) {
-				mCursor.moveToFirst();
-			}
-
-		}finally{
-			conexion.close();
-		}
-
-		return mCursor;	
-	}
-
 }

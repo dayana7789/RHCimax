@@ -18,6 +18,8 @@ public class Empleado {
 	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	public final static String ID_USUARIO_CREADOR = "idUsuarioCreador";
 	public final static String ID_USUARIO_MODIFICADOR = "idUsuarioModificador";
+	public final static String SINCRONIZADO = "sincronizado";
+
 	
 	String id;
 	String nombre;

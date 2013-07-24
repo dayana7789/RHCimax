@@ -13,6 +13,8 @@ public class Cotizacion {
 	public final static String FECHA_MODIFICACION = "fechaModificacion";
 	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	public final static String NUM_COTIZACION = "numCotizacion";
+	public final static String SINCRONIZADO = "sincronizado";
+
 	
 	String id;
 	String fechaEnvio;

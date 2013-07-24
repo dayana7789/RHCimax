@@ -3,7 +3,6 @@ package com.nahmens.rhcimax.database.DAO;
 import org.json.JSONArray;
 
 import android.content.Context;
-import android.database.Cursor;
 
 import com.nahmens.rhcimax.database.modelo.Permiso;
 
@@ -18,9 +17,4 @@ public interface PermisoDAO {
      * @return numero de registros eliminados
      */
     int eliminarPermisos(Context context);
-    /**
-	 * Funcion que retorna lista de Permiso que no han sido sincronizados
-	 */
-	Cursor listarPermisoNoSync(Context contexto);
-
 }

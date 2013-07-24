@@ -11,21 +11,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.nahmens.rhcimax.controlador.LoginActivity;
-import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Configuracion;
-import com.nahmens.rhcimax.database.modelo.Empresa;
-import com.nahmens.rhcimax.database.modelo.Permiso;
-import com.nahmens.rhcimax.database.modelo.Rol;
-import com.nahmens.rhcimax.database.modelo.Rol_Permiso;
-import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.ConfiguracionSqliteDao;
-import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.GenericoSqliteDao;
-import com.nahmens.rhcimax.database.sqliteDAO.PermisoSqliteDao;
-import com.nahmens.rhcimax.database.sqliteDAO.RolSqliteDao;
-import com.nahmens.rhcimax.database.sqliteDAO.Rol_PermisoSqliteDao;
-import com.nahmens.rhcimax.database.sqliteDAO.UsuarioSqliteDao;
 
 public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
@@ -42,10 +30,10 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		super();
 		this.contexto = contexto;
 		this.sync = new Sincronizacion(contexto);
-		this.mLog = new LogFile(contexto, new Formato().getNumeroAleatorio());
+		this.mLog = new LogFile(contexto, new Utils().getNumeroAleatorio());
 	}
 
-	public void getUsuarios() throws Exception{
+	/*public void getUsuarios() throws Exception{
 
 		UsuarioSqliteDao usuarioDao2 = new UsuarioSqliteDao();
 		Usuario usuario2 =  usuarioDao2.buscarUsuario(contexto, "administrador", "1234");
@@ -58,7 +46,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		
 		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
 		
-		JSONArray userArray = sync.getValores(dirServidor+"getTest");
+	/*	JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
 	/*	JSONArray userArray = new JSONArray();
 		JSONObject jsObject =  new JSONObject();
@@ -71,7 +59,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 		userArray.put(jsObject);*/
 
-		Usuario usuario = null;
+	/*	Usuario usuario = null;
 		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
 		String id = null;
 		String login = null;
@@ -127,7 +115,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		
 		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
 		
-		JSONArray userArray = sync.getValores(dirServidor+"getTest");
+	/*	JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
 	/*	JSONArray userArray = new JSONArray();
 
@@ -144,7 +132,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		userArray.put(jsObject);		
 		userArray.put(jsObject2);*/
 
-		Rol rol = null;
+	/*	Rol rol = null;
 		RolSqliteDao rolDao = new RolSqliteDao();
 		String id = null;
 		String nombre = null;
@@ -192,7 +180,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		
 		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
 		
-		JSONArray userArray = sync.getValores(dirServidor+"getTest");
+	/*	JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
 		/*JSONArray userArray = new JSONArray();
 
@@ -209,7 +197,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		userArray.put(jsObject);		
 		userArray.put(jsObject2);*/
 
-		Permiso permiso = null;
+	/*	Permiso permiso = null;
 		PermisoSqliteDao permisoDao = new PermisoSqliteDao();
 		String id = null;
 		String nombre = null;
@@ -257,7 +245,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		
 		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
 		
-		JSONArray userArray = sync.getValores(dirServidor+"getTest");
+	/*	JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
 		//	JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
@@ -276,7 +264,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		userArray.put(jsObject);		
 		//userArray.put(jsObject2);*/
 
-		Rol_Permiso rol_permiso = null;
+	/*	Rol_Permiso rol_permiso = null;
 		Rol_PermisoSqliteDao rol_PermisoDao = new Rol_PermisoSqliteDao();
 		String idPermiso = null;
 		String idRol = null;
@@ -313,7 +301,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	 * Esta funcion se utiliza despues de haber hecho login en el sistema.
 	 * @throws Exception
 	 */
-	public void postAutenticacion() throws Exception{
+/*	public void postAutenticacion() throws Exception{
 
 		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
 		String idUsuario = SesionUsuario.getIdUsuario(contexto);
@@ -333,7 +321,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	 * desde la pagina del login
 	 * @throws Exception
 	 */
-	public void postAutenticacionMaster() throws Exception{
+	/*public void postAutenticacionMaster() throws Exception{
 
 		UsuarioSqliteDao usuarioDao = new UsuarioSqliteDao();
 		Usuario usuario =  usuarioDao.buscarUsuario(contexto, "administrador", "1234");
@@ -350,7 +338,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 		Cursor cEmpresas =  empresaDao.listarEmpresasNoSync(contexto);
 
-		String input = new Formato().cursorToJsonString(cEmpresas);
+		String input = new Utils().cursorToJsonString(cEmpresas);
 		Log.e("input", input);
 		
 		//JSONObject resp = sync.postValores(dirServidor+"createTest", input);
@@ -359,7 +347,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		
 		//JSONArray userArray = sync.getValores(dirServidor+"getTest");
 
-		JSONArray myJsonArray = new JSONArray(input);
+	/*	JSONArray myJsonArray = new JSONArray(input);
 
 		/*JSONArray userArray = new JSONArray();
 
@@ -376,7 +364,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		userArray.put(jsObject);		
 		//userArray.put(jsObject2);*/
 
-		Empresa empresa = null;
+	/*	Empresa empresa = null;
 		EmpresaSqliteDao myDao = new EmpresaSqliteDao();
 		String id;
 		String nombre;
@@ -434,7 +422,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			}
 		}
 
-	}
+	}*/
 	
 	
 	public void getGenerico(String nombreTabla) throws Exception{
@@ -442,7 +430,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		GenericoSqliteDao myDao = new GenericoSqliteDao();
 		Cursor myCursor =  myDao.listarGenericoNoSync(contexto, nombreTabla);
 
-		String input = new Formato().cursorToJsonString(myCursor);
+		String input = new Utils().cursorToJsonString(myCursor);
 		Log.e("input", input);
 		
 		//JSONObject resp = sync.postValores(dirServidor+"createTest", input);
@@ -465,7 +453,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			
 			if(!modificado){
 				try{
-					myDao.insertarGenerico(contexto, myJsonObject, DataBaseHelper.TABLA_EMPRESA);
+					myDao.insertarGenerico(contexto, myJsonObject, nombreTabla);
 				}catch(android.database.sqlite.SQLiteConstraintException e){
 					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La "+nombreTabla+" con id "+ "id" + " no pudo ser insertado.");
 				}
@@ -483,7 +471,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	 * Muestra dialog.
 	 */
 	protected void onPreExecute() {
-		LoginActivity.dialog.show();
+		//LoginActivity.dialog.show();
 	}
 
 
@@ -493,7 +481,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	 * Oculta dialos.
 	 */
 	protected void onPostExecute(String result) {
-		LoginActivity.dialog.dismiss(); 
+		//LoginActivity.dialog.dismiss(); 
 
 		if(result.equals("OK")){
 			Toast toast = Toast.makeText(contexto, TEXT_OK,  DURATION);
@@ -513,7 +501,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	 * Funcion que corre en background que se encarga de establecer
 	 * la sincronizacion cuando existe conexion a internet.
 	 */
-	protected String doInBackground(String... params) {
+	protected String doInBackground(String... nombreTablas) {
 
 		String servidorDB = obtenerServidor();
 		if((servidorDB.equals("")==false) && servidorDB!=null){
@@ -535,13 +523,12 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			mLog.appendLog(obtenerTag() + "Inicio de sincronización... ");
 
 			try {
-				
-				getGenerico(DataBaseHelper.TABLA_EMPLEADO);
-				//getEmpresas();
-				/*this.getRoles();
-				this.getPermisos();
-				this.getRol_Permiso();
-				this.getUsuarios();*/
+				 int count = nombreTablas.length;
+
+		         for (int i = 0; i < count; i++) {
+		        	 getGenerico(nombreTablas[i]);
+		         }
+
 
 			} catch (Exception e) {
 				e.printStackTrace();

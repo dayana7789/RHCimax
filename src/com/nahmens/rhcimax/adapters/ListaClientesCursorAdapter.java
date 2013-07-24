@@ -26,7 +26,6 @@ import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
-import com.nahmens.rhcimax.utils.FormatoFecha;
 import com.nahmens.rhcimax.utils.SesionUsuario;
 
 /**
@@ -321,13 +320,13 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 	 * @param cursor
 	 */
 	private void actualizarCuadrosNotificacionCliente(View v, Cursor cursor) {
-		String strFechaSincronizacion = cursor.getString(cursor.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
-		String strFechaModificacion = cursor.getString(cursor.getColumnIndex(Empleado.FECHA_MODIFICACION));
 
 		TextView tvAvisoRojoFila = (TextView) v.findViewById(R.id.avisoRojoFila);
 		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
 		
-		if(strFechaSincronizacion.equals("null") || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+		int strSincronizado = cursor.getInt(cursor.getColumnIndex(Empleado.SINCRONIZADO));
+
+		if(strSincronizado==0){
 			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
 			tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 		}else{

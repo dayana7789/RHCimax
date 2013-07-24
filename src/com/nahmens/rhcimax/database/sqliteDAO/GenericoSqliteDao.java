@@ -1,5 +1,6 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
+import java.util.Date;
 import java.util.Iterator;
 
 import org.json.JSONException;
@@ -12,11 +13,13 @@ import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DAO.GenericoDAO;
+import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class GenericoSqliteDao implements GenericoDAO{
 
 	private final String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	private final String FECHA_MODIFICACION = "fechaModificacion";
+	private final String SINCRONIZADO = "sincronizado";
 	private final String ID = "_id";
 
 	@Override
@@ -62,7 +65,7 @@ public class GenericoSqliteDao implements GenericoDAO{
 
 		} catch (JSONException e) {
 			e.printStackTrace();
-			
+
 		}finally{
 			conexion.close();
 		}
@@ -73,7 +76,7 @@ public class GenericoSqliteDao implements GenericoDAO{
 	@Override
 	public boolean modificarGenerico(Context contexto, JSONObject json,
 			String nombreTabla) {
-		
+
 		ConexionBD conexion = new ConexionBD(contexto);
 		long value = -1;
 		boolean modificado = false;
@@ -87,7 +90,7 @@ public class GenericoSqliteDao implements GenericoDAO{
 			while(keys.hasNext()){
 				String key = (String)keys.next();
 				values.put(key,json.getString(key));
-				
+
 				if(key.equals(ID)){
 					id = json.getString(key);
 				}
@@ -96,19 +99,54 @@ public class GenericoSqliteDao implements GenericoDAO{
 			Log.e("DEBUG","id a modificar: " + id);
 			value = conexion.getDatabase().update(nombreTabla, values, "_id=?", new String []{id});
 
-			
+
 			if(value!=0){
 				modificado = true;
 			}
 
 		} catch (JSONException e) {
 			e.printStackTrace();
-			
+
 		}finally{
 			conexion.close();
 		}
 
 		return modificado;
+	}
+
+	@Override
+	public boolean sincronizarGenerico(Context contexto, JSONObject json,
+			String nombreTabla) {
+
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean sincronizado = false;
+		String id = null;
+		
+
+		try{
+			conexion.open();
+			
+			id = json.getString(ID);
+			 
+			ContentValues contenido = new ContentValues();
+			contenido.put(FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
+			contenido.put(SINCRONIZADO, 1);
+
+			int value = conexion.getDatabase().update(nombreTabla, contenido, "_id=?", new String []{id});
+
+			if(value!=0){
+				sincronizado = true;
+			}
+
+		}catch (JSONException e) {
+			e.printStackTrace();
+
+		}finally{
+			conexion.close();
+		}
+
+		return sincronizado;
+
 	}
 
 

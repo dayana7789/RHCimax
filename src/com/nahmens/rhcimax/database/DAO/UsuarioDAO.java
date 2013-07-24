@@ -28,11 +28,5 @@ public interface UsuarioDAO {
      * @return numero de regsitros eliminados
      */
     int eliminarUsuarios(Context context);
-    
-    /**
-   	 * Funcion que retorna lista de Usuario que no han sido sincronizados
-   	 */
-   	Cursor listarUsuarioNoSync(Context contexto);
-    
-  
+ 
 }

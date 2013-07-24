@@ -35,6 +35,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	private int layout;
 	private String[] from;
 	private int[] to;
+	@SuppressWarnings("unused")
 	private FragmentManager fragmentManager;
 	private HashMap<String,Boolean> arrSincronizados;
 	private ArrayList<String> permisos;
@@ -282,13 +283,12 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 
 
 	private void actualizarCuadrosNotificacionTarea(View v, Cursor cursor) {
-		String strFechaSincronizacion = cursor.getString(cursor.getColumnIndex(Tarea.FECHA_SINCRONIZACION));
-		String strFechaModificacion = cursor.getString(cursor.getColumnIndex(Tarea.FECHA_MODIFICACION));
-
 		TextView tvAvisoRojoFila = (TextView) v.findViewById(R.id.avisoRojoFila);
 		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
 
-		if(strFechaSincronizacion.equals("null") || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+		int strSincronizado = cursor.getInt(cursor.getColumnIndex(Tarea.SINCRONIZADO));
+
+		if(strSincronizado==0){
 			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
 			tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 		}else{

@@ -80,10 +80,5 @@ public interface EmpleadoDAO {
 	 * @return si es o no cliente del idUsuario
 	 */
 	boolean esClienteDelUsuario(Context contexto, String idEmpleado, String idUsuario);
-	
-	/**
-	 * Funcion que retorna lista de empleados que no han sido sincronizados
-	 */
-	Cursor listarEmpleadosNoSync(Context contexto);
 
 }

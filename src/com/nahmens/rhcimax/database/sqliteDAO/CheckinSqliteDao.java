@@ -8,7 +8,7 @@ import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.CheckinDAO;
 import com.nahmens.rhcimax.database.modelo.Checkin;
-import com.nahmens.rhcimax.utils.Formato;
+import com.nahmens.rhcimax.utils.Utils;
 
 public class CheckinSqliteDao implements CheckinDAO{
 
@@ -18,7 +18,7 @@ public class CheckinSqliteDao implements CheckinDAO{
 		String idFila = null;
 
 		if(checkin.getId() == null){
-			idFila= new Formato().getNumeroAleatorio();
+			idFila= new Utils().getNumeroAleatorio();
 		}else{
 			idFila = checkin.getId();
 		}
@@ -92,6 +92,7 @@ public class CheckinSqliteDao implements CheckinDAO{
 			values.put(Checkin.CHECKIN, checkin.getCheckin());
 			values.put(Checkin.CHECKOUT, checkin.getCheckout());
 			values.put(Checkin.ID_USUARIO, checkin.getIdUsuario());
+			values.put(Checkin.SINCRONIZADO, 0);
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_CHECKIN, values, "_id=?", new String []{checkin.getId()});
 
@@ -104,28 +105,6 @@ public class CheckinSqliteDao implements CheckinDAO{
 		}
 
 		return modificado;
-	}
-
-	@Override
-	public Cursor listarCheckinNoSync(Context contexto) {
-		ConexionBD conexion = new ConexionBD(contexto);
-		Cursor mCursor = null;
-		try{
-
-			conexion.open();
-
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_CHECKIN, null , Checkin.FECHA_SINCRONIZACION + " IS NULL OR " + Checkin.FECHA_MODIFICACION + " > " +Checkin.FECHA_SINCRONIZACION ,null, null, null, null);
-
-
-			if (mCursor != null) {
-				mCursor.moveToFirst();
-			}
-
-		}finally{
-			conexion.close();
-		}
-
-		return mCursor;		
 	}
 
 }

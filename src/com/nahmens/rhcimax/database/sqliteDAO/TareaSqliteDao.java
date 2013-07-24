@@ -13,7 +13,7 @@ import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
-import com.nahmens.rhcimax.utils.Formato;
+import com.nahmens.rhcimax.utils.Utils;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 import com.nahmens.rhcimax.utils.SesionUsuario;
 
@@ -23,6 +23,7 @@ public class TareaSqliteDao implements TareaDAO{
 		              +", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 		              +", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa"
 		              +", tarea."+Tarea.FECHA_MODIFICACION+", tarea."+Tarea.FECHA_SINCRONIZACION
+		              +", tarea."+Tarea.SINCRONIZADO
 		              +", empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado"
 		              +", usuario."+Usuario.LOGIN + " as loginUsuario "
 		              +", usuario." + Usuario.ID + " as idUsuario"
@@ -40,7 +41,7 @@ public class TareaSqliteDao implements TareaDAO{
 		String idFila = null;
 
 		if(tarea.getId() == null){
-			idFila= new Formato().getNumeroAleatorio();
+			idFila= new Utils().getNumeroAleatorio();
 		}else{
 			idFila = tarea.getId();
 		}
@@ -92,6 +93,7 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.ID_USUARIO_MODIFICADOR, tarea.getIdUsuarioModificador());
 			values.put(Tarea.ID_EMPLEADO,tarea.getIdEmpleado());
 			values.put(Tarea.ID_EMPRESA,tarea.getIdEmpresa());
+			values.put(Tarea.SINCRONIZADO,0);
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, values, "_id=?", new String []{tarea.getId()});
 
@@ -117,6 +119,8 @@ public class TareaSqliteDao implements TareaDAO{
 			ContentValues values = new ContentValues();
 			values.put("status", "inactivo");
 			values.put(Tarea.FECHA_MODIFICACION, FormatoFecha.obtenerFechaTiempoActualEN());
+			values.put(Tarea.ID_USUARIO_MODIFICADOR,SesionUsuario.getIdUsuario(contexto));
+			values.put(Tarea.SINCRONIZADO,0);
 			
 			//long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_TAREA, "_id=?", new String[]{idTarea});
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, values, "_id=?", new String []{idTarea});
@@ -347,6 +351,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 			ContentValues contenido = new ContentValues();
 			contenido.put(Tarea.FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
+			contenido.put(Tarea.SINCRONIZADO, 1);
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, contenido, "_id=?", new String []{idTarea});
 
@@ -360,27 +365,4 @@ public class TareaSqliteDao implements TareaDAO{
 
 		return sincronizado;
 	}
-
-	@Override
-	public Cursor listarTareasNoSync(Context contexto) {
-		ConexionBD conexion = new ConexionBD(contexto);
-		Cursor mCursor = null;
-		try{
-
-			conexion.open();
-
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA, null , Tarea.FECHA_SINCRONIZACION + " IS NULL OR " + Tarea.FECHA_MODIFICACION + " > " +Tarea.FECHA_SINCRONIZACION ,null, null, null, null);
-
-
-			if (mCursor != null) {
-				mCursor.moveToFirst();
-			}
-
-		}finally{
-			conexion.close();
-		}
-
-		return mCursor;		
-	}
-
 }

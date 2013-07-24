@@ -8,7 +8,7 @@ import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.RolDAO;
 import com.nahmens.rhcimax.database.modelo.Rol;
-import com.nahmens.rhcimax.utils.Formato;
+import com.nahmens.rhcimax.utils.Utils;
 
 public class RolSqliteDao implements RolDAO {
 	
@@ -19,7 +19,7 @@ public class RolSqliteDao implements RolDAO {
 		String idFila = null;
 		
 		if(rol.getId() == null){
-			idFila= new Formato().getNumeroAleatorio();
+			idFila= new Utils().getNumeroAleatorio();
 		}else{
 			idFila = rol.getId();
 		}
@@ -118,27 +118,5 @@ public class RolSqliteDao implements RolDAO {
 		return modificado;
 	}
 
-
-	@Override
-	public Cursor listarRolNoSync(Context contexto) {
-		ConexionBD conexion = new ConexionBD(contexto);
-		Cursor mCursor = null;
-		try{
-
-			conexion.open();
-
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_ROL, null , Rol.FECHA_SINCRONIZACION + " IS NULL OR " + Rol.FECHA_MODIFICACION + " > " +Rol.FECHA_SINCRONIZACION ,null, null, null, null);
-
-
-			if (mCursor != null) {
-				mCursor.moveToFirst();
-			}
-
-		}finally{
-			conexion.close();
-		}
-
-		return mCursor;		
-	}
 
 }

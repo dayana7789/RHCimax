@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -182,7 +181,7 @@ public class HistoricosActivity extends ListFragment{
 	 */
 	private void setArrSincronizados(Cursor mCursorHistoricos) {
 
-		String strFechaSincronizacion = null;
+		int strSincronizado = 0;
 
 		String id = null;
 
@@ -192,9 +191,9 @@ public class HistoricosActivity extends ListFragment{
 
 		while(!mCursorHistoricos.isAfterLast()){
 			id =  mCursorHistoricos.getString(mCursorHistoricos.getColumnIndex("historicoId"));
-			strFechaSincronizacion = mCursorHistoricos.getString(mCursorHistoricos.getColumnIndex("historicoFechaSincronizacion"));
+			strSincronizado = mCursorHistoricos.getInt(mCursorHistoricos.getColumnIndex(Historico.SINCRONIZADO));
 
-			if(strFechaSincronizacion == null){
+			if(strSincronizado == 0){
 				arrSincronizados.put(id,false);
 			}else{
 				arrSincronizados.put(id, true);

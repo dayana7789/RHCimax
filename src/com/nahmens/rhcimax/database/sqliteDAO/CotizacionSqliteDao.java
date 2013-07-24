@@ -10,7 +10,7 @@ import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.CotizacionDAO;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
-import com.nahmens.rhcimax.utils.Formato;
+import com.nahmens.rhcimax.utils.Utils;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class CotizacionSqliteDao implements CotizacionDAO{
@@ -24,7 +24,7 @@ public class CotizacionSqliteDao implements CotizacionDAO{
 		String idFila = null;
 
 		if(cotizacion.getId() == null){
-			idFila= new Formato().getNumeroAleatorio();
+			idFila= new Utils().getNumeroAleatorio();
 		}else{
 			idFila = cotizacion.getId();
 		}
@@ -53,6 +53,7 @@ public class CotizacionSqliteDao implements CotizacionDAO{
 			values.put(Cotizacion.ID_EMPRESA, cotizacion.getIdEmpresa());
 			values.put(Cotizacion.NUM_COTIZACION,numCotizacion);
 			values.put(Cotizacion.DESCRIPCION, cotizacion.getDescripcion());
+			
 			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_COTIZACION, null,values);
 
 			if(value==-1){
@@ -97,6 +98,7 @@ public class CotizacionSqliteDao implements CotizacionDAO{
 
 			ContentValues contenido = new ContentValues();
 			contenido.put(Cotizacion.FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
+			contenido.put(Cotizacion.SINCRONIZADO, 1);
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_COTIZACION, contenido, "_id=?", new String []{idCotizacion});
 
@@ -110,27 +112,4 @@ public class CotizacionSqliteDao implements CotizacionDAO{
 
 		return sincronizado;
 	}
-
-	@Override
-	public Cursor listarCotizacionNoSync(Context contexto) {
-		ConexionBD conexion = new ConexionBD(contexto);
-		Cursor mCursor = null;
-		try{
-
-			conexion.open();
-
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_COTIZACION , null ,  Cotizacion.FECHA_SINCRONIZACION + " IS NULL OR " + Cotizacion.FECHA_MODIFICACION + " > " +Cotizacion.FECHA_SINCRONIZACION ,null, null, null, null);
-
-
-			if (mCursor != null) {
-				mCursor.moveToFirst();
-			}
-
-		}finally{
-			conexion.close();
-		}
-
-		return mCursor;		
-	}
-
 }

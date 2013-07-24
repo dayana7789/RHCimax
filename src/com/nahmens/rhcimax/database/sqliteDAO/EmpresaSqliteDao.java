@@ -13,7 +13,8 @@ import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
-import com.nahmens.rhcimax.utils.Formato;
+import com.nahmens.rhcimax.utils.SesionUsuario;
+import com.nahmens.rhcimax.utils.Utils;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class EmpresaSqliteDao implements EmpresaDAO{
@@ -25,7 +26,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 		String idFila = null;
 
 		if(empresa.getId() == null){
-			idFila= new Formato().getNumeroAleatorio();
+			idFila= new Utils().getNumeroAleatorio();
 		}else{
 			idFila = empresa.getId();
 		}
@@ -79,6 +80,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			values.put(Empresa.FECHA_MODIFICACION,empresa.getFechaModificacion());
 			values.put(Empresa.ID_USUARIO_MODIFICADOR,empresa.getIdUsuarioModificador());
 			values.put(Empresa.MODIFICADO, 1);
+			values.put(Empresa.SINCRONIZADO, 0);
 
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPRESA, values, "_id=?", new String []{empresa.getId()});
@@ -108,6 +110,8 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 			ContentValues values = new ContentValues();
 			values.put("status", "inactivo");
 			values.put(Empresa.FECHA_MODIFICACION, FormatoFecha.obtenerFechaTiempoActualEN());
+			values.put(Empresa.ID_USUARIO_MODIFICADOR,SesionUsuario.getIdUsuario(contexto));
+			values.put(Empresa.SINCRONIZADO, 0);
 			
 			//Actualizamos el status de la empresa
 			//long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_TAREA, "_id=?", new String[]{idTarea});
@@ -340,6 +344,7 @@ public class EmpresaSqliteDao implements EmpresaDAO{
 
 			ContentValues contenido = new ContentValues();
 			contenido.put(Empresa.FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
+			contenido.put(Empresa.SINCRONIZADO, 1);
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPRESA, contenido, "_id=?", new String []{idEmpresa});
 

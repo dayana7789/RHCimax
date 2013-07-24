@@ -8,7 +8,7 @@ import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.ServicioDAO;
 import com.nahmens.rhcimax.database.modelo.Servicio;
-import com.nahmens.rhcimax.utils.Formato;
+import com.nahmens.rhcimax.utils.Utils;
 
 public class ServicioSqliteDao implements ServicioDAO{
 
@@ -18,7 +18,7 @@ public class ServicioSqliteDao implements ServicioDAO{
 		String idFila = null;
 
 		if(servicio.getId() == null){
-			idFila= new Formato().getNumeroAleatorio();
+			idFila= new Utils().getNumeroAleatorio();
 		}else{
 			idFila = servicio.getId();
 		}
@@ -106,27 +106,5 @@ public class ServicioSqliteDao implements ServicioDAO{
 		}
 
 		return servicio;	
-	}
-
-	@Override
-	public Cursor listarServicioNoSync(Context contexto) {
-		ConexionBD conexion = new ConexionBD(contexto);
-		Cursor mCursor = null;
-		try{
-
-			conexion.open();
-
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_SERVICIO, null , Servicio.FECHA_SINCRONIZACION + " IS NULL OR " + Servicio.FECHA_MODIFICACION + " > " +Servicio.FECHA_SINCRONIZACION ,null, null, null, null);
-
-
-			if (mCursor != null) {
-				mCursor.moveToFirst();
-			}
-
-		}finally{
-			conexion.close();
-		}
-
-		return mCursor;		
 	}
 }

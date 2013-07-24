@@ -15,8 +15,5 @@ public interface Cotizacion_ServicioDAO {
 	 */
 	String insertar(Context contexto, Cotizacion_Servicio cot_serv);
 	Cursor listarCotizacion_Servicio(Context contexto, String idCotizacion);
-	/**
-	 * Funcion que retorna lista de Cotizacion_Servicio que no han sido sincronizados
-	 */
-	Cursor listarCotizacion_ServicioNoSync(Context contexto);
+
 }

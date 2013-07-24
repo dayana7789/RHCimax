@@ -8,6 +8,8 @@ public class Permiso {
 	public final static String FECHA_CREACION = "fechaCreacion";
 	public final static String FECHA_MODIFICACION = "fechaModificacion";
 	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
+	public final static String SINCRONIZADO = "sincronizado";
+
 	
 	/*Lista de permisos*/
 	public final static String LISTAR_TODO = "ListarTodo";

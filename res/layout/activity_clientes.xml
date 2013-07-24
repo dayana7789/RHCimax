@@ -28,7 +28,7 @@
 	            tools:ignore="UselessParent" >
 	
 	            <Button
-	                android:id="@+id/buttonSincClient"
+	                android:id="@+id/buttonActualizar"
 	                android:layout_width="match_parent"
 	                android:layout_height="35dp"
 	                android:text="@string/actualizar" />

@@ -16,7 +16,8 @@ import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.modelo.Usuario;
-import com.nahmens.rhcimax.utils.Formato;
+import com.nahmens.rhcimax.utils.SesionUsuario;
+import com.nahmens.rhcimax.utils.Utils;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class EmpleadoSqliteDao implements EmpleadoDAO{
@@ -27,7 +28,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		String idFila = null;
 
 		if(empleado.getId() == null){
-			idFila= new Formato().getNumeroAleatorio();
+			idFila= new Utils().getNumeroAleatorio();
 		}else{
 			idFila = empleado.getId();
 		}
@@ -89,6 +90,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			values.put(Empleado.EMPRESA_ID,empleado.getIdEmpresa());
 			values.put(Empleado.FECHA_MODIFICACION,empleado.getFechaModificacion());
 			values.put(Empleado.ID_USUARIO_MODIFICADOR,empleado.getIdUsuarioModificador());
+			values.put(Empleado.SINCRONIZADO, 0);
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, values, "_id=?", new String []{empleado.getId()});
 
@@ -116,6 +118,8 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			ContentValues values = new ContentValues();
 			values.put("status", "inactivo");
 			values.put(Empleado.FECHA_MODIFICACION, FormatoFecha.obtenerFechaTiempoActualEN());
+			values.put(Empleado.ID_USUARIO_MODIFICADOR,SesionUsuario.getIdUsuario(contexto));
+			values.put(Empleado.SINCRONIZADO, 0);
 
 			//Actualizamos el status del empleado
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, values, "_id=?", new String []{idEmpleado});
@@ -256,6 +260,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 			sqlQuery += ", empleado.linkedin as "+Empleado.LINKEDIN;
 			sqlQuery += ", empleado." + Empleado.FECHA_SINCRONIZACION;
 			sqlQuery += ", empleado." + Empleado.FECHA_MODIFICACION;
+			sqlQuery += ", empleado." + Empleado.SINCRONIZADO;
 			sqlQuery += ", usuario." + Usuario.LOGIN + " as usuarioCreador";
 			sqlQuery += ", usuario." + Usuario.ID + " as idUsuario";
 			sqlQuery += " FROM " + DataBaseHelper.TABLA_EMPLEADO;
@@ -309,6 +314,7 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 
 			ContentValues contenido = new ContentValues();
 			contenido.put(Empleado.FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
+			contenido.put(Empleado.SINCRONIZADO, 1);
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_EMPLEADO, contenido, "_id=?", new String []{idEmpleado});
 
@@ -454,28 +460,6 @@ public class EmpleadoSqliteDao implements EmpleadoDAO{
 		}
 
 		return esCliente;
-	}
-
-	@Override
-	public Cursor listarEmpleadosNoSync(Context contexto) {
-		ConexionBD conexion = new ConexionBD(contexto);
-		Cursor mCursor = null;
-		try{
-
-			conexion.open();
-
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO , null ,  Empleado.FECHA_SINCRONIZACION + " IS NULL OR " + Empleado.FECHA_MODIFICACION + " > " +Empleado.FECHA_SINCRONIZACION ,null, null, null, null);
-
-
-			if (mCursor != null) {
-				mCursor.moveToFirst();
-			}
-
-		}finally{
-			conexion.close();
-		}
-
-		return mCursor;		
 	}
 
 }

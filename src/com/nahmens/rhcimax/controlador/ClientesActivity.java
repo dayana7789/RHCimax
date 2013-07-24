@@ -24,14 +24,15 @@ import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaClientesCursorAdapter;
+import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
-import com.nahmens.rhcimax.utils.FormatoFecha;
 import com.nahmens.rhcimax.utils.SesionUsuario;
+import com.nahmens.rhcimax.utils.SincronizacionAsyncTask;
 
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -78,6 +79,16 @@ public class ClientesActivity extends ListFragment {
 
 			cambiarColorCuadroNotificacion(view);
 
+			// Registro del evento OnClick del buttonActualizar
+						Button bAct = (Button)view.findViewById(R.id.buttonActualizar);
+						bAct.setOnClickListener(new View.OnClickListener() {
+
+							@Override
+							public void onClick(View v) {
+								new SincronizacionAsyncTask(getActivity()).execute(DataBaseHelper.TABLA_EMPRESA);
+							}
+						});
+						
 			// Registro del evento OnClick del buttonEmpresa
 			Button bEmp = (Button)view.findViewById(R.id.buttonEmpresa);
 			bEmp.setOnClickListener(new View.OnClickListener() {
@@ -150,8 +161,7 @@ public class ClientesActivity extends ListFragment {
 			v = getView();
 		}
 
-		String strFechaSincronizacion = null;
-		String strFechaModificacion = null;
+		int strSincronizado = 0;
 
 		TextView tvVerde = (TextView) v.findViewById(R.id.avisoVerde);
 		TextView tvRojo = (TextView) v.findViewById(R.id.avisoRojo);
@@ -170,10 +180,9 @@ public class ClientesActivity extends ListFragment {
 		}
 
 		while(!cursorlistEmpresas.isAfterLast()){
-			strFechaSincronizacion = cursorlistEmpresas.getString(cursorlistEmpresas.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
-			strFechaModificacion = cursorlistEmpresas.getString(cursorlistEmpresas.getColumnIndex(Empleado.FECHA_MODIFICACION));
+			strSincronizado = cursorlistEmpresas.getInt(cursorlistEmpresas.getColumnIndex(Empresa.SINCRONIZADO));
 
-			if(strFechaSincronizacion.equals("null") || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+			if(strSincronizado==0){
 				arr.add(false);
 			}else{
 				arr.add(true);
@@ -189,10 +198,10 @@ public class ClientesActivity extends ListFragment {
 		}
 
 		while(!cursorlistEmpleados.isAfterLast()){
-			strFechaSincronizacion = cursorlistEmpleados.getString(cursorlistEmpleados.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
-			strFechaModificacion = cursorlistEmpleados.getString(cursorlistEmpleados.getColumnIndex(Empleado.FECHA_MODIFICACION));
 
-			if(strFechaSincronizacion.equals("null")  || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+			strSincronizado = cursorlistEmpleados.getInt(cursorlistEmpleados.getColumnIndex(Empleado.SINCRONIZADO));
+			
+			if(strSincronizado==0){
 				arr.add(false);
 			}else{
 				arr.add(true);

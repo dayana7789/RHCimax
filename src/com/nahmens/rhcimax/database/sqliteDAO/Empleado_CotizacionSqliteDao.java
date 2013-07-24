@@ -2,7 +2,6 @@ package com.nahmens.rhcimax.database.sqliteDAO;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
@@ -35,27 +34,4 @@ public class Empleado_CotizacionSqliteDao implements Empleado_CotizacionDAO{
 
 		return value+"";
 	}
-
-	@Override
-	public Cursor listarEmpleado_CotizacionNoSync(Context contexto) {
-		ConexionBD conexion = new ConexionBD(contexto);
-		Cursor mCursor = null;
-		try{
-
-			conexion.open();
-
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_EMPLEADO_COTIZACION, null , Empleado_Cotizacion.FECHA_SINCRONIZACION + " IS NULL OR " + Empleado_Cotizacion.FECHA_MODIFICACION + " > " +Empleado_Cotizacion.FECHA_SINCRONIZACION ,null, null, null, null);
-
-
-			if (mCursor != null) {
-				mCursor.moveToFirst();
-			}
-
-		}finally{
-			conexion.close();
-		}
-
-		return mCursor;		
-	}
-
 }

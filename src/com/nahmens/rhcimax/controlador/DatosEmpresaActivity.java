@@ -87,7 +87,6 @@ public class DatosEmpresaActivity extends Fragment {
 				flagGuardado = true;
 
 				String idEmpresa = mArgumentos.getString("idEmpresa");
-				Log.e("aqui datos","idEmpresa: "+ idEmpresa);
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
 

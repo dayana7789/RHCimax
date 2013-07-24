@@ -8,7 +8,7 @@ import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.UsuarioDAO;
 import com.nahmens.rhcimax.database.modelo.Usuario;
-import com.nahmens.rhcimax.utils.Formato;
+import com.nahmens.rhcimax.utils.Utils;
 
 /*
  * Clase que contendrá toda la funcionalidad para realizar consultas 
@@ -22,7 +22,7 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 		String idFila = null;
 
 		if(usuario.getId() == null){
-			idFila= new Formato().getNumeroAleatorio();
+			idFila= new Utils().getNumeroAleatorio();
 		}else{
 			idFila = usuario.getId();
 		}
@@ -69,6 +69,7 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 			values.put(Usuario.CORREO,usuario.getCorreo());
 			values.put(Usuario.ID_ROL,usuario.getIdRol());
 			values.put(Usuario.TOKEN,usuario.getToken());
+			values.put(Usuario.SINCRONIZADO,0);
 
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_USUARIO, values, "_id=?", new String []{usuario.getId()});
 
@@ -199,27 +200,4 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 		return numCol;		
 
 	}
-
-	@Override
-	public Cursor listarUsuarioNoSync(Context contexto) {
-		ConexionBD conexion = new ConexionBD(contexto);
-		Cursor mCursor = null;
-		try{
-
-			conexion.open();
-
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_USUARIO, null , Usuario.FECHA_SINCRONIZACION + " IS NULL OR " + Usuario.FECHA_MODIFICACION + " > " +Usuario.FECHA_SINCRONIZACION ,null, null, null, null);
-
-
-			if (mCursor != null) {
-				mCursor.moveToFirst();
-			}
-
-		}finally{
-			conexion.close();
-		}
-
-		return mCursor;		
-	}
-
 }

@@ -30,12 +30,10 @@ import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaTareasCursorAdapter;
-import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
-import com.nahmens.rhcimax.utils.FormatoFecha;
 import com.nahmens.rhcimax.utils.SesionUsuario;
 
 public class TareasActivity extends ListFragment{
@@ -195,8 +193,7 @@ public class TareasActivity extends ListFragment{
 	 */
 	private void setArrSincronizados(Cursor mCursorTareas) {
 	
-		String strFechaSincronizacion = null;
-		String strFechaModificacion = null;
+		int strSincronizado = 0;
 		String id = null;
 
 		if (mCursorTareas != null) {
@@ -205,10 +202,10 @@ public class TareasActivity extends ListFragment{
 
 		while(!mCursorTareas.isAfterLast()){
 			id =  mCursorTareas.getString(mCursorTareas.getColumnIndex(Tarea.ID));
-			strFechaSincronizacion = mCursorTareas.getString(mCursorTareas.getColumnIndex(Empleado.FECHA_SINCRONIZACION));
-			strFechaModificacion = mCursorTareas.getString(mCursorTareas.getColumnIndex(Empleado.FECHA_MODIFICACION));
 
-			if(strFechaSincronizacion == null || FormatoFecha.compararDateTimes(strFechaSincronizacion, strFechaModificacion)==1){
+			strSincronizado = mCursorTareas.getInt(mCursorTareas.getColumnIndex(Tarea.SINCRONIZADO));
+
+			if(strSincronizado==0){
 				arrSincronizados.put(id,false);
 			}else{
 				arrSincronizados.put(id, true);

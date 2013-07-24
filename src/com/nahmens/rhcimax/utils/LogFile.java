@@ -22,7 +22,7 @@ public class LogFile {
 
 	public void appendLog(String text){       
 
-		/*File logFile = new File(context.getExternalFilesDir(null), nombreArchivo);
+		File logFile = new File(context.getExternalFilesDir(null), nombreArchivo);
 
 
 		if (!logFile.exists()){
@@ -41,7 +41,7 @@ public class LogFile {
 		}
 		catch (IOException e){
 			e.printStackTrace();
-		}*/
+		}
 	}
 
 }

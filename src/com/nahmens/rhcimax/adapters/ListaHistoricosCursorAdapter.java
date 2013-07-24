@@ -341,13 +341,13 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 	}
 
 	private void actualizarCuadrosNotificacion(View v, Cursor cursor, String tipoRegistro) {
-		String strFechaSincronizacion =  cursor.getString(cursor.getColumnIndex("historicoFechaSincronizacion"));
+		int strSincronizado =  cursor.getInt(cursor.getColumnIndex(Historico.SINCRONIZADO));
 			
 
 		TextView tvAvisoRojoFila = (TextView) v.findViewById(R.id.avisoRojoFila);
 		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
 
-		if(strFechaSincronizacion.equals("null")){
+		if(strSincronizado==0){
 			tvAvisoRojoFila.setBackgroundResource(R.drawable.borde_rojo);
 			tvAvisoVerdeFila.setBackgroundResource(R.drawable.borde_blanco);
 		}else{

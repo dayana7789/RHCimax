@@ -14,6 +14,7 @@ public class Empresa {
 	public final static String ID_USUARIO_MODIFICADOR = "idUsuarioModificador";
 	public final static String FECHA_SINCRONIZACION = "fechaSincronizacion";
 	public final static String MODIFICADO = "modificado";
+	public final static String SINCRONIZADO = "sincronizado";
 	public final static String LATITUD = "latitud";
 	public final static String LONGITUD = "longitud";
 	
