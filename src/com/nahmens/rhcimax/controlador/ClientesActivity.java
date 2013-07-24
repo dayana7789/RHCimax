@@ -1,9 +1,10 @@
 package com.nahmens.rhcimax.controlador;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.DataSetObserver;
@@ -28,6 +29,7 @@ import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Permiso;
+import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
@@ -45,15 +47,41 @@ public class ClientesActivity extends ListFragment {
 	 */
 	public static ListaClientesCursorAdapter listCursorAdapterEmpleados;
 	public static ListaClientesCursorAdapter listCursorAdapterEmpresas;
-
+	@SuppressLint("UseSparseArrays")
+	HashMap<String,Boolean> arrSincronizadosEmpresa = new HashMap<String, Boolean>(); //Contiene idEmpresa y si esta sincronizado o no
+	@SuppressLint("UseSparseArrays")
+	HashMap<String,Boolean> arrSincronizadosEmpleado = new HashMap<String, Boolean>(); //Contiene idEmpleado y si esta sincronizado o no
 	private ArrayList<String> permisos;
+
+	//Las siguientes variables son utilizadas para evitar llamadas a
+	//la BD innecesarias porq los listeners se disparan aunque el 
+	//usuario no lo haya solicitado.
+
+	//Se utiliza para evitar llamar al metodo onChanged del
+	//DataSetObserver dos veces. Su valor se inicializa en el 
+	//metodo onResume.
+	private boolean mObserverBool;
+
+	//Se utiliza para evitar llamar al metodo OnTextChanged del
+	//dos veces. Su valor se inicializa en el 
+	//metodo onResume.
+	private boolean mOnTextChangedBool;
 
 	//Creamos un DataSetObserver para saber cuando los listView de empleados
 	//y empresas han sido modificados
 	//y lo registramos al adaptor con la funcion registerDataSetObserver().
 	private DataSetObserver observer = new DataSetObserver() {
 		public void onChanged(){
-			cambiarColorCuadroNotificacion(null);
+
+			if(mObserverBool){
+				setArrSincronizados(listCursorAdapterEmpresas.getCursor(), "empresa");
+				setArrSincronizados(listCursorAdapterEmpleados.getCursor(), "empleado");
+				cambiarColorCuadroNotificacion(getView());
+				mObserverBool = false;
+
+			}else{
+				mObserverBool = true;
+			}
 		}
 	};
 
@@ -70,13 +98,22 @@ public class ClientesActivity extends ListFragment {
 			//tab es el correspondiente.
 			AplicacionActivity.mTabsWidget.setCurrentTab(AplicacionActivity.posicionTagFragmentClientes);		
 
+			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+			
+			Cursor mCursorEmpresas = empresaDao.buscarEmpresaFilter(getActivity(),null);
+			Cursor mCursorEmpleados = empleadoDao.buscarEmpleadoFilter(getActivity(),null);
+
+			
 			//primero listamos a los empleados donde vamos a inicializar el valor de listCursorAdapterEmpleados
-			listarEmpleados(view);
+			listarEmpleados(view, mCursorEmpleados);
 
 			//por ultimo listamos a las empresas, la cual utiliza la referencia de listCursorAdapterEmpleados dentro
 			//del adaptador. OJO con esto.
-			listarEmpresas(view);
+			listarEmpresas(view, mCursorEmpresas);
 
+			setArrSincronizados(mCursorEmpresas, "empresa");
+			setArrSincronizados(mCursorEmpleados, "empleado");
 			cambiarColorCuadroNotificacion(view);
 
 			// Registro del evento OnClick del buttonActualizar
@@ -86,7 +123,7 @@ public class ClientesActivity extends ListFragment {
 				@Override
 				public void onClick(View v) {
 					new SincronizacionAsyncTask(getActivity()).execute(DataBaseHelper.TABLA_EMPLEADO, DataBaseHelper.TABLA_EMPRESA);
-					
+
 				}
 			});
 
@@ -129,12 +166,19 @@ public class ClientesActivity extends ListFragment {
 				@Override
 				public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
 
-					if(listCursorAdapterEmpleados!=null){
-						listCursorAdapterEmpleados.getFilter().filter(cs);   
-					}
+					//Este if es para que este metodo no se llame automaticamente
+					//al iniciar la actividad
+					if(mOnTextChangedBool){
+						
+						if(listCursorAdapterEmpleados!=null){
+							listCursorAdapterEmpleados.getFilter().filter(cs);   
+						}
 
-					if(listCursorAdapterEmpresas!=null){
-						listCursorAdapterEmpresas.getFilter().filter(cs); 
+						if(listCursorAdapterEmpresas!=null){
+							listCursorAdapterEmpresas.getFilter().filter(cs); 
+						}
+					}else{
+						mOnTextChangedBool=true;
 					}
 				}
 
@@ -158,69 +202,25 @@ public class ClientesActivity extends ListFragment {
 	 */
 	public void cambiarColorCuadroNotificacion(View v) {
 
-		if(v==null){
-			v = getView();
-		}
-
-		int strSincronizado = 0;
 
 		TextView tvVerde = (TextView) v.findViewById(R.id.avisoVerde);
 		TextView tvRojo = (TextView) v.findViewById(R.id.avisoRojo);
-
-		EmpresaSqliteDao empresasDao = new EmpresaSqliteDao();
-		Cursor cursorlistEmpresas = empresasDao.buscarEmpresaFilter(getActivity(),null);
-
-		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-		Cursor cursorlistEmpleados = empleadoDao.buscarEmpleadoFilter(getActivity(),null);
-
-		ArrayList<Boolean> arr = new ArrayList<Boolean>();
-
-		//iteramos sobre las empresas
-		if (cursorlistEmpresas != null) {
-			cursorlistEmpresas.moveToFirst();
-		}
-
-		while(!cursorlistEmpresas.isAfterLast()){
-			strSincronizado = cursorlistEmpresas.getInt(cursorlistEmpresas.getColumnIndex(Empresa.SINCRONIZADO));
-
-			if(strSincronizado==0){
-				arr.add(false);
-			}else{
-				arr.add(true);
-			}
-
-			cursorlistEmpresas.moveToNext();
-		}
-
-
-		//iteramos sobre los empleados
-		if (cursorlistEmpleados != null) {
-			cursorlistEmpleados.moveToFirst();
-		}
-
-		while(!cursorlistEmpleados.isAfterLast()){
-
-			strSincronizado = cursorlistEmpleados.getInt(cursorlistEmpleados.getColumnIndex(Empleado.SINCRONIZADO));
-
-			if(strSincronizado==0){
-				arr.add(false);
-			}else{
-				arr.add(true);
-			}
-
-			cursorlistEmpleados.moveToNext();
-		}
+		HashMap<String,Boolean> arrSincronizados = new HashMap<String, Boolean>();
+		
+		
+		arrSincronizados.putAll(arrSincronizadosEmpresa);
+		arrSincronizados.putAll(arrSincronizadosEmpleado);
 
 		//pintamos..
-		if(arr.contains(true) && arr.contains(false)){
+		if(arrSincronizados.containsValue(true) && arrSincronizados.containsValue(false)){
 			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
 			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
 
-		}else if(arr.contains(true)){
+		}else if(arrSincronizados.containsValue(true)){
 			tvRojo.setBackgroundResource(R.drawable.borde_blanco);
 			tvVerde.setBackgroundResource(R.drawable.borde_verde);
 
-		}else if(arr.contains(false)){
+		}else if(arrSincronizados.containsValue(false)){
 			tvRojo.setBackgroundResource(R.drawable.borde_rojo);
 			tvVerde.setBackgroundResource(R.drawable.borde_blanco);
 		}
@@ -232,12 +232,7 @@ public class ClientesActivity extends ListFragment {
 	 * Funcion que muestra lista de empresas y crea adaptador para iterar sobre la misma.
 	 * @param view
 	 */
-	private void listarEmpresas(View view){
-
-		//Cargamos la lista de empresas
-		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-		Context contexto = getActivity();
-		Cursor mCursorEmpresas = empresaDao.buscarEmpresaFilter(getActivity(),null);
+	private void listarEmpresas(View view, Cursor mCursorEmpresas){
 
 		if(mCursorEmpresas.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
@@ -248,7 +243,7 @@ public class ClientesActivity extends ListFragment {
 			final ListView lvEmpresas = (ListView) view.findViewById (R.id.listEmpresas);
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterEmpresas = new ListaClientesCursorAdapter(contexto, R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa");
+			listCursorAdapterEmpresas = new ListaClientesCursorAdapter(getActivity(), R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa", arrSincronizadosEmpresa);
 			lvEmpresas.setAdapter(listCursorAdapterEmpresas);
 
 
@@ -288,12 +283,8 @@ public class ClientesActivity extends ListFragment {
 	 * @param view
 	 *
 	 */
-	private void listarEmpleados(View view){
-		//Cargamos la lista de empleados
-		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-		Context context = getActivity();
-		Cursor mCursorEmpleados = empleadoDao.buscarEmpleadoFilter(getActivity(),null);
-
+	private void listarEmpleados(View view, Cursor mCursorEmpleados){
+		
 		if(mCursorEmpleados.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
 			//OJO: Aqui pasamos  Empleado.ID para no invocarlo directamente en el ListaClientesCursorAdapter
@@ -303,7 +294,7 @@ public class ClientesActivity extends ListFragment {
 			ListView lvEmpleados = (ListView) view.findViewById (android.R.id.list);
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterEmpleados = new ListaClientesCursorAdapter(context, R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado");
+			listCursorAdapterEmpleados = new ListaClientesCursorAdapter(getActivity(), R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado", arrSincronizadosEmpleado);
 			lvEmpleados.setAdapter(listCursorAdapterEmpleados);
 
 
@@ -644,5 +635,56 @@ public class ClientesActivity extends ListFragment {
 		.replace(android.R.id.tabcontent,fragment, AplicacionActivity.tagFragmentDatosEmpresa)
 		.addToBackStack(AplicacionActivity.tagFragmentDatosEmpresa)
 		.commit();
+	}
+
+	//Se utiliza este metodo para que cuando le de 
+	//al back button estas variables se inicialicen
+	//y puedan funcionar correctamente.
+	@Override
+	public void onResume() {
+		super.onResume();
+		mObserverBool=false;
+		mOnTextChangedBool = false;
+	}
+	
+	/**
+	 * Funcion que inicializa el arreglo de sincronizados
+	 * a ser utilizado para determinar el color de los
+	 * cuadro de notificacion principal 
+	 * @param mCursor
+	 */
+	public void setArrSincronizados(Cursor mCursor, String tipoCliente) {
+
+		int strSincronizado = 0;
+		String id = null;
+
+		if (mCursor != null) {
+			mCursor.moveToFirst();
+		}
+
+		while(!mCursor.isAfterLast()){
+			id =  mCursor.getString(mCursor.getColumnIndex(Tarea.ID));
+
+			strSincronizado = mCursor.getInt(mCursor.getColumnIndex(Tarea.SINCRONIZADO));
+
+			if(strSincronizado==0){
+				
+				if(tipoCliente.equals("empresa")){
+					arrSincronizadosEmpresa.put(id,false);
+				}else if (tipoCliente.equals("empleado")){
+					arrSincronizadosEmpleado.put(id,false);
+				}
+			}else{
+				
+				if(tipoCliente.equals("empresa")){
+					arrSincronizadosEmpresa.put(id,true);
+				}else if (tipoCliente.equals("empleado")){
+					arrSincronizadosEmpleado.put(id,true);
+				}
+			}
+
+			mCursor.moveToNext();
+		}
+
 	}
 }

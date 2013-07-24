@@ -1,6 +1,7 @@
 package com.nahmens.rhcimax.adapters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -41,13 +42,16 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 	private String[] from;
 	private int[] to;
 	private ArrayList<String> permisos;
+	private HashMap<String,Boolean> arrSincronizados;
 
 	/**
 	 * @param tipoCliente Puede ser empleado o empresa. Se utiliza para saber sobre
 	 * 					  que tipo de lista estoy iterando.
+	 * @param arrSincronizados contiene <idCliente, si esta sincronizado o no> Se utiliza para pintar
+	 *                         los cuadros de notificacion principal.
 	 */
 	public ListaClientesCursorAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to, int flags, String tipoCliente) {
+			String[] from, int[] to, int flags, String tipoCliente, HashMap<String,Boolean> arrSincronizados) {
 
 		super(context, layout, c, from, to, flags);
 
@@ -57,6 +61,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		this.from = from;
 		this.to = to;
 		this.permisos = SesionUsuario.getPermisos(context);
+		this.arrSincronizados = arrSincronizados;
 
 	}
 
@@ -269,12 +274,14 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 				//Actualizamos los valores del cursor de la lista de empresas
 				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 				this.changeCursor(empresaDao.buscarEmpresaFilter(context,null));
+				arrSincronizados.put(id,true);
 
 				
 			}else if(tipoCliente.equals("empleado")){
 				//Actualizamos los valores del cursor de la lista de empleados
 				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 				this.changeCursor(empleadoDao.buscarEmpleadoFilter(context,null));
+				arrSincronizados.put(id,true);
 
 			}
 
@@ -283,6 +290,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 
 		}else{
 			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeError);
+			arrSincronizados.put(id,false);
 		}
 
 		try {
