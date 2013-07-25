@@ -1,7 +1,6 @@
 package com.nahmens.rhcimax.adapters;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -16,18 +15,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
-import com.nahmens.rhcimax.controlador.AplicacionActivity;
+import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
 import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Tarea;
-import com.nahmens.rhcimax.database.sqliteDAO.CotizacionSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
-import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
-import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 import com.nahmens.rhcimax.utils.SesionUsuario;
+import com.nahmens.rhcimax.utils.SincronizacionAsyncTask;
 
 public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements Filterable{
 
@@ -39,7 +36,6 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 	private int[] toTarea;
 	private String[] fromVisita;
 	private int[] toVisita;
-	private HashMap<String,Boolean> arrSincronizados;
 	private ArrayList<String> permisos;
 
 
@@ -51,7 +47,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 	 */
 	public ListaHistoricosCursorAdapter(Context context, int layout, Cursor c,
 			String[] fromCotizacion, int[] toCotizacion, int flags, String[] fromTarea, int[] toTarea,
-			String[] fromVisita, int[] toVisita, HashMap<String,Boolean> arrSincronizados) {
+			String[] fromVisita, int[] toVisita) {
 
 		super(context, layout, c, fromCotizacion, toCotizacion, flags);
 
@@ -63,7 +59,6 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 		this.toTarea = toTarea;
 		this.fromVisita = fromVisita;
 		this.toVisita = toVisita;
-		this.arrSincronizados = arrSincronizados;
 		this.permisos = SesionUsuario.getPermisos(context);
 
 	}
@@ -239,36 +234,42 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 		//int display_mode = context.getResources().getConfiguration().orientation;
 
 		//if (display_mode != 1) {
-			
-		    String id = null;
-		    String idHistorico = cursor.getString(cursor.getColumnIndex("historicoId"));
-			
-			if(tipoRegistro.equals("tarea")){
-				id= cursor.getString(cursor.getColumnIndex("tareaId"));
 
-			}else if(tipoRegistro.equals("cotizacion")){
-				id= cursor.getString(cursor.getColumnIndex("cotizacionId"));
+		String id = null;
+		String idHistorico = cursor.getString(cursor.getColumnIndex("historicoId"));
+		String idCheckin = null;
 
+		if(tipoRegistro.equals("tarea")){
+			id= cursor.getString(cursor.getColumnIndex("tareaId"));
+
+		}else if(tipoRegistro.equals("cotizacion")){
+			id= cursor.getString(cursor.getColumnIndex("cotizacionId"));
+
+		}else{
+			id= cursor.getString(cursor.getColumnIndex("empresaVisitaId"));
+			idCheckin = cursor.getString(cursor.getColumnIndex("checkinId"));
+		}
+
+		//almacenamos en un bundle, el id de la tarea y nombre de la tarea.
+		final Bundle mArgumentos = new Bundle();
+		mArgumentos.putString("id", id);
+		mArgumentos.putString("idHistorico", idHistorico);
+		mArgumentos.putString("idCheckin", idCheckin);
+		mArgumentos.putString("tipoRegistro", tipoRegistro);
+
+		ImageButton buttonSincronizar = (ImageButton)  v.findViewById(R.id.imageButtonSync);
+		buttonSincronizar.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v){
+				String id = mArgumentos.getString("id");
+				String idHistorico = mArgumentos.getString("idHistorico");
+				String tipoRegistro = mArgumentos.getString("tipoRegistro");
+				String idCheckin = mArgumentos.getString("idCheckin");
+				sincronizarHistorico(idHistorico, id, tipoRegistro, idCheckin);
 			}
 
-			//almacenamos en un bundle, el id de la tarea y nombre de la tarea.
-			final Bundle mArgumentos = new Bundle();
-			mArgumentos.putString("id", id);
-			mArgumentos.putString("idHistorico", idHistorico);
-			mArgumentos.putString("tipoRegistro", tipoRegistro);
-
-			ImageButton buttonSincronizar = (ImageButton)  v.findViewById(R.id.imageButtonSync);
-			buttonSincronizar.setOnClickListener(new View.OnClickListener() {
-
-				@Override
-				public void onClick(View v){
-					String id = mArgumentos.getString("id");
-					String idHistorico = mArgumentos.getString("idHistorico");
-					String tipoRegistro = mArgumentos.getString("tipoRegistro");
-					sincronizarHistorico(idHistorico, id, tipoRegistro);
-				}
-
-			});
+		});
 		//}
 
 	}
@@ -278,71 +279,35 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 	 * @param id Id de la tarea, empresa o cotizacion
 	 * @tipoRegistro Posibles valores: visita, cotizacion o tarea
 	 */
-	private void sincronizarHistorico(String idHistorico, String id, String tipoRegistro) {
-		final LayoutInflater inflater = LayoutInflater.from(context);
-		Boolean sincronizado =  false;
-		Mensaje mToast = null;
-		String mensajeError = null;
-		String mensajeOk = null;
+	private void sincronizarHistorico(String idHistorico, String id, String tipoRegistro, String idCheckin) {
 
-		HistoricoSqliteDao historicoDao =  new HistoricoSqliteDao();
-		sincronizado = historicoDao.sincronizarHistorico(context, idHistorico);
-		
 		if(tipoRegistro.equals("tarea")){
-			TareaSqliteDao tareaDao =  new TareaSqliteDao();
-			sincronizado = sincronizado && tareaDao.sincronizarTarea(context, id);
 
-			mensajeOk = "ok_sincronizado_tarea";
-			mensajeError = "error_sincronizado_tarea";
+			//OJO: aqui concatenamos el id con un &
+			new SincronizacionAsyncTask(context).execute(
+					DataBaseHelper.TABLA_HISTORICO+"&"+idHistorico, 
+					DataBaseHelper.TABLA_TAREA+"&"+id);
+
 
 		}else if(tipoRegistro.equals("cotizacion")){
-			CotizacionSqliteDao cotizacionDao =  new CotizacionSqliteDao();
-			sincronizado = sincronizado && cotizacionDao.sincronizarCotizacion(context, id);
-
-			mensajeOk = "ok_sincronizado_cotizacion";
-			mensajeError = "error_sincronizado_cotizacion";
-
-		}else{
-			mensajeOk = "ok_sincronizado_visita";
-			mensajeError = "error_sincronizado_visita";
-		}
-
-
-		if(sincronizado){
-			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
-
-			arrSincronizados.put(idHistorico,true);
-			
-			//Actualizamos los valores del cursor de la lista de tareas
-			if(permisos.contains(Permiso.LISTAR_TODO)){
-				this.changeCursor(historicoDao.buscarHistoricoFilter(context,null, false));
-			}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
-				this.changeCursor(historicoDao.buscarHistoricoFilter(context,null, true));
-			}else{
-				this.changeCursor(historicoDao.buscarHistoricoFilter(context,null, false));
-			}
-			
-
-			//Notificamos que la lista cambio
-			this.notifyDataSetChanged();
+			//OJO: aqui concatenamos el id con un &
+			new SincronizacionAsyncTask(context).execute(
+					DataBaseHelper.TABLA_HISTORICO+"&"+idHistorico, 
+					DataBaseHelper.TABLA_COTIZACION+"&"+id);
 
 		}else{
-			
-			arrSincronizados.put(idHistorico,false);
-			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeError);
-		}
-
-		try {
-			mToast.controlMensajesToast();
-		} catch (Exception e) {
-			e.printStackTrace();
+			//OJO: aqui concatenamos el id con un &
+			new SincronizacionAsyncTask(context).execute(
+					DataBaseHelper.TABLA_CHECKIN+"&"+idCheckin, 
+					DataBaseHelper.TABLA_EMPRESA+"&"+id,
+					DataBaseHelper.TABLA_HISTORICO+"&"+idHistorico);
 		}
 
 	}
 
 	private void actualizarCuadrosNotificacion(View v, Cursor cursor, String tipoRegistro) {
 		int strSincronizado =  cursor.getInt(cursor.getColumnIndex(Historico.SINCRONIZADO));
-			
+
 
 		TextView tvAvisoRojoFila = (TextView) v.findViewById(R.id.avisoRojoFila);
 		TextView tvAvisoVerdeFila = (TextView) v.findViewById(R.id.avisoVerdeFila);
@@ -376,7 +341,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 		Cursor filterResultsData = null;
 
 		HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
-		
+
 		if(permisos.contains(Permiso.LISTAR_TODO)){
 			filterResultsData = historicoDao.buscarHistoricoFilter(context, constraint.toString(), false);
 		}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
@@ -384,7 +349,7 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 		}else{
 			filterResultsData = historicoDao.buscarHistoricoFilter(context, constraint.toString(), false);
 		}
-		
+
 
 
 		return filterResultsData;

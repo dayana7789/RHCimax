@@ -13,9 +13,11 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.nahmens.rhcimax.database.modelo.Checkin;
+import com.nahmens.rhcimax.database.modelo.Historico;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Usuario;
 import com.nahmens.rhcimax.database.sqliteDAO.CheckinSqliteDao;
+import com.nahmens.rhcimax.database.sqliteDAO.HistoricoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.PermisoSqliteDao;
 
 public class SesionUsuario {
@@ -77,10 +79,21 @@ public class SesionUsuario {
 		String idCheckin = prefs.getString("idCheckin", ""); 
 
 		CheckinSqliteDao checkinDao = new CheckinSqliteDao();
+		HistoricoSqliteDao historicoDao = new HistoricoSqliteDao();
+		
 		Checkin checkin = checkinDao.buscarCheckin(contexto, idCheckin);
 		checkin.setCheckout(fecha);
 
 		checkinDao.modificarCheckin(contexto, checkin);
+		
+		Historico historico = historicoDao.buscarHistoricoPorCheckin(contexto, idCheckin);
+		
+		if(historico !=null){
+			historico.setFechaModificacion(fecha);
+		}
+		
+		historicoDao.modificarHistorico(contexto, historico);
+		
 
 	}
 	

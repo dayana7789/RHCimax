@@ -209,12 +209,12 @@ public class GenericoSqliteDao implements GenericoDAO{
 
 		try{
 			conexion.open();
-			
+
 
 			ContentValues values = new ContentValues();
 			values.put(FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
 			values.put(SINCRONIZADO, 1);
-			
+
 			if(nombreTabla.equals(DataBaseHelper.TABLA_COTIZACION_SERVICIO)){
 				String idCotizacion = json.getString(Cotizacion_Servicio.ID_COTIZACION);
 				String idServicio = json.getString(Cotizacion_Servicio.ID_SERVICIO);
@@ -253,6 +253,29 @@ public class GenericoSqliteDao implements GenericoDAO{
 
 		return sincronizado;
 
+	}
+
+	@Override
+	public Cursor buscarGenerico(Context contexto, String nombreTabla,
+			String idRegistro) {
+		
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		try{
+
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(nombreTabla, null , ID + " = ?", new String []{idRegistro}, null, null, null);
+
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return mCursor;		
 	}
 
 

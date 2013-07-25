@@ -44,12 +44,55 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	}
 
 
-	public void getGenerico(String nombreTabla) throws Exception{
-Log.e("nombreTabla", "nombre: "+nombreTabla);
+	public void getGenerico(String nombreTabla, String idRegistro) throws Exception{
+		Log.e("nombreTabla", "nombre: "+nombreTabla + " _id: " + idRegistro);
+
+		GenericoSqliteDao myDao = new GenericoSqliteDao();
+		Cursor myCursor =  myDao.buscarGenerico(contexto, nombreTabla, idRegistro);
+
+		String input = new Utils().cursorToJsonString(myCursor, false);
+		Log.e("input", input);
+
+		//JSONObject resp = sync.postValores(dirServidor+"createTest", input);
+
+		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
+
+		//JSONArray userArray = sync.getValores(dirServidor+"getTest");
+
+		JSONObject myJsonObject = new JSONObject(input);
+		boolean modificado = false;
+		boolean error = false;
+		boolean sincronizado = false;
+
+		modificado = myDao.modificarGenerico(contexto, myJsonObject, nombreTabla);
+
+		if(!modificado){
+			try{
+				myDao.insertarGenerico(contexto, myJsonObject, nombreTabla);
+			}catch(android.database.sqlite.SQLiteConstraintException e){
+				mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La "+nombreTabla+" con id "+ myJsonObject.getString("_id") + " no pudo ser insertado.");
+				error = true;
+			}
+		}else{
+			mLog.appendLog(obtenerTag() + "... " + "La "+nombreTabla+" con id "+ "id" +" ya existe.");
+		}
+
+		if(!error){
+			sincronizado = myDao.sincronizarGenerico(contexto, myJsonObject, nombreTabla);
+
+			if(!sincronizado){
+				mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ "id" +" no pudo ser sincronizado.");
+			}
+		}
+
+	}
+
+	public void getGenericos(String nombreTabla) throws Exception{
+		Log.e("nombreTabla", "nombre: "+nombreTabla);
 		GenericoSqliteDao myDao = new GenericoSqliteDao();
 		Cursor myCursor =  myDao.listarGenericoNoSync(contexto, nombreTabla);
 
-		String input = new Utils().cursorToJsonString(myCursor);
+		String input = new Utils().cursorToJsonString(myCursor, true);
 		Log.e("input", input);
 
 		//JSONObject resp = sync.postValores(dirServidor+"createTest", input);
@@ -116,7 +159,7 @@ Log.e("nombreTabla", "nombre: "+nombreTabla);
 			Toast toast = Toast.makeText(contexto, TEXT_OK,  DURATION);
 			toast.show();
 			mLog.appendLog(obtenerTag() + TEXT_OK);
-			
+
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 			TareaSqliteDao tareaDao = new TareaSqliteDao();
@@ -163,7 +206,7 @@ Log.e("nombreTabla", "nombre: "+nombreTabla);
 
 			try{
 				if(HistoricosActivity.listCursorAdapterHistoricos != null){
-					
+
 					Cursor mCursorHistoricos = null;
 					if(permisos.contains(Permiso.LISTAR_TODO)){
 						mCursorHistoricos = historicoDao.buscarHistoricoFilter(contexto,null, false);
@@ -172,7 +215,7 @@ Log.e("nombreTabla", "nombre: "+nombreTabla);
 					}else{
 						mCursorHistoricos = historicoDao.buscarHistoricoFilter(contexto,null, false);
 					}
-					
+
 					HistoricosActivity.listCursorAdapterHistoricos.changeCursor(mCursorHistoricos);
 					HistoricosActivity.listCursorAdapterHistoricos.notifyDataSetChanged();
 				}
@@ -215,10 +258,22 @@ Log.e("nombreTabla", "nombre: "+nombreTabla);
 
 			try {
 				int count = nombreTablas.length;
+				String[] result = {};
 
 				for (int i = 0; i < count; i++) {
-					getGenerico(nombreTablas[i]);
+					
+					//verificamos si estamos concatenando algun id
+					result = nombreTablas[i].split("&");
+					
+					if(result.length == 1){
+						getGenericos(nombreTablas[i]);
+					}else{
+						getGenerico(result[0],result[1]);
+					}
+					
+					
 				}
+
 
 
 			} catch (Exception e) {

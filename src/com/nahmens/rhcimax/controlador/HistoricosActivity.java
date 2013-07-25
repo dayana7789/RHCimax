@@ -302,7 +302,7 @@ public class HistoricosActivity extends ListFragment{
 
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterHistoricos = new ListaHistoricosCursorAdapter(getActivity(), R.layout.activity_fila_historico, mCursorHistoricos, fromCotizacion, toCotizacion, 0, fromTarea, toTarea, fromVisita, toVisita, arrSincronizados);
+			listCursorAdapterHistoricos = new ListaHistoricosCursorAdapter(getActivity(), R.layout.activity_fila_historico, mCursorHistoricos, fromCotizacion, toCotizacion, 0, fromTarea, toTarea, fromVisita, toVisita);
 			lvHistoricos.setAdapter(listCursorAdapterHistoricos);
 
 			//registramos el DataSetObserver al adaptador

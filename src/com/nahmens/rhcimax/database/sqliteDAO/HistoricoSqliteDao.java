@@ -24,8 +24,8 @@ import com.nahmens.rhcimax.utils.SesionUsuario;
 public class HistoricoSqliteDao implements HistoricoDAO {
 
 	String  consulta  = "historico." + Historico.ID + " as historicoId, historico."+Historico.TIPO_REGISTRO + ", historico." + Historico.FECHA_CREACION + " as historicoFechaCreacion,  historico." + Historico.ID_USUARIO_CREADOR + " as historicoUsuarioCreador, historico."+ Historico.SINCRONIZADO
-			+ ", empresaVisita." + Empresa.NOMBRE + " as nombreEmpresaVisita"
-			+ ", checkin."+Checkin.CHECKIN + ", checkin." + Checkin.CHECKOUT
+			+ ", empresaVisita." + Empresa.NOMBRE + " as nombreEmpresaVisita, empresaVisita." + Empresa.ID + " as empresaVisitaId"
+			+ ", checkin."+Checkin.CHECKIN + ", checkin." + Checkin.CHECKOUT + ", checkin."+Checkin.ID + " as checkinId"
 			+ ", usuarioVisita."+Usuario.LOGIN + " as loginUsuarioVisita"
 			+ ", cotizacion."+Cotizacion.ID+" as cotizacionId, cotizacion."+Cotizacion.FECHA_ENVIO+", cotizacion."+Cotizacion.FECHA_LEIDO + ", cotizacion."+Cotizacion.DESCRIPCION + " as cotizacionDescripcion, cotizacion." + Cotizacion.FECHA_CREACION + " as cotizacionFechaCreacion, cotizacion."+Cotizacion.NUM_COTIZACION
 			+ ", usuario."+Usuario.LOGIN+" as loginUsuario"
@@ -79,7 +79,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 			values.put(Historico.ID_USUARIO_CREADOR, historico.getIdUsuarioCreador());
 
 			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_HISTORICO, null,values);
-			
+
 			if(value==-1){
 				idFila = value + "";
 			}
@@ -89,6 +89,38 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 		}
 
 		return idFila;
+	}
+	
+	@Override
+	public boolean modificarHistorico(Context contexto, Historico historico) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		boolean modificado = false;
+
+		try{
+			conexion.open();
+
+			ContentValues values = new ContentValues();
+			
+			values.put(Historico.TIPO_REGISTRO,historico.getTipoRegistro());
+			values.put(Historico.ID_COTIZACION,historico.getIdCotizacion());
+			values.put(Historico.ID_TAREA, historico.getIdTarea());
+			values.put(Historico.ID_EMPRESA, historico.getIdEmpresa());
+			values.put(Historico.ID_CHECKIN, historico.getIdCheckin());
+			values.put(Historico.ID_USUARIO_CREADOR, historico.getIdUsuarioCreador());
+			values.put(Historico.FECHA_MODIFICACION, historico.getFechaModificacion());
+			values.put(Historico.SINCRONIZADO, 0);
+
+			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_HISTORICO, values, "_id=?", new String []{historico.getId()});
+
+			if(value!=0){
+				modificado = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return modificado;
 	}
 
 	/*@Override
@@ -140,7 +172,7 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 				palabras = args.split(" ");
 			}
 		}
-		
+
 		if(fltrarPorUsuario){
 			condicion += " AND historico."+Historico.ID_USUARIO_CREADOR + " = " + SesionUsuario.getIdUsuario(contexto);
 		}
@@ -301,11 +333,50 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
 
-				historico = new Historico(mCursor.getString(mCursor.getColumnIndex(Historico.TIPO_REGISTRO)),
+				historico = new Historico(mCursor.getString(mCursor.getColumnIndex(Historico.ID)), 
+						mCursor.getString(mCursor.getColumnIndex(Historico.TIPO_REGISTRO)),
 						mCursor.getString(mCursor.getColumnIndex(Historico.ID_COTIZACION)), 
 						mCursor.getString(mCursor.getColumnIndex(Historico.ID_TAREA)), 
 						mCursor.getString(mCursor.getColumnIndex(Historico.ID_EMPRESA)), 
-						mCursor.getString(mCursor.getColumnIndex(Historico.ID_CHECKIN)));
+						mCursor.getString(mCursor.getColumnIndex(Historico.ID_CHECKIN)),
+						mCursor.getString(mCursor.getColumnIndex(Historico.ID_USUARIO_CREADOR)), 
+						mCursor.getString(mCursor.getColumnIndex(Historico.FECHA_CREACION)),
+						mCursor.getString(mCursor.getColumnIndex(Historico.FECHA_MODIFICACION)),
+						mCursor.getString(mCursor.getColumnIndex(Historico.FECHA_SINCRONIZACION)));
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return historico;	
+	}
+
+	@Override
+	public Historico buscarHistoricoPorCheckin(Context contexto,String idCheckin) {
+		ConexionBD conexion = new ConexionBD(contexto);
+		Cursor mCursor = null;
+		Historico historico = null;
+
+		try{
+			conexion.open();
+
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_HISTORICO , null , Historico.ID_CHECKIN + " = ?", new String [] {idCheckin}, null, null, null);
+
+			if (mCursor.getCount() > 0) {
+				mCursor.moveToFirst();
+
+				historico = new Historico(mCursor.getString(mCursor.getColumnIndex(Historico.ID)), 
+						mCursor.getString(mCursor.getColumnIndex(Historico.TIPO_REGISTRO)),
+						mCursor.getString(mCursor.getColumnIndex(Historico.ID_COTIZACION)), 
+						mCursor.getString(mCursor.getColumnIndex(Historico.ID_TAREA)), 
+						mCursor.getString(mCursor.getColumnIndex(Historico.ID_EMPRESA)), 
+						mCursor.getString(mCursor.getColumnIndex(Historico.ID_CHECKIN)),
+						mCursor.getString(mCursor.getColumnIndex(Historico.ID_USUARIO_CREADOR)), 
+						mCursor.getString(mCursor.getColumnIndex(Historico.FECHA_CREACION)),
+						mCursor.getString(mCursor.getColumnIndex(Historico.FECHA_MODIFICACION)),
+						mCursor.getString(mCursor.getColumnIndex(Historico.FECHA_SINCRONIZACION)));
+
 			}
 
 		}finally{
@@ -336,4 +407,6 @@ public class HistoricoSqliteDao implements HistoricoDAO {
 
 		return existeHistorico;	
 	}
+
+
 }

@@ -24,6 +24,7 @@ public class Historico {
 	String idCheckin;
 	String idUsuarioCreador;
 	String fechaCreacion;
+	String fechaModificacion;
 	String fechaSincronizacion;
 	
 
@@ -43,11 +44,33 @@ public class Historico {
 		this.idEmpresa = idEmpresa;
 		this.idUsuarioCreador = idUsuarioCreador;
 	}
+	
+	//para busqueda
+
 
 	public String getId() {
 		return id;
 	}
 	
+	
+
+	public Historico(String id, String tipoRegistro, String idCotizacion,
+			String idTarea, String idEmpresa, String idCheckin,
+			String idUsuarioCreador, String fechaCreacion,
+			String fechaModificacion, String fechaSincronizacion) {
+
+		this.id = id;
+		this.tipoRegistro = tipoRegistro;
+		this.idCotizacion = idCotizacion;
+		this.idTarea = idTarea;
+		this.idEmpresa = idEmpresa;
+		this.idCheckin = idCheckin;
+		this.idUsuarioCreador = idUsuarioCreador;
+		this.fechaCreacion = fechaCreacion;
+		this.fechaModificacion = fechaModificacion;
+		this.fechaSincronizacion = fechaSincronizacion;
+	}
+
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -114,6 +137,14 @@ public class Historico {
 
 	public void setIdUsuarioCreador(String idUsuarioCreador) {
 		this.idUsuarioCreador = idUsuarioCreador;
+	}
+
+	public String getFechaModificacion() {
+		return fechaModificacion;
+	}
+
+	public void setFechaModificacion(String fechaModificacion) {
+		this.fechaModificacion = fechaModificacion;
 	}
 
 

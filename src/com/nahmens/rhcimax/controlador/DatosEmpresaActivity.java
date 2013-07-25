@@ -284,12 +284,12 @@ public class DatosEmpresaActivity extends Fragment {
 						//Buscamos la empresa que le vamos asignar las coordenadas
 						EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 						Empresa empresa  = empresaDao.buscarEmpresa(getActivity(),idEmpresa);
+						empresa.setIdUsuarioModificador(SesionUsuario.getIdUsuario(getActivity()));
+						empresa.setFechaModificacion(FormatoFecha.obtenerFechaTiempoActualEN());
 						empresa.setLatitud(checkin.getLatitud());
 						empresa.setLongitud(checkin.getLongitud());
 
 						boolean modificado = empresaDao.modificarEmpresa(getActivity(), empresa);
-
-
 
 						if(modificado){
 							mToast = new Mensaje(mInflater, getActivity(), "ok_checkin");

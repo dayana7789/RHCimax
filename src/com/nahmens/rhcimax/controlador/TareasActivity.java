@@ -258,7 +258,7 @@ public class TareasActivity extends ListFragment{
 
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterTareas = new ListaTareasCursorAdapter(getActivity(), R.layout.activity_fila_tarea, mCursorTareas, from, to, 0, getFragmentManager(), arrSincronizados);
+			listCursorAdapterTareas = new ListaTareasCursorAdapter(getActivity(), R.layout.activity_fila_tarea, mCursorTareas, from, to, 0, getFragmentManager());
 			lvTareas.setAdapter(listCursorAdapterTareas);
 
 			//registramos el DataSetObserver al adaptador

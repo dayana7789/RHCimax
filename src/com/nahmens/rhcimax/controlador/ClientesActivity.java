@@ -256,7 +256,7 @@ public class ClientesActivity extends ListFragment {
 			final ListView lvEmpresas = (ListView) view.findViewById (R.id.listEmpresas);
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterEmpresas = new ListaClientesCursorAdapter(getActivity(), R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa", arrSincronizadosEmpresa);
+			listCursorAdapterEmpresas = new ListaClientesCursorAdapter(getActivity(), R.layout.activity_fila_cliente, mCursorEmpresas, from, to, 0, "empresa");
 			lvEmpresas.setAdapter(listCursorAdapterEmpresas);
 
 
@@ -307,7 +307,7 @@ public class ClientesActivity extends ListFragment {
 			ListView lvEmpleados = (ListView) view.findViewById (android.R.id.list);
 
 			//Creamos un array adapter para desplegar cada una de las filas
-			listCursorAdapterEmpleados = new ListaClientesCursorAdapter(getActivity(), R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado", arrSincronizadosEmpleado);
+			listCursorAdapterEmpleados = new ListaClientesCursorAdapter(getActivity(), R.layout.activity_fila_cliente, mCursorEmpleados, from, to, 0, "empleado");
 			lvEmpleados.setAdapter(listCursorAdapterEmpleados);
 
 

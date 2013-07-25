@@ -2,7 +2,6 @@ package com.nahmens.rhcimax.adapters;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -22,12 +21,14 @@ import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.controlador.AplicacionActivity;
+import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.TareaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 import com.nahmens.rhcimax.utils.SesionUsuario;
+import com.nahmens.rhcimax.utils.SincronizacionAsyncTask;
 
 public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Filterable{
 
@@ -37,7 +38,6 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	private int[] to;
 	@SuppressWarnings("unused")
 	private FragmentManager fragmentManager;
-	private HashMap<String,Boolean> arrSincronizados;
 	private ArrayList<String> permisos;
 
 	/**
@@ -47,7 +47,7 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	 *                         los cuadros de notificacion principal.
 	 */
 	public ListaTareasCursorAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to, int flags, FragmentManager fragmentManager, HashMap<String,Boolean> arrSincronizados) {
+			String[] from, int[] to, int flags, FragmentManager fragmentManager) {
 
 		super(context, layout, c, from, to, flags);
 
@@ -56,7 +56,6 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 		this.from = from;
 		this.to = to;
 		this.fragmentManager=fragmentManager;
-		this.arrSincronizados = arrSincronizados;
 		this.permisos = SesionUsuario.getPermisos(context);
 	}
 
@@ -239,46 +238,9 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	 * @param id Id de la tarea
 	 */
 	private void sincronizarTarea(String id) {
-		final LayoutInflater inflater = LayoutInflater.from(context);
-		Boolean sincronizado =  false;
-		Mensaje mToast = null;
-		String mensajeError = null;
-		String mensajeOk = null;
-
-		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		sincronizado = tareaDao.sincronizarTarea(context, id);
-
-		mensajeOk = "ok_sincronizado_tarea";
-		mensajeError = "error_sincronizado_tarea";
-
-		if(sincronizado){
-			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
-			
-			arrSincronizados.put(id,true);
-
-			//Actualizamos los valores del cursor de la lista de tareas
-			if(permisos.contains(Permiso.LISTAR_TODO)){
-				this.changeCursor(tareaDao.buscarTareaFilter(context,null, false));
-			}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
-				this.changeCursor(tareaDao.buscarTareaFilter(context,null, true));
-			}else{
-				this.changeCursor(tareaDao.buscarTareaFilter(context,null, false));
-			}
-
-			//Notificamos que la lista cambio
-			this.notifyDataSetChanged();
-
-		}else{
-			arrSincronizados.put(id,false);
-			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeError);
-		}
-
-		try {
-			mToast.controlMensajesToast();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		//OJO: aqui concatenamos el id con un &
+		new SincronizacionAsyncTask(context).execute(
+                DataBaseHelper.TABLA_TAREA +"&"+id);
 	}
 
 

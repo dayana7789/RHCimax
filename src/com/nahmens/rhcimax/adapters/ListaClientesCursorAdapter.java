@@ -1,7 +1,6 @@
 package com.nahmens.rhcimax.adapters;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -22,12 +21,14 @@ import android.widget.TextView;
 import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.controlador.AplicacionActivity;
 import com.nahmens.rhcimax.controlador.ClientesActivity;
+import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.SesionUsuario;
+import com.nahmens.rhcimax.utils.SincronizacionAsyncTask;
 
 /**
  * Adaptador personalizado para iterar sobre los resultados de la BD,
@@ -42,7 +43,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 	private String[] from;
 	private int[] to;
 	private ArrayList<String> permisos;
-	private HashMap<String,Boolean> arrSincronizados;
+
 
 	/**
 	 * @param tipoCliente Puede ser empleado o empresa. Se utiliza para saber sobre
@@ -51,7 +52,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 	 *                         los cuadros de notificacion principal.
 	 */
 	public ListaClientesCursorAdapter(Context context, int layout, Cursor c,
-			String[] from, int[] to, int flags, String tipoCliente, HashMap<String,Boolean> arrSincronizados) {
+			String[] from, int[] to, int flags, String tipoCliente) {
 
 		super(context, layout, c, from, to, flags);
 
@@ -61,8 +62,6 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 		this.from = from;
 		this.to = to;
 		this.permisos = SesionUsuario.getPermisos(context);
-		this.arrSincronizados = arrSincronizados;
-
 	}
 
 
@@ -143,9 +142,7 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 			}
 		}
 
-
 		actualizarCuadrosNotificacionCliente(v, cursor);
-
 
 		setIconoCliente(v);
 
@@ -242,63 +239,21 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 	 * @param Id del empleado o empresa
 	 */
 	private void sincronizarCliente(String id) {
-		final LayoutInflater inflater = LayoutInflater.from(context);
-		Boolean sincronizado =  false;
-		Mensaje mToast = null;
-		String mensajeError = null;
-		String mensajeOk = null;
 
 		if(tipoCliente.equals("empresa")){
-			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-			sincronizado = empresaDao.sincronizarEmpresa(context, id);
-
-			
-			mensajeOk = "ok_sincronizado_empresa";
-			mensajeError = "error_sincronizado_empresa";
+			//OJO: aqui concatenamos el id con un &
+			new SincronizacionAsyncTask(context).execute(
+                    DataBaseHelper.TABLA_EMPRESA +"&"+id);
 
 		}else if(tipoCliente.equals("empleado")){
-			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-			sincronizado = empleadoDao.sincronizarEmpleado(context, id);
 			
-			mensajeOk = "ok_sincronizado_empleado";
-			mensajeError = "error_sincronizado_empleado";
+			//OJO: aqui concatenamos el id con un &
+			new SincronizacionAsyncTask(context).execute(
+                    DataBaseHelper.TABLA_EMPLEADO +"&"+id);
 
 		}else{
 			Log.e("ListaClientesCursorAdapter","tipoCliente no soportado en funcion sincronizarCliente: " + tipoCliente);
 		}
-
-		if(sincronizado){
-			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeOk);
-
-			if(tipoCliente.equals("empresa")){
-				//Actualizamos los valores del cursor de la lista de empresas
-				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				this.changeCursor(empresaDao.buscarEmpresaFilter(context,null));
-				arrSincronizados.put(id,true);
-
-				
-			}else if(tipoCliente.equals("empleado")){
-				//Actualizamos los valores del cursor de la lista de empleados
-				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-				this.changeCursor(empleadoDao.buscarEmpleadoFilter(context,null));
-				arrSincronizados.put(id,true);
-
-			}
-
-			//Notificamos que la lista cambio
-			this.notifyDataSetChanged();
-
-		}else{
-			mToast = new Mensaje(inflater, (AplicacionActivity)this.context, mensajeError);
-			arrSincronizados.put(id,false);
-		}
-
-		try {
-			mToast.controlMensajesToast();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	/**

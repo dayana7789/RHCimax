@@ -8,6 +8,9 @@ import com.nahmens.rhcimax.database.modelo.Historico;
 public interface HistoricoDAO {
 	
 	String insertarHistorico(Context contexto, Historico historico);
+	
+	boolean modificarHistorico(Context contexto, Historico historico);
+	
 	//Cursor listarHistoricos(Context contexto);
 	
 
@@ -31,5 +34,7 @@ public interface HistoricoDAO {
 	Historico buscarHistoricoPorCheckinPorEmpresa(Context contexto, String idCheckin, String idEmpresa);
 
 	boolean existeCheckinVisita(Context contexto, String idCheckin);
+	
+	Historico buscarHistoricoPorCheckin(Context contexto, String idCheckin);
 
 }

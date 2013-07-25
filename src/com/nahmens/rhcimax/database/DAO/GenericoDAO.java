@@ -8,6 +8,7 @@ import android.database.Cursor;
 public interface GenericoDAO {
 	
 	Cursor listarGenericoNoSync(Context contexto, String nombreTabla);
+	Cursor buscarGenerico(Context contexto, String nombreTabla, String idRegistro);
 	String insertarGenerico(Context contexto, JSONObject json, String nombreTabla);
 	boolean modificarGenerico(Context contexto, JSONObject json, String nombreTabla);
 	boolean sincronizarGenerico(Context contexto, JSONObject json, String nombreTabla);

@@ -13,16 +13,23 @@ public class Utils {
 	 * Funcion que construye un String con formato JSON a partir de
 	 * un cursor.
 	 * @param mCursor
+	 * @param esArray Indica si queremos formar un JSONArray o un JSONObject.
 	 * @return
 	 */
-	public String cursorToJsonString(Cursor mCursor){
-		String mJsonString = "[";
+	public String cursorToJsonString(Cursor mCursor, boolean esArray){
+		String mJsonString = null;
 		String columna = null;
 		String contenido = null;
 		int numColumnas = mCursor.getColumnNames().length;
 		int numRegistros = mCursor.getCount();
 		int i = 0;
 			
+		if(esArray){
+			mJsonString = "[";
+		}else{
+			mJsonString = "";
+		}
+		
 		while (!mCursor.isAfterLast()) {
 			
 			mJsonString += "{";
@@ -50,7 +57,12 @@ public class Utils {
 
 		}
 		
-		mJsonString += "]";
+		if(esArray){
+			mJsonString += "]";
+		}else{
+			mJsonString += "";
+		}
+		
 		
 		return mJsonString;
 	}
