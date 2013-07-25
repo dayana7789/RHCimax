@@ -9,16 +9,18 @@ import org.json.JSONObject;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
+import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.GenericoDAO;
+import com.nahmens.rhcimax.database.modelo.Cotizacion_Servicio;
+import com.nahmens.rhcimax.database.modelo.Empleado_Cotizacion;
+import com.nahmens.rhcimax.database.modelo.Rol_Permiso;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class GenericoSqliteDao implements GenericoDAO{
 
 	private final String FECHA_SINCRONIZACION = "fechaSincronizacion";
-	private final String FECHA_MODIFICACION = "fechaModificacion";
 	private final String SINCRONIZADO = "sincronizado";
 	private final String ID = "_id";
 
@@ -30,8 +32,7 @@ public class GenericoSqliteDao implements GenericoDAO{
 
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(nombreTabla, null , FECHA_SINCRONIZACION + " IS NULL OR " + FECHA_MODIFICACION + " > " + FECHA_SINCRONIZACION ,null, null, null, null);
-
+			mCursor = conexion.getDatabase().query(nombreTabla, null , SINCRONIZADO + " = 0",null, null, null, null);
 
 			if (mCursor != null) {
 				mCursor.moveToFirst();
@@ -82,28 +83,106 @@ public class GenericoSqliteDao implements GenericoDAO{
 		boolean modificado = false;
 		ContentValues values = new ContentValues();
 		Iterator<?> keys = json.keys();
-		String id = null;
 
 		try{
 			conexion.open();
 
-			while(keys.hasNext()){
-				String key = (String)keys.next();
-				String valor = json.getString(key);
-				
-				if(valor.equals("null") || valor==null){
-					values.putNull(key);
-				}else{
-					values.put(key,valor);
+			if(nombreTabla.equals(DataBaseHelper.TABLA_COTIZACION_SERVICIO)){
+				String idCotizacion = null;
+				String idServicio = null;
+
+				while(keys.hasNext()){
+					String key = (String)keys.next();
+					String valor = json.getString(key);
+
+					if(valor.equals("null") || valor==null){
+						values.putNull(key);
+					}else{
+						values.put(key,valor);
+					}
+
+
+					if(key.equals(Cotizacion_Servicio.ID_COTIZACION)){
+						idCotizacion = json.getString(key);
+					}
+
+					if(key.equals(Cotizacion_Servicio.ID_SERVICIO)){
+						idServicio = json.getString(key);
+					}
 				}
 
-				if(key.equals(ID)){
-					id = json.getString(key);
+				value = conexion.getDatabase().update(nombreTabla, values, Cotizacion_Servicio.ID_COTIZACION+ "=? AND " + Cotizacion_Servicio.ID_SERVICIO + "=?", new String []{idCotizacion, idServicio});
+
+			}else if(nombreTabla.equals(DataBaseHelper.TABLA_EMPLEADO_COTIZACION)){
+				String idCotizacion = null;
+				String idEmpleado = null;
+
+				while(keys.hasNext()){
+					String key = (String)keys.next();
+					String valor = json.getString(key);
+
+					if(valor.equals("null") || valor==null){
+						values.putNull(key);
+					}else{
+						values.put(key,valor);
+					}
+
+					if(key.equals(Empleado_Cotizacion.ID_EMPLEADO)){
+						idEmpleado = json.getString(key);
+					}
+
+					if(key.equals(Empleado_Cotizacion.ID_COTIZACION)){
+						idCotizacion = json.getString(key);
+					}
 				}
+
+				value = conexion.getDatabase().update(nombreTabla, values,  Empleado_Cotizacion.ID_EMPLEADO+ "=? AND " + Empleado_Cotizacion.ID_COTIZACION + "=?", new String []{idEmpleado, idCotizacion});
+
+			}else if(nombreTabla.equals(DataBaseHelper.TABLA_ROL_PERMISO)){
+				String idRol = null;
+				String idPermiso = null;
+
+				while(keys.hasNext()){
+					String key = (String)keys.next();
+					String valor = json.getString(key);
+
+					if(valor.equals("null") || valor==null){
+						values.putNull(key);
+					}else{
+						values.put(key,valor);
+					}
+
+					if(key.equals(Rol_Permiso.ID_ROL)){
+						idRol = json.getString(key);
+					}
+
+					if(key.equals(Rol_Permiso.ID_PERMISO)){
+						idPermiso = json.getString(key);
+					}
+				}
+
+				value = conexion.getDatabase().update(nombreTabla, values, Rol_Permiso.ID_ROL+ "=? AND " + Rol_Permiso.ID_PERMISO + "=?", new String []{idRol, idPermiso});
+
+			}else{
+				String id = null;
+
+				while(keys.hasNext()){
+					String key = (String)keys.next();
+					String valor = json.getString(key);
+
+					if(valor.equals("null") || valor==null){
+						values.putNull(key);
+					}else{
+						values.put(key,valor);
+					}
+
+					if(key.equals(ID)){
+						id = json.getString(key);
+					}
+				}
+
+				value = conexion.getDatabase().update(nombreTabla, values, "_id=?", new String []{id});
 			}
-
-			Log.e("DEBUG","id a modificar: " + id );
-			value = conexion.getDatabase().update(nombreTabla, values, "_id=?", new String []{id});
 
 
 			if(value!=0){
@@ -126,19 +205,40 @@ public class GenericoSqliteDao implements GenericoDAO{
 
 		ConexionBD conexion = new ConexionBD(contexto);
 		boolean sincronizado = false;
-		String id = null;
-		
+		int value = 0;
 
 		try{
 			conexion.open();
 			
-			id = json.getString(ID);
-			 
-			ContentValues contenido = new ContentValues();
-			contenido.put(FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
-			contenido.put(SINCRONIZADO, 1);
 
-			int value = conexion.getDatabase().update(nombreTabla, contenido, "_id=?", new String []{id});
+			ContentValues values = new ContentValues();
+			values.put(FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
+			values.put(SINCRONIZADO, 1);
+			
+			if(nombreTabla.equals(DataBaseHelper.TABLA_COTIZACION_SERVICIO)){
+				String idCotizacion = json.getString(Cotizacion_Servicio.ID_COTIZACION);
+				String idServicio = json.getString(Cotizacion_Servicio.ID_SERVICIO);
+
+				value = conexion.getDatabase().update(nombreTabla, values, Cotizacion_Servicio.ID_COTIZACION+ "=? AND " + Cotizacion_Servicio.ID_SERVICIO + "=?", new String []{idCotizacion, idServicio});
+
+			}else if(nombreTabla.equals(DataBaseHelper.TABLA_EMPLEADO_COTIZACION)){
+				String idEmpleado  = json.getString(Empleado_Cotizacion.ID_EMPLEADO);
+				String idCotizacion = json.getString(Empleado_Cotizacion.ID_COTIZACION);
+
+				value = conexion.getDatabase().update(nombreTabla, values,  Empleado_Cotizacion.ID_EMPLEADO+ "=? AND " + Empleado_Cotizacion.ID_COTIZACION + "=?", new String []{idEmpleado, idCotizacion});
+
+			}else if(nombreTabla.equals(DataBaseHelper.TABLA_ROL_PERMISO)){
+				String idRol = json.getString(Rol_Permiso.ID_ROL);
+				String idPermiso = json.getString(Rol_Permiso.ID_PERMISO);
+
+				value = conexion.getDatabase().update(nombreTabla, values, Rol_Permiso.ID_ROL+ "=? AND " + Rol_Permiso.ID_PERMISO + "=?", new String []{idRol, idPermiso});
+
+			}else{
+				String id = json.getString(ID);
+
+				value = conexion.getDatabase().update(nombreTabla, values, "_id=?", new String []{id});
+
+			}
 
 			if(value!=0){
 				sincronizado = true;

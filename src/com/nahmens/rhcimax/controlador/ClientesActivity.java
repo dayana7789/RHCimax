@@ -122,7 +122,20 @@ public class ClientesActivity extends ListFragment {
 
 				@Override
 				public void onClick(View v) {
-					new SincronizacionAsyncTask(getActivity()).execute(DataBaseHelper.TABLA_EMPLEADO, DataBaseHelper.TABLA_EMPRESA);
+					new SincronizacionAsyncTask(getActivity()).execute(DataBaseHelper.TABLA_ROL, 
+																	   DataBaseHelper.TABLA_USUARIO,
+																	   DataBaseHelper.TABLA_PERMISO,
+																	   DataBaseHelper.TABLA_PERMISO,
+							                                           DataBaseHelper.TABLA_ROL_PERMISO, 
+							                                           DataBaseHelper.TABLA_EMPRESA,
+							                                           DataBaseHelper.TABLA_EMPLEADO,
+							                                           DataBaseHelper.TABLA_COTIZACION,
+							                                           DataBaseHelper.TABLA_EMPLEADO_COTIZACION,
+							                                           DataBaseHelper.TABLA_SERVICIO,
+							                                           DataBaseHelper.TABLA_COTIZACION_SERVICIO,
+							                                           DataBaseHelper.TABLA_TAREA,
+							                                           DataBaseHelper.TABLA_CHECKIN,
+							                                           DataBaseHelper.TABLA_HISTORICO);
 
 				}
 			});

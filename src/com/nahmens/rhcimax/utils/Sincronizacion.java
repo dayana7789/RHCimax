@@ -5,11 +5,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 
@@ -70,14 +72,14 @@ public class Sincronizacion{
 		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 		JSONObject jsonObject = null;
-		
+
 		Log.e("resultado",""+strJsonArray);
 
 
 		OutputStream os = conn.getOutputStream();
 		os.write(strJsonArray.getBytes());
 		os.flush();
-		
+
 		conn.connect();
 
 		if (conn.getResponseCode() != 200) {
@@ -95,16 +97,38 @@ public class Sincronizacion{
 		while ((output = br.readLine()) != null) {
 			Log.e("salida",output);
 			sb.append(output);
-			
+
 		}
-		
+
 		Log.e("salida",sb.toString());
 		jsonObject = new JSONObject(sb.toString());
 
 		conn.disconnect();
-		
+
 		return jsonObject;
 
+	}
+
+	/**
+	 * Funcion que guarda en archivo de shared preferences las fechas de sincronizacion
+	 * de cada tabla de BD.
+	 * @param context
+	 * @param fechas JsonArray de la forma [{nombreTabla_0: fecha_0},...,{nombreTabla_n: fecha_n}]
+	 */
+	public void setFechaSincronizacion(Context context, String nombreTabla) {
+
+		SharedPreferences prefs = contexto.getSharedPreferences("Sincronizacion",Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(nombreTabla, FormatoFecha.darFormatoDateTimeUS(new Date()));
+
+		editor.commit();
+	}
+	
+	public String getFechaSincronizacion(Context context, String nombreTabla){
+		
+		SharedPreferences prefs = contexto.getSharedPreferences("Sincronizacion",Context.MODE_PRIVATE);
+		return prefs.getString(nombreTabla, ""); 
+	
 	}
 
 }

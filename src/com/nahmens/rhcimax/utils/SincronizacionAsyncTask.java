@@ -45,7 +45,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 
 	public void getGenerico(String nombreTabla) throws Exception{
-
+Log.e("nombreTabla", "nombre: "+nombreTabla);
 		GenericoSqliteDao myDao = new GenericoSqliteDao();
 		Cursor myCursor =  myDao.listarGenericoNoSync(contexto, nombreTabla);
 
@@ -76,14 +76,17 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 					error = true;
 				}
 			}else{
-				mLog.appendLog(obtenerTag() + "... " + "La "+nombreTabla+" con id "+  myJsonObject.getString("_id") +" ya existe.");
+				mLog.appendLog(obtenerTag() + "... " + "La "+nombreTabla+" con id "+ "id" +" ya existe.");
 			}
 
 			if(!error){
 				sincronizado = myDao.sincronizarGenerico(contexto, myJsonObject, nombreTabla);
 
 				if(!sincronizado){
-					mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+  myJsonObject.getString("_id") +" no pudo ser sincronizado.");
+					mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ "id" +" no pudo ser sincronizado.");
+				}else{
+					//Guardamos la fecha de sincronizacion en shared preferences
+					new Sincronizacion(contexto).setFechaSincronizacion(contexto, nombreTabla);
 				}
 			}
 		}
@@ -113,7 +116,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			Toast toast = Toast.makeText(contexto, TEXT_OK,  DURATION);
 			toast.show();
 			mLog.appendLog(obtenerTag() + TEXT_OK);
-
+			
 			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
 			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
 			TareaSqliteDao tareaDao = new TareaSqliteDao();
@@ -139,16 +142,18 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			}
 
 			try{
-				Cursor mCursorTareas = null;
-				if(permisos.contains(Permiso.LISTAR_TODO)){
-					mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, false);
-				}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
-					mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, true);
-				}else{
-					mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, false);
-				}
-				
+
 				if(TareasActivity.listCursorAdapterTareas !=null){
+
+					Cursor mCursorTareas = null;
+					if(permisos.contains(Permiso.LISTAR_TODO)){
+						mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, false);
+					}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+						mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, true);
+					}else{
+						mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, false);
+					}
+
 					TareasActivity.listCursorAdapterTareas.changeCursor(mCursorTareas);
 					TareasActivity.listCursorAdapterTareas.notifyDataSetChanged();
 				}
@@ -158,7 +163,17 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 			try{
 				if(HistoricosActivity.listCursorAdapterHistoricos != null){
-					HistoricosActivity.listCursorAdapterHistoricos.changeCursor(historicoDao.buscarHistoricoFilter(contexto,null, false));
+					
+					Cursor mCursorHistoricos = null;
+					if(permisos.contains(Permiso.LISTAR_TODO)){
+						mCursorHistoricos = historicoDao.buscarHistoricoFilter(contexto,null, false);
+					}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+						mCursorHistoricos = historicoDao.buscarHistoricoFilter(contexto,null, true);
+					}else{
+						mCursorHistoricos = historicoDao.buscarHistoricoFilter(contexto,null, false);
+					}
+					
+					HistoricosActivity.listCursorAdapterHistoricos.changeCursor(mCursorHistoricos);
 					HistoricosActivity.listCursorAdapterHistoricos.notifyDataSetChanged();
 				}
 			}catch(Exception e){
@@ -202,7 +217,6 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 				int count = nombreTablas.length;
 
 				for (int i = 0; i < count; i++) {
-					Log.e("debuug", "nombreTabla: "+nombreTablas[i]);
 					getGenerico(nombreTablas[i]);
 				}
 
