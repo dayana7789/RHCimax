@@ -90,10 +90,8 @@ public class SesionUsuario {
 		
 		if(historico !=null){
 			historico.setFechaModificacion(fecha);
+			historicoDao.modificarHistorico(contexto, historico);
 		}
-		
-		historicoDao.modificarHistorico(contexto, historico);
-		
 
 	}
 	
