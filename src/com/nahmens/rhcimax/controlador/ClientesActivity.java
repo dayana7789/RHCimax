@@ -29,7 +29,6 @@ import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Empleado;
 import com.nahmens.rhcimax.database.modelo.Empresa;
 import com.nahmens.rhcimax.database.modelo.Permiso;
-import com.nahmens.rhcimax.database.modelo.Tarea;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpleadoSqliteDao;
 import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
@@ -246,8 +245,8 @@ public class ClientesActivity extends ListFragment {
 	 * @param view
 	 */
 	private void listarEmpresas(View view, Cursor mCursorEmpresas){
-
-		if(mCursorEmpresas.getCount()>0){
+		//esta if se comenta para que al actualizar empresas (por ejemplo) se muestren los registros
+		//if(mCursorEmpresas.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
 			//OJO: Aqui pasamos Empresa.ID para no invocarlo directamente en el ListaClientesCursorAdapter
 			// y lo relacionamos en el arreglo 'to' con el valor 0.
@@ -287,7 +286,7 @@ public class ClientesActivity extends ListFragment {
 			}); 
 
 
-		}
+		//}
 
 	}
 
@@ -297,8 +296,8 @@ public class ClientesActivity extends ListFragment {
 	 *
 	 */
 	private void listarEmpleados(View view, Cursor mCursorEmpleados){
-		
-		if(mCursorEmpleados.getCount()>0){
+		//esta if se comenta para que al actualizar empresas (por ejemplo) se muestren los registros
+		//if(mCursorEmpleados.getCount()>0){
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
 			//OJO: Aqui pasamos  Empleado.ID para no invocarlo directamente en el ListaClientesCursorAdapter
 			// y lo relacionamos en el arreglo 'to' con el valor 0.
@@ -333,7 +332,7 @@ public class ClientesActivity extends ListFragment {
 
 			//enables filtering for the contents of the given ListView
 			//lvEmpleados.setTextFilterEnabled(true);
-		}
+		//}
 	}
 
 	/**
@@ -676,9 +675,9 @@ public class ClientesActivity extends ListFragment {
 		}
 
 		while(!mCursor.isAfterLast()){
-			id =  mCursor.getString(mCursor.getColumnIndex(Tarea.ID));
+			id =  mCursor.getString(mCursor.getColumnIndex(Empleado.ID));
 
-			strSincronizado = mCursor.getInt(mCursor.getColumnIndex(Tarea.SINCRONIZADO));
+			strSincronizado = mCursor.getInt(mCursor.getColumnIndex(Empleado.SINCRONIZADO));
 
 			if(strSincronizado==0){
 				

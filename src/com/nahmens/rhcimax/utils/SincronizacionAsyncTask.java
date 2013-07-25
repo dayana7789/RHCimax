@@ -1,5 +1,6 @@
 package com.nahmens.rhcimax.utils;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import com.nahmens.rhcimax.controlador.ClientesActivity;
 import com.nahmens.rhcimax.controlador.HistoricosActivity;
 import com.nahmens.rhcimax.controlador.TareasActivity;
+import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Configuracion;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.sqliteDAO.ConfiguracionSqliteDao;
@@ -30,7 +32,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	private final CharSequence TEXT_ERROR = "Ha ocurrido un error con la sincronización: ";
 	private final CharSequence TEXT_OK = "Sincronización finalizada";
 	private final int DURATION = Toast.LENGTH_LONG;
-	private String dirServidor = "http://190.203.108.202:8080/vasaweb-1.0/";
+	private String dirServidor = "http://190.203.108.202:8080/rhcimax-1.0/";
 
 	Context contexto;
 	Sincronizacion sync;
@@ -98,35 +100,45 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		//JSONObject resp = sync.postValores(dirServidor+"createTest", input);
 
 		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
-
+		
 		//JSONArray userArray = sync.getValores(dirServidor+"getTest");
-
-		JSONArray myJsonArray = new JSONArray(input);
+		JSONArray myJsonArray = sync.getValores(dirServidor+"companies/"+URLEncoder.encode("2013-07-24 00:00:00", "ISO-8859-1"));
+		
+	
+		//JSONArray myJsonArray = new JSONArray(input);
 		boolean modificado = false;
 		boolean error = false;
 		boolean sincronizado = false;
+		String id = null;
 
 		for (int i = 0; i < myJsonArray.length(); ++i) {
 			JSONObject myJsonObject = myJsonArray.getJSONObject(i);
-
+			
+			try{
+				// no todas las tablas tienen _id. Ej. tablas con claves compuestas
+				id = myJsonObject.getString("_id");
+			}catch (Exception e){}
+			
 			modificado = myDao.modificarGenerico(contexto, myJsonObject, nombreTabla);
 
 			if(!modificado){
 				try{
 					myDao.insertarGenerico(contexto, myJsonObject, nombreTabla);
+					
+					mLog.appendLog(obtenerTag() + "... " + "La "+nombreTabla+" con id "+ id + " fue insertado.");
 				}catch(android.database.sqlite.SQLiteConstraintException e){
-					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La "+nombreTabla+" con id "+ myJsonObject.getString("_id") + " no pudo ser insertado.");
+					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La "+nombreTabla+" con id "+ id + " no pudo ser insertado.");
 					error = true;
 				}
 			}else{
-				mLog.appendLog(obtenerTag() + "... " + "La "+nombreTabla+" con id "+ "id" +" ya existe.");
+				mLog.appendLog(obtenerTag() + "... " + "La "+nombreTabla+" con id "+ id +" fue modificado.");
 			}
 
 			if(!error){
 				sincronizado = myDao.sincronizarGenerico(contexto, myJsonObject, nombreTabla);
 
 				if(!sincronizado){
-					mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ "id" +" no pudo ser sincronizado.");
+					mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ id +" no pudo ser sincronizado.");
 				}else{
 					//Guardamos la fecha de sincronizacion en shared preferences
 					new Sincronizacion(contexto).setFechaSincronizacion(contexto, nombreTabla);
@@ -257,6 +269,11 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			mLog.appendLog(obtenerTag() + "Inicio de sincronización... ");
 
 			try {
+				
+				/***TEMPORAL***/
+				getGenericos(DataBaseHelper.TABLA_EMPRESA);
+				/***TEMPORAL***/
+				
 				int count = nombreTablas.length;
 				String[] result = {};
 
@@ -266,14 +283,13 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 					result = nombreTablas[i].split("&");
 					
 					if(result.length == 1){
-						getGenericos(nombreTablas[i]);
+					//	getGenericos(nombreTablas[i]);
+						
 					}else{
 						getGenerico(result[0],result[1]);
 					}
-					
-					
-				}
 
+				}
 
 
 			} catch (Exception e) {

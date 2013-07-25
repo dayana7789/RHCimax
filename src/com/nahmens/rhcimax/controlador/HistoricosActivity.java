@@ -286,8 +286,8 @@ public class HistoricosActivity extends ListFragment{
 	}
 
 	private void listarHistoricos(View view, Cursor mCursorHistoricos) {
-
-		if(mCursorHistoricos.getCount()>0){
+		//esta if se comenta para que al actualizar empresas (por ejemplo) se muestren los registros
+		//if(mCursorHistoricos.getCount()>0){
 
 			final ListView lvHistoricos = (ListView) view.findViewById (android.R.id.list);
 			//indicamos los campos que queremos mostrar (from) y en donde (to)
@@ -309,7 +309,7 @@ public class HistoricosActivity extends ListFragment{
 			listCursorAdapterHistoricos.registerDataSetObserver(observer);
 
 
-		}
+		//}
 
 	}
 
