@@ -12,6 +12,12 @@ import android.util.Log;
  */
 public class DataBaseHelper extends SQLiteOpenHelper{
 
+	/** OJO: Si vas a agregar un nuevo campo a alguna tabla de tipo REAL o INTEGER,
+	 * asegurate de tomar en cuenta el nombre de la nueva columna en Utils.java/cursorToJsonString()
+	 *Cursor no posee un metodo para obtener el tipo de dato de la columna
+	 *en los APIS viejos de android. Es por esto, que segun el nombre de
+	 *la columna, obtenemos el tipo de dato, para la sincronizacion */
+	
 	private static final String DATABASE_NAME = "rhcimax";
 	private static final int DATABASE_VERSION = 10;
 

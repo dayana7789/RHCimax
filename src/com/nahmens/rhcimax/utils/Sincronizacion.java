@@ -26,7 +26,6 @@ public class Sincronizacion{
 
 	public JSONArray getValores(String strUrl) throws Exception{
 		JSONArray jsonArray = null; 
-
 		URL url = new URL(strUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("GET");
@@ -55,13 +54,11 @@ public class Sincronizacion{
 
 		conn.disconnect();
 
-
-
 		return jsonArray;
-
 	}
 
 	public JSONObject postValores (String strUrl, String strJsonArray) throws Exception{
+		JSONObject jsonObject = null;
 		URL url = new URL(strUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setReadTimeout(10000);
@@ -71,17 +68,16 @@ public class Sincronizacion{
 		conn.setRequestMethod("POST");
 		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-		JSONObject jsonObject = null;
-
+		strJsonArray = "data=" + strJsonArray;
+		
 		Log.e("resultado",""+strJsonArray);
-
 
 		OutputStream os = conn.getOutputStream();
 		os.write(strJsonArray.getBytes());
 		os.flush();
 
 		conn.connect();
-
+		//Log.e("conn.getResponseCode()","conn.getResponseCode()?"+conn.getResponseCode());
 		if (conn.getResponseCode() != 200) {
 			throw new RuntimeException("Failed : HTTP error code : "
 					+ conn.getResponseCode());
@@ -95,14 +91,14 @@ public class Sincronizacion{
 
 		System.out.println("Output from Server .... \n");
 		while ((output = br.readLine()) != null) {
-			Log.e("salida",output);
 			sb.append(output);
-
 		}
 
 		Log.e("salida",sb.toString());
 		jsonObject = new JSONObject(sb.toString());
 
+		
+		//Log.e("error","error?"+conn.getErrorStream());
 		conn.disconnect();
 
 		return jsonObject;

@@ -210,7 +210,6 @@ public class GenericoSqliteDao implements GenericoDAO{
 		try{
 			conexion.open();
 
-
 			ContentValues values = new ContentValues();
 			values.put(FECHA_SINCRONIZACION, FormatoFecha.darFormatoDateTimeUS(new Date()));
 			values.put(SINCRONIZADO, 1);

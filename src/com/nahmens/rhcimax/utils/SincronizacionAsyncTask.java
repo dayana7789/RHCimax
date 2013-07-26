@@ -1,6 +1,5 @@
 package com.nahmens.rhcimax.utils;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 import com.nahmens.rhcimax.controlador.ClientesActivity;
 import com.nahmens.rhcimax.controlador.HistoricosActivity;
 import com.nahmens.rhcimax.controlador.TareasActivity;
-import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Configuracion;
 import com.nahmens.rhcimax.database.modelo.Permiso;
 import com.nahmens.rhcimax.database.sqliteDAO.ConfiguracionSqliteDao;
@@ -33,6 +31,8 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	private final CharSequence TEXT_OK = "Sincronización finalizada";
 	private final int DURATION = Toast.LENGTH_LONG;
 	private String dirServidor = "http://190.203.108.202:8080/rhcimax-1.0/";
+	private final String MENSAJE = "message";
+	private final String CODIGO = "code";
 
 	Context contexto;
 	Sincronizacion sync;
@@ -46,66 +46,98 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	}
 
 
+	/**
+	 * Funcion que intenta hacer POST y GET de un solo registro.
+	 * @param nombreTabla
+	 * @param idRegistro
+	 * @throws Exception Códigos de error HTTP.
+	 */
 	public void getGenerico(String nombreTabla, String idRegistro) throws Exception{
 		Log.e("nombreTabla", "nombre: "+nombreTabla + " _id: " + idRegistro);
 
 		GenericoSqliteDao myDao = new GenericoSqliteDao();
 		Cursor myCursor =  myDao.buscarGenerico(contexto, nombreTabla, idRegistro);
+		boolean sincronizado = false;
 
 		String input = new Utils().cursorToJsonString(myCursor, false);
 		Log.e("input", input);
 
-		//JSONObject resp = sync.postValores(dirServidor+"createTest", input);
+		mLog.appendLog(obtenerTag() + "... " + "Iniciando POST");
+		
+		JSONObject resp = sync.postValores(dirServidor+"company", input);
 
-		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
+		mLog.appendLog(obtenerTag() + "... " + "Respuesta servidor: " +resp.getInt(CODIGO) +"-"+resp.getString(MENSAJE));
 
-		//JSONArray userArray = sync.getValores(dirServidor+"getTest");
-
-		JSONObject myJsonObject = new JSONObject(input);
-		boolean modificado = false;
-		boolean error = false;
-		boolean sincronizado = false;
-
-		modificado = myDao.modificarGenerico(contexto, myJsonObject, nombreTabla);
-
-		if(!modificado){
-			try{
-				myDao.insertarGenerico(contexto, myJsonObject, nombreTabla);
-			}catch(android.database.sqlite.SQLiteConstraintException e){
-				mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La "+nombreTabla+" con id "+ myJsonObject.getString("_id") + " no pudo ser insertado.");
-				error = true;
-			}
-		}else{
-			mLog.appendLog(obtenerTag() + "... " + "La "+nombreTabla+" con id "+ "id" +" ya existe.");
-		}
-
-		if(!error){
-			sincronizado = myDao.sincronizarGenerico(contexto, myJsonObject, nombreTabla);
+		if(resp.getInt(CODIGO) == 200){
+			
+			//Actualizamos la fecha de sincronizacion
+			sincronizado = myDao.sincronizarGenerico(contexto, new JSONObject(input), nombreTabla);
 
 			if(!sincronizado){
-				mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ "id" +" no pudo ser sincronizado.");
+				mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ idRegistro +" no pudo ser sincronizado.");
 			}
-		}
 
+			/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
+
+			//JSONArray userArray = sync.getValores(dirServidor+"getTest");
+
+			/*JSONObject myJsonObject = new JSONObject(input);
+			boolean modificado = false;
+			boolean error = false;
+			
+
+			modificado = myDao.modificarGenerico(contexto, myJsonObject, nombreTabla);
+
+			if(!modificado){
+				try{
+					myDao.insertarGenerico(contexto, myJsonObject, nombreTabla);
+				}catch(android.database.sqlite.SQLiteConstraintException e){
+					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La "+nombreTabla+" con id "+ myJsonObject.getString("_id") + " no pudo ser insertado.");
+					error = true;
+				}
+			}else{
+				mLog.appendLog(obtenerTag() + "... " + "La "+nombreTabla+" con id "+ "id" +" ya existe.");
+			}
+
+			if(!error){
+				sincronizado = myDao.sincronizarGenerico(contexto, myJsonObject, nombreTabla);
+
+				if(!sincronizado){
+					mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ "id" +" no pudo ser sincronizado.");
+				}
+			}*/
+		}else if(resp.getInt(CODIGO) == 400){
+			throw new Exception("Solicitud incorrecta:");
+		}else if(resp.getInt(CODIGO) == 500){
+			throw new Exception("Error interno del servidor:");
+		}else{
+			throw new Exception("No se ha podido establecer una comunicación efectiva con el servidor.");
+		}
 	}
 
+	/**
+	 * Funcion que intenta hacer POST y GET de varios registros.
+	 * @param nombreTabla
+	 * @throws Exception
+	 */
 	public void getGenericos(String nombreTabla) throws Exception{
 		Log.e("nombreTabla", "nombre: "+nombreTabla);
+		
 		GenericoSqliteDao myDao = new GenericoSqliteDao();
 		Cursor myCursor =  myDao.listarGenericoNoSync(contexto, nombreTabla);
-
 		String input = new Utils().cursorToJsonString(myCursor, true);
+		
 		Log.e("input", input);
 
 		//JSONObject resp = sync.postValores(dirServidor+"createTest", input);
 
 		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
-		
+
 		//JSONArray userArray = sync.getValores(dirServidor+"getTest");
-		JSONArray myJsonArray = sync.getValores(dirServidor+"companies/"+URLEncoder.encode("2013-07-24 00:00:00", "ISO-8859-1"));
-		
-	
-		//JSONArray myJsonArray = new JSONArray(input);
+		//JSONArray myJsonArray = sync.getValores(dirServidor+"companies/"+URLEncoder.encode("2013-07-24 00:00:00", "ISO-8859-1"));
+
+
+		JSONArray myJsonArray = new JSONArray(input);
 		boolean modificado = false;
 		boolean error = false;
 		boolean sincronizado = false;
@@ -113,19 +145,19 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 		for (int i = 0; i < myJsonArray.length(); ++i) {
 			JSONObject myJsonObject = myJsonArray.getJSONObject(i);
-			
+
 			try{
 				// no todas las tablas tienen _id. Ej. tablas con claves compuestas
 				id = myJsonObject.getString("_id");
 			}catch (Exception e){}
-			
+
 			modificado = myDao.modificarGenerico(contexto, myJsonObject, nombreTabla);
 
 			if(!modificado){
 				try{
 					myDao.insertarGenerico(contexto, myJsonObject, nombreTabla);
-					
 					mLog.appendLog(obtenerTag() + "... " + "La "+nombreTabla+" con id "+ id + " fue insertado.");
+					
 				}catch(android.database.sqlite.SQLiteConstraintException e){
 					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La "+nombreTabla+" con id "+ id + " no pudo ser insertado.");
 					error = true;
@@ -145,7 +177,6 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 				}
 			}
 		}
-
 	}
 
 	/*************************** FUNCIONES ASYNC TASK ***************************/
@@ -158,8 +189,6 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		//LoginActivity.dialog.show();
 	}
 
-
-
 	/**
 	 * Funcion que se llama al terminar la carga.
 	 * Oculta dialog.
@@ -171,77 +200,16 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			Toast toast = Toast.makeText(contexto, TEXT_OK,  DURATION);
 			toast.show();
 			mLog.appendLog(obtenerTag() + TEXT_OK);
-
-			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-			TareaSqliteDao tareaDao = new TareaSqliteDao();
-			HistoricoSqliteDao historicoDao =  new HistoricoSqliteDao();
-			ArrayList<String> permisos= SesionUsuario.getPermisos(contexto);
-
-			try{
-				if(ClientesActivity.listCursorAdapterEmpleados !=null){
-					ClientesActivity.listCursorAdapterEmpleados.changeCursor(empleadoDao.buscarEmpleadoFilter(contexto,null));
-					ClientesActivity.listCursorAdapterEmpleados.notifyDataSetChanged();
-				}
-			}catch(Exception e){
-				//e.printStackTrace();
-			}
-
-			try{
-				if(ClientesActivity.listCursorAdapterEmpresas != null){
-					ClientesActivity.listCursorAdapterEmpresas.changeCursor(empresaDao.buscarEmpresaFilter(contexto,null));
-					ClientesActivity.listCursorAdapterEmpresas.notifyDataSetChanged();
-				}
-			}catch(Exception e){
-				//e.printStackTrace();
-			}
-
-			try{
-
-				if(TareasActivity.listCursorAdapterTareas !=null){
-
-					Cursor mCursorTareas = null;
-					if(permisos.contains(Permiso.LISTAR_TODO)){
-						mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, false);
-					}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
-						mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, true);
-					}else{
-						mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, false);
-					}
-
-					TareasActivity.listCursorAdapterTareas.changeCursor(mCursorTareas);
-					TareasActivity.listCursorAdapterTareas.notifyDataSetChanged();
-				}
-			}catch(Exception e){
-				//e.printStackTrace();
-			}
-
-			try{
-				if(HistoricosActivity.listCursorAdapterHistoricos != null){
-
-					Cursor mCursorHistoricos = null;
-					if(permisos.contains(Permiso.LISTAR_TODO)){
-						mCursorHistoricos = historicoDao.buscarHistoricoFilter(contexto,null, false);
-					}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
-						mCursorHistoricos = historicoDao.buscarHistoricoFilter(contexto,null, true);
-					}else{
-						mCursorHistoricos = historicoDao.buscarHistoricoFilter(contexto,null, false);
-					}
-
-					HistoricosActivity.listCursorAdapterHistoricos.changeCursor(mCursorHistoricos);
-					HistoricosActivity.listCursorAdapterHistoricos.notifyDataSetChanged();
-				}
-			}catch(Exception e){
-				//e.printStackTrace();
-			}
+			
+			actualizarAdaptadores();
+			
 		}else{
 			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result, DURATION);
 			toast.show();
 			mLog.appendLog(obtenerTag() + TEXT_ERROR + result);
 		}
-
 	}
-
+	
 
 	/**
 	 * Funcion que corre en background que se encarga de establecer
@@ -269,31 +237,28 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			mLog.appendLog(obtenerTag() + "Inicio de sincronización... ");
 
 			try {
-				
+
 				/***TEMPORAL***/
-				getGenericos(DataBaseHelper.TABLA_EMPRESA);
+				//getGenericos(DataBaseHelper.TABLA_EMPRESA);
 				/***TEMPORAL***/
-				
+
 				int count = nombreTablas.length;
 				String[] result = {};
 
 				for (int i = 0; i < count; i++) {
-					
+
 					//verificamos si estamos concatenando algun id
 					result = nombreTablas[i].split("&");
-					
+
 					if(result.length == 1){
-					//	getGenericos(nombreTablas[i]);
-						
+						getGenericos(nombreTablas[i]);
+
 					}else{
 						getGenerico(result[0],result[1]);
 					}
-
 				}
 
-
 			} catch (Exception e) {
-				e.printStackTrace();
 				return e.toString();
 			}
 
@@ -304,7 +269,6 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		}
 
 		return "ERROR";
-
 	}
 
 	/*************************** FUNCIONES COMPLEMENTARIAS ***************************/
@@ -349,7 +313,72 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		return (networkInfo != null && networkInfo.isConnected());
 	}
 
+	/**
+	 * Funcion que actualiza los adaptadores de listas.
+	 * Como nose quien me esta llamando, los intento
+	 * actualizar todos.
+	 */
+	private void actualizarAdaptadores() {
+		EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
+		EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
+		TareaSqliteDao tareaDao = new TareaSqliteDao();
+		HistoricoSqliteDao historicoDao =  new HistoricoSqliteDao();
+		ArrayList<String> permisos= SesionUsuario.getPermisos(contexto);
 
+		try{
+			if(ClientesActivity.listCursorAdapterEmpleados !=null){
+				ClientesActivity.listCursorAdapterEmpleados.changeCursor(empleadoDao.buscarEmpleadoFilter(contexto,null));
+				ClientesActivity.listCursorAdapterEmpleados.notifyDataSetChanged();
+			}
+		}catch(Exception e){
+			//e.printStackTrace();
+		}
+
+		try{
+			if(ClientesActivity.listCursorAdapterEmpresas != null){
+				ClientesActivity.listCursorAdapterEmpresas.changeCursor(empresaDao.buscarEmpresaFilter(contexto,null));
+				ClientesActivity.listCursorAdapterEmpresas.notifyDataSetChanged();
+			}
+		}catch(Exception e){
+			//e.printStackTrace();
+		}
+
+		try{
+			if(TareasActivity.listCursorAdapterTareas !=null){
+
+				Cursor mCursorTareas = null;
+				if(permisos.contains(Permiso.LISTAR_TODO)){
+					mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, false);
+				}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+					mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, true);
+				}else{
+					mCursorTareas = tareaDao.buscarTareaFilter(contexto,null, false);
+				}
+
+				TareasActivity.listCursorAdapterTareas.changeCursor(mCursorTareas);
+				TareasActivity.listCursorAdapterTareas.notifyDataSetChanged();
+			}
+		}catch(Exception e){
+			//e.printStackTrace();
+		}
+
+		try{
+			if(HistoricosActivity.listCursorAdapterHistoricos != null){
+
+				Cursor mCursorHistoricos = null;
+				if(permisos.contains(Permiso.LISTAR_TODO)){
+					mCursorHistoricos = historicoDao.buscarHistoricoFilter(contexto,null, false);
+				}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
+					mCursorHistoricos = historicoDao.buscarHistoricoFilter(contexto,null, true);
+				}else{
+					mCursorHistoricos = historicoDao.buscarHistoricoFilter(contexto,null, false);
+				}
+
+				HistoricosActivity.listCursorAdapterHistoricos.changeCursor(mCursorHistoricos);
+				HistoricosActivity.listCursorAdapterHistoricos.notifyDataSetChanged();
+			}
+		}catch(Exception e){
+			//e.printStackTrace();
+		}
+	}
 }
-
-
