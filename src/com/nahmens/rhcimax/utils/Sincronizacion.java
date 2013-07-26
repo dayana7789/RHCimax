@@ -111,7 +111,7 @@ public class Sincronizacion{
 	 * @param context
 	 * @param fechas JsonArray de la forma [{nombreTabla_0: fecha_0},...,{nombreTabla_n: fecha_n}]
 	 */
-	public void setFechaSincronizacion(Context context, String nombreTabla) {
+	public void setFechaSincronizacion(String nombreTabla) {
 
 		SharedPreferences prefs = contexto.getSharedPreferences("Sincronizacion",Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
@@ -120,7 +120,7 @@ public class Sincronizacion{
 		editor.commit();
 	}
 	
-	public String getFechaSincronizacion(Context context, String nombreTabla){
+	public String getFechaSincronizacion(String nombreTabla){
 		
 		SharedPreferences prefs = contexto.getSharedPreferences("Sincronizacion",Context.MODE_PRIVATE);
 		return prefs.getString(nombreTabla, ""); 

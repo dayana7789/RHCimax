@@ -134,7 +134,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
 
 		//JSONArray userArray = sync.getValores(dirServidor+"getTest");
-		//JSONArray myJsonArray = sync.getValores(dirServidor+"companies/"+URLEncoder.encode("2013-07-24 00:00:00", "ISO-8859-1"));
+		//JSONArray myJsonArray = sync.getValores(dirServidor+"companies/"+URLEncoder.encode(sync.getFechaSincronizacion(nombreTabla), "ISO-8859-1"));
 
 
 		JSONArray myJsonArray = new JSONArray(input);
@@ -173,7 +173,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 					mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ id +" no pudo ser sincronizado.");
 				}else{
 					//Guardamos la fecha de sincronizacion en shared preferences
-					new Sincronizacion(contexto).setFechaSincronizacion(contexto, nombreTabla);
+					sync.setFechaSincronizacion(nombreTabla);
 				}
 			}
 		}
@@ -204,7 +204,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			actualizarAdaptadores();
 			
 		}else{
-			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result, DURATION);
+			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result + ". Inténtelo más tarde.", DURATION);
 			toast.show();
 			mLog.appendLog(obtenerTag() + TEXT_ERROR + result);
 		}
