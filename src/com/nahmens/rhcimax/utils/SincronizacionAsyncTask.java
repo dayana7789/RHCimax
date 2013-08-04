@@ -30,9 +30,16 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	private final CharSequence TEXT_ERROR = "Ha ocurrido un error con la sincronización: ";
 	private final CharSequence TEXT_OK = "Sincronización finalizada";
 	private final int DURATION = Toast.LENGTH_LONG;
-	private String dirServidor = "http://190.203.108.202:8080/rhcimax-1.0/";
+	//private String dirServidor = "http://190.203.108.202:8080/rhcimax-1.0/";
+	private String dirServidor = "http://dipoint.no-ip.org:8080/rhcimaxserver/";
 	private final String MENSAJE = "message";
 	private final String CODIGO = "code";
+	private final String STATUS = "status";
+	private final String RESPUESTAS = "respuestas";
+	private final String DATA = "data";
+	private final String SUCCESS = "success";
+	private final String NOMBRE_TABLA = "tabla";
+
 
 	Context contexto;
 	Sincronizacion sync;
@@ -47,29 +54,28 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 
 	/**
-	 * Funcion que intenta hacer POST y GET de un solo registro.
+	 * Funcion que intenta hacer POST de un solo registro.
 	 * @param nombreTabla
 	 * @param idRegistro
 	 * @throws Exception Códigos de error HTTP.
 	 */
 	public void getGenerico(String nombreTabla, String idRegistro) throws Exception{
-		Log.e("nombreTabla", "nombre: "+nombreTabla + " _id: " + idRegistro);
+		Log.e("getGenerico: nombreTabla", "nombre: "+nombreTabla + " _id: " + idRegistro);
 
 		GenericoSqliteDao myDao = new GenericoSqliteDao();
 		Cursor myCursor =  myDao.buscarGenerico(contexto, nombreTabla, idRegistro);
 		boolean sincronizado = false;
 
 		String input = new Utils().cursorToJsonString(myCursor, false);
-		Log.e("input", input);
 
 		mLog.appendLog(obtenerTag() + "... " + "Iniciando POST");
-		
-		JSONObject resp = sync.postValores(dirServidor+"company", input);
 
-		mLog.appendLog(obtenerTag() + "... " + "Respuesta servidor: " +resp.getInt(CODIGO) +"-"+resp.getString(MENSAJE));
+		JSONObject resp = sync.postValores(dirServidor+nombreTabla, input, null);
 
-		if(resp.getInt(CODIGO) == 200){
-			
+		mLog.appendLog(obtenerTag() + "... " + "Respuesta servidor: " +resp.getInt(CODIGO) +"-"+resp.getString(STATUS)+ ": "+resp.getString(MENSAJE));
+
+		if(resp.getString(STATUS).equals(SUCCESS)){
+
 			//Actualizamos la fecha de sincronizacion
 			sincronizado = myDao.sincronizarGenerico(contexto, new JSONObject(input), nombreTabla);
 
@@ -77,67 +83,48 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 				mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ idRegistro +" no pudo ser sincronizado.");
 			}
 
-			/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
-
-			//JSONArray userArray = sync.getValores(dirServidor+"getTest");
-
-			/*JSONObject myJsonObject = new JSONObject(input);
-			boolean modificado = false;
-			boolean error = false;
-			
-
-			modificado = myDao.modificarGenerico(contexto, myJsonObject, nombreTabla);
-
-			if(!modificado){
-				try{
-					myDao.insertarGenerico(contexto, myJsonObject, nombreTabla);
-				}catch(android.database.sqlite.SQLiteConstraintException e){
-					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La "+nombreTabla+" con id "+ myJsonObject.getString("_id") + " no pudo ser insertado.");
-					error = true;
-				}
-			}else{
-				mLog.appendLog(obtenerTag() + "... " + "La "+nombreTabla+" con id "+ "id" +" ya existe.");
-			}
-
-			if(!error){
-				sincronizado = myDao.sincronizarGenerico(contexto, myJsonObject, nombreTabla);
-
-				if(!sincronizado){
-					mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ "id" +" no pudo ser sincronizado.");
-				}
-			}*/
-		}else if(resp.getInt(CODIGO) == 400){
-			throw new Exception("Solicitud incorrecta:");
-		}else if(resp.getInt(CODIGO) == 500){
-			throw new Exception("Error interno del servidor:");
-		}else{
-			throw new Exception("No se ha podido establecer una comunicación efectiva con el servidor.");
 		}
 	}
 
 	/**
-	 * Funcion que intenta hacer POST y GET de varios registros.
+	 * Funcion que intenta hacer POST de varios registros.
 	 * @param nombreTabla
 	 * @throws Exception
 	 */
 	public void getGenericos(String nombreTabla) throws Exception{
 		Log.e("nombreTabla", "nombre: "+nombreTabla);
 		
+		String fechaUltSync = sync.getFechaSincronizacion(nombreTabla);
+		
+		if(fechaUltSync==null){
+			fechaUltSync = "";
+		}
+		Log.e("fechaSync", ","+fechaUltSync+",");
+
 		GenericoSqliteDao myDao = new GenericoSqliteDao();
 		Cursor myCursor =  myDao.listarGenericoNoSync(contexto, nombreTabla);
 		String input = new Utils().cursorToJsonString(myCursor, true);
 		
-		Log.e("input", input);
+		JSONObject resp = sync.postValores(dirServidor+nombreTabla, input, fechaUltSync);
+		
+		JSONArray respuestas = new JSONArray(resp.getString(RESPUESTAS));
 
-		//JSONObject resp = sync.postValores(dirServidor+"createTest", input);
+		for (int j = 0; j < respuestas.length(); ++j) {
+			JSONObject mensaje = respuestas.getJSONObject(j);
+			mLog.appendLog(obtenerTag() + "... " + "Respuesta servidor: " +mensaje.getInt(CODIGO) +"-"+mensaje.getString(STATUS)+ ": "+mensaje.getString(MENSAJE));
+		
+			//AQUI HAY QUE REVISAR CADA MENSAJE CON EL REGISTRO
+			JSONObject data = mensaje.getJSONObject("data");
+					
+			//Actualizamos la fecha de sincronizacion
+			boolean sincronizado = myDao.sincronizarGenerico(contexto, data, data.getString(NOMBRE_TABLA));
 
-		/**********AQUI HAY QUE VERIFICAR LA RESPUESTA PARA PODER HACER ALGO *************/
-
-		//JSONArray userArray = sync.getValores(dirServidor+"getTest");
-		//JSONArray myJsonArray = sync.getValores(dirServidor+"companies/"+URLEncoder.encode(sync.getFechaSincronizacion(nombreTabla), "ISO-8859-1"));
-
-
-		JSONArray myJsonArray = new JSONArray(input);
+			if(!sincronizado){
+				mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ "" +" no pudo ser sincronizado.");
+			}
+		}
+		
+		JSONArray myJsonArray = new JSONArray(resp.getString(DATA));
 		boolean modificado = false;
 		boolean error = false;
 		boolean sincronizado = false;
@@ -157,7 +144,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 				try{
 					myDao.insertarGenerico(contexto, myJsonObject, nombreTabla);
 					mLog.appendLog(obtenerTag() + "... " + "La "+nombreTabla+" con id "+ id + " fue insertado.");
-					
+
 				}catch(android.database.sqlite.SQLiteConstraintException e){
 					mLog.appendLog(obtenerTag() + "... " + e.getMessage() + ": " + "La "+nombreTabla+" con id "+ id + " no pudo ser insertado.");
 					error = true;
@@ -200,16 +187,16 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			Toast toast = Toast.makeText(contexto, TEXT_OK,  DURATION);
 			toast.show();
 			mLog.appendLog(obtenerTag() + TEXT_OK);
-			
+
 			actualizarAdaptadores();
-			
+
 		}else{
 			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result + ". Inténtelo más tarde.", DURATION);
 			toast.show();
 			mLog.appendLog(obtenerTag() + TEXT_ERROR + result);
 		}
 	}
-	
+
 
 	/**
 	 * Funcion que corre en background que se encarga de establecer
@@ -238,10 +225,6 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 			try {
 
-				/***TEMPORAL***/
-				//getGenericos(DataBaseHelper.TABLA_EMPRESA);
-				/***TEMPORAL***/
-
 				int count = nombreTablas.length;
 				String[] result = {};
 
@@ -259,7 +242,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 				}
 
 			} catch (Exception e) {
-				return e.toString();
+				return e.getMessage();
 			}
 
 			return "OK";

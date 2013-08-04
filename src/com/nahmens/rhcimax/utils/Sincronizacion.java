@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Date;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,11 +13,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-
 public class Sincronizacion{
 
 	Context contexto;
-
 
 	public Sincronizacion(Context contexto) {
 		this.contexto = contexto;
@@ -57,8 +54,8 @@ public class Sincronizacion{
 		return jsonArray;
 	}
 
-	public JSONObject postValores (String strUrl, String strJsonArray) throws Exception{
-		JSONObject jsonObject = null;
+	public JSONObject postValores (String strUrl, String strJsonArray, String fechaSync) throws Exception{
+		JSONObject jsonObj = null;
 		URL url = new URL(strUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setReadTimeout(10000);
@@ -69,15 +66,19 @@ public class Sincronizacion{
 		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 		strJsonArray = "data=" + strJsonArray;
-		
-		Log.e("resultado",""+strJsonArray);
+
+		if(fechaSync!=null){
+			strJsonArray = strJsonArray + "&fechaUltSync=" + fechaSync;
+		}
+
+		Log.e("info. enviar",""+strJsonArray);
 
 		OutputStream os = conn.getOutputStream();
 		os.write(strJsonArray.getBytes());
 		os.flush();
 
 		conn.connect();
-		//Log.e("conn.getResponseCode()","conn.getResponseCode()?"+conn.getResponseCode());
+		Log.e("conn.getResponseCode()","conn.getResponseCode()?"+conn.getResponseCode());
 		if (conn.getResponseCode() != 200) {
 			throw new RuntimeException("Failed : HTTP error code : "
 					+ conn.getResponseCode());
@@ -94,14 +95,14 @@ public class Sincronizacion{
 			sb.append(output);
 		}
 
-		Log.e("salida",sb.toString());
-		jsonObject = new JSONObject(sb.toString());
-
 		
+		jsonObj = new JSONObject(sb.toString());
+		Log.e("salida",jsonObj.toString());
+
 		//Log.e("error","error?"+conn.getErrorStream());
 		conn.disconnect();
 
-		return jsonObject;
+		return jsonObj;
 
 	}
 
@@ -115,16 +116,16 @@ public class Sincronizacion{
 
 		SharedPreferences prefs = contexto.getSharedPreferences("Sincronizacion",Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(nombreTabla, FormatoFecha.darFormatoDateTimeUS(new Date()));
+		editor.putString(nombreTabla, FormatoFecha.obtenerFechaTiempoActualEN());
 
 		editor.commit();
 	}
-	
+
 	public String getFechaSincronizacion(String nombreTabla){
-		
+
 		SharedPreferences prefs = contexto.getSharedPreferences("Sincronizacion",Context.MODE_PRIVATE);
-		return prefs.getString(nombreTabla, ""); 
-	
+		return prefs.getString(nombreTabla, null); 
+
 	}
 
 }
