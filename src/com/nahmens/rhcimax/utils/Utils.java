@@ -38,7 +38,7 @@ public class Utils {
 		enteros.add(Empresa.SINCRONIZADO);
 		enteros.add(Cotizacion.ENVIADO);
 		enteros.add(Cotizacion.RECIBIDO);
-		enteros.add(Tarea.FECHA_FINALIZACION);
+		enteros.add(Tarea.FINALIZADA);
 		enteros.add(Cotizacion.NUM_COTIZACION);
 		
 		String mJsonString = null;
@@ -68,7 +68,12 @@ public class Utils {
 					contenido =  ""+mCursor.getInt(j);
 					
 				}else{
-					contenido =  "\""+mCursor.getString(j)+"\"";
+					
+					if(mCursor.getString(j)==null){
+						contenido =  null;
+					}else{
+						contenido =  "\""+mCursor.getString(j)+"\"";
+					}
 				}
 
 				if(j==numColumnas-1){
@@ -94,7 +99,6 @@ public class Utils {
 		}else{
 			mJsonString += "";
 		}
-		
 		
 		return mJsonString;
 	}

@@ -198,7 +198,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 													  + "_id TEXT PRIMARY KEY NOT NULL, "
 													  + "nombre TEXT NOT NULL, "
 													  + "fecha DATE NOT NULL, "
-													  + "hora TIME NOT NULL, "
+													  + "hora TEXT NOT NULL, "
 													  + "descripcion TEXT, "
 													  + "finalizada INTEGER NOT NULL DEFAULT 0, "
 													  + "fechaFinalizacion DATETIME DEFAULT NULL, "

@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.DataSetObserver;
@@ -121,6 +122,10 @@ public class HistoricosActivity extends ListFragment{
 
 				@Override
 				public void onClick(View v) {
+					
+					AplicacionActivity.dialog = new ProgressDialog(getActivity());
+					AplicacionActivity.onClickSincronizar();
+					
 					new SincronizacionAsyncTask(getActivity()).execute(DataBaseHelper.TABLA_ROL, 
 																	   DataBaseHelper.TABLA_USUARIO,
 																	   DataBaseHelper.TABLA_PERMISO,

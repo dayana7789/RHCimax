@@ -13,8 +13,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.nahmens.rhcimax.controlador.AplicacionActivity;
 import com.nahmens.rhcimax.controlador.ClientesActivity;
 import com.nahmens.rhcimax.controlador.HistoricosActivity;
+import com.nahmens.rhcimax.controlador.LoginActivity;
 import com.nahmens.rhcimax.controlador.TareasActivity;
 import com.nahmens.rhcimax.database.modelo.Configuracion;
 import com.nahmens.rhcimax.database.modelo.Permiso;
@@ -70,7 +72,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 
 		mLog.appendLog(obtenerTag() + "... " + "Iniciando POST");
 
-		JSONObject resp = sync.postValores(dirServidor+nombreTabla, input, null);
+		JSONObject resp = sync.postValores(dirServidor+nombreTabla+"/"+idRegistro, input, null);
 
 		mLog.appendLog(obtenerTag() + "... " + "Respuesta servidor: " +resp.getInt(CODIGO) +"-"+resp.getString(STATUS)+ ": "+resp.getString(MENSAJE));
 
@@ -173,7 +175,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	 * Muestra dialog.
 	 */
 	protected void onPreExecute() {
-		//LoginActivity.dialog.show();
+		AplicacionActivity.dialog.show();
 	}
 
 	/**
@@ -181,7 +183,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	 * Oculta dialog.
 	 */
 	protected void onPostExecute(String result) {
-		//LoginActivity.dialog.dismiss(); 
+		AplicacionActivity.dialog.dismiss(); 
 
 		if(result.equals("OK")){
 			Toast toast = Toast.makeText(contexto, TEXT_OK,  DURATION);
@@ -242,6 +244,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 				}
 
 			} catch (Exception e) {
+				e.printStackTrace();
 				return e.getMessage();
 			}
 

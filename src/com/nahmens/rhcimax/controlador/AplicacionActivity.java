@@ -3,6 +3,7 @@ package com.nahmens.rhcimax.controlador;
 import java.util.HashMap;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,6 +26,7 @@ import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
 import com.nahmens.rhcimax.utils.SesionUsuario;
+import com.nahmens.rhcimax.utils.SincronizacionAsyncTask;
 import com.nahmens.rhcimax.utils.Tripleta;
 
 /*
@@ -33,6 +35,8 @@ import com.nahmens.rhcimax.utils.Tripleta;
 
 public class AplicacionActivity extends FragmentActivity {
 
+	public static ProgressDialog dialog;
+	
 	/* Identificadores de los fragments que se cargan en este activity.
 	 * Por cada activity nuevo de tipo Fragment, se debe inicializar el
 	 * tag del Fragment aqui.
@@ -561,6 +565,12 @@ public class AplicacionActivity extends FragmentActivity {
 		registerReceiver(myReceiver, theFilter);
 	}
 
+	public static void onClickSincronizar(){
+        dialog.setMessage("Por favor espere mientras se cargan los datos...");
+        dialog.setTitle("Progreso");
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setCancelable(false);
+	}
 
 	/*@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

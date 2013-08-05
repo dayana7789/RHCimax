@@ -15,7 +15,7 @@ import com.nahmens.rhcimax.utils.SesionUsuario;
 import com.nahmens.rhcimax.utils.SincronizacionAsyncTask;
 
 public class LoginActivity extends Activity {
-	 public static ProgressDialog dialog;
+	 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,16 +54,5 @@ public class LoginActivity extends Activity {
 		}else{
 			Toast.makeText(getApplicationContext(), "Error: login o password inválido",Toast.LENGTH_LONG).show();
 		}
-	}
-
-	public void onClickSincronizar(View v){
-		dialog = new ProgressDialog(this);
-        dialog.setMessage("Por favor espere mientras se cargan los datos...");
-        dialog.setTitle("Progreso");
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setCancelable(false);
-        
-
-		new SincronizacionAsyncTask(getApplicationContext()).execute();
 	}
 }

@@ -18,22 +18,22 @@ import com.nahmens.rhcimax.utils.SesionUsuario;
 import com.nahmens.rhcimax.utils.Utils;
 
 public class TareaSqliteDao implements TareaDAO{
-	
+
 	String consulta = "DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
-		              +", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
-		              +", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa"
-		              +", tarea."+Tarea.FECHA_MODIFICACION+", tarea."+Tarea.FECHA_SINCRONIZACION
-		              +", tarea."+Tarea.SINCRONIZADO
-		              +", empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado"
-		              +", usuario."+Usuario.LOGIN + " as loginUsuario "
-		              +", usuario." + Usuario.ID + " as idUsuario"
-		              + " FROM tarea "
-		              + " LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
-		              + " LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
-		              + " LEFT JOIN usuario ON ( tarea." + Tarea.ID_USUARIO_CREADOR + " = usuario."+Usuario.ID+" ) ";
-	
+			+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
+			+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa"
+			+", tarea."+Tarea.FECHA_MODIFICACION+", tarea."+Tarea.FECHA_SINCRONIZACION
+			+", tarea."+Tarea.SINCRONIZADO
+			+", empleado."+Empleado.NOMBRE+" as nombreEmpleado, empleado."+Empleado.APELLIDO+" as apellidoEmpleado"
+			+", usuario."+Usuario.LOGIN + " as loginUsuario "
+			+", usuario." + Usuario.ID + " as idUsuario"
+			+ " FROM tarea "
+			+ " LEFT JOIN empleado ON ( tarea." + Tarea.ID_EMPLEADO + " = empleado."+Empleado.ID+" ) "
+			+ " LEFT JOIN empresa ON ( tarea." + Tarea.ID_EMPRESA + " = empresa."+Empresa.ID+" ) "
+			+ " LEFT JOIN usuario ON ( tarea." + Tarea.ID_USUARIO_CREADOR + " = usuario."+Usuario.ID+" ) ";
+
 	String orderBy  = " ORDER BY " + Tarea.FECHA + " ASC";
-	
+
 	@Override
 	public String insertarTarea(Context contexto, Tarea tarea) {
 		ConexionBD conexion = new ConexionBD(contexto);
@@ -56,14 +56,19 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.FECHA, tarea.getFecha());
 			values.put(Tarea.HORA, tarea.getHora());
 			values.put(Tarea.DESCRIPCION, tarea.getDescripcion());
-			values.put(Tarea.FECHA_FINALIZACION, tarea.getFechaFinalizacion());
+			if(tarea.getFechaFinalizacion()==null || tarea.getFechaFinalizacion().equals("null") ){
+				values.putNull(Tarea.FECHA_FINALIZACION);
+			}else{
+				values.put(Tarea.FECHA_FINALIZACION, tarea.getFechaFinalizacion());
+			}
+			
 			values.put(Tarea.ID_USUARIO_CREADOR, tarea.getIdUsuarioCreador());
 			values.put(Tarea.ID_USUARIO_MODIFICADOR, tarea.getIdUsuarioModificador());
 			values.put(Tarea.ID_EMPLEADO,tarea.getIdEmpleado());
 			values.put(Tarea.ID_EMPRESA,tarea.getIdEmpresa());
 
 			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_TAREA, null,values);
-			
+
 			if(value==-1){
 				idFila = ""+value;
 			}
@@ -88,7 +93,11 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.FECHA, tarea.getFecha());
 			values.put(Tarea.HORA, tarea.getHora());
 			values.put(Tarea.DESCRIPCION, tarea.getDescripcion());
-			values.put(Tarea.FECHA_FINALIZACION, tarea.getFechaFinalizacion());
+			if(tarea.getFechaFinalizacion()==null || tarea.getFechaFinalizacion().equals("null") ){
+				values.putNull(Tarea.FECHA_FINALIZACION);
+			}else{
+				values.put(Tarea.FECHA_FINALIZACION, tarea.getFechaFinalizacion());
+			}
 			values.put(Tarea.FECHA_MODIFICACION, tarea.getFechaModificacion());
 			values.put(Tarea.ID_USUARIO_MODIFICADOR, tarea.getIdUsuarioModificador());
 			values.put(Tarea.ID_EMPLEADO,tarea.getIdEmpleado());
@@ -121,7 +130,7 @@ public class TareaSqliteDao implements TareaDAO{
 			values.put(Tarea.FECHA_MODIFICACION, FormatoFecha.obtenerFechaTiempoActualEN());
 			values.put(Tarea.ID_USUARIO_MODIFICADOR,SesionUsuario.getIdUsuario(contexto));
 			values.put(Tarea.SINCRONIZADO,0);
-			
+
 			//long value = conexion.getDatabase().delete(DataBaseHelper.TABLA_TAREA, "_id=?", new String[]{idTarea});
 			int value = conexion.getDatabase().update(DataBaseHelper.TABLA_TAREA, values, "_id=?", new String []{idTarea});
 
@@ -141,16 +150,16 @@ public class TareaSqliteDao implements TareaDAO{
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
 		Tarea tarea = null;
-		
+
 
 		try{
 			conexion.open();
-			
+
 			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_TAREA , null , Tarea.ID + " = ? AND tarea.status='activo'", new String [] {idTarea}, null, null, null);
 
 			if (mCursor.getCount() > 0) {
 				mCursor.moveToFirst();
-				
+
 				tarea = new Tarea( mCursor.getString(mCursor.getColumnIndex(Tarea.ID)), 
 						mCursor.getString(mCursor.getColumnIndex(Tarea.NOMBRE)), 
 						mCursor.getString(mCursor.getColumnIndex(Tarea.FECHA)), 
@@ -173,7 +182,7 @@ public class TareaSqliteDao implements TareaDAO{
 		return tarea;
 	}
 
-/*	@Override
+	/*	@Override
 	public Cursor listarTareas(Context contexto) {
 		ConexionBD conexion = new ConexionBD(contexto);
 		Cursor mCursor = null;
@@ -182,7 +191,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 			conexion.open();
 
-			
+
 			sqlQuery = "SELECT DISTINCT tarea."+Tarea.ID+", tarea."+Tarea.NOMBRE+", "+Tarea.FECHA+", "+Tarea.HORA
 					+", tarea."+Tarea.DESCRIPCION+", "+Tarea.FECHA_FINALIZACION+", tarea."+Tarea.ID_EMPLEADO
 					+", tarea."+Tarea.ID_EMPRESA+", empresa."+Empresa.NOMBRE+" as nombreEmpresa, "
@@ -208,7 +217,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 		return mCursor;
 	}
-*/
+	 */
 	@Override
 	public Cursor buscarTareaFilter(Context contexto, String args, boolean fltrarPorUsuario) {
 		ConexionBD conexion = new ConexionBD(contexto);
@@ -218,7 +227,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 
 		String condicion = "";
-		
+
 		if(args !=null){
 			if(args.equals("Todos")){
 				condicion = "";
@@ -227,7 +236,7 @@ public class TareaSqliteDao implements TareaDAO{
 			}else if(args.equals("Ayer")){
 				condicion = " AND "+Tarea.FECHA+"='"+FormatoFecha.obtenerFecha(-1)+"'";
 			}else if(args.equals("Esta semana")){
-				
+
 				//condicion = " AND "+Tarea.FECHA+" BETWEEN '"+FormatoFecha.obtenerFecha(-7)+"' AND '"+FormatoFecha.obtenerFecha(0)+"'";
 				condicion = " AND "+Tarea.FECHA+" BETWEEN '"+FormatoFecha.obtenerFecha(0)+"' AND '"+FormatoFecha.darFormatoDateUS(FormatoFecha.getFechaUltimoDiaDeLaSemana())+"'";
 
@@ -235,7 +244,7 @@ public class TareaSqliteDao implements TareaDAO{
 				palabras = args.split(" ");
 			}
 		}
-		
+
 		if(fltrarPorUsuario){
 			condicion += " AND tarea."+Tarea.ID_USUARIO_CREADOR + " = " + SesionUsuario.getIdUsuario(contexto);
 		}
@@ -249,7 +258,7 @@ public class TareaSqliteDao implements TareaDAO{
 			sqlQuery += " WHERE tarea.status='activo' AND "+ Tarea.FECHA_FINALIZACION + "  IS NULL ";
 			sqlQuery += condicion;
 
-			
+
 			for(int i =0; i< palabras.length; i++){
 
 				sqlQuery += " AND (";
@@ -258,7 +267,7 @@ public class TareaSqliteDao implements TareaDAO{
 				sqlQuery += " OR (substr(tarea.fecha, 9, 2) || '/' || substr(tarea.fecha, 6, 2) || '/' || substr(tarea.fecha, 1, 4)) LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR tarea.hora LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR tarea.descripcion LIKE '%" + palabras[i] + "%' ";
-				
+
 				sqlQuery += " OR empleado.nombre LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR empleado.apellido LIKE '%" + palabras[i] + "%' ";
 				sqlQuery += " OR empresa.nombre LIKE '%" + palabras[i] + "%' ";
@@ -266,7 +275,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 				sqlQuery += ") ";
 			}
-			
+
 			sqlQuery += orderBy;
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
@@ -281,8 +290,8 @@ public class TareaSqliteDao implements TareaDAO{
 
 		return mCursor;	
 	}
-	
-	
+
+
 
 	@Override
 	public Cursor listarTareasPorEmpresa(Context contexto, String idEmpresa) {
@@ -293,10 +302,10 @@ public class TareaSqliteDao implements TareaDAO{
 			conexion.open();
 
 			sqlQuery = "SELECT "
-				        + consulta
-						+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + "  IS NULL "
-						+ "AND tarea." + Tarea.ID_EMPRESA + " = " + idEmpresa 
-						+ orderBy;
+					+ consulta
+					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + "  IS NULL "
+					+ "AND tarea." + Tarea.ID_EMPRESA + " = " + idEmpresa 
+					+ orderBy;
 
 			mCursor = conexion.getDatabase().rawQuery(sqlQuery, null);
 
@@ -311,7 +320,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 		return mCursor;
 	}
-	
+
 	@Override
 	public Cursor listarTareasPorEmpleado(Context contexto, String idEmpleado) {
 		ConexionBD conexion = new ConexionBD(contexto);
@@ -321,7 +330,7 @@ public class TareaSqliteDao implements TareaDAO{
 			conexion.open();
 
 			sqlQuery = "SELECT "
-			        + consulta
+					+ consulta
 					+ "WHERE tarea.status='activo' AND " + Tarea.FECHA_FINALIZACION + "  IS NULL "
 					+ "AND tarea." + Tarea.ID_EMPLEADO + " = " + idEmpleado
 					+ orderBy;
@@ -339,7 +348,7 @@ public class TareaSqliteDao implements TareaDAO{
 
 		return mCursor;
 	}
-	
+
 	@Override
 	public boolean sincronizarTarea(Context contexto, String idTarea) {
 		ConexionBD conexion = new ConexionBD(contexto);

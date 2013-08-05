@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.DataSetObserver;
@@ -18,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -34,9 +37,6 @@ import com.nahmens.rhcimax.database.sqliteDAO.EmpresaSqliteDao;
 import com.nahmens.rhcimax.mensaje.Mensaje;
 import com.nahmens.rhcimax.utils.SesionUsuario;
 import com.nahmens.rhcimax.utils.SincronizacionAsyncTask;
-
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 
 public class ClientesActivity extends ListFragment {
 
@@ -121,6 +121,10 @@ public class ClientesActivity extends ListFragment {
 
 				@Override
 				public void onClick(View v) {
+					
+					AplicacionActivity.dialog = new ProgressDialog(getActivity());
+					AplicacionActivity.onClickSincronizar();
+			        
 					new SincronizacionAsyncTask(getActivity()).execute(DataBaseHelper.TABLA_ROL, 
 																	   DataBaseHelper.TABLA_USUARIO,
 																	   DataBaseHelper.TABLA_PERMISO,

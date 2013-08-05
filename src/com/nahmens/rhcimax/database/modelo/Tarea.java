@@ -19,6 +19,7 @@ public class Tarea {
 	public final static String NOMBRE_EMPLEADO = "nombreEmpleado";
 	public final static String APELLIDO_EMPLEADO = "apellidoEmpleado";
 	public final static String SINCRONIZADO = "sincronizado";
+	public final static String FINALIZADA = "finalizada";
 
 	
 	String id;
