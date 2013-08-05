@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -238,6 +239,10 @@ public class ListaTareasCursorAdapter extends SimpleCursorAdapter implements Fil
 	 * @param id Id de la tarea
 	 */
 	private void sincronizarTarea(String id) {
+		
+		AplicacionActivity.dialog = new ProgressDialog(context);
+		AplicacionActivity.onClickSincronizar();
+		
 		//OJO: aqui concatenamos el id con un &
 		new SincronizacionAsyncTask(context).execute(
                 DataBaseHelper.TABLA_TAREA +"&"+id);

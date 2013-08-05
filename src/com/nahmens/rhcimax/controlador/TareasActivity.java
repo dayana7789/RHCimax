@@ -185,7 +185,6 @@ public class TareasActivity extends ListFragment{
 					new SincronizacionAsyncTask(getActivity()).execute(DataBaseHelper.TABLA_ROL, 
 																	   DataBaseHelper.TABLA_USUARIO,
 																	   DataBaseHelper.TABLA_PERMISO,
-																	   DataBaseHelper.TABLA_PERMISO,
 											                           DataBaseHelper.TABLA_ROL_PERMISO, 
 											                           DataBaseHelper.TABLA_EMPRESA,
 											                           DataBaseHelper.TABLA_EMPLEADO,
@@ -543,42 +542,11 @@ public class TareasActivity extends ListFragment{
 	 * @param id Id de la tarea
 	 */
 	private void sincronizarTarea(String id) {
-		final LayoutInflater inflater = LayoutInflater.from(getActivity());
-		Boolean sincronizado =  false;
-		Mensaje mToast = null;
-		String mensajeError = null;
-		String mensajeOk = null;
-
-		TareaSqliteDao tareaDao = new TareaSqliteDao();
-		sincronizado = tareaDao.sincronizarTarea(getActivity(), id);
-
-		mensajeOk = "ok_sincronizado_tarea";
-		mensajeError = "error_sincronizado_tarea";
-
-		if(sincronizado){
-			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeOk);
-
-			//Actualizamos los valores del cursor de la lista de tareas
-			if(permisos.contains(Permiso.LISTAR_TODO)){
-				listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null,false));
-			}else if(permisos.contains(Permiso.LISTAR_PROPIOS)){
-				listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null,true));
-			}else{
-				listCursorAdapterTareas.changeCursor(tareaDao.buscarTareaFilter(getActivity(),null, false));
-			}
-
-			//Notificamos que la lista cambio
-			listCursorAdapterTareas.notifyDataSetChanged();
-
-		}else{
-			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeError);
-		}
-
-		try {
-			mToast.controlMensajesToast();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		AplicacionActivity.dialog = new ProgressDialog(getActivity());
+		AplicacionActivity.onClickSincronizar();
+		
+		//OJO: aqui concatenamos el id con un &
+		new SincronizacionAsyncTask(getActivity()).execute(
+                DataBaseHelper.TABLA_TAREA +"&"+id);
 	}
 }

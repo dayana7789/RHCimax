@@ -128,7 +128,6 @@ public class ClientesActivity extends ListFragment {
 					new SincronizacionAsyncTask(getActivity()).execute(DataBaseHelper.TABLA_ROL, 
 																	   DataBaseHelper.TABLA_USUARIO,
 																	   DataBaseHelper.TABLA_PERMISO,
-																	   DataBaseHelper.TABLA_PERMISO,
 							                                           DataBaseHelper.TABLA_ROL_PERMISO, 
 							                                           DataBaseHelper.TABLA_EMPRESA,
 							                                           DataBaseHelper.TABLA_EMPLEADO,
@@ -534,65 +533,24 @@ public class ClientesActivity extends ListFragment {
 	}
 
 	private void sincronizarCliente(String id, String tipoCliente) {
-		final LayoutInflater inflater = LayoutInflater.from(getActivity());
-		Boolean sincronizado =  false;
-		Mensaje mToast = null;
-		String mensajeError = null;
-		String mensajeOk = null;
-
+		AplicacionActivity.dialog = new ProgressDialog(getActivity());
+		AplicacionActivity.onClickSincronizar();
+		
 		if(tipoCliente.equals("empresa")){
-			EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-			sincronizado = empresaDao.sincronizarEmpresa(getActivity(), id);
 
-
-			mensajeOk = "ok_sincronizado_empresa";
-			mensajeError = "error_sincronizado_empresa";
+			//OJO: aqui concatenamos el id con un &
+			new SincronizacionAsyncTask(getActivity()).execute(
+                    DataBaseHelper.TABLA_EMPRESA +"&"+id);
 
 		}else if(tipoCliente.equals("empleado")){
-			EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-			sincronizado = empleadoDao.sincronizarEmpleado(getActivity(), id);
-
-			mensajeOk = "ok_sincronizado_empleado";
-			mensajeError = "error_sincronizado_empleado";
+			
+			//OJO: aqui concatenamos el id con un &
+			new SincronizacionAsyncTask(getActivity()).execute(
+                    DataBaseHelper.TABLA_EMPLEADO +"&"+id);
 
 		}else{
 			Log.e("ListaClientesCursorAdapter","tipoCliente no soportado en funcion sincronizarCliente: " + tipoCliente);
 		}
-
-		if(sincronizado){
-			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeOk);
-
-			if(tipoCliente.equals("empresa")){
-				//Actualizamos los valores del cursor de la lista de empresas
-				EmpresaSqliteDao empresaDao = new EmpresaSqliteDao();
-				listCursorAdapterEmpresas.changeCursor(empresaDao.buscarEmpresaFilter(getActivity(),null));
-
-				//Notificamos que la lista cambio
-				listCursorAdapterEmpresas.notifyDataSetChanged();
-
-
-			}else if(tipoCliente.equals("empleado")){
-				//Actualizamos los valores del cursor de la lista de empleados
-				EmpleadoSqliteDao empleadoDao = new EmpleadoSqliteDao();
-				listCursorAdapterEmpleados.changeCursor(empleadoDao.buscarEmpleadoFilter(getActivity(),null));
-
-				//Notificamos que la lista cambio
-				listCursorAdapterEmpleados.notifyDataSetChanged();
-
-			}
-
-
-
-		}else{
-			mToast = new Mensaje(inflater, (AplicacionActivity)getActivity(), mensajeError);
-		}
-
-		try {
-			mToast.controlMensajesToast();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	/**

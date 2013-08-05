@@ -26,7 +26,6 @@ import com.nahmens.rhcimax.R;
 import com.nahmens.rhcimax.adapters.ListaCorreosCursorAdapter;
 import com.nahmens.rhcimax.adapters.ListaServiciosCursorAdapter;
 import com.nahmens.rhcimax.utils.SesionUsuario;
-import com.nahmens.rhcimax.utils.SincronizacionAsyncTask;
 import com.nahmens.rhcimax.utils.Tripleta;
 
 /*

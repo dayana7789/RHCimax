@@ -2,6 +2,7 @@ package com.nahmens.rhcimax.adapters;
 
 import java.util.ArrayList;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nahmens.rhcimax.R;
+import com.nahmens.rhcimax.controlador.AplicacionActivity;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.modelo.Checkin;
 import com.nahmens.rhcimax.database.modelo.Cotizacion;
@@ -281,6 +283,9 @@ public class ListaHistoricosCursorAdapter extends SimpleCursorAdapter implements
 	 */
 	private void sincronizarHistorico(String idHistorico, String id, String tipoRegistro, String idCheckin) {
 
+		AplicacionActivity.dialog = new ProgressDialog(context);
+		AplicacionActivity.onClickSincronizar();
+		
 		if(tipoRegistro.equals("tarea")){
 
 			//OJO: aqui concatenamos el id con un &

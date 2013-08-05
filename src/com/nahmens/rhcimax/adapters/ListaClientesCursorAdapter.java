@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -240,7 +241,11 @@ public class ListaClientesCursorAdapter extends SimpleCursorAdapter implements F
 	 */
 	private void sincronizarCliente(String id) {
 
+		AplicacionActivity.dialog = new ProgressDialog(context);
+		AplicacionActivity.onClickSincronizar();
+		
 		if(tipoCliente.equals("empresa")){
+
 			//OJO: aqui concatenamos el id con un &
 			new SincronizacionAsyncTask(context).execute(
                     DataBaseHelper.TABLA_EMPRESA +"&"+id);
