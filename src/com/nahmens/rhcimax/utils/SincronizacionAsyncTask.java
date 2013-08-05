@@ -16,7 +16,6 @@ import android.widget.Toast;
 import com.nahmens.rhcimax.controlador.AplicacionActivity;
 import com.nahmens.rhcimax.controlador.ClientesActivity;
 import com.nahmens.rhcimax.controlador.HistoricosActivity;
-import com.nahmens.rhcimax.controlador.LoginActivity;
 import com.nahmens.rhcimax.controlador.TareasActivity;
 import com.nahmens.rhcimax.database.modelo.Configuracion;
 import com.nahmens.rhcimax.database.modelo.Permiso;
@@ -85,6 +84,8 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 				mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ idRegistro +" no pudo ser sincronizado.");
 			}
 
+		}else{
+			throw new Exception(resp.getInt(CODIGO) +"-"+resp.getString(STATUS)+". Revise archivo de log para más información.");
 		}
 	}
 
@@ -193,7 +194,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			actualizarAdaptadores();
 
 		}else{
-			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result + ". Inténtelo más tarde.", DURATION);
+			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result + ". Intente hacer click en botón actualizar.", DURATION);
 			toast.show();
 			mLog.appendLog(obtenerTag() + TEXT_ERROR + result);
 		}
