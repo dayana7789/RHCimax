@@ -63,6 +63,7 @@ public class Sincronizacion{
 		conn.setDoOutput(true);
 		conn.setDoInput(true);
 		conn.setRequestMethod("POST");
+		conn.setRequestProperty("token", SesionUsuario.getToken(contexto));
 		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 		strJsonArray = "data=" + strJsonArray;

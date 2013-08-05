@@ -28,7 +28,7 @@ public class SesionUsuario {
 		// check if GPS enabled
         if(!gps.canGetLocation()){
 
-            gps.showSettingsAlert();
+        	gps.showSettingsAlert();
         }
         
         double latitud = gps.getLatitude();
@@ -56,6 +56,7 @@ public class SesionUsuario {
 		editor.putString(Usuario.ID, usu.getId());
 		editor.putString(Usuario.CORREO, usu.getCorreo());
 		editor.putString(Usuario.ID_ROL, usu.getIdRol());
+		editor.putString(Usuario.TOKEN, usu.getToken());
 		editor.putString("idCheckin", idCheckin);
 		
 		for (int i=0; i<permisos.length(); i++){
@@ -108,6 +109,11 @@ public class SesionUsuario {
 	public static String getCorreo(Context contexto) {
 		SharedPreferences prefs = contexto.getSharedPreferences("Usuario",Context.MODE_PRIVATE);
 		return prefs.getString(Usuario.CORREO, "");
+	}
+	
+	public static String getToken(Context contexto) {
+		SharedPreferences prefs = contexto.getSharedPreferences("Usuario",Context.MODE_PRIVATE);
+		return prefs.getString(Usuario.TOKEN, "");
 	}
 	
 	public static String getIdRol(Context contexto) {

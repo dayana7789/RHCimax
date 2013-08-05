@@ -21,6 +21,8 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	private static final String DATABASE_NAME = "rhcimax";
 	private static final int DATABASE_VERSION = 10;
 
+	private String dirServidor = "http://dipoint.no-ip.org:8080/rhcimaxserver/";
+
 	/*Tablas*/
 	public static final String TABLA_USUARIO = "usuario";
 	public static final String TABLA_ROL = "rol";
@@ -291,8 +293,9 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	//	this.insertarRegistros(database);
 	}
 
+	
 	private void insertarConfiguracion(SQLiteDatabase database) {
-		String insertServer = "INSERT INTO "+ TABLA_CONFIGURACION + "("+Configuracion.KEY+", " + Configuracion.VALUE + ") VALUES('"+Configuracion.NOMBRE_SERVIDOR+"','')";
+		String insertServer = "INSERT INTO "+ TABLA_CONFIGURACION + "("+Configuracion.KEY+", " + Configuracion.VALUE + ") VALUES('"+Configuracion.NOMBRE_SERVIDOR+"','"+dirServidor+"')";
 		database.execSQL(insertServer);
 	}
 
