@@ -277,6 +277,27 @@ public class GenericoSqliteDao implements GenericoDAO{
 		return mCursor;		
 	}
 
+	@Override
+	public boolean eliminarGenerico(Context contexto, String nombreTabla,
+			String idRegistro) {
+		
+		ConexionBD conexion = new ConexionBD(contexto);
+		int numCol = 0;
+		boolean eliminado = false;
+		
+		try{
+			conexion.open();
+			numCol = conexion.getDatabase().delete(nombreTabla, ID + " = ? ", new String []{idRegistro});
 
+			if(numCol!=0){
+				eliminado = true;
+			}
+
+		}finally{
+			conexion.close();
+		}
+
+		return eliminado;		
+	}
 
 }

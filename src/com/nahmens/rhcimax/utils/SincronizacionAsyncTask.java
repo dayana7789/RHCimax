@@ -85,7 +85,18 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			}
 
 		}else{
-			throw new Exception(resp.getInt(CODIGO) +"-"+resp.getString(STATUS)+". Revise archivo de log para más información.");
+			
+			if(resp.getInt(CODIGO)==410){
+				//si el registro fue eliminado del servidor, eliminamos del android
+				boolean eliminado =  myDao.eliminarGenerico(contexto, nombreTabla, idRegistro);
+				
+				if(!eliminado){
+					mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ idRegistro +" no pudo ser eliminado.");
+				}
+				
+			}else{
+				throw new Exception(resp.getInt(CODIGO) +"-"+resp.getString(STATUS)+". Revise archivo de log para más información.");
+			}
 		}
 	}
 
@@ -119,12 +130,19 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			//AQUI HAY QUE REVISAR CADA MENSAJE CON EL REGISTRO
 			JSONObject data = mensaje.getJSONObject("data");
 					
-			//Actualizamos la fecha de sincronizacion
-			boolean sincronizado = myDao.sincronizarGenerico(contexto, data, data.getString(NOMBRE_TABLA));
+			if(mensaje.getString(STATUS).equals(SUCCESS)){
+				//Actualizamos la fecha de sincronizacion
+				boolean sincronizado = myDao.sincronizarGenerico(contexto, data, data.getString(NOMBRE_TABLA));
 
-			if(!sincronizado){
-				mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ "" +" no pudo ser sincronizado.");
+				if(!sincronizado){
+					mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ data.getString("_id") +" no pudo ser sincronizado.");
+				}
+			}else{
+				
+				throw new Exception(resp.getInt(CODIGO) +"-"+resp.getString(STATUS)+". Revise archivo de log para más información.");
+
 			}
+
 		}
 		
 		JSONArray myJsonArray = new JSONArray(resp.getString(DATA));
