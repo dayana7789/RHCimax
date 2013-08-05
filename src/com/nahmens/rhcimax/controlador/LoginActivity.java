@@ -45,11 +45,13 @@ public class LoginActivity extends Activity {
 
 		if (usu != null) {
 
-			SesionUsuario.iniciarSesion(getApplicationContext(), usu);
+			boolean showSettingsAlert = SesionUsuario.iniciarSesion(this, usu);
 
-			final Intent inte = new Intent(this, AplicacionActivity.class);
-			startActivity(inte);
-			finish();
+			if(!showSettingsAlert){
+				final Intent inte = new Intent(this, AplicacionActivity.class);
+				startActivity(inte);
+				finish();
+			}
 		} else {
 			Toast.makeText(getApplicationContext(),
 					"Error: login o password inválido", Toast.LENGTH_LONG)

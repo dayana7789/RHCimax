@@ -22,13 +22,15 @@ import com.nahmens.rhcimax.database.sqliteDAO.PermisoSqliteDao;
 
 public class SesionUsuario {
 
-	public static void iniciarSesion(Context context, Usuario usu) {
+	public static boolean iniciarSesion(Context context, Usuario usu) {
+		boolean showSettingsAlert = false;
+		
 		//Guardamos el geoposicionamiento
 		GPSTracker gps = new GPSTracker(context);
 		// check if GPS enabled
         if(!gps.canGetLocation()){
-
-        	gps.showSettingsAlert();
+        	showSettingsAlert = true;
+            gps.showSettingsAlert();
         }
         
         double latitud = gps.getLatitude();
@@ -70,6 +72,8 @@ public class SesionUsuario {
 			}
 		}
 		editor.commit();
+		
+		return showSettingsAlert;
 
 	}
 	

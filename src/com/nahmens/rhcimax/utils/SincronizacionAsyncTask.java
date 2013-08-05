@@ -81,7 +81,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			sincronizado = myDao.sincronizarGenerico(contexto, new JSONObject(input), nombreTabla);
 
 			if(!sincronizado){
-				mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ idRegistro +" no pudo ser sincronizado.");
+				mLog.appendLog(obtenerTag() + "... " + nombreTabla + " con id "+ idRegistro +" no pudo ser sincronizado.");
 			}
 
 		}else{
@@ -91,7 +91,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 				boolean eliminado =  myDao.eliminarGenerico(contexto, nombreTabla, idRegistro);
 
 				if(!eliminado){
-					mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ idRegistro +" no pudo ser eliminado.");
+					mLog.appendLog(obtenerTag() + "... " + nombreTabla + " con id "+ idRegistro +" no pudo ser eliminado.");
 				}
 
 			}else{
@@ -135,7 +135,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 				boolean sincronizado = myDao.sincronizarGenerico(contexto, data, data.getString(NOMBRE_TABLA));
 
 				if(!sincronizado){
-					mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ data.getString("_id") +" no pudo ser sincronizado.");
+					mLog.appendLog(obtenerTag() + "... " + nombreTabla + " con id "+ data.getString("_id") +" no pudo ser sincronizado.");
 				}
 			}else{
 
@@ -145,7 +145,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 					boolean eliminado =  myDao.eliminarGenerico(contexto, nombreTabla, data.getString("_id"));
 
 					if(!eliminado){
-						mLog.appendLog(obtenerTag() + "... " + "La " + nombreTabla + " con id "+ data.getString("_id") +" no pudo ser eliminado.");
+						mLog.appendLog(obtenerTag() + "... " + nombreTabla + " con id "+ data.getString("_id") +" no pudo ser eliminado.");
 					}
 
 				}else{
