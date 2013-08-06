@@ -223,7 +223,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			actualizarAdaptadores();
 
 		}else{
-			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result + ". Intente hacer click en botón actualizar.", DURATION);
+			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result, DURATION);
 			toast.show();
 			mLog.appendLog(obtenerTag() + TEXT_ERROR + result);
 		}
