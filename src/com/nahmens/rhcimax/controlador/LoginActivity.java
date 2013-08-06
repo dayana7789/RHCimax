@@ -65,9 +65,10 @@ public class LoginActivity extends Activity {
 		AplicacionActivity.onClickSincronizar();
 
 		new SincronizacionAsyncTask(this).execute(
-				DataBaseHelper.TABLA_ROL, DataBaseHelper.TABLA_USUARIO,
-				DataBaseHelper.TABLA_PERMISO, DataBaseHelper.TABLA_PERMISO,
-				DataBaseHelper.TABLA_ROL_PERMISO, DataBaseHelper.TABLA_ROL_PERMISO,
+				DataBaseHelper.TABLA_ROL, 
+				DataBaseHelper.TABLA_USUARIO,
+				DataBaseHelper.TABLA_PERMISO,
+				DataBaseHelper.TABLA_ROL_PERMISO,
 				DataBaseHelper.TABLA_SERVICIO);
 	}
 }

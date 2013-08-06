@@ -81,7 +81,7 @@ public class Sincronizacion{
 		conn.connect();
 		Log.e("conn.getResponseCode()","conn.getResponseCode()?"+conn.getResponseCode());
 		if (conn.getResponseCode() != 200) {
-			throw new RuntimeException("Failed : HTTP error code : "
+			throw new RuntimeException("Falló el intento de comunicación con el servidor: HTTP código error : "
 					+ conn.getResponseCode());
 		}
 
