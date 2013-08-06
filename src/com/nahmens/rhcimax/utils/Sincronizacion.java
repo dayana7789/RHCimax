@@ -58,7 +58,7 @@ public class Sincronizacion{
 		URL url = new URL(strUrl);
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setReadTimeout(10000);
-		conn.setConnectTimeout(15000);
+		conn.setConnectTimeout(5000);
 		conn.setDoOutput(true);
 		conn.setDoInput(true);
 		conn.setRequestMethod("POST");

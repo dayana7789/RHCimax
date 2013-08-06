@@ -70,30 +70,39 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		JSONObject resp = sync.postValores(dirServidor+nombreTabla+"/"+idRegistro, input, null);
 
 		mLog.appendLog("\n"+obtenerTag() + "Tabla: " +nombreTabla+ " - " + idRegistro);
-		mLog.appendLog(obtenerTag() + "... " + "Respuesta servidor: " +resp.getInt(CODIGO) +"-"+resp.getString(STATUS)+ ": "+resp.getString(MENSAJE));
+		mLog.appendLog(obtenerTag() + "Respuesta servidor: " +resp.getInt(CODIGO) +"-"+resp.getString(STATUS)+ ": "+resp.getString(MENSAJE));
 
 		if(resp.getString(STATUS).equals(SUCCESS)){
 
-			//Actualizamos la fecha de sincronizacion
-			sincronizado = myDao.sincronizarGenerico(contexto, new JSONObject(input), nombreTabla);
+			JSONObject data = new JSONObject(resp.getString(DATA));
 
-			if(!sincronizado){
-				mLog.appendLog(obtenerTag() + "... " + nombreTabla + " con id "+ idRegistro +" no pudo ser sincronizado.");
+			mLog.appendLog(obtenerTag() + "... " + "Respuesta servidor: " +data.getInt(CODIGO) +"-"+data.getString(STATUS)+ ": "+data.getString(MENSAJE));
+
+			if(data.getString(STATUS).equals(SUCCESS)){
+
+				//Actualizamos la fecha de sincronizacion
+				sincronizado = myDao.sincronizarGenerico(contexto, new JSONObject(input), nombreTabla);
+
+				if(!sincronizado){
+					mLog.appendLog(obtenerTag() + "... " + nombreTabla + " con id "+ idRegistro +" no pudo ser sincronizado.");
+				}
+			}else{
+
+				if(resp.getInt(CODIGO)==410){
+					//si el registro fue eliminado del servidor, eliminamos del android
+					eliminado =  myDao.eliminarGenerico(contexto, nombreTabla, idRegistro);
+
+					if(!eliminado){
+						mLog.appendLog(obtenerTag() + "... " + nombreTabla + " con id "+ idRegistro +" no pudo ser eliminado.");
+					}
+
+				}else{
+					throw new Exception("El registro no pudo ser sincronizado.");
+				}
 			}
 
 		}else{
-
-			if(resp.getInt(CODIGO)==410){
-				//si el registro fue eliminado del servidor, eliminamos del android
-				eliminado =  myDao.eliminarGenerico(contexto, nombreTabla, idRegistro);
-
-				if(!eliminado){
-					mLog.appendLog(obtenerTag() + "... " + nombreTabla + " con id "+ idRegistro +" no pudo ser eliminado.");
-				}
-
-			}else{
-				throw new Exception(resp.getInt(CODIGO) +"-"+resp.getString(STATUS));
-			}
+			throw new Exception(resp.getInt(CODIGO) +"-"+resp.getString(STATUS));
 		}
 	}
 
@@ -163,7 +172,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 			}
 
 			mLog.appendLog(obtenerTag() + "Inicio de actualización de data en Android...");
-			
+
 			JSONArray myJsonArray = new JSONArray(data.getString(ACTUALIZACIONES));
 			boolean modificado = false;
 			boolean errorInterno = false;
@@ -203,12 +212,12 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 					}
 				}
 			}
-			
+
 			if(error){
 				throw new Exception("Uno o varios registros no pudieron ser sincronizados.");
 			}
-			
-			
+
+
 		}else{
 			throw new Exception(resp.getInt(CODIGO) +"-"+resp.getString(STATUS));
 		}
@@ -241,6 +250,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		}else{
 			Toast toast = Toast.makeText(contexto, TEXT_ERROR + result + " Revise archivo de log para más información.", DURATION);
 			toast.show();
+			mLog.appendLog(obtenerTag() + "... " + TEXT_ERROR + result);
 		}
 	}
 
@@ -259,7 +269,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		if(hayInternet()){
 			mLog.appendLog(obtenerTag() + "Dirección servidor: " +dirServidor);
 
-		
+
 			mLog.appendLog("\n"+obtenerTag() + "Inicio de sincronización... ");
 
 			try {
