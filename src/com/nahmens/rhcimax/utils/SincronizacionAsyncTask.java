@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.nahmens.rhcimax.controlador.AplicacionActivity;
@@ -61,7 +60,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	 * @throws Exception Códigos de error HTTP.
 	 */
 	public void getGenerico(String nombreTabla, String idRegistro) throws Exception{
-		Log.e("getGenerico: nombreTabla", "nombre: "+nombreTabla + " _id: " + idRegistro);
+		//Log.e("getGenerico: nombreTabla", "nombre: "+nombreTabla + " _id: " + idRegistro);
 
 		boolean sincronizado = false;
 		boolean eliminado = false;
@@ -104,7 +103,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 	 * @throws Exception
 	 */
 	public void getGenericos(String nombreTabla) throws Exception{
-		Log.e("nombreTabla", "nombre: "+nombreTabla);
+		//Log.e("nombreTabla", "nombre: "+nombreTabla);
 
 		String fechaUltSync = sync.getFechaSincronizacion(nombreTabla);
 		boolean sincronizado = false;
@@ -112,7 +111,7 @@ public class SincronizacionAsyncTask extends AsyncTask<String, Float, String> {
 		if(fechaUltSync==null){
 			fechaUltSync = "";
 		}
-		Log.e("fechaSync", ","+fechaUltSync+",");
+		//Log.e("fechaSync", ","+fechaUltSync+",");
 
 		GenericoSqliteDao myDao = new GenericoSqliteDao();
 		Cursor myCursor =  myDao.listarGenericoNoSync(contexto, nombreTabla);

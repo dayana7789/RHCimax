@@ -565,7 +565,7 @@ public class AplicacionActivity extends FragmentActivity {
 	}
 
 	public static void onClickSincronizar(){
-        dialog.setMessage("Por favor espere mientras se cargan los datos...");
+        dialog.setMessage("Por favor espere mientras se actualizan los datos...");
         dialog.setTitle("Progreso");
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setCancelable(false);

@@ -11,7 +11,6 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 public class Sincronizacion{
 
@@ -41,11 +40,11 @@ public class Sincronizacion{
 		String output;
 		StringBuilder sb = new StringBuilder();
 
-		Log.e("Sync","Output from Server .... \n");
+		//Log.e("Sync","Output from Server .... \n");
 		while ((output = br.readLine()) != null) {
 			sb.append(output);
 		}
-		Log.e("salida",sb.toString());
+		//Log.e("salida",sb.toString());
 
 		jsonArray = new JSONArray(sb.toString());
 
@@ -72,14 +71,14 @@ public class Sincronizacion{
 			strJsonArray = strJsonArray + "&fechaUltSync=" + fechaSync;
 		}
 
-		Log.e("info. enviar",""+strJsonArray);
+		//Log.e("info. enviar",""+strJsonArray);
 
 		OutputStream os = conn.getOutputStream();
 		os.write(strJsonArray.getBytes());
 		os.flush();
 
 		conn.connect();
-		Log.e("conn.getResponseCode()","conn.getResponseCode()?"+conn.getResponseCode());
+		//Log.e("conn.getResponseCode()","conn.getResponseCode()?"+conn.getResponseCode());
 		if (conn.getResponseCode() != 200) {
 			throw new RuntimeException("Falló el intento de comunicación con el servidor: HTTP código error : "
 					+ conn.getResponseCode());
@@ -98,7 +97,7 @@ public class Sincronizacion{
 
 		
 		jsonObj = new JSONObject(sb.toString());
-		Log.e("salida",jsonObj.toString());
+		//Log.e("salida",jsonObj.toString());
 
 		//Log.e("error","error?"+conn.getErrorStream());
 		conn.disconnect();
