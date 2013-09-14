@@ -1,13 +1,20 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.RolDAO;
 import com.nahmens.rhcimax.database.modelo.Rol;
+import com.nahmens.rhcimax.database.modelo.Usuario;
+import com.nahmens.rhcimax.database.modelo.Usuario_Rol;
 import com.nahmens.rhcimax.utils.Utils;
 
 public class RolSqliteDao implements RolDAO {
@@ -116,6 +123,50 @@ public class RolSqliteDao implements RolDAO {
 		}
 
 		return modificado;
+	}
+
+
+	public JSONArray buscarRoles(Context context, String idUsuario) {
+		ConexionBD conexion = new ConexionBD(context);
+		Cursor mCursor = null;
+		JSONArray roles = new JSONArray();
+		try{
+
+			conexion.open();
+			
+			String sqlQuery = "SELECT rol."+Rol.ID+", rol."+Rol.NOMBRE
+				            + " FROM " + DataBaseHelper.TABLA_USUARIO_ROL
+				            + " LEFT JOIN " + DataBaseHelper.TABLA_USUARIO 
+				            + " ON ( usuario_rol." + Usuario_Rol.ID_USUARIO+ " = usuario."+Usuario.ID+" ) "
+				            + " LEFT JOIN " + DataBaseHelper.TABLA_ROL
+				            + " ON ( usuario_rol." + Usuario_Rol.ID_ROL+ " = rol."+Rol.ID+" ) "
+				            + " WHERE "
+				            + " usuario_rol."+Usuario_Rol.ID_USUARIO+"="+idUsuario;
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
+			
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+				
+				while(!mCursor.isAfterLast()){
+					
+					JSONObject rol = new JSONObject();
+					rol.put(Rol.ID, mCursor.getString(mCursor.getColumnIndex(Rol.ID)));
+					rol.put(Rol.NOMBRE,  mCursor.getString(mCursor.getColumnIndex(Rol.NOMBRE)));
+					roles.put(rol);
+
+					mCursor.moveToNext();
+		        }
+			}
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		
+		}finally{
+			conexion.close();
+		}
+
+		return roles;	
 	}
 
 

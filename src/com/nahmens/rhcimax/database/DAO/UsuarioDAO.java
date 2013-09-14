@@ -1,5 +1,7 @@
 package com.nahmens.rhcimax.database.DAO;
 
+import org.json.JSONArray;
+
 import android.content.Context;
 import android.database.Cursor;
 
@@ -7,7 +9,7 @@ import com.nahmens.rhcimax.database.modelo.Usuario;
 
 public interface UsuarioDAO {
 	
-	Usuario buscarUsuario(Context context, String login, String password);
+	Usuario buscarUsuarioByLogin(Context context, String login);
 	Usuario buscarUsuario(Context context, String idUsuario);
 	
 	/**
@@ -28,5 +30,7 @@ public interface UsuarioDAO {
      * @return numero de regsitros eliminados
      */
     int eliminarUsuarios(Context context);
+    
+    JSONArray buscarPermisos(Context context, String idUsuario);
  
 }

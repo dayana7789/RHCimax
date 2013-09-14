@@ -1,13 +1,22 @@
 package com.nahmens.rhcimax.database.sqliteDAO;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.nahmens.rhcimax.database.ConexionBD;
 import com.nahmens.rhcimax.database.DataBaseHelper;
 import com.nahmens.rhcimax.database.DAO.UsuarioDAO;
+import com.nahmens.rhcimax.database.modelo.Permiso;
+import com.nahmens.rhcimax.database.modelo.Rol;
+import com.nahmens.rhcimax.database.modelo.Rol_Permiso;
 import com.nahmens.rhcimax.database.modelo.Usuario;
+import com.nahmens.rhcimax.database.modelo.Usuario_Rol;
 import com.nahmens.rhcimax.utils.Utils;
 
 /*
@@ -38,7 +47,6 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 			values.put(Usuario.LOGIN,usuario.getLogin());
 			values.put(Usuario.PASSWORD,usuario.getPassword());
 			values.put(Usuario.CORREO,usuario.getCorreo());
-			values.put(Usuario.ID_ROL,usuario.getIdRol());
 			values.put(Usuario.TOKEN,usuario.getToken());
 
 			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_USUARIO, null,values);
@@ -67,7 +75,6 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 			values.put(Usuario.LOGIN,usuario.getLogin());
 			values.put(Usuario.PASSWORD,usuario.getPassword());
 			values.put(Usuario.CORREO,usuario.getCorreo());
-			values.put(Usuario.ID_ROL,usuario.getIdRol());
 			values.put(Usuario.TOKEN,usuario.getToken());
 			values.put(Usuario.SINCRONIZADO,0);
 
@@ -85,7 +92,7 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 	}
 
 	@Override
-	public Usuario buscarUsuario(Context context, String login, String password) {
+	public Usuario buscarUsuarioByLogin(Context context, String login) {
 		ConexionBD conexion = new ConexionBD(context);
 		Cursor mCursor = null;
 		Usuario usu = null;
@@ -93,15 +100,15 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 		try{
 			conexion.open();
 
-			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_USUARIO, null, "login=? and password=?", new String[] {login,password}, null, null, null);
+			mCursor = conexion.getDatabase().query(DataBaseHelper.TABLA_USUARIO, null, "login=?", new String[] {login}, null, null, null);
 
 			if(mCursor.getCount()>0){
 				mCursor.moveToFirst();
 				usu = new Usuario(mCursor.getString(mCursor.getColumnIndex(Usuario.ID)), 
 				         mCursor.getString(mCursor.getColumnIndex(Usuario.LOGIN)),
-				         mCursor.getString(mCursor.getColumnIndex(Usuario.CORREO)),
 				         mCursor.getString(mCursor.getColumnIndex(Usuario.PASSWORD)),
-				         mCursor.getString(mCursor.getColumnIndex(Usuario.ID_ROL)),
+				         mCursor.getString(mCursor.getColumnIndex(Usuario.SALT)),
+				         mCursor.getString(mCursor.getColumnIndex(Usuario.CORREO)),
 						 mCursor.getString(mCursor.getColumnIndex(Usuario.TOKEN)));
 			}
 
@@ -127,11 +134,11 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 			if(mCursor.getCount()>0){
 				mCursor.moveToFirst();
 				usu = new Usuario(mCursor.getString(mCursor.getColumnIndex(Usuario.ID)), 
-						         mCursor.getString(mCursor.getColumnIndex(Usuario.LOGIN)),
-						         mCursor.getString(mCursor.getColumnIndex(Usuario.CORREO)),
-						         mCursor.getString(mCursor.getColumnIndex(Usuario.PASSWORD)),
-						         mCursor.getString(mCursor.getColumnIndex(Usuario.ID_ROL)),
-								 mCursor.getString(mCursor.getColumnIndex(Usuario.TOKEN)));
+				         mCursor.getString(mCursor.getColumnIndex(Usuario.LOGIN)),
+				         mCursor.getString(mCursor.getColumnIndex(Usuario.PASSWORD)),
+				         mCursor.getString(mCursor.getColumnIndex(Usuario.SALT)),
+				         mCursor.getString(mCursor.getColumnIndex(Usuario.CORREO)),
+						 mCursor.getString(mCursor.getColumnIndex(Usuario.TOKEN)));
 			}
 
 		}finally{
@@ -200,4 +207,50 @@ public class UsuarioSqliteDao implements UsuarioDAO{
 		return numCol;		
 
 	}
+	
+	public JSONArray buscarPermisos(Context context, String idUsuario) {
+		ConexionBD conexion = new ConexionBD(context);
+		Cursor mCursor = null;
+		JSONArray permisos = new JSONArray();
+		try{
+			conexion.open();
+			
+			String sqlQuery = "SELECT permiso." + Permiso.NOMBRE + ", permiso." + Permiso.ID 
+							 + " FROM " + DataBaseHelper.TABLA_USUARIO + ", " + DataBaseHelper.TABLA_ROL
+							 + ", " + DataBaseHelper.TABLA_USUARIO_ROL + ", " + DataBaseHelper.TABLA_PERMISO
+							 + ", " + DataBaseHelper.TABLA_ROL_PERMISO + ""
+							 + " WHERE"
+							 + " usuario." + Usuario.ID + "= "+ idUsuario +" AND "
+							 + "usuario." + Usuario.ID + " = usuario_rol."+Usuario_Rol.ID_USUARIO+" AND "
+							 + "rol." + Rol.ID + " = usuario_rol."+Usuario_Rol.ID_ROL+" AND "
+							 + "rol." + Rol.ID + " = rol_permiso."+Usuario_Rol.ID_ROL+" AND "
+							 + "permiso." + Permiso.ID + " = rol_permiso."+Rol_Permiso.ID_PERMISO+";";
+Log.e("QUERY: ", sqlQuery);
+
+			mCursor = conexion.getDatabase().rawQuery(sqlQuery,null);
+			
+			if (mCursor != null) {
+				mCursor.moveToFirst();
+				
+				while(!mCursor.isAfterLast()){
+					
+					JSONObject permiso = new JSONObject();
+					permiso.put(Rol.ID, mCursor.getString(mCursor.getColumnIndex(Rol.ID)));
+					permiso.put(Rol.NOMBRE,  mCursor.getString(mCursor.getColumnIndex(Rol.NOMBRE)));
+					permisos.put(permiso);
+
+					mCursor.moveToNext();
+		        }
+			}
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		
+		}finally{
+			conexion.close();
+		}
+
+		return permisos;	
+	}
+
 }

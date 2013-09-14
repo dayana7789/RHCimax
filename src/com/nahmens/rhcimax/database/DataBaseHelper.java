@@ -28,6 +28,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	public static final String TABLA_ROL = "rol";
 	public static final String TABLA_PERMISO = "permiso";
 	public static final String TABLA_ROL_PERMISO = "rol_permiso";
+	public static final String TABLA_USUARIO_ROL = "usuario_rol";
 	public static final String TABLA_EMPRESA = "empresa";
 	public static final String TABLA_EMPLEADO = "empleado";
 	public static final String TABLA_COTIZACION = "cotizacion";
@@ -52,16 +53,30 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 
 	private static final String DATABASE_CREATE_USUARIO = "CREATE table " + TABLA_USUARIO + " ("
 														+"_id TEXT PRIMARY KEY NOT NULL, "
-														+ "token TEXT NOT NULL, "
+														+ "nombre TEXT NOT NULL, "
+														+ "apellido TEXT NOT NULL, "
 														+ "login TEXT NOT NULL, "
 														+ "password TEXT NOT NULL, "
+														+ "salt TEXT NOT NULL, "
 														+ "correo TEXT NOT NULL, "
+														+ "fechaUltimoLogin DATETIME DEFAULT NULL, "
+														+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
+														+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
+														+ "fechaSincronizacion DATETIME DEFAULT NULL, "
+														+ "token TEXT NOT NULL, "
+														+ "status TEXT NOT NULL DEFAULT 'activo', "
+														+ "sincronizado INTEGER NOT NULL DEFAULT 0);";
+	
+	private static final String DATABASE_CREATE_USUARIO_ROL = "CREATE table " + TABLA_USUARIO_ROL + " ("
+														+ "idUsuario TEXT NOT NULL, "
 														+ "idRol TEXT NOT NULL, "
 														+ "fechaCreacion DATETIME DEFAULT (datetime('now','localtime')), "
 														+ "fechaModificacion DATETIME DEFAULT (datetime('now','localtime')), "
 														+ "fechaSincronizacion DATETIME DEFAULT NULL, "
 														+ "status TEXT NOT NULL DEFAULT 'activo', "
 														+ "sincronizado INTEGER NOT NULL DEFAULT 0, "
+														+ "primary key (idUsuario, idRol), "
+														+ "FOREIGN KEY(idUsuario) REFERENCES " + TABLA_USUARIO + "(_id) ON DELETE CASCADE, " 
 														+ "FOREIGN KEY(idRol) REFERENCES " + TABLA_ROL + "(_id) ON DELETE CASCADE);";
 	
 	private static final String DATABASE_CREATE_PERMISO = "CREATE table " + TABLA_PERMISO + " ("
@@ -261,6 +276,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 	public void onCreate(SQLiteDatabase database) {
 		database.execSQL(DATABASE_CREATE_ROL);
 		database.execSQL(DATABASE_CREATE_USUARIO);
+		database.execSQL(DATABASE_CREATE_USUARIO_ROL);
 		database.execSQL(DATABASE_CREATE_PERMISO);
 		database.execSQL(DATABASE_CREATE_ROL_PERMISO);
 		database.execSQL(DATABASE_CREATE_EMPRESA);
@@ -290,7 +306,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		Log.e("",DATABASE_CREATE_HISTORICO);*/
 
 		this.insertarConfiguracion(database);
-	//	this.insertarRegistros(database);
+		this.insertarRegistros(database);
 	}
 
 	
@@ -340,9 +356,9 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 /*id:5*/String insertPermiso5 =  "INSERT INTO "+ TABLA_PERMISO + "(_id,nombre, descripcion) VALUES('5','EliminarTodo','Se permite el acceso a la acción eliminar.')";
 /*id:6*/String insertPermiso6 =  "INSERT INTO "+ TABLA_PERMISO + "(_id,nombre, descripcion) VALUES('6','EliminarPropios','Se permite el acceso a la acción eliminar de los registros que son propios del usuario.')";
 
-		String usuario = "INSERT INTO "+ TABLA_USUARIO + "(_id,idRol,login, password, correo, token) VALUES('1','1','administrador','1234','NONE','11aa22bb33cc')";
-		String usuario2 = "INSERT INTO "+ TABLA_USUARIO + "(_id,idRol,login, password, correo, token) VALUES('2','2','usuario avanzado','1234','NONE','11aa22bb33cc')";
-		String usuario3 = "INSERT INTO "+ TABLA_USUARIO + "(_id,idRol,login, password, correo, token) VALUES('3','3','usuario','1234','NONE','11aa22bb33cc')";
+		String usuario = "INSERT INTO "+ TABLA_USUARIO + "(_id, nombre, apellido, login, password, salt, correo, token) VALUES('1', 'Admin', 'Admin', 'administrador', 'LZ5iAtFKWtM/35tOMY4/C5FCsaeylfho4m0Vk9zTlTg=', 'uAfdQGBvuxo=', 'admin@prueba.com', '11aa22bb33cc')";
+		String usuario2 = "INSERT INTO "+ TABLA_USUARIO + "(_id, nombre, apellido, login, password, salt, correo, token) VALUES('2', 'Usuario', 'Avanzado', 'usuario avanzado', 'LZ5iAtFKWtM/35tOMY4/C5FCsaeylfho4m0Vk9zTlTg=', 'uAfdQGBvuxo=', 'usuario@prueba.com', '22bb33cc44dd')";
+		String usuario3 = "INSERT INTO "+ TABLA_USUARIO + "(_id, nombre, apellido, login, password, salt, correo, token) VALUES('3', 'Usuario', 'Usuario', 'usuario', 'LZ5iAtFKWtM/35tOMY4/C5FCsaeylfho4m0Vk9zTlTg=', 'uAfdQGBvuxo=', 'usuario_avan@prueba.com', '33cc44dd55ee')";
 
 		/*Rol administrador tiene todos los permisos generales*/
 		String rolPer =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('1','1')";
@@ -358,6 +374,12 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		String rolPer7 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('3','2')";
 		String rolPer8 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('3','4')";
 		String rolPer9 =  "INSERT INTO "+ TABLA_ROL_PERMISO + "(idRol,idPermiso) VALUES('3','6')";
+		
+		
+		String usuarios_roles1 = "INSERT INTO usuario_rol (idUsuario, idRol) VALUES ('1', '1')";
+		String usuarios_roles2 = "INSERT INTO usuario_rol (idUsuario, idRol) VALUES ('2', '2')";
+		String usuarios_roles3 = "INSERT INTO usuario_rol (idUsuario, idRol) VALUES ('3', '3')";
+
 
 		database.execSQL(insertRol1);
 		database.execSQL(insertRol2);
@@ -381,6 +403,10 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		database.execSQL(rolPer7);
 		database.execSQL(rolPer8);
 		database.execSQL(rolPer9);
+		
+		database.execSQL(usuarios_roles1);
+		database.execSQL(usuarios_roles2);
+		database.execSQL(usuarios_roles3);
 		
 		String serv1 =  "INSERT INTO "+ TABLA_SERVICIO + "(_id,nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('1','Reclutamiento',0,5000,'persona','Reclutamiento:  Es un servicio para reclutar personal.','Activo')";
 		String serv2 =  "INSERT INTO "+ TABLA_SERVICIO + "(_id,nombre,precio,inicial,unidadMedicion,descripcion,status) VALUES('2','Merchandiser',300,0,'horas', 'Merchandiser: Es un servicio para Merchandiser.','Activo')";

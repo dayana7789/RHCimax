@@ -23,7 +23,7 @@ public class Rol_PermisoSqliteDao implements Rol_PermisoDAO{
 			ContentValues values = new ContentValues();
 
 			values.put(Rol_Permiso.ID_ROL, rol_permiso.getIdRol());
-			values.put(Rol_Permiso.ID_PERMISO, rol_permiso.getIdRol());
+			values.put(Rol_Permiso.ID_PERMISO, rol_permiso.getIdPermiso());
 
 			value = conexion.getDatabase().insertOrThrow(DataBaseHelper.TABLA_ROL_PERMISO, null,values);
 
