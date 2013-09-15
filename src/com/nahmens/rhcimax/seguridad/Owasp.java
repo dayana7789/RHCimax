@@ -172,9 +172,9 @@ public class Owasp {
 	 * @return byte[]
 	 * @throws IOException
 	 */
-	public static byte[] base64ToByte(String data) throws IOException { 
+	public static byte[] base64ToByte(String data) throws IOException {
 
-		return Base64.decode(data, Base64.DEFAULT); 
+		return Base64.decode(data, Base64.DEFAULT);
 		
 	}
 
