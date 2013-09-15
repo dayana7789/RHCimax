@@ -164,7 +164,7 @@ public class Owasp {
 		return input;
 	}
 
-	/**
+	/** 
 	 * From a base 64 representation, returns the corresponding byte[]
 	 * 
 	 * @param data
