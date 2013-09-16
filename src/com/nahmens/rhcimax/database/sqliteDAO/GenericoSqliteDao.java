@@ -16,6 +16,7 @@ import com.nahmens.rhcimax.database.DAO.GenericoDAO;
 import com.nahmens.rhcimax.database.modelo.Cotizacion_Servicio;
 import com.nahmens.rhcimax.database.modelo.Empleado_Cotizacion;
 import com.nahmens.rhcimax.database.modelo.Rol_Permiso;
+import com.nahmens.rhcimax.database.modelo.Usuario_Rol;
 import com.nahmens.rhcimax.utils.FormatoFecha;
 
 public class GenericoSqliteDao implements GenericoDAO{
@@ -163,6 +164,31 @@ public class GenericoSqliteDao implements GenericoDAO{
 
 				value = conexion.getDatabase().update(nombreTabla, values, Rol_Permiso.ID_ROL+ "=? AND " + Rol_Permiso.ID_PERMISO + "=?", new String []{idRol, idPermiso});
 
+			}else if(nombreTabla.equals(DataBaseHelper.TABLA_USUARIO_ROL)){
+				String idRol = null;
+				String idUsuario = null;
+
+				while(keys.hasNext()){
+					String key = (String)keys.next();
+					String valor = json.getString(key);
+
+					if(valor.equals("null") || valor==null){
+						values.putNull(key);
+					}else{
+						values.put(key,valor);
+					}
+
+					if(key.equals(Usuario_Rol.ID_ROL)){
+						idRol = json.getString(key);
+					}
+
+					if(key.equals(Usuario_Rol.ID_USUARIO)){
+						idUsuario = json.getString(key);
+					}
+				}
+
+				value = conexion.getDatabase().update(nombreTabla, values, Usuario_Rol.ID_ROL+ "=? AND " + Usuario_Rol.ID_USUARIO + "=?", new String []{idRol, idUsuario});
+
 			}else{
 				String id = null;
 
@@ -231,6 +257,12 @@ public class GenericoSqliteDao implements GenericoDAO{
 				String idPermiso = json.getString(Rol_Permiso.ID_PERMISO);
 
 				value = conexion.getDatabase().update(nombreTabla, values, Rol_Permiso.ID_ROL+ "=? AND " + Rol_Permiso.ID_PERMISO + "=?", new String []{idRol, idPermiso});
+
+			}else if(nombreTabla.equals(DataBaseHelper.TABLA_USUARIO_ROL)){
+				String idRol = json.getString(Usuario_Rol.ID_ROL);
+				String idUsuario = json.getString(Usuario_Rol.ID_USUARIO);
+
+				value = conexion.getDatabase().update(nombreTabla, values, Usuario_Rol.ID_ROL+ "=? AND " + Usuario_Rol.ID_USUARIO + "=?", new String []{idRol, idUsuario});
 
 			}else{
 				String id = json.getString(ID);

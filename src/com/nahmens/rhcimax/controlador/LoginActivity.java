@@ -105,6 +105,7 @@ public class LoginActivity extends Activity {
 				DataBaseHelper.TABLA_USUARIO,
 				DataBaseHelper.TABLA_PERMISO,
 				DataBaseHelper.TABLA_ROL_PERMISO,
+				DataBaseHelper.TABLA_USUARIO_ROL,
 				DataBaseHelper.TABLA_SERVICIO);
 	}
 }

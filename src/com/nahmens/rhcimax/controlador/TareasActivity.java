@@ -186,6 +186,7 @@ public class TareasActivity extends ListFragment{
 																	   DataBaseHelper.TABLA_USUARIO,
 																	   DataBaseHelper.TABLA_PERMISO,
 											                           DataBaseHelper.TABLA_ROL_PERMISO, 
+											                           DataBaseHelper.TABLA_USUARIO_ROL,
 											                           DataBaseHelper.TABLA_EMPRESA,
 											                           DataBaseHelper.TABLA_EMPLEADO,
 											                           DataBaseHelper.TABLA_COTIZACION,

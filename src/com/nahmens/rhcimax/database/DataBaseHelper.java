@@ -306,7 +306,7 @@ public class DataBaseHelper extends SQLiteOpenHelper{
 		Log.e("",DATABASE_CREATE_HISTORICO);*/
 
 		this.insertarConfiguracion(database);
-		this.insertarRegistros(database);
+		//this.insertarRegistros(database);
 	}
 
 	
